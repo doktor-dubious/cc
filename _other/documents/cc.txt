@@ -1,0 +1,113 @@
+Generate database using Prisma:
+npx prisma migrate dev --name init
+
+Loggin in:
+sudo -u postgres psql
+
+psql -h localhost -U compliance -d compliance
+
+
+npm install
+npm run dev
+PORT=3001 npm run dev
+
+-- When Prisma Database has been changed:
+npx 
+npx prisma init
+npx prisma studio
+
+npx shadcn@latest add https://aliimam.in/r/footer-01.json
+
+
+shadcn
+DropdownMenu
+npx shadcn@latest add dropdown-menu
+npx shadcn@latest add avatar
+
+
+npm install jose
+
+
+
+
+# View logs
+pm2 logs Compliance-Circle
+
+# Monitor
+pm2 monit
+
+# Restart app
+pm2 restart your-app
+
+# Stop app
+pm2 stop your-app
+
+# List all apps
+pm2 list
+
+# View detailed info
+pm2 info Compliance-Circle
+
+
+------------------------------------------
+DESIGN:
+https://factory.ai/pricing
+
+
+------------------------------------------
+GIT:
+git init
+
+
+
+AWS S3
+LocalStack
+MinIO (Production-Ready S3 Alternative)
+
+--------------------------
+Localstack:
+pip install localstack
+
+
+# Start LocalStack (runs in foreground)
+localstack start
+
+# Or run in background
+localstack start -d
+
+# Check status
+localstack status
+
+# Stop (if running in background)
+localstack stop
+
+# macOS
+brew install awscli
+
+# Windows
+choco install awscli
+
+# Linux
+pip install awscli
+
+
+# Configure AWS CLI for LocalStack (one-time setup)
+aws configure --profile localstack
+# Access Key: test
+# Secret Key: test
+# Region: us-east-1
+# Output: json
+
+# Create bucket
+aws --endpoint-url=http://localhost:4566 s3 mb s3://artifacts --profile localstack
+
+# List buckets
+aws --endpoint-url=http://localhost:4566 s3 ls --profile localstack
+
+# Upload file
+aws --endpoint-url=http://localhost:4566 s3 cp test.pdf s3://artifacts/ --profile localstack
+
+# List files in bucket
+aws --endpoint-url=http://localhost:4566 s3 ls s3://artifacts/ --profile localstack
+
+

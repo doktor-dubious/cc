@@ -1,0 +1,186 @@
+https://ui.shadcn.com/docs/directory
+
+Collections:
+allshadcn.com/components
+
+Tabs:
+https://ui.shadcn.com/docs/components/radix/tabs
+
+Icons:
+lucide-react
+https://lucide.dev/icons/
+
+Morphic Navbar, Background Paths, Toolbar, Dynamic Text
+https://kokonutui.com/docs/components/morphic-navbar
+
+Footer, Icons, Alert, Badge, Breadcrumbs. Shader-rgb
+https://aliimam.in/blocks/footer
+https://aliimam.in/icons
+https://aliimam.in/components/alert
+https://aliimam.in/components/shader-rgb
+
+Code, Accordion, Checkbox, Files(!), Radio, Sidebar, Switch, Tabs, Toggle Group,
+Accordion
+https://animate-ui.com/docs/components/radix/tabs
+https://animate-ui.com/docs/components/animate/code
+https://animate-ui.com/docs/components/radix/checkbox
+https://animate-ui.com/docs/components/radix/files
+https://animate-ui.com/docs/components/radix/sidebar
+https://animate-ui.com/docs/components/radix/switch
+https://animate-ui.com/docs/components/base/toggle-group
+https://animate-ui.com/docs/components/base/accordion
+
+Bett Upload, upload files
+https://better-upload.com/docs/quickstart
+
+Breadcrumb, Button/Input Group, Checkbox (Card checkbox), Combobox, Button Group, Resizeable, Separator
+Sonner (Toast), Spinner
+https://basecn.dev/docs/components/breadcrumb
+https://basecn.dev/docs/components/button-group
+https://basecn.dev/docs/components/checkbox
+https://basecn.dev/docs/components/input-group
+https://basecn.dev/docs/components/sonner
+https://basecn.dev/docs/components/spinner
+
+Calendar, Radio, Stepper, Video
+https://www.creative-tim.com/ui/docs/components/calendar
+https://www.creative-tim.com/ui/docs/components/stepper
+
+Angle Slider, Circular Progress, Compare Slider, Cropper, Gauge, Marquee, Masonry, Media Player, Mention, QR Code, Rating, Scroll Spy,
+Sortable, Stat (dor dashboard!), Status, Stepper, Timeline
+https://www.diceui.com/docs/components/angle-slider
+https://www.diceui.com/docs/components/circular-progress
+https://www.diceui.com/docs/components/compare-slider
+https://www.diceui.com/docs/components/cropper
+https://www.diceui.com/docs/components/gauge
+https://www.diceui.com/docs/components/marquee
+https://www.diceui.com/docs/components/masonry
+https://www.diceui.com/docs/components/media-player
+https://www.diceui.com/docs/components/mention
+https://www.diceui.com/docs/components/scroll-spy
+https://www.diceui.com/docs/components/sortable
+https://www.diceui.com/docs/components/stat
+https://www.diceui.com/docs/components/status
+https://www.diceui.com/docs/components/stepper
+
+Icons, Colours
+https://www.radix-ui.com/icons
+https://www.radix-ui.com/colors
+
+Footer
+https://efferd.com/blocks/
+
+Animated Icons (User)
+https://lucide-animated.com/
+
+Grid (for dashboard)
+https://www.1771technologies.com/demo
+
+Text Highlighter
+https://magicui.design/docs/components/highlighter
+
+Theme
+https://www.mui-treasury.com/theme-preview
+
+Text Scramble, Text Shimmer, Dock
+https://motion-primitives.com/docs/text-scramble
+
+HTML Guidelines
+https://vercel.com/design/guidelines
+
+Scramble Text, Layered Stack
+https://ui.paceui.com/docs/components/scramble-text
+
+Rich-Text Editior (!)
+https://platejs.org/                     (1)
+https://shadcn-editor.vercel.app/        (2)
+
+Decrypted Text, Electric Border, Splash Cursor, Light Pillar (background for login?), Floating Lines, Letter Glitch, Balatro (!)
+https://reactbits.dev/text-animations/decrypted-text
+
+Dashboards (Project Timelines, Calendar, Task management, Circle)
+https://square.lndev.me/
+
+Toast (Notificactions), Switch (switch dark/light theme!), Tabs, Input (Login: Input with start icon, password input), Dialog, Button 18 (for Terms, Privacy Policy)
+https://shadcnstudio.com/docs/components/input
+https://shadcnstudio.com/docs/components/sonner
+
+Select, separator
+https://www.shadcnui-blocks.com/components/select
+
+Animated Input, Typewriter Text, Animated Tags, Glow Hover Cards
+https://smoothui.dev/docs/components/animated-input
+
+Animated Testimonials, Floating Label Input, Multistep Form, Testimonials
+https://ui.spectrumhq.in/docs/animatedtestimonials
+
+Message
+https://taki-ui.com/docs/ai-elements/message
+
+Notification Center (Toast), Messenger
+https://ui.tripled.work/components/notification-center
+
+Spotlight Cards, Media Modals, Linear Modal, Password
+https://www.ui-layouts.com/components/spotlight-cards
+
+collapsible (Combo box), Combobox, Input Group, Radio Group, Select, Switch, Tabs
+https://pure.kam-ui.com/docs/components/collapsible
+
+Reaction Button, Typewriter Text
+https://www.animbits.dev/docs/animations/specials/reaction-button
+
+Motion-Primitives
+https://motion-primitives.com/docs
+
+Starwind
+https://starwind.dev/
+
+Scrollxui
+https://www.scrollxui.dev/docs/components/table
+
+
+https://www.scrollxui.dev/docs/components/folder-tree
+https://www.scrollxui.dev/docs/components/calendar
+https://www.scrollxui.dev/docs/components/hyperlink
+https://www.scrollxui.dev/docs/components/lustretext
+https://www.scrollxui.dev/docs/components/magicdock
+https://www.scrollxui.dev/docs/components/morphy-button
+https://www.scrollxui.dev/docs/components/profilecard
+
+
+
+https://www.scrollxui.dev/docs/components/cosmic-background
+https://www.scrollxui.dev/docs/components/globe
+https://www.scrollxui.dev/docs/components/globe-wireframe
+https://www.scrollxui.dev/docs/components/pixel-background
+https://www.scrollxui.dev/docs/components/radialflow
+https://www.scrollxui.dev/docs/components/showcase
+https://www.scrollxui.dev/docs/components/stagger-chars
+https://www.scrollxui.dev/docs/components/testimonial-carousel
+https://www.scrollxui.dev/docs/components/text-spotlight
+https://www.scrollxui.dev/docs/components/transition
+https://www.scrollxui.dev/docs/components/venom-beam
+https://www.scrollxui.dev/docs/components/wavy-button
+
+
+Data table:
+https://tnks-data-table.vercel.app/example/users-camel-case
+
+Text Writer:
+https://www.uibeats.com/docs/text/text-writer
+
+Zoomable Chart
+https://zoom-chart-demo.vercel.app/
+
+manfromexistence:
+https://manfromexistence-ui.vercel.app/docs/components/calendars
+https://manfromexistence-ui.vercel.app/docs/components/gantts
+
+Chart:
+https://linked-chart.vercel.app/
+
+Buttons: (Ring Hover; Link Hover Underline)
+https://enhanced-button.vercel.app/
+
+Calendar:
+https://calendar-shadcn.vercel.app/
