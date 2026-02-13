@@ -75,6 +75,7 @@
 
 ────────────────────
 ── Friday 13 Feb
+* Claude Code, startup
 * Overall Design
   -> Sitewise unified look&feel for all buttons/tables/etc.
     --> Work in Dark/Light Themes.
@@ -84,6 +85,11 @@
     --> Page: Incomming Files
   -> Better Assets Type Badge colours/design.
   -> Better User Role Badge colours/design.
+  -> Page Header + restyled & rearranged Select Organization
+* Page header: Action Icons
+  --> Refresh Action
+    --> Page: Incomming Files
+    --> Page: Organizations
 
 
 

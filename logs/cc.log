@@ -6503,3 +6503,362 @@
 [05:40:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : profile - GET (fetch)[39m
 [05:40:22 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
 [05:40:22 UTC] [32mINFO[39m: [36mSQL - profile: findByOrganizationId[39m
+[05:44:00 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[05:44:00 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[05:44:00 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[05:44:00 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[05:44:00 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[05:44:00 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[06:40:05 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:40:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[06:40:05 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:40:05 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:48:44 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[06:48:44 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:48:44 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:50:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:50:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:50:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:50:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:50:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:50:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:52:37 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[06:52:37 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:52:37 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:54:59 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:54:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[06:54:59 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:54:59 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:54:59 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:54:59 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:55:00 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[06:55:00 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:55:00 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":1}[39m
+[06:55:31 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[06:55:31 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[06:55:31 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:55:31 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[06:55:31 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[06:55:32 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[06:55:32 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[06:55:32 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[]}[39m
+[06:55:32 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[06:55:32 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[]}[39m
+[07:11:53 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[07:11:54 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[07:11:54 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[07:12:01 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[07:12:01 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[07:12:01 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[07:13:03 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[07:13:03 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[07:13:03 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[07:13:04 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[07:13:04 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:13:04 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[07:13:04 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[07:13:04 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[]}[39m
+[07:13:11 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[07:13:11 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:13:11 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[07:13:11 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[07:13:11 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:13:11 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[07:16:47 UTC] [34mDEBUG[39m: [36m(PRISMA API : profile - GET (fetch)[39m
+[07:16:47 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:16:47 UTC] [32mINFO[39m: [36mSQL - profile: findByOrganizationId[39m
+[07:16:47 UTC] [34mDEBUG[39m: [36m(PRISMA API : profile - GET (fetch)[39m
+[07:16:47 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:16:47 UTC] [32mINFO[39m: [36mSQL - profile: findByOrganizationId[39m
+[07:16:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[07:16:50 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:16:50 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[07:16:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[07:16:50 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[07:16:50 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:20:00 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:20:01 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[08:20:01 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[08:20:01 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[08:20:01 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[08:20:01 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[08:24:58 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:24:58 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:24:58 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:24:58 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[08:24:58 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[08:24:58 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[08:25:32 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:25:32 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:25:32 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:30:37 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:30:37 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:30:37 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:30:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[08:30:38 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[08:30:38 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:57:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[08:57:56 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[08:57:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[08:57:56 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[08:57:56 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[09:04:36 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[09:04:36 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[09:04:36 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[09:04:37 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[09:04:37 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[09:04:37 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[09:04:37 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[09:04:37 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[09:04:37 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[09:04:45 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[09:04:45 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[09:04:45 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[09:04:45 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[09:04:45 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[09:04:45 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[09:04:45 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[09:04:45 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[]}[39m
+[09:04:45 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[09:04:45 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[]}[39m
+[09:05:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[09:05:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[09:05:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[09:05:17 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[09:05:17 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[09:05:17 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[09:06:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[09:06:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[09:06:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[09:08:45 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[09:08:45 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[09:08:45 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[09:08:45 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[09:08:45 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[09:08:45 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[09:08:45 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[09:08:45 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:00:57 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:00:57 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:00:57 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:00:58 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:00:58 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:00:58 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:00:58 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:00:58 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:03:50 UTC] [34mDEBUG[39m: [36mAPI: files/upload-dir - DELETE (delete file)[39m
+[10:03:50 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:03:50 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:03:50 UTC] [32mINFO[39m: [36mFile deleted from upload directory[39m [90m{"organizationId":1,"filename":"ada-hest-3.jpg","filePath":"/compliance/acme/up/ada-hest-3.jpg","deletedBy":1}[39m
+[10:27:53 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:27:53 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:27:53 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:27:53 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:27:53 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:27:53 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:27:53 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:27:53 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:27:56 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:27:56 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:27:56 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:27:56 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:27:56 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:28:22 UTC] [34mDEBUG[39m: [36mAPI: files/upload-dir - DELETE (delete file)[39m
+[10:28:22 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:28:22 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:28:22 UTC] [32mINFO[39m: [36mFile deleted from upload directory[39m [90m{"organizationId":1,"filename":"ada-hest-3.jpg","filePath":"/compliance/acme/up/ada-hest-3.jpg","deletedBy":1}[39m
+[10:28:32 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:28:32 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:28:32 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:28:32 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:28:32 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:29:40 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:29:40 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:29:40 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:29:40 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:29:40 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:29:47 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:29:47 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:29:47 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:29:48 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:29:48 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:29:48 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:29:48 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:29:48 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:30:02 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:30:02 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:30:02 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:30:02 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:30:02 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:34:25 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:34:25 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:34:25 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:34:25 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:34:25 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:38:40 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:38:40 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:38:40 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:38:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:39:07 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:39:07 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:39:07 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:39:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:39:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:39:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:39:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:39:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:39:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:40:06 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:40:06 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:40:06 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:40:06 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:40:06 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:40:06 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:40:06 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:40:06 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:40:12 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:40:12 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:40:12 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:40:12 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:40:12 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:40:16 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:40:16 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:40:16 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:40:16 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:40:16 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:41:24 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:41:24 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:41:24 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:41:24 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:41:24 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:41:48 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:41:48 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:41:48 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:41:48 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:41:48 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:41:50 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:41:50 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:41:50 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:41:50 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:41:50 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:41:58 UTC] [34mDEBUG[39m: [36mAPI: GET - List files from organization upload directory[39m
+[10:41:58 UTC] [34mDEBUG[39m: [36mSession[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:41:58 UTC] [32mINFO[39m: [36mSQL - organization: findByIdWithSettings[39m
+[10:41:58 UTC] [32mINFO[39m: [36mDirectories[39m [90m{"resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact"}[39m
+[10:41:58 UTC] [34mDEBUG[39m: [36mFiles in Upload Directory[39m [90m{"files":[{"name":"ada-hest-3.jpg","relativePath":"ada-hest-3.jpg","size":492793,"modified":"2025-11-29T10:50:44.502Z","mime":"image/jpeg"}]}[39m
+[10:42:45 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:42:45 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:42:45 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:42:45 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:42:45 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:42:45 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:47:54 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:47:54 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:47:54 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:47:54 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:47:54 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:47:54 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:47:54 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:48:33 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:48:33 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[10:48:33 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[11:17:11 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[11:17:11 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[11:17:11 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[11:19:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[11:19:02 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[11:19:02 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[11:27:49 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[11:27:49 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[11:27:49 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[11:27:49 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[11:27:49 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[11:27:49 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[11:28:18 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[11:28:18 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":1,"profileId":1,"role":"SUPER_ADMIN"}[39m
+[11:28:18 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m

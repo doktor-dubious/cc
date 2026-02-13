@@ -1031,7 +1031,6 @@ useEffect(() => {
             variant="default"
             size="sm"
             onClick={handleNewTask}
-            className=""
           >
             New Task
           </Button>

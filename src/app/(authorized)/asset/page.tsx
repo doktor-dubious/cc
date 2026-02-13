@@ -60,6 +60,7 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { refresh } from 'next/cache';
 
 export default function ArtifactPage() 
 {

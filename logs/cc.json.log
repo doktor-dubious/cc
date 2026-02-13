@@ -3534,3 +3534,233 @@
 {"level":30,"time":"2026-02-13T05:40:21.754Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
 {"level":30,"time":"2026-02-13T05:40:21.756Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
 {"level":30,"time":"2026-02-13T05:40:22.024Z","pid":537477,"hostname":"Cassandra","msg":"SQL - profile: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T05:44:00.351Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T05:44:00.369Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:40:05.405Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:40:05.419Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.421Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.441Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:40:05.442Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.453Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.468Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:40:05.470Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.481Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.500Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:40:05.502Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.513Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.530Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:40:05.544Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.547Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.561Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:40:05.563Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.566Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:40:05.663Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:40:05.709Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:48:44.335Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:48:44.353Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:48:44.364Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:48:44.366Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:48:44.366Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:48:44.436Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:48:44.973Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:50:05.067Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:50:05.071Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:50:05.096Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:50:05.105Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:50:05.113Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:50:05.117Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:52:37.007Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:52:37.009Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:52:37.011Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:52:37.034Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:52:37.091Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:52:37.094Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:52:37.686Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:54:59.903Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T06:54:59.911Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:54:59.915Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T06:54:59.919Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T06:55:00.521Z","pid":537477,"hostname":"Cassandra","organizationId":1,"msg":"SQL - task: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T06:55:31.997Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T06:55:31.999Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T06:55:32.000Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T06:55:32.002Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T07:11:53.991Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T07:11:54.004Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T07:11:54.006Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T07:12:01.375Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T07:12:01.379Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T07:12:01.380Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T07:13:03.854Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T07:13:03.857Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T07:13:03.859Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T07:13:04.578Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T07:13:04.580Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T07:13:11.695Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T07:13:11.708Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T07:16:47.340Z","pid":537477,"hostname":"Cassandra","msg":"SQL - profile: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T07:16:47.354Z","pid":537477,"hostname":"Cassandra","msg":"SQL - profile: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T07:16:50.287Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T07:16:50.297Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T08:20:00.897Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:20:00.914Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:20:00.917Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:20:00.936Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:20:00.938Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:20:00.950Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:20:00.971Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:20:00.972Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:20:00.983Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:20:00.999Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:20:01.001Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:20:01.012Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:20:01.032Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:20:01.043Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:20:01.045Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:20:01.060Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:20:01.062Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:20:01.064Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:20:01.170Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T08:20:01.230Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T08:24:58.077Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:24:58.079Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:24:58.080Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:24:58.618Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T08:25:32.781Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:25:32.795Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:25:32.798Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:30:37.586Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:30:37.595Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:30:37.598Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:30:38.262Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T08:57:56.505Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:57:56.518Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.535Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.536Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:57:56.541Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.544Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.569Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:57:56.572Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.574Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.601Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:57:56.603Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.605Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.629Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:57:56.632Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.633Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.652Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T08:57:56.653Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.656Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T08:57:56.811Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T08:57:56.868Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T09:04:36.978Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T09:04:36.988Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T09:04:36.990Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T09:04:37.040Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T09:04:37.051Z","pid":537477,"hostname":"Cassandra","msg":"SQL - artifact: findByOrganizationId"}
+{"level":30,"time":"2026-02-13T09:04:45.114Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T09:04:45.115Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T09:04:45.116Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T09:04:45.123Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T09:05:16.232Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T09:05:16.235Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T09:05:16.237Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T09:05:17.890Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T09:05:17.891Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T09:05:17.893Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T09:06:16.808Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T09:06:16.810Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T09:06:16.811Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T09:08:45.394Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T09:08:45.396Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T09:08:45.397Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T09:08:45.910Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T09:08:45.912Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:00:57.678Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:00:57.687Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:00:57.689Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:00:58.386Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:00:58.388Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:03:50.192Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:03:50.194Z","pid":537477,"hostname":"Cassandra","organizationId":1,"filename":"ada-hest-3.jpg","filePath":"/compliance/acme/up/ada-hest-3.jpg","deletedBy":1,"msg":"File deleted from upload directory"}
+{"level":30,"time":"2026-02-13T10:27:53.245Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:27:53.255Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:27:53.257Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:27:53.935Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:27:53.937Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:27:56.685Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:27:56.686Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:28:22.080Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:28:22.082Z","pid":537477,"hostname":"Cassandra","organizationId":1,"filename":"ada-hest-3.jpg","filePath":"/compliance/acme/up/ada-hest-3.jpg","deletedBy":1,"msg":"File deleted from upload directory"}
+{"level":30,"time":"2026-02-13T10:28:32.352Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:28:32.354Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:29:40.838Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:29:40.839Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:29:47.402Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:29:47.404Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:29:47.406Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:29:48.285Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:29:48.286Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:30:02.689Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:30:02.690Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:34:25.973Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:34:25.975Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:38:40.971Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:38:40.983Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:38:40.986Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.010Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:38:41.023Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.024Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.053Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:38:41.057Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.060Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.076Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:38:41.088Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.089Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.122Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:38:41.123Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.125Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.141Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:38:41.143Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:38:41.145Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:39:07.532Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:39:07.534Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:39:07.536Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:39:16.524Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:39:16.526Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:39:16.528Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:39:16.554Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:39:16.559Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:39:16.745Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:40:06.014Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:40:06.023Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:40:06.025Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:40:06.701Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:40:06.703Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:40:12.169Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:40:12.171Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:40:16.054Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:40:16.055Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:41:24.166Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:41:24.167Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:41:48.697Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:41:48.698Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:41:50.987Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:41:50.989Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:41:58.505Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findByIdWithSettings"}
+{"level":30,"time":"2026-02-13T10:41:58.507Z","pid":537477,"hostname":"Cassandra","resolvedUploadDirectory":"/compliance/acme/up","resolvedArtifactDirectory":"/compliance/acme/artifact","msg":"Directories"}
+{"level":30,"time":"2026-02-13T10:42:45.721Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T10:42:45.733Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T10:47:54.029Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T10:47:54.037Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T10:47:54.040Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T10:47:54.042Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T10:47:54.575Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T10:48:33.537Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T11:17:11.558Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T11:19:02.560Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T11:27:49.091Z","pid":537477,"hostname":"Cassandra","msg":"SQL - user: findById"}
+{"level":30,"time":"2026-02-13T11:27:49.101Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAll"}
+{"level":30,"time":"2026-02-13T11:27:49.103Z","pid":537477,"hostname":"Cassandra","msg":"SQL - task: findAll"}
+{"level":30,"time":"2026-02-13T11:27:49.635Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}
+{"level":30,"time":"2026-02-13T11:28:18.454Z","pid":537477,"hostname":"Cassandra","msg":"SQL - organization: findAllWithProfilesTasksAndSettings"}

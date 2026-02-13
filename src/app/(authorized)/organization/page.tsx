@@ -51,6 +51,7 @@ import {
 import { Input } from "@/components/ui/input"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { Badge } from "@/components/ui/badge"
 
 export default function OrganizationPage()
 {
@@ -119,6 +120,58 @@ export default function OrganizationPage()
     const [searchTaskText, setSearchTaskText] = useState("");
     const [availableTasks, setAvailableTasks] = useState<any[]>([]);
     const [selectedTaskToAdd, setSelectedTaskToAdd] = useState<number | null>(null);
+
+    // ----------------------------------------------------------------------------------------------------------------
+    // FETCH ORGANISATIONS - WITH SETTINGS (& refresh).
+    const fetchOrganizations = async () =>
+    {
+        try
+        {
+            const res = await fetch('/api/organization');
+            const data = await res.json();
+            if (data.success == false)
+            {
+                console.error('Failed to fetch organizations:', data.error);
+                router.push('/error');
+                return;
+            }
+            setOrganizations(data.data);
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch organizations:', error);
+            router.push('/error');
+            return;
+        }
+        finally 
+        {
+            setLoading(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Change user +  + Refresh event    
+    useEffect(() =>
+    {
+        if (user?.role !== 'SUPER_ADMIN') return;
+
+        fetchOrganizations();
+
+        // Listen for refresh event
+        const handleRefresh = () => 
+        {
+            fetchOrganizations();
+        };
+
+        window.addEventListener('refreshPage', handleRefresh);
+        // console.log("Event listener added for refreshPage");
+
+        return () => 
+        {
+            // console.log("Cleaning up event listener");
+            window.removeEventListener('refreshPage', handleRefresh);
+        };
+    }, [user]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // ADD (EXISTING) PROFILE TO ORGANIZATION
@@ -335,35 +388,6 @@ export default function OrganizationPage()
     };
 
     // ----------------------------------------------------------------------------------------------------------------
-    // FETCH ORGANISATIONS - WITH SETTINGS.
-    const fetchOrganizations = async () =>
-    {
-        try
-        {
-            const res = await fetch('/api/organization');
-            const data = await res.json();
-            if (data.success == false)
-            {
-                console.error('Failed to fetch organizations:', data.error);
-                router.push('/error');
-                return;
-            }
-            setOrganizations(data.data);
-        }
-        catch (error)
-        {
-            console.error('Failed to fetch organizations:', error);
-            router.push('/error');
-            return;
-        }
-        finally 
-        {
-            setLoading(false);
-        }
-    };
-
-
-    // ----------------------------------------------------------------------------------------------------------------
     // TAB 2 - SETTINGS
 
     // Set Settings on new Organization.
@@ -491,14 +515,6 @@ export default function OrganizationPage()
             router.push('/dashboard');
         }
     }, [user, router]);
-
-    useEffect(() =>
-    {
-        if (user?.role === 'SUPER_ADMIN')
-        {
-            fetchOrganizations();
-        }
-    }, [user]);
 
     useEffect(() =>
     {
@@ -1105,6 +1121,20 @@ export default function OrganizationPage()
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Task Status.
+    const getStatusBadge = (taskStatus: string) =>
+    {
+        const styles = 
+        {
+            NOT_STARTED : 'bg-[var(--color-status-not-started)]',
+            OPEN        : 'bg-[var(--color-status-open)]',
+            COMPLETED   : 'bg-[var(--color-status-completed)]',
+            CLOSED      : 'bg-[var(--color-status-closed)]'
+        };
+        return styles[taskStatus as keyof typeof styles] || '';
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // DOM
     return (
 <>
@@ -1456,6 +1486,7 @@ export default function OrganizationPage()
         Cancel
       </Button>
       <Button
+        variant="default"
         disabled={!selectedTaskToAdd}
         onClick={handleAddTask}
       >
@@ -1470,12 +1501,9 @@ export default function OrganizationPage()
     {/* Header Row (New Organisation) */}
     <div className="flex justify-center">
     <Button
-        variant="outline"
+        variant="default"
         size="sm"
         onClick={handleNewOrg}
-        className="
-            cursor-pointer 
-            rounded-none"
     >
         New Organisation
     </Button>
@@ -1723,7 +1751,7 @@ export default function OrganizationPage()
             <TabsContent value="profiles" className="mt-6">
                 <div className="flex justify-center mb-4">
                     <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         onClick={() => {
                         fetchAvailableProfiles();
@@ -1784,7 +1812,7 @@ export default function OrganizationPage()
             <TabsContent value="tasks" className="mt-6">
                 <div className="flex justify-center mb-4">
                     <Button
-                        variant="outline"
+                        variant="default"
                         size="sm"
                         onClick={() => {
                         fetchAvailableTasks();
@@ -1821,17 +1849,11 @@ export default function OrganizationPage()
                                     <TableCell className="w-20 text-right tabular-nums">{task.id}</TableCell>
                                     <TableCell>{task.name}</TableCell>
                                     <TableCell>{task.description || '-'}</TableCell>
-                                    <TableCell className="w-32">
-                                        <span className={`
-                                            px-2 py-1 text-xs rounded-full
-                                            ${task.status === 'COMPLETED' ? 'bg-green-500/20 text-green-400' : ''}
-                                            ${task.status === 'OPEN' ? 'bg-blue-500/20 text-blue-400' : ''}
-                                            ${task.status === 'NOT_STARTED' ? 'bg-gray-500/20 text-gray-400' : ''}
-                                            ${task.status === 'CLOSED' ? 'bg-red-500/20 text-red-400' : ''}
-                                        `}>
-                                            {task.status.replace('_', ' ')}
-                                        </span>
-                                    </TableCell>
+                                      <TableCell className="w-32">
+                                        <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs status-badge`}>
+                                          {task.status.replace('_', ' ')}
+                                        </Badge>
+                                      </TableCell>
                                     <TableCell className="w-16 text-right">  {/* ← new column */}
                                         <button
                                             className="hover:text-destructive p-1"

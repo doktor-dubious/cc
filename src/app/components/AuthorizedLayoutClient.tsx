@@ -1,10 +1,9 @@
 'use client';
 
-import { useRouter } from 'next/navigation';
-import { useState } from 'react';
-
-import Link from 'next/link'
-import { Button } from "@/components/ui/button"
+import { useRouter, usePathname }   from 'next/navigation';
+import { useState }                 from 'react';
+import Link                         from 'next/link'
+import { Button }                   from "@/components/ui/button"
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -18,9 +17,9 @@ import {
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+}                                   from "@/components/ui/dropdown-menu"
 
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
+import { Avatar, AvatarFallback }   from "@/components/ui/avatar"
 
 import {
   Collapsible,
@@ -88,6 +87,9 @@ import {
   ExternalLink
   
 } from "lucide-react"
+
+import { GB, DK, SE, NO, FR, DE, ES } from 'country-flag-icons/react/3x2'
+
 import { useTheme } from "next-themes"
 
 import { 
@@ -130,11 +132,30 @@ export default function AuthorizedLayout({children, user, organizations, tasks}:
     const { theme, setTheme } = useTheme();
     const router = useRouter();
     const [openSubmenu, setOpenSubmenu] = useState<string | null>('tasks1'); // ← Set initial value here
+    const [isRefreshing, setIsRefreshing] = useState(false);
 
     const handleSubmenuToggle = (menuName: string) => {
     setOpenSubmenu(prev => prev === menuName ? null : menuName);
 };
 
+let pathname = usePathname();
+
+// Map routes to titles
+const getPageTitle = () => 
+{
+    if (pathname.includes('/asset'))            return 'Assets';
+    if (pathname.includes('/task'))             return 'Tasks';
+    if (pathname.includes('/organization'))     return 'Organizations';
+    if (pathname.includes('/profile'))          return 'Profile';
+    if (pathname.includes('/upload-files'))     return 'Upload Files';
+    if (pathname.includes('/incomming-files'))  return 'Incoming Files';
+    if (pathname.includes('/settings'))         return 'Settings';
+    if (pathname.includes('/home'))             return 'Home';
+
+    return 'Dashboard';
+};
+
+// ── Change Organization Drop Down ───────────────────────────────────────
 function OrganizationSwitcher()
 {
     const { organizations, activeOrganization, setActiveOrganization } = useOrganization();
@@ -144,48 +165,78 @@ function OrganizationSwitcher()
     // Only one Organiszation → Badge.
     if (organizations.length === 1)
     {
-      return (
-        <Badge 
-          variant="secondary" 
-          className="min-w-32 px-3 py-1 rounded-sm text-muted-foreground"
-        >
-          <Building2 className="mr-2 h-4 w-4" />
+        return (
+<div className="
+    flex
+    w-full
+    my-3
+    py-3
+    bg-secondary
+    text-muted-foreground"
+>
+  <Building2 className="pl-2 h-6 w-6" />
+  <Badge 
+    variant="secondary" 
+  >
+    {activeOrganization.name}
+  </Badge>
+</div>
+        );
+    }
+
+    // Multiple Organiszation → Dropdown.
+    return (
+<div className="
+    flex
+    w-full
+    my-3
+    bg-secondary
+    text-muted-foreground"
+>
+  <DropdownMenu>
+    <DropdownMenuTrigger asChild>
+      <Button
+        variant="secondary" 
+        className="
+            w-full
+            h-7 
+            min-w-48 
+            gap-2 
+            px-3 
+            py-4
+            rounded-none 
+            bg-secondary
+            text-muted-foreground 
+            text-xs 
+            flex 
+            items-center"
+      >
+        <Building2 className="h-3! w-3! shrink-0" />
+        <span className="ml-2 flex-1 truncate text-left">
           {activeOrganization.name}
-        </Badge>
-      );
-  }
+        </span>
+        <ChevronDown className="h-31 w-3! ml-auto shrink-0" />
+      </Button>
+    </DropdownMenuTrigger>
 
-  // Multiple Organiszation → Dropdown.
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="secondary" 
-          className="h-7 min-w-48 gap-2 px-3 py-1 rounded-sm text-muted-foreground text-xs flex items-center"
+    <DropdownMenuContent align="center" className="
+        rounded-none 
+        w-(--sidebar-width)">
+      <DropdownMenuLabel>Organizations</DropdownMenuLabel>
+      <DropdownMenuSeparator />
+      {organizations.map(org => (
+        <DropdownMenuItem
+          key={org.id}
+          onClick={() => setActiveOrganization(org)}
+          className="cursor-pointer"
         >
-          <Building2 className="!h-3 !w-3 shrink-0" />
-          <span className="ml-2 flex-1 truncate text-left">
-            {activeOrganization.name}
-          </span>
-          <ChevronDown className="!h-3 !w-3 ml-auto shrink-0" />
-        </Button>
-      </DropdownMenuTrigger>
-
-      <DropdownMenuContent align="start" className="rounded-none min-w-48">
-        <DropdownMenuLabel>Organizations</DropdownMenuLabel>
-        <DropdownMenuSeparator />
-        {organizations.map(org => (
-          <DropdownMenuItem
-            key={org.id}
-            onClick={() => setActiveOrganization(org)}
-            className="cursor-pointer"
-          >
-            {org.name}
-          </DropdownMenuItem>
-        ))}
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
+          {org.name}
+        </DropdownMenuItem>
+      ))}
+    </DropdownMenuContent>
+  </DropdownMenu>
+</div>
+    );
 }
 
 function SidebarLogo()
@@ -248,15 +299,28 @@ function SidebarLogo()
         {/* Sidebar */}
         <Sidebar 
           collapsible="icon" 
-          className="border-0 group-data-[side=left]:border-r-0 group-data-[side=right]:border-l-0 w-64 text-muted-foreground overflow-x-hidden"
+          className="
+            border-0 
+            group-data-[side=left]:border-r-0 
+            group-data-[side=right]:border-l-0 
+            w-(--sidebar-width)
+            text-muted-foreground 
+            overflow-x-hidden
+            select-none"
         >
 
-          <SidebarHeader className="h-10 px-2 bg-(--sidebar) border-b flex items-center">
+          <SidebarHeader className="h-10 px-2 bg-sidebar border-b flex items-center">
             <SidebarLogo />
           </SidebarHeader>
           
           <SidebarContent className="overflow-x-hidden">
-            <Button 
+
+            {/* SELECT ORGANIZATION */}
+            <div className="flex items-center gap-2 w-full">
+              <OrganizationSwitcher />
+            </div>
+
+            <Button
               variant="ghost" 
               className="rounded-none mx-2 mt-2 pl-2"
             >
@@ -436,10 +500,16 @@ function SidebarLogo()
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="width: var(----sidebar-width) font-normal bg-white dark:bg-[rgb(38,38,38)] text-muted-foreground">
+              <DropdownMenuContent align="center" className="
+                  w-56 
+                  font-normal 
+                  bg-white 
+                  dark:bg-[rgb(38,38,38)] 
+                  text-muted-foreground"
+                >
 
 
-                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/dashboard')}>
+                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/home')}>
                     Home
                     <DropdownMenuShortcut><Home /></DropdownMenuShortcut>
                   </DropdownMenuItem>
@@ -609,8 +679,13 @@ function SidebarLogo()
                       <DropdownMenuSubTrigger>Language</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent className="text-muted-foreground font-normal">
-                          <DropdownMenuItem>English</DropdownMenuItem>
-                          <DropdownMenuItem>Dansk</DropdownMenuItem>
+                          <DropdownMenuItem><GB className="w-4 h-3" />English</DropdownMenuItem>
+                          <DropdownMenuItem><DK className="w-4 h-3" />Dansk</DropdownMenuItem>
+                          <DropdownMenuItem><SE className="w-4 h-3" />Svenska</DropdownMenuItem>
+                          <DropdownMenuItem><NO className="w-4 h-3" />Norsk</DropdownMenuItem>
+                          <DropdownMenuItem><FR className="w-4 h-3" />Français</DropdownMenuItem>
+                          <DropdownMenuItem><DE className="w-4 h-3" />Deutsch</DropdownMenuItem>
+                          <DropdownMenuItem><ES className="w-4 h-3" />Español</DropdownMenuItem>
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
@@ -634,12 +709,41 @@ function SidebarLogo()
 
         {/* Main Content Area */}
         <SidebarInset className="flex-1">
-          {/* Header with theme toggle */}
           <header className="flex items-center justify-left h-10">
+            <div className="ml-8 w-80">
+              <h1 className="text-base font-semibold text-[rgb(245,245,245)] h-[21px] leading-[21px] tracking-[-0.05px]">
+                {getPageTitle()}
+              </h1>
+            </div>
+
+            {/* MOVED:: SELECT ORGANIZATION 
             <div className="flex items-center gap-2">
               <OrganizationSwitcher />
             </div>
-            
+            */}
+
+            {/* ACTIONS */ }
+            <div className="
+                flex 
+                items-end 
+                gap-2 
+                ml-auto
+                mr-2">
+              <Cog 
+                className={`
+                  w-6 h-6
+                  ${isRefreshing ? 'text-foreground animate-spin' : 'text-muted-foreground hover:text-foreground'}
+                  cursor-pointer
+                  transition-transform
+                `}
+                onClick={() => {
+                  setIsRefreshing(true);
+                  window.dispatchEvent(new Event('refreshPage'));
+                  setTimeout(() => setIsRefreshing(false), 1000);
+                }}
+              />
+            </div>
+
           </header>
 
           {/* Page Content */}

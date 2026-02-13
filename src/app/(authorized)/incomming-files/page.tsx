@@ -55,48 +55,74 @@ export default function ArtifactFilesPage()
     const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // Change Organization.
-    useEffect(() => {
-      if (!activeOrganization?.id) return;
+    const fetchFiles = async () => 
+    {
+        if (!activeOrganization?.id) return;
 
-      const fetchFiles = async () => {
         setLoading(true);
-        try {
-          const res = await fetch(`/api/files/upload-dir/${activeOrganization.id}?ts=${Date.now()}`);
-          if (!res.ok) {
-            console.error('Failed to load files (HTTP)', res.status);
-            throw new Error(`HTTP ${res.status}`);
-          }
 
-          const data = await res.json();
-          console.log("API Response:", data);
+        try 
+        {
+            const res = await fetch(`/api/files/upload-dir/${activeOrganization.id}?ts=${Date.now()}`);
 
-          if (!data.success) {
-            console.error('API failure:', data.error);
-            throw new Error(data.error || 'API returned failure');
-          }
+            if (!res.ok) 
+            {
+              console.error('Failed to load files (HTTP)', res.status);
+              throw new Error(`HTTP ${res.status}`);
+            }
 
-          const fileList = data.data?.files || [];
-          console.log("fileList:", fileList);
+            const data = await res.json();
+            console.log("API Response:", data);
 
-          if (!Array.isArray(fileList)) {
-            console.warn('fileList is not an array:', fileList);
+            if (!data.success) 
+            {
+                console.error('API failure:', data.error);
+                throw new Error(data.error || 'API returned failure');
+            }
+
+            const fileList = data.data?.files || [];
+            console.log("fileList:", fileList);
+
+            if (!Array.isArray(fileList)) 
+            {
+                console.warn('fileList is not an array:', fileList);
+                setFiles([]);
+                return;
+            }
+
+            setFiles(fileList);
+
+        } 
+        catch (err: any) 
+        {
+            console.error('Fetch error:', err);
+            toast.error('Could not load files from upload directory');
             setFiles([]);
-            return;
-          }
-
-          setFiles(fileList);
-        } catch (err: any) {
-          console.error('Fetch error:', err);
-          toast.error('Could not load files from upload directory');
-          setFiles([]);
-        } finally {
-          setLoading(false);
+        } 
+        finally {
+            setLoading(false);
         }
-      };
+    };
 
-      fetchFiles();
+    // Initial load + Change Organization + Refresh event
+    useEffect(() => 
+    {
+        fetchFiles(); // Initial load
+
+        // Listen for refresh event
+        const handleRefresh = () => 
+        {
+            fetchFiles();
+        };
+
+        window.addEventListener('refreshPage', handleRefresh);
+        // console.log("Event listener added for refreshPage");
+
+        return () => 
+        {
+            // console.log("Cleaning up event listener");
+            window.removeEventListener('refreshPage', handleRefresh);
+        };
     }, [activeOrganization?.id]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -226,7 +252,6 @@ export default function ArtifactFilesPage()
       </AlertDialog>
 
       <div className="p-6 space-y-6">
-        <h1 className="text-2xl font-bold">Upload Directory Files</h1>
 
         {loading ? (
           <div className="space-y-3">
