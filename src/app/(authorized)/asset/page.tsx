@@ -533,22 +533,22 @@ export default function ArtifactPage()
     {
         const styles: Record<ArtifactType, string> = 
         {
-            [ArtifactType.DOCUMENT]:     'bg-blue-500/20 text-blue-400',
-            [ArtifactType.EXCEL]:        'bg-green-500/20 text-green-400',
-            [ArtifactType.IMAGE]:        'bg-purple-500/20 text-purple-400',
-            [ArtifactType.PRESENTATION]: 'bg-orange-500/20 text-orange-400',
-            [ArtifactType.PDF]:          'bg-red-500/20 text-red-400',
-            [ArtifactType.CONTRACT]:     'bg-amber-500/20 text-amber-400',
-            [ArtifactType.LEGAL]:        'bg-red-500/20 text-red-400',
-            [ArtifactType.POLICY]:       'bg-indigo-500/20 text-indigo-400',
-            [ArtifactType.PROCEDURE]:    'bg-cyan-500/20 text-cyan-400',
-            [ArtifactType.REPORT]:       'bg-teal-500/20 text-teal-400',
-            [ArtifactType.VIDEO]:        'bg-pink-500/20 text-pink-400',
-            [ArtifactType.AUDIO]:        'bg-fuchsia-500/20 text-fuchsia-400',
-            [ArtifactType.ARCHIVE]:      'bg-slate-500/20 text-slate-400',
-            [ArtifactType.DATA]:         'bg-emerald-500/20 text-emerald-400',
-            [ArtifactType.SOURCE_CODE]:  'bg-violet-500/20 text-violet-400',
-            [ArtifactType.OTHER]:        'bg-gray-500/20 text-gray-400',
+            [ArtifactType.DOCUMENT]:     'bg-[var(--color_asset_type_1)]',
+            [ArtifactType.EXCEL]:        'bg-[var(--color_asset_type_2)]',
+            [ArtifactType.IMAGE]:        'bg-[var(--color_asset_type_3)]',
+            [ArtifactType.PRESENTATION]: 'bg-[var(--color_asset_type_4)]',
+            [ArtifactType.PDF]:          'bg-[var(--color_asset_type_5)]',
+            [ArtifactType.CONTRACT]:     'bg-[var(--color_asset_type_6)]',
+            [ArtifactType.LEGAL]:        'bg-[var(--color_asset_type_7)]',
+            [ArtifactType.POLICY]:       'bg-[var(--color_asset_type_8)]',
+            [ArtifactType.PROCEDURE]:    'bg-[var(--color_asset_type_9)]',
+            [ArtifactType.REPORT]:       'bg-[var(--color_asset_type_10)]',
+            [ArtifactType.VIDEO]:        'bg-[var(--color_asset_type_11)]',
+            [ArtifactType.AUDIO]:        'bg-[var(--color_asset_type_12)]',
+            [ArtifactType.ARCHIVE]:      'bg-[var(--color_asset_type_13)]',
+            [ArtifactType.DATA]:         'bg-[var(--color_asset_type_14)]',
+            [ArtifactType.SOURCE_CODE]:  'bg-[var(--color_asset_type_15)]',
+            [ArtifactType.OTHER]:        'bg-[var(--color_asset_type_16)]',
         };
 
         return styles[type as ArtifactType] || styles[ArtifactType.OTHER];
@@ -586,10 +586,10 @@ export default function ArtifactPage()
     {
         const styles = 
         {
-            COMPLETED   : 'bg-green-500/20 text-green-400',
-            OPEN        : 'bg-blue-500/20 text-blue-400',
-            NOT_STARTED : 'bg-gray-500/20 text-gray-400',
-            CLOSED      : 'bg-red-500/20 text-red-400',
+            NOT_STARTED : 'bg-[var(--color-status-not-started)]',
+            OPEN        : 'bg-[var(--color-status-open)]',
+            COMPLETED   : 'bg-[var(--color-status-completed)]',
+            CLOSED      : 'bg-[var(--color-status-closed)]'
         };
         return styles[taskStatus as keyof typeof styles] || '';
     };
@@ -687,7 +687,7 @@ export default function ArtifactPage()
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Artifact name</label>
+              <label className="block text-sm">Artifact name</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -697,7 +697,7 @@ export default function ArtifactPage()
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Description</label>
+              <label className="block text-sm">Description</label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
@@ -707,7 +707,7 @@ export default function ArtifactPage()
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Artifact Type</label>
+              <label className="block text-sm">Artifact Type</label>
               <Select value={artifactType} onValueChange={setArtifactType}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -746,7 +746,7 @@ export default function ArtifactPage()
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Task name</label>
+              <label className="block text-sm">Task name</label>
               <Input
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
@@ -756,7 +756,7 @@ export default function ArtifactPage()
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Description</label>
+              <label className="block text-sm">Description</label>
               <Textarea
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
@@ -836,7 +836,7 @@ export default function ArtifactPage()
                   <TableCell>{artifact.name}</TableCell>
                   <TableCell className="max-w-md truncate">{artifact.description || '-'}</TableCell>
                   <TableCell className="w-40">
-                    <Badge variant="secondary" className={`${getTypeBadge(artifact.type)} px-2 py-1 text-xs`}>
+                    <Badge variant="secondary" className={`${getTypeBadge(artifact.type)} px-2 py-1 text-xs asset-type-badge`}>
                       {artifact.type.replace('_', ' ')}
                     </Badge>
                   </TableCell>
@@ -918,29 +918,29 @@ export default function ArtifactPage()
               <hr className="my-8" />
 
               <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-                <div className="relative w-full max-w-[900px]">
+                <div className="relative w-full max-w-225">
                   <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-3">
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
                     >
                       Details
                     </TabsTrigger>
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="file-details"
                     >
                       File Details
                     </TabsTrigger>
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="tasks"
                     >
                       Tasks ({selectedArtifact.taskArtifacts?.length || 0})
                     </TabsTrigger>
                   </TabsList>
                   <div
-                    className="absolute bottom-0 h-[2px] bg-white transition-all duration-300 ease-in-out z-0"
+                    className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
                       width: '33.333%',
                       left: activeTab === 'details' ? '0%' : activeTab === 'file-details' ? '33.333%' : '66.666%'
@@ -951,7 +951,7 @@ export default function ArtifactPage()
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Artifact name</label>
+                      <label className="block text-sm mb-2">Artifact name</label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -960,7 +960,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Description</label>
+                      <label className="block text-sm mb-2">Description</label>
                       <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
@@ -970,7 +970,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Artifact Type</label>
+                      <label className="block text-sm mb-2">Artifact Type</label>
                       <Select value={artifactType} onValueChange={setArtifactType}>
                         <SelectTrigger className="w-full">
                           <SelectValue />
@@ -990,7 +990,7 @@ export default function ArtifactPage()
                 <TabsContent value="file-details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">MIME Type</label>
+                      <label className="block text-sm mb-2">MIME Type</label>
                       <Input
                         value={mimeType}
                         onChange={(e) => setMimeType(e.target.value)}
@@ -999,7 +999,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">File Extension</label>
+                      <label className="block text-sm mb-2">File Extension</label>
                       <Input
                         value={selectedArtifact.extension || '-'}
                         disabled
@@ -1008,7 +1008,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">File Size</label>
+                      <label className="block text-sm mb-2">File Size</label>
                       <Input
                         value={formatFileSize(selectedArtifact.size)}
                         disabled
@@ -1017,7 +1017,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Original File Name</label>
+                      <label className="block text-sm mb-2">Original File Name</label>
                       <Input
                         value={selectedArtifact.originalName || '-'}
                         disabled
@@ -1055,7 +1055,7 @@ export default function ArtifactPage()
                             <TableCell>{ta.task.name}</TableCell>
                             <TableCell>{ta.task.description || '-'}</TableCell>
                             <TableCell className="w-32">
-                              <Badge variant="secondary" className={`${getStatusBadge(ta.task.status)} px-2 py-1 text-xs`}>
+                              <Badge variant="secondary" className={`${getStatusBadge(ta.task.status)} px-2 py-1 text-xs status-badge`}>
                                 {ta.task.status.replace('_', ' ')}
                               </Badge>
                           </TableCell>
@@ -1085,13 +1085,14 @@ export default function ArtifactPage()
           <div className={`
             fixed 
             bottom-0 
-            left-0 
+            left-var(--sidebar-width) 
             right-0 
             bg-neutral-900 
             border-t 
             border-neutral-800 
             px-6 
             py-2 
+            w-full
             flex 
             justify-end 
             gap-3
@@ -1101,41 +1102,15 @@ export default function ArtifactPage()
             ${hasChanges ? 'translate-y-0' : 'translate-y-full'}
           `}>
             <Button
+              variant="secondary"
               onClick={handleCancel}
               disabled={isSaving}
-              className="
-                cursor-pointer 
-                px-3 
-                py-2 
-                text-sm 
-                text-neutral-300 
-                border 
-                border-neutral-700 
-                bg-neutral-800
-                rounded-none
-                hover:text-white 
-                hover:bg-black 
-                transition-colors 
-                disabled:opacity-50"
             >
               Cancel
             </Button>
             <Button
               onClick={handleSave}
               disabled={!hasChanges || isSaving}
-              className="
-                cursor-pointer 
-                px-3 
-                py-2 
-                text-sm 
-                bg-white 
-                text-neutral-900 
-                rounded-none
-                hover:bg-neutral-100 
-                transition-colors 
-                disabled:opacity-50 
-                disabled:cursor-not-allowed 
-                font-normal"
             >
               {isSaving ? 'Saving...' : 'Save changes'}
             </Button>

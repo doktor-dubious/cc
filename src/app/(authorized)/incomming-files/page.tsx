@@ -295,7 +295,7 @@ export default function ArtifactFilesPage()
 
         {/* Assign Dialog */}
         <Dialog open={assignDialogOpen} onOpenChange={setAssignDialogOpen}>
-          <DialogContent className="sm:max-w-[500px]">
+          <DialogContent className="sm:max-w-125">
             <DialogHeader>
               <DialogTitle>Assign File as Artifact</DialogTitle>
               <DialogDescription>
@@ -319,7 +319,7 @@ export default function ArtifactFilesPage()
                   value={artifactDesc}
                   onChange={(e) => setArtifactDesc(e.target.value)}
                   placeholder="Optional description"
-                  className="min-h-[100px]"
+                  className="min-h-25"
                 />
               </div>
 

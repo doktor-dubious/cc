@@ -706,10 +706,10 @@ useEffect(() => {
     {
         const styles = 
         {
-            COMPLETED   : 'bg-green-500/20 text-green-400',
-            OPEN        : 'bg-blue-500/20 text-blue-400',
-            NOT_STARTED : 'bg-gray-500/20 text-gray-400',
-            CLOSED      : 'bg-red-500/20 text-red-400',
+            NOT_STARTED : 'bg-[var(--color-status-not-started)]',
+            OPEN        : 'bg-[var(--color-status-open)]',
+            COMPLETED   : 'bg-[var(--color-status-completed)]',
+            CLOSED      : 'bg-[var(--color-status-closed)]'
         };
         return styles[taskStatus as keyof typeof styles] || '';
     };
@@ -816,7 +816,7 @@ useEffect(() => {
       </AlertDialog>
 
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>Create New Task</DialogTitle>
             <DialogDescription>
@@ -826,7 +826,7 @@ useEffect(() => {
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Task name</label>
+              <label className="block text-sm">Task name</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
@@ -836,22 +836,22 @@ useEffect(() => {
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Description</label>
+              <label className="block text-sm">Description</label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
                 placeholder="Enter task description"
-                className="min-h-[120px]"
+                className="min-h-30"
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Expected Evidence</label>
+              <label className="block text-sm">Expected Evidence</label>
               <Textarea
                 value={expectedEvidence}
                 onChange={(e) => setExpectedEvidence(e.target.value)}
                 placeholder="Enter expected evidence"
-                className="min-h-[80px]"
+                className="min-h-20"
               />
             </div>
 
@@ -862,7 +862,7 @@ useEffect(() => {
                 onPointerDownCapture={(e) => e.preventDefault()}
                 onClick={(e) => e.stopPropagation()}
               >
-                <label className="block text-sm text-neutral-400">Start Date</label>
+                <label className="block text-sm">Start Date</label>
                 <DatePicker
                     value={startAt}
                     onChange={(date) => {
@@ -878,7 +878,7 @@ useEffect(() => {
                 onPointerDownCapture={(e) => e.preventDefault()}
                 onClick={(e) => e.stopPropagation()}
               >
-                <label className="block text-sm text-neutral-400">End Date</label>
+                <label className="block text-sm">End Date</label>
                 <DatePicker
                   value={endAt}
                   onChange={(date) => {
@@ -894,7 +894,7 @@ useEffect(() => {
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Status</label>
+              <label className="block text-sm">Status</label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -903,7 +903,7 @@ useEffect(() => {
                   position="popper"
                   side="bottom"
                   sideOffset={4}
-                  className="max-h-[300px] overflow-y-auto"
+                  className="max-h-75 overflow-y-auto"
                 >
                   {TASK_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
@@ -928,7 +928,7 @@ useEffect(() => {
 
 {/* Edit Artifact Dialog */}
 <Dialog open={isEditArtifactDialogOpen} onOpenChange={setIsEditArtifactDialogOpen}>
-  <DialogContent className="sm:max-w-[500px]">
+  <DialogContent className="sm:max-w-125">
     <DialogHeader>
       <DialogTitle>Edit Artifact</DialogTitle>
       <DialogDescription>
@@ -938,7 +938,7 @@ useEffect(() => {
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="text-sm text-neutral-400">Artifact name</label>
+        <label className="text-sm">Artifact name</label>
         <Input
           value={artifactName}
           onChange={(e) => setArtifactName(e.target.value)}
@@ -947,11 +947,11 @@ useEffect(() => {
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm text-neutral-400">Description</label>
+        <label className="text-sm">Description</label>
         <Textarea
           value={artifactDescription}
           onChange={(e) => setArtifactDescription(e.target.value)}
-          className="min-h-[120px]"
+          className="min-h-30"
         />
       </div>
     </div>
@@ -977,7 +977,7 @@ useEffect(() => {
 
 {/* Edit Profile Dialog */}
 <Dialog open={isEditProfileDialogOpen} onOpenChange={setIsEditProfileDialogOpen}>
-  <DialogContent className="sm:max-w-[500px]">
+  <DialogContent className="sm:max-w-125">
     <DialogHeader>
       <DialogTitle>Edit Profile</DialogTitle>
       <DialogDescription>
@@ -987,7 +987,7 @@ useEffect(() => {
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="text-sm text-neutral-400">Profile name</label>
+        <label className="text-sm">Profile name</label>
         <Input
           value={profileName}
           onChange={(e) => setProfileName(e.target.value)}
@@ -996,11 +996,11 @@ useEffect(() => {
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm text-neutral-400">Description</label>
+        <label className="text-sm">Description</label>
         <Textarea
           value={profileDescription}
           onChange={(e) => setProfileDescription(e.target.value)}
-          className="min-h-[120px]"
+          className="min-h-30"
         />
       </div>
     </div>
@@ -1028,10 +1028,10 @@ useEffect(() => {
       <div className="space-y-8 p-6">
         <div className="flex justify-center">
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
             onClick={handleNewTask}
-            className="cursor-pointer rounded-none"
+            className=""
           >
             New Task
           </Button>
@@ -1059,7 +1059,7 @@ useEffect(() => {
           <TableBody>
             {currentTasks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foregroundX">
                   {filterText ? "No tasks match your filter" : "No tasks found"}
                 </TableCell>
               </TableRow>
@@ -1077,7 +1077,7 @@ useEffect(() => {
                   <TableCell>{task.name}</TableCell>
                   <TableCell className="max-w-md truncate">{task.description || '-'}</TableCell>
                   <TableCell className="w-32">
-                    <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs`}>
+                    <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs status-badge`}>
                       {task.status.replace('_', ' ')}
                     </Badge>
                   </TableCell>
@@ -1159,29 +1159,29 @@ useEffect(() => {
               <hr className="my-8" />
 
               <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-                <div className="relative w-full max-w-[600px]">
+                <div className="relative w-full max-w-150">
                   <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-3">
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
                     >
                       Details
                     </TabsTrigger>
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="artifacts"
                     >
                       Artifacts ({selectedTask.taskArtifacts?.length || 0})
                     </TabsTrigger>
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="profiles"
                     >
                       Profiles ({selectedTask.taskProfiles?.length || 0})
                     </TabsTrigger>
                   </TabsList>
                   <div
-                    className="absolute bottom-0 h-[2px] bg-white transition-all duration-300 ease-in-out z-0"
+                    className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
                       width: '33.333%',
                       left: activeTab === 'artifacts' ? '33.333%' : activeTab === 'profiles' ? '66.666%' : '0%'
@@ -1192,7 +1192,7 @@ useEffect(() => {
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Task name</label>
+                      <label className="block text-sm mb-2">Task name</label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -1201,22 +1201,22 @@ useEffect(() => {
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Description</label>
+                      <label className="block text-sm mb-2">Description</label>
                       <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Enter task description"
-                        className="min-h-[120px]"
+                        className="min-h-30"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Expected Evidence</label>
+                      <label className="block text-sm mb-2">Expected Evidence</label>
                       <Textarea
                         value={expectedEvidence}
                         onChange={(e) => setExpectedEvidence(e.target.value)}
                         placeholder="Enter expected evidence"
-                        className="min-h-[80px]"
+                        className="min-h-20"
                       />
                     </div>
 
@@ -1227,7 +1227,7 @@ useEffect(() => {
                         onPointerDownCapture={(e) => e.preventDefault()}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <label className="block text-sm text-neutral-400">Start Date</label>
+                        <label className="block text-sm">Start Date</label>
                         <DatePicker
                             value={startAt}
                             onChange={(date) => {
@@ -1243,7 +1243,7 @@ useEffect(() => {
                         onPointerDownCapture={(e) => e.preventDefault()}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <label className="block text-sm text-neutral-400">End Date</label>
+                        <label className="block text-sm">End Date</label>
                         <DatePicker
                           value={endAt}
                           onChange={(date) => {
@@ -1259,7 +1259,7 @@ useEffect(() => {
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Status</label>
+                      <label className="block text-sm mb-2">Status</label>
                       <Select value={status} onValueChange={setStatus}>
                         <SelectTrigger className="w-full">
                           <SelectValue />
@@ -1268,7 +1268,7 @@ useEffect(() => {
                   position="popper"
                   side="bottom"
                   sideOffset={4}
-                  className="max-h-[300px] overflow-y-auto"
+                  className="max-h-75 overflow-y-auto"
                 >
                   {TASK_STATUSES.map((status) => (
                       <SelectItem key={status} value={status}>
@@ -1383,13 +1383,14 @@ useEffect(() => {
           <div className={`
             fixed 
             bottom-0 
-            left-0 
+            left-var(--sidebar-width) 
             right-0 
-            bg-neutral-900 
+            bg-background
             border-t 
             border-neutral-800 
             px-6 
             py-2 
+            w-full
             flex 
             justify-end 
             gap-3
@@ -1399,41 +1400,16 @@ useEffect(() => {
             ${hasChanges ? 'translate-y-0' : 'translate-y-full'}
           `}>
             <Button
+              variant="secondary"
               onClick={handleCancel}
               disabled={isSaving}
-              className="
-                cursor-pointer 
-                px-3 
-                py-2 
-                text-sm 
-                text-neutral-300 
-                border 
-                border-neutral-700 
-                bg-neutral-800
-                rounded-none
-                hover:text-white 
-                hover:bg-black 
-                transition-colors 
-                disabled:opacity-50"
             >
               Cancel
             </Button>
             <Button
+              variant="default"
               onClick={handleSave}
               disabled={!hasChanges || isSaving}
-              className="
-                cursor-pointer 
-                px-3 
-                py-2 
-                text-sm 
-                bg-white 
-                text-neutral-900 
-                rounded-none
-                hover:bg-neutral-100 
-                transition-colors 
-                disabled:opacity-50 
-                disabled:cursor-not-allowed 
-                font-normal"
             >
               {isSaving ? 'Saving...' : 'Save changes'}
             </Button>

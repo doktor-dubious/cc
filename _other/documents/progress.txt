@@ -1,0 +1,89 @@
+── Partially Done ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+  * Tech Stack (React, Nextjs, Tailwind, Prisma, Postgres, Git)
+      # Docker
+  * Overall Design & Theme Switcher
+  * Login
+      # Strengthen
+      # Two Factor
+      # Pen
+  * General Layout (Menus, Sidebars, etc)
+  * Organization Switcher
+  * PAGE: Organization Maintanence
+  * PAGE: Profile Maintanence
+  * PAGE: Task Maintanence
+      # Empty / Link New Task
+      # Direct to Incomming Files / Upload Files
+      # Messages
+      # Attach Task to Safeguard(s)
+  * PAGE: Asset Maintanence
+      # Download Asset
+      # Preview Asset
+  * PAGE: Incomming Files -> Assets
+      # Preview
+      # S3
+      # MinIO
+      # Localstack
+  * PAGE: Setup (partially)
+      # CC Setup (Super Admins)
+        ## Home Directory
+        ## FTP/SFTP Logins
+      # Profile Setup
+
+── Small Fixes / Errors ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+  * Move delete button from master table to action tab in detail pane (too dangerous to have it in the master table).
+
+── Not Started ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+  * PAGE: Home / Dashboard
+      # Dashboard should show information for all Organizations available to the logged in user. Unlike all other pages which are Organization specific.
+      # Tasks
+      # Messages
+  * PAGE: Upload Files (Drag & Drop)
+  * PAGE: Messages (for overall list of all messages across Tasks - Task page still lacks messages)
+  * PAGE: Reports
+      -> Status Reports
+      -> Progress Reports
+  * PAGE: Audit Trail
+  * PAGE: Mechanical Turl (automatization setup)
+      -> fetch files from external SFTP / S3, etc.
+  * Documentstion
+      -> PAGE: Wheel (Wheel & Safeguards)
+      -> PAGE: Academy (General dictionary, ..)
+      -> PAGE: AI (ask anything related to CC)
+      -> Learn More
+        -> PAGE: About Compliance Circle
+        -> PAGE: Privacy Policy
+        -> PAGE: Terms of Service
+  * Debug Console (Super Admin)
+  * Log Viewer (Super Admin)
+  * Refresh Icon (top bar) / Functionality
+  * New Message(s) Icon  (top bar) / Pop Up functionality.
+
+
+── Worked On ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+────────────────────
+── Thursday 12 Feb
+* Overall Design
+  -> Sitewise unified look&feel for all buttons/tables/etc.
+    --> Work in Dark/Light Themes.
+    --> Page: Tasks
+  -> Better Status Badge colours/design.
+  -> Sidebar restyle
+
+────────────────────
+── Friday 13 Feb
+* Overall Design
+  -> Sitewise unified look&feel for all buttons/tables/etc.
+    --> Work in Dark/Light Themes.
+    --> Page: Assets
+    --> Page: Otganizations
+    --> Page: Profile
+    --> Page: Incomming Files
+  -> Better Assets Type Badge colours/design.
+  -> Better User Role Badge colours/design.
+
+
+

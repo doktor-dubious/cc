@@ -1207,7 +1207,7 @@ export default function OrganizationPage()
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="block text-sm text-neutral-400">Organisation name</label>
+        <label className="block text-sm">Organisation name</label>
         <input
           type="text"
           value={name}
@@ -1219,12 +1219,12 @@ export default function OrganizationPage()
       </div>
 
       <div className="grid gap-2">
-        <label className="block text-sm text-neutral-400">Description</label>
+        <label className="block text-sm">Description</label>
         <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           placeholder="Enter organization description"
-          className="min-h-[120px] bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
+          className="min-h-30 bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
         />
       </div>
     </div>
@@ -1258,7 +1258,7 @@ export default function OrganizationPage()
         </DialogHeader>
         <div className="grid gap-6 py-4">
         <div className="grid gap-2">
-            <label className="block text-sm text-neutral-400">Profile name</label>
+            <label className="block text-sm">Profile name</label>
             <Input
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
@@ -1267,12 +1267,12 @@ export default function OrganizationPage()
             />
         </div>
         <div className="grid gap-2">
-            <label className="block text-sm text-neutral-400">Description</label>
+            <label className="block text-sm">Description</label>
             <Textarea
             value={profileDescription}
             onChange={(e) => setProfileDescription(e.target.value)}
             placeholder="Enter profile description"
-            className="min-h-[120px]"
+            className="min-h-30"
             />
         </div>
         </div>
@@ -1289,7 +1289,7 @@ export default function OrganizationPage()
 
 {/* ── Edit Task pop up */}
 <Dialog open={isEditTaskDialogOpen} onOpenChange={setIsEditTaskDialogOpen}>
-  <DialogContent className="sm:max-w-[500px]">
+  <DialogContent className="sm:max-w-125">
     <DialogHeader>
       <DialogTitle>Edit Task</DialogTitle>
       <DialogDescription>
@@ -1299,7 +1299,7 @@ export default function OrganizationPage()
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="text-sm text-neutral-400">Task name</label>
+        <label className="text-sm">Task name</label>
         <Input
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
@@ -1308,11 +1308,11 @@ export default function OrganizationPage()
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm text-neutral-400">Description</label>
+        <label className="text-sm">Description</label>
         <Textarea
           value={taskDescription}
           onChange={(e) => setTaskDescription(e.target.value)}
-          className="min-h-[120px]"
+          className="min-h-30"
         />
       </div>
     </div>
@@ -1338,7 +1338,7 @@ export default function OrganizationPage()
 
 {/* Add Existing Profile Dialog */}
 <Dialog open={isAddProfileDialogOpen} onOpenChange={setIsAddProfileDialogOpen}>
-  <DialogContent className="sm:max-w-[500px]">
+  <DialogContent className="sm:max-w-125">
     <DialogHeader>
       <DialogTitle>Add Existing Profile to Organization</DialogTitle>
       <DialogDescription>
@@ -1354,7 +1354,7 @@ export default function OrganizationPage()
         className="mb-4"
       />
 
-      <div className="max-h-[300px] overflow-y-auto border rounded">
+      <div className="max-h-75 overflow-y-auto border rounded">
         {availableProfiles.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">No available profiles found</p>
         ) : (
@@ -1401,7 +1401,7 @@ export default function OrganizationPage()
 
 {/* Add Existing Task Dialog */}
 <Dialog open={isAddTaskDialogOpen} onOpenChange={setIsAddTaskDialogOpen}>
-  <DialogContent className="sm:max-w-[500px]">
+  <DialogContent className="sm:max-w-125">
     <DialogHeader>
       <DialogTitle>Add Existing Task to Organization</DialogTitle>
       <DialogDescription>
@@ -1417,7 +1417,7 @@ export default function OrganizationPage()
         className="mb-4"
       />
 
-      <div className="max-h-[300px] overflow-y-auto border rounded">
+      <div className="max-h-75 overflow-y-auto border rounded">
         {availableTasks.length === 0 ? (
           <p className="text-center text-muted-foreground py-8">No available tasks found</p>
         ) : (
@@ -1607,35 +1607,35 @@ export default function OrganizationPage()
         <hr className="my-8" />
 
         <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-            <div className="relative w-full max-w-[600px]">
+            <div className="relative w-full max-w-150">
                 <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-4">
                     <TabsTrigger 
-                        className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
                         value="details"
                     >
                         Details
                     </TabsTrigger>
                     <TabsTrigger 
-                        className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
                         value="settings"
                     >
                         Settings
                     </TabsTrigger>
                     <TabsTrigger 
-                        className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
                         value="profiles"
                     >
                         Profiles ({selectedOrg.profiles?.length || 0})
                     </TabsTrigger>
                     <TabsTrigger 
-                        className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
                         value="tasks"
                     >
                         Tasks ({selectedOrg.tasks?.length || 0})
                     </TabsTrigger>
                 </TabsList>
                 <div 
-                    className="absolute bottom-0 h-[2px] bg-white transition-all duration-300 ease-in-out z-0"
+                    className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
                         width: '25%',
                         left: activeTab === 'settings' ? '25%' : activeTab === 'profiles' ? '50%' : activeTab === 'tasks' ? '75%' : '0%'
@@ -1647,7 +1647,7 @@ export default function OrganizationPage()
             <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-sm text-neutral-400 mb-2">Organisation name</label>
+                        <label className="block text-sm mb-2">Organisation name</label>
                         <input
                             type="text"
                             value={name}
@@ -1658,7 +1658,7 @@ export default function OrganizationPage()
                     </div>
 
                     <div>
-                        <label className="block text-sm text-neutral-400 mb-2">Description</label>
+                        <label className="block text-sm mb-2">Description</label>
                         <Textarea 
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
@@ -1673,7 +1673,7 @@ export default function OrganizationPage()
             <TabsContent value="settings" className="space-y-6 max-w-2xl mt-6">
                 <div className="space-y-6">
                     <div>
-                    <label className="block text-sm text-neutral-400 mb-2">Upload Directory</label>
+                    <label className="block text-sm mb-2">Upload Directory</label>
                     <Input
                         value={uploadDirectory}
                         onChange={(e) => setUploadDirectory(e.target.value)}
@@ -1686,7 +1686,7 @@ export default function OrganizationPage()
                     </div>
 
                     <div>
-                    <label className="block text-sm text-neutral-400 mb-2">Download Directory</label>
+                    <label className="block text-sm mb-2">Download Directory</label>
                     <Input
                         value={downloadDirectory}
                         onChange={(e) => setDownloadDirectory(e.target.value)}
@@ -1699,7 +1699,7 @@ export default function OrganizationPage()
                     </div>
 
                     <div>
-                    <label className="block text-sm text-neutral-400 mb-2">Artifact Directory</label>
+                    <label className="block text-sm mb-2">Artifact Directory</label>
                     <Input
                         value={artifactDirectory}
                         onChange={(e) => setArtifactDirectory(e.target.value)}
@@ -1854,19 +1854,18 @@ export default function OrganizationPage()
     </>
     )}
 
-{/* ── Cancel/Save Button Row (now shared) ── */}
 {selectedOrg && (hasChanges || settingsHasChanges) && (
   <div className={`
     fixed bottom-0 left-0 right-0
-    bg-neutral-900 border-t border-neutral-800
+    left-var(--sidebar-width) 
+    bg-background border-t border-neutral-800
     px-6 py-3
     flex justify-end items-center gap-3
     transition-transform duration-300 ease-in-out
     ${hasChanges || settingsHasChanges ? 'translate-y-0' : 'translate-y-full'}
-    z-20
   `}>
     <Button
-      variant="outline"
+      variant="secondary"
       onClick={() => {
         // Reset both detail & settings fields
         setName(selectedOrg.name || "");
@@ -1884,6 +1883,7 @@ export default function OrganizationPage()
     </Button>
 
     <Button
+      variant="default"
       onClick={async () => {
         setIsSaving(true);
         let success = true;
@@ -1915,7 +1915,6 @@ export default function OrganizationPage()
         }
       }}
       disabled={isSaving || (!hasChanges && !settingsHasChanges)}
-      className="rounded-none bg-white text-neutral-900 hover:bg-neutral-100"
     >
       {isSaving ? 'Saving...' : 'Save changes'}
     </Button>

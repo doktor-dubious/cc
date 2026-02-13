@@ -54,10 +54,108 @@ DESIGN:
 https://factory.ai/pricing
 
 
+https://app.localstack.cloud/onboarding?emulator=snowflake
+	Header:
+		margin: 0px;
+		color: rgb(212, 212, 212);
+		font-size: 24px;
+		letter-spacing: -0.06px;
+		line-height: 28px;
+		font-family: Roboto, Helvetica, Arial, sans-serif;
+		font-weight: 600;
+
+	Footer
+	    margin: 0px;
+	    letter-spacing: -0.05px;
+	    line-height: 21px;
+	    font-family: Roboto, Helvetica, Arial, sans-serif;
+	    font-size: 13px;
+	    color: rgb(163, 163, 163);
+	    font-weight: 500;
+
+	Text:
+		margin: 2px 0px 8px;
+	    letter-spacing: -0.05px;
+	    font-family: Roboto, Helvetica, Arial, sans-serif;
+	    color: rgb(163, 163, 163);
+	    font-size: 12px;
+	    font-weight: 600;
+	    line-height: 1.2;
+
+
+	Button:
+		font: inherit;
+	    letter-spacing: inherit;
+	    color: currentcolor;
+	    border: 0px;
+	    box-sizing: content-box;
+	    background: none;
+	    height: 1.4375em;
+	    margin: 0px;
+	    -webkit-tap-highlight-color: transparent;
+	    display: block;
+	    min-width: 0px;
+	    width: 100%;
+	    animation-name: mui-auto-fill-cancel;
+	    animation-duration: 10ms;
+	    padding: 8.5px 14px;
+
+
+		border-bottom-colorrgb(212, 212, 212)
+		colorrgb(212, 212, 212)
+		font-weight400
+		height20.125px
+		letter-spacing-0.05px
+		line-height20.125px
+
+		padding-block-end8.5px
+		padding-block-start8.5px
+		padding-bottom8.5px
+		padding-inline-end14px
+		padding-inline-start14px
+		padding-left14px
+		padding-right14px
+		padding-top8.5px
+		text-alignstart
+		text-indent0px
+
+		text-transformnone
+		width360px
+		word-spacing0px
+		-webkit-font-smoothingantialiased
+		-webkit-rtl-orderinglogical
+		-webkit-tap-highlight-colorrgba(0, 0, 0, 0)
+		-webkit-border-imagenone
+
+
 ------------------------------------------
 GIT:
 git init
+git config --global user.email "rune@predictioninstitute.com"
+git config --global user.name "Rune Skardhamar"
+git commit -m "Initial commit - Next.js + Prisma setup"
 
+Create Repo:
+https://github.com/new
+
+Create Token:
+https://github.com/settings/tokens
+	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
+
+ssh-keygen -t ed25519 -C "rune@predictioninstitute.com"
+
+
+git remote add origin https://github.com/doktor-dubious/cc.git
+git remote add origin git@github.com:doktor-dubious/cc.git
+git remote set-url origin git@github.com:doktor-dubious/cc.git
+
+git branch -M main
+git push -u origin main
+
+
+git remote add origin git@github.com:doktor-dubious/cc.git
+git branch -M main
+git push -u origin main
 
 
 AWS S3
@@ -66,6 +164,7 @@ MinIO (Production-Ready S3 Alternative)
 
 --------------------------
 Localstack:
+sudo apt install python3-pip
 pip install localstack
 
 

@@ -840,9 +840,9 @@ export default function ProfilePage()
     {
         const styles = 
         {
-            SUPER_ADMIN: 'bg-amber-500/20 text-amber-400 border-amber-500/30',  // Gold
-            ADMIN: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30',           // Cyan
-            USER: 'bg-slate-500/20 text-slate-400 border-slate-500/30',         // Slate
+            SUPER_ADMIN : 'bg-[var(--color-user-role-super-admin)]',
+            ADMIN       : 'bg-[var(--color-user-role-admin)]',
+            USER        : 'bg-[var(--color-user-role-user)]',
         };
 
         return styles[role as keyof typeof styles] || styles.USER;
@@ -852,10 +852,10 @@ export default function ProfilePage()
     {
         const styles = 
         {
-            COMPLETED   : 'bg-green-500/20 text-green-400',
-            OPEN        : 'bg-blue-500/20 text-blue-400',
-            NOT_STARTED : 'bg-gray-500/20 text-gray-400',
-            CLOSED      : 'bg-red-500/20 text-red-400',
+            NOT_STARTED : 'bg-[var(--color-status-not-started)]',
+            OPEN        : 'bg-[var(--color-status-open)]',
+            COMPLETED   : 'bg-[var(--color-status-completed)]',
+            CLOSED      : 'bg-[var(--color-status-closed)]'
         };
         return styles[taskStatus as keyof typeof styles] || '';
     };
@@ -922,7 +922,7 @@ export default function ProfilePage()
 
       { /* New Profile Pop-Up */ }
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
-        <DialogContent className="sm:max-w-[600px] max-h-[90vh] overflow-y-auto">
+        <DialogContent className="sm:max-w-150 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Create New Profile</DialogTitle>
             <DialogDescription>
@@ -935,7 +935,7 @@ export default function ProfilePage()
               <h3 className="text-sm font-medium">Profile Information</h3>
               
               <div className="grid gap-2">
-                <label className="block text-sm text-neutral-400">Profile name</label>
+                <label className="block text-sm">Profile name</label>
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
@@ -945,12 +945,12 @@ export default function ProfilePage()
               </div>
 
               <div className="grid gap-2">
-                <label className="block text-sm text-neutral-400">Description</label>
+                <label className="block text-sm">Description</label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="Enter profile description"
-                  className="min-h-[80px]"
+                  className="min-h-20"
                 />
               </div>
             </div>
@@ -961,7 +961,7 @@ export default function ProfilePage()
               <h3 className="text-sm font-medium">Login Information</h3>
               
               <div className="grid gap-2">
-                <label className="block text-sm text-neutral-400">Email</label>
+                <label className="block text-sm">Email</label>
                 <Input
                     type="email"
                     value={email}
@@ -989,7 +989,7 @@ export default function ProfilePage()
               </div>
 
               <div className="grid gap-2 relative">
-                <label className="block text-sm text-neutral-400">Password</label>
+                <label className="block text-sm">Password</label>
                 <Input
                   type="password"
                   name="new-password"
@@ -1050,7 +1050,7 @@ export default function ProfilePage()
               </div>
 
               <div className="grid gap-2">
-                <label className="block text-sm text-neutral-400">Login Name</label>
+                <label className="block text-sm">Login Name</label>
                 <Input
                   value={loginName}
                   onChange={(e) => setLoginName(e.target.value)}
@@ -1059,7 +1059,7 @@ export default function ProfilePage()
               </div>
 
               <div className="grid gap-2">
-                <label className="block text-sm text-neutral-400">Nickname</label>
+                <label className="block text-sm">Nickname</label>
                 <Input
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
@@ -1069,7 +1069,7 @@ export default function ProfilePage()
 
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <label className="block text-sm text-neutral-400">Role</label>
+                  <label className="block text-sm">Role</label>
                   <Select value={role} onValueChange={setRole}>
                     <SelectTrigger className="w-full">
                       <SelectValue />
@@ -1118,7 +1118,7 @@ export default function ProfilePage()
 
       {/* ── Edit Task Dialog ─────────────────────────────────────────────────────── */}
       <Dialog open={isEditTaskDialogOpen} onOpenChange={setIsEditTaskDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-125">
           <DialogHeader>
             <DialogTitle>Edit Task</DialogTitle>
             <DialogDescription>
@@ -1128,7 +1128,7 @@ export default function ProfilePage()
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Task name</label>
+              <label className="block text-sm">Task name</label>
               <Input
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
@@ -1138,12 +1138,12 @@ export default function ProfilePage()
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm text-neutral-400">Description</label>
+              <label className="block text-sm">Description</label>
               <Textarea
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
                 placeholder="Enter task description"
-                className="min-h-[120px]"
+                className="min-h-30"
               />
             </div>
           </div>
@@ -1228,8 +1228,8 @@ export default function ProfilePage()
                   <TableCell>{profile.user?.email || '-'}</TableCell>
                   <TableCell>
                     <Badge 
-                        variant="outline" 
-                        className={`text-xs ${getRoleBadgeStyle(profile.user?.role || 'USER')}`}
+                        variant="secondary" 
+                        className={`${getRoleBadgeStyle(profile.user?.role || 'USER')} text-xs user-role-badge`}
                     >
                         {profile.user?.role || 'USER'}
                     </Badge>
@@ -1315,29 +1315,29 @@ export default function ProfilePage()
               <hr className="my-8" />
 
               <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-                <div className="relative w-full max-w-[800px]">
+                <div className="relative w-full max-w-200">
                   <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-4">
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
                     >
                       Details
                     </TabsTrigger>
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="login"
                     >
                       Login
                     </TabsTrigger>
                     <TabsTrigger
-                      className="!bg-transparent rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="tasks"
                     >
                       Tasks ({selectedProfile.taskProfiles?.length || 0})
                     </TabsTrigger>
                   </TabsList>
                   <div
-                    className="absolute bottom-0 h-[2px] bg-white transition-all duration-300 ease-in-out z-0"
+                    className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
                       width: '25%',
                       left: activeTab === 'login' ? '25%' : activeTab === 'tasks' ? '50%' : activeTab === 'organizations' ? '75%' : '0%'
@@ -1349,7 +1349,7 @@ export default function ProfilePage()
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Profile name</label>
+                      <label className="block text-sm mb-2">Profile name</label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
@@ -1358,12 +1358,12 @@ export default function ProfilePage()
                     </div>
 
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Description</label>
+                      <label className="block text-sm mb-2">Description</label>
                       <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                         placeholder="Enter profile description"
-                        className="min-h-[120px]"
+                        className="min-h-30"
                       />
                     </div>
                   </div>
@@ -1375,7 +1375,7 @@ export default function ProfilePage()
 
                     {/* -- Login Name */}
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Login Name</label>
+                      <label className="block text-sm mb-2">Login Name</label>
                       <Input
                         value={loginName}
                         onChange={(e) => setLoginName(e.target.value)}
@@ -1385,7 +1385,7 @@ export default function ProfilePage()
 
                     {/* -- Email */}
                     <div className="grid gap-2">
-                      <label className="block text-sm text-neutral-400 mb-2">Email</label>
+                      <label className="block text-sm mb-2">Email</label>
                       <Input
                           type="email"
                           value={email}
@@ -1418,7 +1418,7 @@ export default function ProfilePage()
 
                     {/* -- Password */}
                     <div className="grid gap-2 relative">
-                      <label className="block text-sm text-neutral-400 mb-2">Password</label>
+                      <label className="block text-sm mb-2">Password</label>
                       <Input
                         type="password"
                         name="new-password"
@@ -1474,7 +1474,7 @@ export default function ProfilePage()
 
                     {/* -- Nickname */}
                     <div>
-                      <label className="block text-sm text-neutral-400 mb-2">Nickname</label>
+                      <label className="block text-sm mb-2">Nickname</label>
                       <Input
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
@@ -1484,7 +1484,7 @@ export default function ProfilePage()
 
                     {/* -- ole */}
                     <div className="grid gap-2">
-                        <label className="block text-sm text-neutral-400 mb-2">Role</label>
+                        <label className="block text-sm mb-2">Role</label>
                         <Select value={role} onValueChange={setRole}>
                           <SelectTrigger className="w-full">
                             <SelectValue />
@@ -1493,7 +1493,7 @@ export default function ProfilePage()
                               position="popper"
                               side="bottom"
                               sideOffset={4}
-                              className="max-h-[300px] overflow-y-auto"                          
+                              className="max-h-75 overflow-y-auto"                          
                           >
                             <SelectItem value="USER">User</SelectItem>
                             <SelectItem value="ADMIN">Admin</SelectItem>
@@ -1532,7 +1532,7 @@ export default function ProfilePage()
                             <TableCell>{tp.task.name}</TableCell>
                             <TableCell>{tp.task.description || '-'}</TableCell>
                             <TableCell className="w-32">
-                              <Badge variant="secondary" className={`${getStatusBadge(tp.task.status)} px-2 py-1 text-xs`}>
+                              <Badge variant="secondary" className={`${getStatusBadge(tp.task.status)} px-2 py-1 text-xs status-badge`}>
                                 {tp.task.status.replace('_', ' ')}
                               </Badge>
                           </TableCell>
@@ -1571,13 +1571,14 @@ export default function ProfilePage()
           <div className={`
             fixed 
             bottom-0 
-            left-0 
+            left-var(--sidebar-width) 
             right-0 
-            bg-neutral-900 
+            bg-background
             border-t 
             border-neutral-800 
             px-6 
             py-2 
+            w-full
             flex 
             justify-end 
             gap-3
@@ -1587,45 +1588,20 @@ export default function ProfilePage()
             ${hasChanges ? 'translate-y-0' : 'translate-y-full'}
           `}>
             <Button
+              variant="secondary"
               onClick={handleCancel}
               disabled={isSaving}
-              className="
-                cursor-pointer 
-                px-3 
-                py-2 
-                text-sm 
-                text-neutral-300 
-                border 
-                border-neutral-700 
-                bg-neutral-800
-                rounded-none
-                hover:text-white 
-                hover:bg-black 
-                transition-colors 
-                disabled:opacity-50"
             >
               Cancel
             </Button>
             <Button
+              variant="default"
               onClick={handleSave}
               disabled={!hasChanges 
                 || isSaving 
                 || emailValid !== 0
                 || ( !!password && (passwordStrength === null || passwordStrength < 3))
               }
-              className="
-                cursor-pointer 
-                px-3 
-                py-2 
-                text-sm 
-                bg-white 
-                text-neutral-900 
-                rounded-none
-                hover:bg-neutral-100 
-                transition-colors 
-                disabled:opacity-50 
-                disabled:cursor-not-allowed 
-                font-normal"
             >
               {isSaving ? 'Saving...' : 'Save changes'}
             </Button>

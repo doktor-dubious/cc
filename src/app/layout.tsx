@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+import { roboto } from './fonts/fonts';
+
 import { inter } from './fonts/fonts';
 import { geograph } from './fonts/fonts';
 import { playfair } from './fonts/fonts';
@@ -18,9 +20,9 @@ export default function RootLayout({
 }) {
   return (
         <>
-    <html lang="en" className={`${inter.variable} ${geograph.variable} ${playfair.variable}`} suppressHydrationWarning>
+    <html lang="en" className={`${roboto.variable} ${geograph.variable} ${playfair.variable}`} suppressHydrationWarning>
       <head />
-      <body className={`${geograph.variable} antialiased font-sans`}>
+      <body className={`bg-background ${roboto.variable} antialiased font-sans`}>
           <ThemeProvider
             attribute="class"
             defaultTheme="system"

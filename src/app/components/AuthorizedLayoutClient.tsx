@@ -84,7 +84,8 @@ import {
   Lightbulb,
 
   Gear,
-  Cog
+  Cog,
+  ExternalLink
   
 } from "lucide-react"
 import { useTheme } from "next-themes"
@@ -192,9 +193,12 @@ function SidebarLogo()
     const { toggleSidebar } = useSidebar()
 
     return (
+      <>
+      <div className="bg-(--sidebar) w-full pr-4">
 <button
     onClick={toggleSidebar}
     className="
+        bg-(--sidebar)
         cursor-pointer
         flex items-center gap-2 w-full
         transition-colors
@@ -224,6 +228,8 @@ function SidebarLogo()
     strokeWidth={1.25}
     className="ml-auto -mr-2 group-data-[collapsible=icon]:hidden" />
 </button>
+</div>
+</>
   )
 }
 
@@ -242,10 +248,10 @@ function SidebarLogo()
         {/* Sidebar */}
         <Sidebar 
           collapsible="icon" 
-          className="border-0 group-data-[side=left]:border-r-0 group-data-[side=right]:border-l-0 w-56 text-muted-foreground overflow-x-hidden"
+          className="border-0 group-data-[side=left]:border-r-0 group-data-[side=right]:border-l-0 w-64 text-muted-foreground overflow-x-hidden"
         >
 
-          <SidebarHeader className="h-10 px-2 bg-background border-b flex items-center">
+          <SidebarHeader className="h-10 px-2 bg-(--sidebar) border-b flex items-center">
             <SidebarLogo />
           </SidebarHeader>
           
@@ -260,22 +266,7 @@ function SidebarLogo()
             </Button>
             <SidebarSeparator />
 
-            {/* -------------------------------------------------------------------------------------------- */}
-            {/* Home (Non-collapsible) */}
             <SidebarGroup>
-              {/* 
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton asChild className="hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 rounded-none" onClick={() => router.push('/dashboard')}>
-                    <div>
-                      <Home />
-                      <span>Home</span>
-                    </div>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-              */}
-
               {/* -------------------------------------------------------------------------------------------- */}
               {/* Current Task Section */}
               <Collapsible 
@@ -285,14 +276,14 @@ function SidebarLogo()
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 hover rounded-none">
+                    <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
                       <Target size={16} />
                       <span>Current Tasks</span>
                       <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                  
+
                 <CollapsibleContent 
                   className="
                     overflow-hidden 
@@ -307,7 +298,7 @@ function SidebarLogo()
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <SidebarMenuSubButton asChild className="hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 rounded-none h-auto py-2">
+                              <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
                                 <Link href="/task-overview" title={task.name} className="flex items-start gap-2">
                                   <CheckSquare size={16} className="shrink-0 mt-0.5" />
                                   <div className="line-clamp-3">{task.name}</div>
@@ -334,7 +325,7 @@ function SidebarLogo()
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 rounded-none">
+                    <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none rounded-none">
                       <Target size={16} />
                       <span>Waiting Tasks</span>
                       <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
@@ -356,7 +347,7 @@ function SidebarLogo()
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <SidebarMenuSubButton asChild className="hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 rounded-none h-auto py-2">
+                              <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
                                 <Link href="/task-overview" title={task.name} className="flex items-start gap-2">
                                   <CheckSquare size={16} className="shrink-0 mt-0.5" />
                                   <div className="line-clamp-3">{task.name}</div>
@@ -384,7 +375,7 @@ function SidebarLogo()
               >
                 <SidebarMenuItem>
                   <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 hover rounded-none">
+                    <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
                       <Target size={16} />
                       <span>Urgent Tasks</span>
                       <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
@@ -406,7 +397,7 @@ function SidebarLogo()
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
-                              <SidebarMenuSubButton asChild className="hover:bg-slate-600 hover:text-white dark:hover:bg-slate-600 rounded-none h-auto py-2">
+                              <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
                                 <Link href="/task-overview" title={task.name} className="flex items-start gap-2">
                                   <CheckSquare size={16} className="shrink-0 mt-0.5" />
                                   <div className="line-clamp-3">{task.name}</div>
@@ -423,152 +414,6 @@ function SidebarLogo()
                     ))}
                 </CollapsibleContent>
               </Collapsible>
-
-              {/* -------------------------------------------------------------------------------------------- */}
-              {/* Task Section */}
-{/* 
-              <Collapsible 
-                open={openSubmenu === 'tasks'} 
-                onOpenChange={() => handleSubmenuToggle('tasks')}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:!bg-[#425567] rounded-none">
-                      <CogIcon size={16} />
-                      <span>Tasks</span>
-                      <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-                  
-                <CollapsibleContent 
-                  className="
-                    overflow-hidden 
-                    transition-all 
-                    duration-400 ease-in-out 
-                    data-[state=closed]:animate-collapsible-up 
-                    data-[state=open]:animate-collapsible-down
-                  ">
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild className="hover:bg-[#425567] rounded-none">
-                        <Link href="/task-overview">
-                          <CogIcon size={16} />
-                          <span>Task Overview</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild className="hover:bg-[#425567] rounded-none">
-                        <Link href="/status-report">
-                          <FileText />
-                          <span>Task Logs</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </Collapsible>
- */}
-              {/* -------------------------------------------------------------------------------------------- */}
-              {/* Customer Section */}
-{/* 
-              <Collapsible 
-                open={openSubmenu === 'customers'} 
-                onOpenChange={() => handleSubmenuToggle('customers')}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:!bg-[#425567] rounded-none">
-                      <CogIcon size={16} />
-                      <span>Customers</span>
-                      <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-                
-                <CollapsibleContent 
-                  className="
-                    overflow-hidden 
-                    transition-all 
-                    duration-400 ease-in-out 
-                    data-[state=closed]:animate-collapsible-up 
-                    data-[state=open]:animate-collapsible-down
-                  ">
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild className="hover:bg-[#425567] rounded-none">
-                        <Link href="/customer-maintain">
-                          <CogIcon size={16} />
-                          <span>Customer Maintanence</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild className="hover:bg-[#425567] rounded-none">
-                        <Link href="/report-status">
-                          <CogIcon size={16} />
-                          <span>Customer Logs</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </Collapsible>
- */}
-
-              {/* -------------------------------------------------------------------------------------------- */}
-              {/* Report Section */}
-{/* 
-              <Collapsible 
-                open={openSubmenu === 'reports'} 
-                onOpenChange={() => handleSubmenuToggle('reports')}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:!bg-[#425567] rounded-none">
-                      <CogIcon size={16} />
-                      <span>Reports</span>
-                      <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-                
-                <CollapsibleContent 
-                  className="
-                    overflow-hidden 
-                    transition-all 
-                    duration-400 ease-in-out 
-                    data-[state=closed]:animate-collapsible-up 
-                    data-[state=open]:animate-collapsible-down
-                  ">
-                  <SidebarMenuSub>
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild className="hover:bg-[#425567] rounded-none">
-                        <Link href="/report-status">
-                          <CogIcon size={16} />
-                          <span>Progress Report</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                    
-                    <SidebarMenuSubItem>
-                      <SidebarMenuSubButton asChild className="hover:bg-[#425567] rounded-none">
-                        <Link href="/report-status">
-                          <CogIcon size={16} />
-                          <span>Status Report</span>
-                        </Link>
-                      </SidebarMenuSubButton>
-                    </SidebarMenuSubItem>
-                  </SidebarMenuSub>
-                </CollapsibleContent>
-              </Collapsible>
- */}
             </SidebarGroup>
           </SidebarContent>
 
@@ -591,9 +436,8 @@ function SidebarLogo()
                   </div>
                 </Button>
               </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56 font-normal text-muted-foreground">
+              <DropdownMenuContent align="end" className="width: var(----sidebar-width) font-normal bg-white dark:bg-[rgb(38,38,38)] text-muted-foreground">
 
-                <DropdownMenuLabel>{user.name}</DropdownMenuLabel>
 
                   <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/dashboard')}>
                     Home
@@ -646,6 +490,18 @@ function SidebarLogo()
                   <>
                     <DropdownMenuGroup>
                       <DropdownMenuSeparator />
+                                        <DropdownMenuLabel
+  className="
+    text-xs
+    font-regular
+    text-neutral-300
+    leading-[21px]
+    uppercase
+    tracking-tight
+    pt-2 pr-2 pb-1 pl-0
+    m-0
+  "
+>External Asset Management</DropdownMenuLabel>
 
                       {/* ------------------------------------------------------------- */}
                       {/* Incomming files (SFTP/FTP) (ADMIN) */}
@@ -681,8 +537,26 @@ function SidebarLogo()
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
 
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/turk')}>
+                    Mechanical Turk
+                  </DropdownMenuItem>
+
+
                   {/* Learning Centre Section */}
                   <DropdownMenuSeparator />
+                  <DropdownMenuLabel
+  className="
+    text-xs
+    font-regular
+    text-neutral-300
+    leading-5.25
+    uppercase
+    tracking-tight
+    pt-2 pr-2 pb-1 pl-0
+    m-0
+  "
+>Documentation</DropdownMenuLabel>
 
                   <DropdownMenuGroup>
                   <DropdownMenuItem>
@@ -703,6 +577,9 @@ function SidebarLogo()
                         <DropdownMenuSeparator />
                         <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
                         <DropdownMenuItem>Terms of Service</DropdownMenuItem>
+                        <DropdownMenuItem>Blog
+                          <DropdownMenuShortcut><ExternalLink /></DropdownMenuShortcut>
+                        </DropdownMenuItem>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>

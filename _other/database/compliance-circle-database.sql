@@ -202,6 +202,76 @@ insert into artifact (organization_id, name, description, type, mime_Type, exten
 values (1, 'Document 4', 'Description for Document 4', 'DOCUMENT', 'application/odt', 'odt', '12298228', 'hest.odt',
   NOW(), NOW(), true);
 
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 5', 'Description for Document 5', 'PRESENTATION', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 6', 'Description for Document 6', 'PDF', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 7', 'Description for Document 7', 'CONTRACT', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 8', 'Description for Document 8', 'LEGAL', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 9', 'Description for Document 9', 'POLICY', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 10', 'Description for Document 10', 'PROCEDURE', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 11', 'Description for Document 11', 'REPORT', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 12', 'Description for Document 12', 'VIDEO', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 13', 'Description for Document 13', 'AUDIO', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 14', 'Description for Document 14', 'ARCHIVE', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 15', 'Description for Document 15', 'DATA', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 16', 'Description for Document 16', 'SOURCE_CODE', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 17', 'Description for Document 17', 'OTHER', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 18', 'Description for Document 18', 'OTHER', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 19', 'Description for Document 19', 'OTHER', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 20', 'Description for Document 20', 'OTHER', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+insert into artifact (organization_id, name, description, type, mime_Type, extension, size, original_name, created_at, updated_at, active)
+values (1, 'Document 21', 'Description for Document 21', 'OTHER', 'application/odt', 'odt', '12298228', 'hest.odt',
+  NOW(), NOW(), true);
+
+
+
 insert into task_artifact (task_id, artifact_id)
 values (1, 1);
 
@@ -213,6 +283,64 @@ values (1, 3);
 
 insert into task_artifact (task_id, artifact_id)
 values (1, 4);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 5);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 6);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 7);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 8);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 9);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 10);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 11);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 12);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 13);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 14);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 15);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 16);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 17);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 18);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 19);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 20);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 21);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 22);
+
+insert into task_artifact (task_id, artifact_id)
+values (1, 23);
+
 
 -- login
 SELECT setval(

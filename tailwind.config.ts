@@ -9,17 +9,27 @@ const config: Config =
         "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     ],
 
+    darkMode: "class", // enable class-based dark mode
+
     theme:
     {
         extend:
         {
             fontFamily:
             {
+                sans      : ["var(--font-roboto)", "system-ui", "sans-serif"],
+                /*
                 sans      : ["var(--font-geograph)", "system-ui", "sans-serif"],
                 intge     : ["var(--font-inter-sans)"],
                 geograph  : ["var(--font-geograph)"],
                 playfair  : ["var(--font-playfair)"],
+                */
             },
+
+            colors: {
+                background: "var(--background)",
+            },
+
 
             keyframes:
             {

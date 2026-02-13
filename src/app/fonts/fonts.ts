@@ -1,5 +1,28 @@
 import localFont from 'next/font/local';
 
+export const roboto = localFont({
+  src: [
+    // Regular
+    { path: './roboto/roboto-regular.woff2', weight: '400', style: 'normal' },
+    { path: './roboto/roboto-regular.woff', weight: '400', style: 'normal' },
+
+    // Medium
+    { path: './roboto/roboto-medium.woff2', weight: '500', style: 'normal' },
+    { path: './roboto/roboto-medium.woff', weight: '500', style: 'normal' },
+
+    // Semi Bold
+    { path: './roboto/roboto-semibold.woff2', weight: '600', style: 'normal' },
+    { path: './roboto/roboto-semibold.woff', weight: '600', style: 'normal' },
+
+    // Bold
+    { path: './roboto/roboto-bold.woff2', weight: '700', style: 'normal' },
+    { path: './roboto/roboto-bold.woff', weight: '700', style: 'normal' },
+  ],
+  variable: '--font-roboto',
+  display: 'swap',
+});
+
+
 export const inter = localFont({
   src: [
     {
