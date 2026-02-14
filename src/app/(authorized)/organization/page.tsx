@@ -3,7 +3,7 @@
 import { useUser }              from '@/context/UserContext';
 import { useRouter }            from 'next/navigation';
 import { useEffect, useState }  from 'react';
-import { SquarePen, Trash2 }    from 'lucide-react';
+import { Trash2 }               from 'lucide-react';
 import { Button }               from "@/components/ui/button";
 
 import {
@@ -121,6 +121,16 @@ export default function OrganizationPage()
     const [availableTasks, setAvailableTasks] = useState<any[]>([]);
     const [selectedTaskToAdd, setSelectedTaskToAdd] = useState<number | null>(null);
 
+    // Pagination for sub-tabs
+    const [profilesCurrentPage, setProfilesCurrentPage] = useState(1);
+    const [tasksCurrentPage, setTasksCurrentPage] = useState(1);
+    const [eventsCurrentPage, setEventsCurrentPage] = useState(1);
+    const subTabPerPage = 8;
+
+    // For events/audit trail
+    const [events, setEvents] = useState<any[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(false);
+
     // ----------------------------------------------------------------------------------------------------------------
     // FETCH ORGANISATIONS - WITH SETTINGS (& refresh).
     const fetchOrganizations = async () =>
@@ -150,7 +160,59 @@ export default function OrganizationPage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // Change user +  + Refresh event    
+    // FETCH EVENTS FOR SELECTED ORGANIZATION
+    const fetchEvents = async (organizationId: number) =>
+    {
+        setLoadingEvents(true);
+        try
+        {
+            const res = await fetch(`/api/event?organizationId=${organizationId}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch events:', data.error || data.message);
+                setEvents([]);
+                return;
+            }
+            setEvents(data.data || []);
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch events:', error);
+            setEvents([]);
+        }
+        finally
+        {
+            setLoadingEvents(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // CREATE EVENT (audit trail)
+    const createEvent = async (message: string, importance: 'LOW' | 'MIDDLE' | 'HIGH', organizationId: number) =>
+    {
+        try
+        {
+            await fetch('/api/event', {
+                method  : 'POST',
+                headers : { 'Content-Type': 'application/json' },
+                body    : JSON.stringify({ message, importance, organizationId }),
+            });
+
+            // Refresh the audit trail if viewing this organization
+            if (selectedOrg?.id === organizationId)
+            {
+                fetchEvents(organizationId);
+            }
+        }
+        catch (error)
+        {
+            console.error('Failed to create event:', error);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Change user +  + Refresh event
     useEffect(() =>
     {
         if (user?.role !== 'SUPER_ADMIN') return;
@@ -230,6 +292,9 @@ export default function OrganizationPage()
 
             toast.success("Profile assigned to organization");
 
+            // Event: profile added
+            await createEvent(`Profile added: "${addedProfile.name}"`, 'HIGH', selectedOrg.id);
+
             setIsAddProfileDialogOpen(false);
             setSelectedProfileToAdd(null);
         } 
@@ -299,6 +364,9 @@ export default function OrganizationPage()
             });
 
             toast.success("Task assigned to organization");
+
+            // Event: task added
+            await createEvent(`Task added: "${addedTask.name}"`, 'MIDDLE', selectedOrg.id);
 
             setIsAddTaskDialogOpen(false);
             setSelectedTaskToAdd(null);
@@ -391,25 +459,34 @@ export default function OrganizationPage()
     // TAB 2 - SETTINGS
 
     // Set Settings on new Organization.
-    useEffect(() => 
+    useEffect(() =>
     {
-        if (selectedOrg) 
+        if (selectedOrg)
         {
             setName(selectedOrg.name || "");
             setDescription(selectedOrg.description || "");
-            
+
             // Load settings if they exist
             setUploadDirectory(selectedOrg.settings?.uploadDirectory || "");
             setDownloadDirectory(selectedOrg.settings?.downloadDirectory || "");
             setArtifactDirectory(selectedOrg.settings?.artifactDirectory || "");
-        } 
-        else 
+
+            // Fetch events for this organization
+            fetchEvents(selectedOrg.id);
+
+            // Reset sub-tab pagination
+            setProfilesCurrentPage(1);
+            setTasksCurrentPage(1);
+            setEventsCurrentPage(1);
+        }
+        else
         {
             setName("");
             setDescription("");
             setUploadDirectory("");
             setDownloadDirectory("");
             setArtifactDirectory("");
+            setEvents([]);
         }
     }, [selectedOrg]);
 
@@ -483,6 +560,24 @@ export default function OrganizationPage()
                 ...prev!,
                 settings: data.data
             }));
+
+            // Events: directory changes
+            const origUpload   = (selectedOrg.settings?.uploadDirectory || "").trim();
+            const origDownload = (selectedOrg.settings?.downloadDirectory || "").trim();
+            const origArtifact = (selectedOrg.settings?.artifactDirectory || "").trim();
+
+            if (uploadDirectory.trim() !== origUpload)
+            {
+                await createEvent('Upload directory changed', 'LOW', selectedOrg.id);
+            }
+            if (downloadDirectory.trim() !== origDownload)
+            {
+                await createEvent('Download directory changed', 'LOW', selectedOrg.id);
+            }
+            if (artifactDirectory.trim() !== origArtifact)
+            {
+                await createEvent('Artifact directory changed', 'LOW', selectedOrg.id);
+            }
 
             toast.success("Settings saved successfully");
             setSettingsHasChanges(false);
@@ -767,15 +862,31 @@ export default function OrganizationPage()
                 setOrganizations(prev => [...prev, updatedOrg]);
 
                 setIsNewDialogOpen(false);
+
+                // Event: new organization created
+                await createEvent(`Organization created: "${updatedOrg.name}"`, 'HIGH', updatedOrg.id);
             }
             else
             {
+                const originalName = selectedOrg.name || "";
+                const originalDesc = selectedOrg.description || "";
+
                 // Update existing
                 setOrganizations(prev =>
                     prev.map(o => o.id === selectedOrg.id ? updatedOrg : o)
                 );
 
                 setSelectedOrg(updatedOrg); // keep form in sync
+
+                // Events: name/description changed
+                if (name.trim() !== originalName.trim())
+                {
+                    await createEvent(`Organization name changed from "${originalName}" to "${name.trim()}"`, 'LOW', selectedOrg.id);
+                }
+                if (description.trim() !== originalDesc.trim())
+                {
+                    await createEvent('Organization description changed', 'LOW', selectedOrg.id);
+                }
             }
 
             setHasChanges(false);
@@ -903,6 +1014,10 @@ export default function OrganizationPage()
                 };
             });
 
+            // Event: task removed
+            const removedTaskName = selectedOrg.tasks.find((t: any) => t.id === taskToRemove)?.name || 'Unknown';
+            await createEvent(`Task removed: "${removedTaskName}"`, 'MIDDLE', selectedOrg.id);
+
             toast.success("Task removed from organization");
 
             // Close edit dialog if it was open for this task
@@ -978,6 +1093,10 @@ export default function OrganizationPage()
                     profiles: prev.profiles.filter((p: any) => p.id !== profileToDelete),
                 };
             });
+
+            // Event: profile removed
+            const removedProfileName = selectedOrg.profiles.find((p: any) => p.id === profileToDelete)?.name || 'Unknown';
+            await createEvent(`Profile removed: "${removedProfileName}"`, 'HIGH', selectedOrg.id);
 
             toast.success("Profile removed from organization");
 
@@ -1121,7 +1240,7 @@ export default function OrganizationPage()
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // Task Status.
+    // Task Status badges.
     const getStatusBadge = (taskStatus: string) =>
     {
         const styles = 
@@ -1130,6 +1249,19 @@ export default function OrganizationPage()
             OPEN        : 'bg-[var(--color-status-open)]',
             COMPLETED   : 'bg-[var(--color-status-completed)]',
             CLOSED      : 'bg-[var(--color-status-closed)]'
+        };
+        return styles[taskStatus as keyof typeof styles] || '';
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Audit Trail Importance badges.
+    const getEventImportanceBadge = (taskStatus: string) =>
+    {
+        const styles = 
+        {
+            LOW     : 'bg-[var(--color-event-low)]',
+            MIDDLE  : 'bg-[var(--color-event-middle)]',
+            HIGH    : 'bg-[var(--color-event-high)]',
         };
         return styles[taskStatus as keyof typeof styles] || '';
     };
@@ -1527,23 +1659,22 @@ export default function OrganizationPage()
                 <TableHead>Name</TableHead>
                 <TableHead className="w-28 text-right">Profiles</TableHead>
                 <TableHead className="w-28 text-right">Tasks</TableHead>
-                <TableHead className="text-right"></TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
 { currentOrganizations.length === 0 ? (
             <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={4} className="text-center text-muted-foreground">
                     {filterText ? "No organizations match your filter" : "No organizations found"}
                 </TableCell>
             </TableRow>
 ) : (
     currentOrganizations.map((org) => (
-            <TableRow 
-                key={org.id} 
+            <TableRow
+                key={org.id}
                 className={`
                     cursor-pointer transition-colors
-                    ${selectedOrg?.id === org.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}                    
+                    ${selectedOrg?.id === org.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
                 `}
                 onClick={() => handleRowClick(org)}
             >
@@ -1551,31 +1682,6 @@ export default function OrganizationPage()
                 <TableCell>{org.name}</TableCell>
                 <TableCell className="w-28 text-right tabular-nums">{org.profiles?.length || 0}</TableCell>
                 <TableCell className="w-28 text-right tabular-nums">{org.tasks?.length || 0}</TableCell>
-                <TableCell className="w-20 text-right">
-                    <div
-                        onClick={(e) => e.stopPropagation()} 
-                        className="flex justify-end gap-2"
-                    >
-                        <button 
-                            className="hover:text-primary p-1"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setSelectedOrg(org);
-                            }}
-                        >
-                            <SquarePen size={16} className="cursor-pointer" />
-                        </button>
-                        <button 
-                            className="hover:text-destructive"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                setOrgToDelete(org.id);
-                            }}
-                        >
-                            <Trash2 size={16}  className="cursor-pointer" />
-                        </button>
-                    </div>
-                </TableCell>
             </TableRow>
         ))
     )
@@ -1635,8 +1741,8 @@ export default function OrganizationPage()
         <hr className="my-8" />
 
         <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-            <div className="relative w-full max-w-150">
-                <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-4">
+            <div className="relative w-full">
+                <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-6">
                     <TabsTrigger 
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
                         value="details"
@@ -1655,18 +1761,34 @@ export default function OrganizationPage()
                     >
                         Profiles ({selectedOrg.profiles?.length || 0})
                     </TabsTrigger>
-                    <TabsTrigger 
-                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="tasks"
                     >
                         Tasks ({selectedOrg.tasks?.length || 0})
                     </TabsTrigger>
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                        value="audit"
+                    >
+                        Audit Trail ({events.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                        value="actions"
+                    >
+                        Actions
+                    </TabsTrigger>
                 </TabsList>
-                <div 
+                <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
-                        width: '25%',
-                        left: activeTab === 'settings' ? '25%' : activeTab === 'profiles' ? '50%' : activeTab === 'tasks' ? '75%' : '0%'
+                        width: '16.666%',
+                        left: activeTab === 'settings' ? '16.666%' :
+                             activeTab === 'profiles' ? '33.333%' :
+                             activeTab === 'tasks' ? '50%' :
+                             activeTab === 'audit' ? '66.666%' :
+                             activeTab === 'actions' ? '83.333%' : '0%'
                     }}
                 />
             </div>
@@ -1773,39 +1895,90 @@ export default function OrganizationPage()
                     <TableBody>
                         {selectedOrg.profiles?.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={3} className="text-center text-muted-foreground">
+                                <TableCell colSpan={4} className="text-center text-muted-foreground">
                                     No profiles found for this organization
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            selectedOrg.profiles?.map((profile: any) => (
-                                <TableRow 
-                                    key={profile.id}
-                                    className={`
-                                        cursor-pointer transition-colors
-                                        ${selectedProfile?.id === profile.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}                    
-                                    `}
-                                    onClick={() => handleProfileRowClick(profile)}
-                                >
-                                    <TableCell className="w-20 text-right tabular-nums">{profile.id}</TableCell>
-                                    <TableCell>{profile.name}</TableCell>
-                                    <TableCell>{profile.description || '-'}</TableCell>
-                                    <TableCell>
-                                        <button 
-                                            className="hover:text-destructive"
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                setProfileToDelete(profile.id);
-                                            }}
-                                        >
-                                            <Trash2 size={16}  className="cursor-pointer" />
-                                        </button>
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                            (() => {
+                                const startIdx = (profilesCurrentPage - 1) * subTabPerPage;
+                                const endIdx = startIdx + subTabPerPage;
+                                const pageProfiles = (selectedOrg.profiles || []).slice(startIdx, endIdx);
+                                return pageProfiles.map((profile: any) => (
+                                    <TableRow
+                                        key={profile.id}
+                                        className={`
+                                            cursor-pointer transition-colors
+                                            ${selectedProfile?.id === profile.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
+                                        `}
+                                        onClick={() => handleProfileRowClick(profile)}
+                                    >
+                                        <TableCell className="w-20 text-right tabular-nums">{profile.id}</TableCell>
+                                        <TableCell>{profile.name}</TableCell>
+                                        <TableCell>{profile.description || '-'}</TableCell>
+                                        <TableCell>
+                                            <button
+                                                className="hover:text-destructive"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setProfileToDelete(profile.id);
+                                                }}
+                                            >
+                                                <Trash2 size={16}  className="cursor-pointer" />
+                                            </button>
+                                        </TableCell>
+                                    </TableRow>
+                                ));
+                            })()
                         )}
                     </TableBody>
                 </Table>
+                {(() => {
+                    const totalProfiles = selectedOrg.profiles?.length || 0;
+                    const totalPages = Math.ceil(totalProfiles / subTabPerPage);
+                    const startIdx = (profilesCurrentPage - 1) * subTabPerPage;
+                    const endIdx = Math.min(startIdx + subTabPerPage, totalProfiles);
+                    return totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6">
+                            <div className="text-sm text-muted-foreground">
+                                Showing {startIdx + 1} to {endIdx} of {totalProfiles} profiles
+                            </div>
+                            <div className="flex justify-end">
+                                <Pagination>
+                                    <PaginationContent>
+                                        <PaginationItem>
+                                            <PaginationPrevious
+                                                onClick={() => setProfilesCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                className={profilesCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                            />
+                                        </PaginationItem>
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex gap-1">
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                    <PaginationItem key={page}>
+                                                        <PaginationLink
+                                                            onClick={() => setProfilesCurrentPage(page)}
+                                                            isActive={profilesCurrentPage === page}
+                                                            className="cursor-pointer"
+                                                        >
+                                                            {page}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                ))}
+                                            </div>
+                                            <PaginationItem>
+                                                <PaginationNext
+                                                    onClick={() => setProfilesCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                                    className={profilesCurrentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                                />
+                                            </PaginationItem>
+                                        </div>
+                                    </PaginationContent>
+                                </Pagination>
+                            </div>
+                        </div>
+                    );
+                })()}
             </TabsContent>
 
             {/* Tasks Tab */}
@@ -1835,41 +2008,219 @@ export default function OrganizationPage()
                     <TableBody>
                         {selectedOrg.tasks?.length === 0 ? (
                             <TableRow>
-                                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                                <TableCell colSpan={5} className="text-center text-muted-foreground">
                                     No tasks found for this organization
                                 </TableCell>
                             </TableRow>
                         ) : (
-                            selectedOrg.tasks?.map((task: any) => (
-                                <TableRow 
-                                    key={task.id}
-                                    className="cursor-pointer hover:bg-muted/50"
-                                    onClick={() => handleTaskRowClick(task)}
-                                >
-                                    <TableCell className="w-20 text-right tabular-nums">{task.id}</TableCell>
-                                    <TableCell>{task.name}</TableCell>
-                                    <TableCell>{task.description || '-'}</TableCell>
-                                      <TableCell className="w-32">
-                                        <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs status-badge`}>
-                                          {task.status.replace('_', ' ')}
-                                        </Badge>
-                                      </TableCell>
-                                    <TableCell className="w-16 text-right">  {/* ← new column */}
-                                        <button
-                                            className="hover:text-destructive p-1"
-                                            onClick={(e) => {
-                                            e.stopPropagation();
-                                            setTaskToRemove(task.id);
-                                            }}
-                                        >
-                                            <Trash2 size={16} className="cursor-pointer" />
-                                        </button>
-                                    </TableCell>
-                                </TableRow>
-                            ))
+                            (() => {
+                                const startIdx = (tasksCurrentPage - 1) * subTabPerPage;
+                                const endIdx = startIdx + subTabPerPage;
+                                const pageTasks = (selectedOrg.tasks || []).slice(startIdx, endIdx);
+                                return pageTasks.map((task: any) => (
+                                    <TableRow
+                                        key={task.id}
+                                        className="cursor-pointer hover:bg-muted/50"
+                                        onClick={() => handleTaskRowClick(task)}
+                                    >
+                                        <TableCell className="w-20 text-right tabular-nums">{task.id}</TableCell>
+                                        <TableCell>{task.name}</TableCell>
+                                        <TableCell>{task.description || '-'}</TableCell>
+                                        <TableCell className="w-32">
+                                            <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs status-badge`}>
+                                                {task.status.replace('_', ' ')}
+                                            </Badge>
+                                        </TableCell>
+                                        <TableCell className="w-16 text-right">
+                                            <button
+                                                className="hover:text-destructive p-1"
+                                                onClick={(e) => {
+                                                    e.stopPropagation();
+                                                    setTaskToRemove(task.id);
+                                                }}
+                                            >
+                                                <Trash2 size={16} className="cursor-pointer" />
+                                            </button>
+                                        </TableCell>
+                                    </TableRow>
+                                ));
+                            })()
                         )}
                     </TableBody>
                 </Table>
+                {(() => {
+                    const totalTasks = selectedOrg.tasks?.length || 0;
+                    const totalPages = Math.ceil(totalTasks / subTabPerPage);
+                    const startIdx = (tasksCurrentPage - 1) * subTabPerPage;
+                    const endIdx = Math.min(startIdx + subTabPerPage, totalTasks);
+                    return totalPages > 1 && (
+                        <div className="flex items-center justify-between mt-6">
+                            <div className="text-sm text-muted-foreground">
+                                Showing {startIdx + 1} to {endIdx} of {totalTasks} tasks
+                            </div>
+                            <div className="flex justify-end">
+                                <Pagination>
+                                    <PaginationContent>
+                                        <PaginationItem>
+                                            <PaginationPrevious
+                                                onClick={() => setTasksCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                className={tasksCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                            />
+                                        </PaginationItem>
+                                        <div className="flex items-center gap-2">
+                                            <div className="flex gap-1">
+                                                {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                                    <PaginationItem key={page}>
+                                                        <PaginationLink
+                                                            onClick={() => setTasksCurrentPage(page)}
+                                                            isActive={tasksCurrentPage === page}
+                                                            className="cursor-pointer"
+                                                        >
+                                                            {page}
+                                                        </PaginationLink>
+                                                    </PaginationItem>
+                                                ))}
+                                            </div>
+                                            <PaginationItem>
+                                                <PaginationNext
+                                                    onClick={() => setTasksCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                                    className={tasksCurrentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                                />
+                                            </PaginationItem>
+                                        </div>
+                                    </PaginationContent>
+                                </Pagination>
+                            </div>
+                        </div>
+                    );
+                })()}
+            </TabsContent>
+
+            {/* Audit Trail Tab */}
+            <TabsContent value="audit" className="mt-6">
+                {loadingEvents ? (
+                    <div className="text-center text-muted-foreground py-8">Loading events...</div>
+                ) : events.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-8">No events for this organization</div>
+                ) : (
+                    <>
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-20 text-right">ID</TableHead>
+                                <TableHead className="w-40">Date</TableHead>
+                                <TableHead className="w-40">User</TableHead>
+                                <TableHead className="w-32">Importance</TableHead>
+                                <TableHead>Message</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {(() => {
+                                const startIdx = (eventsCurrentPage - 1) * subTabPerPage;
+                                const endIdx = startIdx + subTabPerPage;
+                                const currentEvents = events.slice(startIdx, endIdx);
+                                return currentEvents.map((event: any) => (
+                                    <TableRow key={event.id}>
+                                        <TableCell className="w-20 text-right tabular-nums">{event.id}</TableCell>
+                                        <TableCell className="w-40 text-xs">
+                                            {new Date(event.createdAt).toLocaleString()}
+                                        </TableCell>
+                                        <TableCell className="w-40">
+                                            {event.user?.name || 'System'}
+                                        </TableCell>
+                                        <TableCell className="w-32">
+                                            {event.importance ? (
+                                                <Badge variant="secondary" className={`${getEventImportanceBadge(event.importance)} px-2 py-1 text-xs audit-event-badge`}>
+                                                    {event.importance.replace('_', ' ')}
+                                                </Badge>
+                                            ) : (
+                                                <span className="text-muted-foreground text-xs">-</span>
+                                            )}
+                                        </TableCell>
+                                        <TableCell>{event.message}</TableCell>
+                                    </TableRow>
+                                ));
+                            })()}
+                        </TableBody>
+                    </Table>
+                    {(() => {
+                        const totalEventsPages = Math.ceil(events.length / subTabPerPage);
+                        const startIdx = (eventsCurrentPage - 1) * subTabPerPage;
+                        const endIdx = Math.min(startIdx + subTabPerPage, events.length);
+                        return totalEventsPages > 1 && (
+                            <div className="flex items-center justify-between mt-6">
+                                <div className="text-sm text-muted-foreground">
+                                    Showing {startIdx + 1} to {endIdx} of {events.length} events
+                                </div>
+                                <div className="flex justify-end">
+                                    <Pagination>
+                                        <PaginationContent>
+                                            <PaginationItem>
+                                                <PaginationPrevious
+                                                    onClick={() => setEventsCurrentPage(prev => Math.max(prev - 1, 1))}
+                                                    className={eventsCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                                />
+                                            </PaginationItem>
+                                            <div className="flex items-center gap-2">
+                                                <div className="flex gap-1">
+                                                    {Array.from({ length: totalEventsPages }, (_, i) => i + 1).map((page) => (
+                                                        <PaginationItem key={page}>
+                                                            <PaginationLink
+                                                                onClick={() => setEventsCurrentPage(page)}
+                                                                isActive={eventsCurrentPage === page}
+                                                                className="cursor-pointer"
+                                                            >
+                                                                {page}
+                                                            </PaginationLink>
+                                                        </PaginationItem>
+                                                    ))}
+                                                </div>
+                                                <PaginationItem>
+                                                    <PaginationNext
+                                                        onClick={() => setEventsCurrentPage(prev => Math.min(prev + 1, totalEventsPages))}
+                                                        className={eventsCurrentPage === totalEventsPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                                    />
+                                                </PaginationItem>
+                                            </div>
+                                        </PaginationContent>
+                                    </Pagination>
+                                </div>
+                            </div>
+                        );
+                    })()}
+                    </>
+                )}
+            </TabsContent>
+
+            {/* Actions Tab */}
+            <TabsContent value="actions" className="mt-6">
+                <div className="space-y-6 max-w-2xl">
+                    <div>
+                        <h3 className="text-lg font-semibold mb-4">Organization Actions</h3>
+                        <p className="text-sm text-muted-foreground mb-6">
+                            Manage this organization with the actions below.
+                        </p>
+                    </div>
+
+                    <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-1">
+                                <h4 className="font-medium text-destructive mb-1">Delete Organization</h4>
+                                <p className="text-sm text-muted-foreground">
+                                    Permanently delete this organization and all associated data. This action cannot be undone.
+                                </p>
+                            </div>
+                            <Button
+                                variant="destructive"
+                                onClick={() => setOrgToDelete(selectedOrg.id)}
+                                className="shrink-0"
+                            >
+                                <Trash2 className="w-4 h-4 mr-2" />
+                                Delete Organization
+                            </Button>
+                        </div>
+                    </div>
+                </div>
             </TabsContent>
         </Tabs>
     </div>

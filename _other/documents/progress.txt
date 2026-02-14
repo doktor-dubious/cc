@@ -33,6 +33,7 @@
 ── Small Fixes / Errors ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   * Move delete button from master table to action tab in detail pane (too dangerous to have it in the master table).
+  * Clean up colour schemas (globals.css)
 
 ── Not Started ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -46,7 +47,7 @@
       -> Status Reports
       -> Progress Reports
   * PAGE: Audit Trail
-  * PAGE: Mechanical Turl (automatization setup)
+  * PAGE: Mechanical Turk (automatization setup)
       -> fetch files from external SFTP / S3, etc.
   * Documentstion
       -> PAGE: Wheel (Wheel & Safeguards)
@@ -85,11 +86,137 @@
     --> Page: Incomming Files
   -> Better Assets Type Badge colours/design.
   -> Better User Role Badge colours/design.
-  -> Page Header + restyled & rearranged Select Organization
+  -> Page Header + restyled & rearranged "Select Organization" (from Top Bar => Side Menu)
 * Page header: Action Icons
   --> Refresh Action
     --> Page: Incomming Files
     --> Page: Organizations
+    --> Page: Profile
+    --> Page: Artifact
+    --> Page: Task
+  --> Notification Action
+* Fixed GIT
+* Messages: Database + Prisma.
+* Messages: extended Task page with new message tab.
+
+────────────────────
+── Saturday 14 Feb
+* Task Page : Added pagination to Messages, Assets, Profiles
+* Task Page + Top Menu bar : Show new messages,
+* Task Page : When clicking a message, open in a pop up
+* Periodic refresh (messages, files, etc) 
+* Application Settings: New Page
+* Database: table and functionality for Event (Audit Trail)
+* Page Task : Added tabs in detail view for Audit Trail & Actions
+* Page Task : Moved delete button from overview table to detail view.
+* Page Task : Added button and functionality to add Profile to Task
+* Page Task : Redesigned tabs - more room.
+* Audit Trail Importance in database.
+* Page Task : Message Popup: maximum height
+* Page Task : Implemented Audit Events.
+* Reworked Periodic refresh
+* Page Organization : Added Audit Trail & Action tabs
+* Page Organization : Moved delete functionality from master table to detail view.
+* Page Organization : Implemented Audit Events.
+* Page Profile : Added Audit Trail & Action tabs
 
 
+----------
+The Events table should also have an "importance" column, with values: LOW, MIDDLE, HIGH. Which should also be included in the Audit Trail table.
 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+I added this to the Schema:
+
+enum EventImportance {
+    LOW
+    MIDDLE
+    HIGH
+}
+
+and 
+column
+    importance          Int?
+to the event table.
+If everything ok, make changes to the database
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+On the Task page,
+The popup modal when a message is clicked on should have a maxium height. It becomes unmangable if the message is very long.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Can we start to generate some events.
+
+On the Task page, under "Details" when Task Name is changed it should generate an event: LOW importance, message: "Task name changed"
+Same with Description & Expected Evidence
+Same with Start Date/End Date, but MIDDLE importance
+Same with Status, but HIGH importance
+
+When a Profile is added/removed from the Task, HIGH importance
+When an Artifact is added/removed, MIDDLE importance
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The periodic refresh (  // Periodic refresh - automatically fetch new data based on settings), refreshes the whole screen. This is quite irritating. It should only refresh if there are changes, and preferable only change the things that need to be changed. E.g, the Bell icon for new messages, the message table under Tasks for new messages. 
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+On the Organization page: there should be an additional tab to rightmost called: Actions.
+The action tab should have a delete button. The functionality taken from the delete button on the overview table. And the delete icon (as well as the edit icon) removed from the overview table.
+This is the same as on the Task page.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Also add an "Audit Trail" - same as on the Task page.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+On the Organization page
+
+"Details" when Organization Name is changed it should generate an event: LOW importance, message: "Organization name changed"
+Same with Description
+Same with Upload Directory, Download Directory, Artifact Directory under Settings.
+When a Profile is added/removed from the Organization, HIGH importance
+When an Task is added/removed, MIDDLE importance
+When a new Organization is created, HIGH importance
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+On the Profile page: there should be an additional tab to rightmost called: Actions.
+The action tab should have a delete button. The functionality taken from the delete button on the overview table. And the delete icon (as well as the edit icon) removed from the overview table.
+This is the same as on the Task page.
+
+Also add an "Audit Trail" - same as on the Task page.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- HERETO
+-- HERETO
+-- HERETO
+-- HERETO
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+I get an error: "Could not delete organization" when trying to delete an Organization
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+The pagination elements (< Previous, 1,2,3,4,, Next >) should be non-selectable (select-none) Both on the Organization page, and on the Task page and everywhere else
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+On the Organization page
+
+When an Organization is created/deleted: -> Event with HIGH importance
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+On the Profile page
+
+When a profile is created/deleted: -> Event with HIGH importance
+
+Profile Name, Description, Login Name, Email, Nickname: Event of LOW importance
+Role: Event of HIGH importance

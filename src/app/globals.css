@@ -125,9 +125,33 @@
     --color-scheme-warm-neutral-tones-1 : #E6BEAE;
     --color-scheme-warm-neutral-tones-1 : #B2967D;
 
-    --color-scheme_aaaa_1 : #aaa;
-    --color-scheme_aaaa_1 : #aaa;
-    --color-scheme_aaaa_1 : #aaa;
+    /* https://coolors.co/palette/e9f5db-cfe1b9-b5c99a-97a97c-87986a-718355 */
+    --color-scheme-earthy-green-tones_1 : #E9F5DB;
+    --color-scheme-earthy-green-tones_2 : #CFE1B9;
+    --color-scheme-earthy-green-tones_3 : #B5C99A;
+    --color-scheme-earthy-green-tones_4 : #97A97C;
+    --color-scheme-earthy-green-tones_5 : #87986A;
+    --color-scheme-earthy-green-tones_6 : #718355;
+
+    /* https://coolors.co/palette/50514f-f25f5c-ffe066-247ba0-70c1b3 */
+    --color-scheme-sunset-bliss-1 : #50514F;
+    --color-scheme-sunset-bliss-2 : #F25F5C;
+    --color-scheme-sunset-bliss-3 : #FFE066;
+    --color-scheme-sunset-bliss-4 : #247BA0;
+    --color-scheme-sunset-bliss-5 : #70C1B3;
+
+    /* https://www.schemecolor.com/red-yellow-and-green.php */
+    --color-scheme-red-yellow-green_1 : #D61F1F;
+    --color-scheme-red-yellow-green_2 : #E03C32;
+    --color-scheme-red-yellow-green_3 : #FFD301;
+    --color-scheme-red-yellow-green_4 : #7BB662;
+    --color-scheme-red-yellow-green_5 : #639754;
+    --color-scheme-red-yellow-green_6 : #006B3D;
+
+    --color-scheme-green-yellow-red_1 : #006B3D;
+    --color-scheme-green-yellow-red_2 : #EDBF37;
+    --color-scheme-green-yellow-red_3 : #E03C32;
+
     --color-scheme_aaaa_1 : #aaa;
     --color-scheme_aaaa_1 : #aaa;
     --color-scheme_aaaa_1 : #aaa;
@@ -135,8 +159,9 @@
     --color-scheme_aaaa_1 : #aaa;
 
 
-
-
+    --color-event-low           : #5D664D;
+    --color-event-middle        : #335c8c;
+    --color-event-high          : #ad423f;
 
     --color-good                : #25693e;
     --color-good-to-neutral     : #49844c;
@@ -455,7 +480,7 @@ input:-webkit-autofill:active
         padding-top           : 5px !important; /* Vertical center text */
     }
 
-    /*  ── user Role Badge ───────────────────────────────────────*/
+    /*  ── User Role Badge ───────────────────────────────────────*/
     .user-role-badge
     {
         color                 : var(--color-white-muted) !important;
@@ -464,6 +489,14 @@ input:-webkit-autofill:active
         padding-top           : 5px !important; /* Vertical center text */
     }
 
+    /*  ── Audit Event Badge ───────────────────────────────────────*/
+    .audit-event-badge
+    {
+        color                 : var(--color-white-muted) !important;
+        width                 : 70px !important;
+        border-radius         : 4px !important;
+        padding-top           : 5px !important; /* Vertical center text */
+    }
     
 }
 

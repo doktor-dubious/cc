@@ -107,6 +107,8 @@ export default function ArtifactFilesPage()
     // Initial load + Change Organization + Refresh event
     useEffect(() => 
     {
+        if (!activeOrganization) return; 
+
         fetchFiles(); // Initial load
 
         // Listen for refresh event

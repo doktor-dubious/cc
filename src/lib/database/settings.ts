@@ -5,18 +5,20 @@
 import { log }      from '@/lib/log';
 import { prisma }   from '@/lib/prisma';
 
-export type SettingsData = 
+export type SettingsData =
 {
     id                  : number;
     applicationName     : string;
     homeDirectory       : string;
+    pollingInterval     : number;
 };
 
-const selectFields = 
+const selectFields =
 {
     id                  : true,
     applicationName     : true,
     homeDirectory       : true,
+    pollingInterval     : true,
 } as const;
 
 export const settingsRepository = 
@@ -60,10 +62,11 @@ export const settingsRepository =
     /**
      * Create new settings and deactivate all others
      */
-    async create(data: 
+    async create(data:
     {
         applicationName     : string;
         homeDirectory       : string;
+        pollingInterval?    : number;
     }): Promise<SettingsData> 
     {
         log.info({ data }, 'Creating new settings');
@@ -95,10 +98,11 @@ export const settingsRepository =
      */
     async update(
         id: number,
-        data: 
+        data:
         {
             applicationName?    : string;
             homeDirectory?      : string;
+            pollingInterval?    : number;
         }
     ): Promise<SettingsData> 
     {

@@ -107,6 +107,58 @@ export default function ArtifactPage()
     const [taskDescription, setTaskDescription] = useState("");
     const [taskHasChanges, setTaskHasChanges] = useState(false);
 
+    // ── Fetch Artifacts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    const fetchArtifacts = async () => 
+    {
+        if (!activeOrganization) return;
+
+        try 
+        {
+            const res = await fetch(`/api/artifact?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+
+            if (!data.success) 
+            {
+                console.error('Failed to fetch artifacts:', data.message);
+                return;
+            }
+
+            setArtifacts(data.data);
+        } 
+        catch (error) 
+        {
+            console.error('Failed to fetch artifacts:', error);
+        } 
+        finally 
+        {
+            setLoading(false);
+        }
+    };
+
+    // ── Change organization + Initial Load + Refresh ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    useEffect(() => 
+    {
+        if (!user) return;
+        if (!activeOrganization) return;
+        
+        fetchArtifacts();
+
+        // Listen for refresh event
+        const handleRefresh = () => 
+        {
+            fetchArtifacts();
+        };
+
+        window.addEventListener('refreshPage', handleRefresh);
+        // console.log("Event listener added for refreshPage");
+
+        return () => 
+        {
+            // console.log("Cleaning up event listener");
+            window.removeEventListener('refreshPage', handleRefresh);
+        };
+    }, [user, activeOrganization]);
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // REMOVE / UNLINK TASK FROM ARTIFACT
     const handleRemoveTask = async () => 
@@ -276,16 +328,6 @@ export default function ArtifactPage()
         setTaskDescription("");
         setTaskHasChanges(false);
     };
-
-    // ── Change organization ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
-    {
-        if (!user) return;
-        if (activeOrganization) 
-        {
-            fetchArtifacts();
-        }
-    }, [user, activeOrganization]);
 
     // ── Selected Artifact changed ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     useEffect(() => 
@@ -491,34 +533,6 @@ export default function ArtifactPage()
               setIsDeleting(false);
           }
       };
-
-    // ── Fetch Artifacts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    const fetchArtifacts = async () => 
-    {
-        if (!activeOrganization) return;
-
-        try 
-        {
-            const res = await fetch(`/api/artifact?organizationId=${activeOrganization.id}`);
-            const data = await res.json();
-
-            if (!data.success) 
-            {
-                console.error('Failed to fetch artifacts:', data.message);
-                return;
-            }
-
-            setArtifacts(data.data);
-        } 
-        catch (error) 
-        {
-            console.error('Failed to fetch artifacts:', error);
-        } 
-        finally 
-        {
-            setLoading(false);
-        }
-    };
 
     const filteredArtifacts = artifacts.filter(artifact =>
       artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||

@@ -239,10 +239,10 @@ export async function PATCH(request: NextRequest)
 
         // Parse request body
         const body = await request.json();
-        const { id, applicationName, homeDirectory } = body;
+        const { id, applicationName, homeDirectory, pollingInterval } = body;
 
         // Validate ID
-        if (!id || typeof id !== 'number') 
+        if (!id || typeof id !== 'number')
         {
             return NextResponse.json(
                 { success: false, message: 'Settings ID is required' },
@@ -252,15 +252,27 @@ export async function PATCH(request: NextRequest)
 
         // Build update data
         const updateData: any = {};
-        if (applicationName !== undefined) 
+        if (applicationName !== undefined)
         {
             updateData.applicationName = applicationName.trim();
         }
 
-        if (homeDirectory !== undefined) 
+        if (homeDirectory !== undefined)
         {
             updateData.homeDirectory = homeDirectory.trim();
             updateData.homeDirectory = homeDirectory.replace(/\/+$/, '');
+        }
+
+        if (pollingInterval !== undefined)
+        {
+            if (typeof pollingInterval !== 'number' || pollingInterval < 1000)
+            {
+                return NextResponse.json(
+                    { success: false, message: 'pollingInterval must be a number >= 1000 (milliseconds)' },
+                    { status: 400 }
+                );
+            }
+            updateData.pollingInterval = pollingInterval;
         }
 
         // Update settings

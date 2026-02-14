@@ -1,7 +1,7 @@
 'use client';
 
 import { useRouter, usePathname }   from 'next/navigation';
-import { useState }                 from 'react';
+import { useState, useEffect }      from 'react';
 import Link                         from 'next/link'
 import { Button }                   from "@/components/ui/button"
 import { 
@@ -133,6 +133,8 @@ export default function AuthorizedLayout({children, user, organizations, tasks}:
     const router = useRouter();
     const [openSubmenu, setOpenSubmenu] = useState<string | null>('tasks1'); // ← Set initial value here
     const [isRefreshing, setIsRefreshing] = useState(false);
+    const [messageCount, setMessageCount] = useState(0);
+    const [pollingInterval, setPollingInterval] = useState(30000); // Default 30 seconds
 
     const handleSubmenuToggle = (menuName: string) => {
     setOpenSubmenu(prev => prev === menuName ? null : menuName);
@@ -287,6 +289,77 @@ function SidebarLogo()
   const openTasks = tasks.filter(task => task.status === 'OPEN');
   const waitingTasks = tasks.filter(task => task.status === 'NOT_STARTED');
   const closedTasks = tasks.filter(task => task.status === 'CLOSED');
+
+  // Fetch settings to get polling interval
+  const fetchSettings = async () => {
+    try {
+      const res = await fetch('/api/settings');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.data.pollingInterval) {
+          setPollingInterval(data.data.pollingInterval);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching settings:', error);
+    }
+  };
+
+  // Fetch unread message count
+  const fetchUnreadCount = async () => {
+    try {
+      const res = await fetch('/api/message/unread-count');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success) {
+          setMessageCount(data.data.count);
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching unread count:', error);
+    }
+  };
+
+  // Fetch settings and unread count on mount
+  useEffect(() => {
+    fetchSettings();
+    fetchUnreadCount();
+
+    const handleRefresh = () => {
+      fetchUnreadCount();
+    };
+
+    window.addEventListener('refreshPage', handleRefresh);
+    return () => window.removeEventListener('refreshPage', handleRefresh);
+  }, []);
+
+  // Periodic polling - only check for new unread messages (lightweight)
+  // Full page refresh (refreshPage event) is reserved for manual actions only
+  useEffect(() => {
+    // When user returns to the tab, do a lightweight unread count check
+    const handleVisibilityChange = () => {
+      if (!document.hidden) {
+        fetchUnreadCount();
+      }
+    };
+
+    // Periodically poll only the unread message count (bell icon)
+    const intervalId = setInterval(() => {
+      if (!document.hidden) {
+        setIsRefreshing(true);
+        fetchUnreadCount().finally(() => {
+          setTimeout(() => setIsRefreshing(false), 1500);
+        });
+      }
+    }, pollingInterval);
+
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    return () => {
+      clearInterval(intervalId);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, [pollingInterval]);
 
 
   return (
@@ -673,8 +746,13 @@ function SidebarLogo()
                     </DropdownMenuLabel>
 
                     <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
-                      Settings
+                      Profile Settings
                     </DropdownMenuItem>
+                    {user.role === 'SUPER_ADMIN' && (
+                      <DropdownMenuItem onClick={() => router.push('/settings/application')}>
+                        Application Settings
+                      </DropdownMenuItem>
+                    )}
                     <DropdownMenuSub>
                       <DropdownMenuSubTrigger>Language</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
@@ -724,11 +802,49 @@ function SidebarLogo()
 
             {/* ACTIONS */ }
             <div className="
-                flex 
-                items-end 
-                gap-2 
+                flex
+                items-end
+                gap-2
                 ml-auto
                 mr-2">
+              {/* Messages/Notifications Icon with Badge */}
+              <div className="relative">
+                <Bell
+                  className="
+                    w-6 h-6
+                    text-muted-foreground
+                    hover:text-foreground
+                    cursor-pointer
+                    transition-colors
+                  "
+                  onClick={() => {
+                    // Handle message/notification click
+                    console.log('Messages clicked');
+                  }}
+                />
+                {/* Notification Badge */}
+                {messageCount > 0 && (
+                  <span className="
+                      absolute
+                      -top-1
+                      -right-1
+                      bg-red-500
+                      text-white
+                      text-[10px]
+                      font-semibold
+                      rounded-full
+                      h-4
+                      w-4
+                      flex
+                      items-center
+                      justify-center
+                      pointer-events-none
+                    ">
+                    {messageCount}
+                  </span>
+                )}
+              </div>
+              {/* Refresh Icon */}
               <Cog 
                 className={`
                   w-6 h-6
@@ -739,7 +855,7 @@ function SidebarLogo()
                 onClick={() => {
                   setIsRefreshing(true);
                   window.dispatchEvent(new Event('refreshPage'));
-                  setTimeout(() => setIsRefreshing(false), 1000);
+                  setTimeout(() => setIsRefreshing(false), 1500);
                 }}
               />
             </div>

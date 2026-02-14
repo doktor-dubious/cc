@@ -335,12 +335,6 @@ values (1, 20);
 insert into task_artifact (task_id, artifact_id)
 values (1, 21);
 
-insert into task_artifact (task_id, artifact_id)
-values (1, 22);
-
-insert into task_artifact (task_id, artifact_id)
-values (1, 23);
-
 
 -- login
 SELECT setval(

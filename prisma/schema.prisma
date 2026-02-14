@@ -52,12 +52,24 @@ enum ArtifactType {
     OTHER
 }
 
+enum MessageType {
+    SYSTEM                              /* System-generated message */
+    USER                                /* Message from a user      */
+}
+
+enum EventImportance {
+    LOW
+    MIDDLE
+    HIGH
+}
+
 /* Global Settings */
 model Settings {
     id                  Int       @id(map: "settings_pkey") @default(autoincrement())
 
     applicationName     String                                                            @map("application_name")
     homeDirectory       String                                                            @map("home_directory")
+    pollingInterval     Int       @default(30000)                                         @map("polling_interval")  /* Refresh interval in milliseconds */
 
     active              Boolean   @default(true)
     createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
@@ -78,6 +90,8 @@ model User {
     createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
     updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
     profile             Profile?
+    messages            Message[]
+    events              Event[]
 
     @@map("login")
 }
@@ -95,6 +109,7 @@ model Organization {
     profiles            Profile[]
     tasks               Task[]
     artifacts           Artifact[]
+    events              Event[]
 
     @@map("organization")
 }
@@ -136,6 +151,7 @@ model Profile {
     user                        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
     organization                Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     taskProfiles                TaskProfile[]
+    events                      Event[]
 
     @@index([organizationId])
     @@index([userId])
@@ -164,6 +180,7 @@ model Artifact {
 
     organization        Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     taskArtifacts       TaskArtifact[]
+    events              Event[]
 
     @@index([organizationId])
 
@@ -189,6 +206,8 @@ model Task {
     organization        Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
     taskProfiles        TaskProfile[]                                                                                         /* Zero or more Profiles */
     taskArtifacts       TaskArtifact[]                                                                                        /* Zero or more Artifacts */
+    messages            Message[]                                                                                             /* Zero or more Messages */
+    events              Event[]                                                                                               /* Zero or more Events */
 
     @@index([organizationId])
     @@index([startAt])
@@ -224,6 +243,69 @@ model TaskArtifact {
     @@index([artifactId])
 
     @@map("task_artifact")
+}
+
+/* Messages tied to Tasks - can be system-generated or from users */
+model Message {
+    id                  Int       @id(map: "message_pkey") @default(autoincrement())
+    taskId              Int                                                               @map("task_id")
+    type                MessageType @default(USER)
+    content             String    @db.Text
+
+    /* If type is USER, senderId should be set. If SYSTEM, it can be null */
+    senderId            Int?                                                              @map("sender_id")
+
+    isRead              Boolean   @default(false)                                         @map("is_read")
+    active              Boolean   @default(true)
+    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
+    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
+
+    task                Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+    sender              User?     @relation(fields: [senderId], references: [id], onDelete: SetNull)
+
+    @@index([taskId])
+    @@index([senderId])
+    @@index([isRead])
+    @@index([createdAt])
+
+    @@map("message")
+}
+
+/* Event/Audit Log - Tracks actions across different entities */
+model Event {
+    id                  Int       @id(map: "event_pkey") @default(autoincrement())
+    importance          EventImportance?
+
+    message             String    @db.Text
+
+    /* User who initiated the action (null if system-generated) */
+    userId              Int?                                                              @map("user_id")
+
+    /* The event can be attached to one of these entities */
+    organizationId      Int?                                                              @map("organization_id")
+    taskId              Int?                                                              @map("task_id")
+    profileId           Int?                                                              @map("profile_id")
+    artifactId          Int?                                                              @map("artifact_id")
+
+    active              Boolean   @default(true)
+    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
+    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
+
+    /* Relations */
+    user                User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
+    organization        Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+    task                Task?         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+    profile             Profile?      @relation(fields: [profileId], references: [id], onDelete: Cascade)
+    artifact            Artifact?     @relation(fields: [artifactId], references: [id], onDelete: Cascade)
+
+    @@index([userId])
+    @@index([organizationId])
+    @@index([taskId])
+    @@index([profileId])
+    @@index([artifactId])
+    @@index([createdAt])
+
+    @@map("event")
 }
 
 

@@ -5,7 +5,7 @@ import { zxcvbn }                         from '@/lib/zxcvbn';
 import { useUser }                        from '@/context/UserContext';
 import { useOrganization }                from '@/context/OrganizationContext';
 import { useRouter }                      from 'next/navigation';
-import { SquarePen, Trash2 }              from 'lucide-react';
+import { Trash2 }                         from 'lucide-react';
 import { Button }                         from "@/components/ui/button";
 
 import {
@@ -120,6 +120,12 @@ export default function ProfilePage()
     const [taskHasChanges, setTaskHasChanges] = useState(false);
 
 
+    // Events / Audit Trail ────────────────────────────────────────
+    const [events, setEvents] = useState<any[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(false);
+    const [eventsCurrentPage, setEventsCurrentPage] = useState(1);
+    const eventsPerPage = 8;
+
     const [initialForm, setInitialForm] = useState<null | {
         name        : string;
         description : string;
@@ -128,6 +134,86 @@ export default function ProfilePage()
         nickname    : string;
         role        : string;
     }>(null);
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH PROFILES
+    const fetchProfiles = async () => 
+    {
+        if (!activeOrganization) return;
+
+        try 
+        {
+            const res = await fetch(`/api/profile?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (!data.success) 
+            {
+                console.error('Failed tNewo fetch profiles:', data.error);
+                return;
+            }
+            setProfiles(data.data);
+        } 
+        catch (error) 
+        {
+            console.error('Failed to fetch profiles:', error);
+        } 
+        finally 
+        {
+            setLoading(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH EVENTS FOR SELECTED PROFILE
+    const fetchEvents = async (profileId: number) =>
+    {
+        setLoadingEvents(true);
+        try
+        {
+            const res = await fetch(`/api/event?profileId=${profileId}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch events:', data.error || data.message);
+                setEvents([]);
+                return;
+            }
+            setEvents(data.data || []);
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch events:', error);
+            setEvents([]);
+        }
+        finally
+        {
+            setLoadingEvents(false);
+        }
+    };
+
+    // ── Change organization + Initial Load──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    useEffect(() => 
+    {
+        if (!user) return;
+        if (!activeOrganization) return; 
+
+        fetchProfiles();
+
+        // Listen for refresh event
+        const handleRefresh = () => 
+        {
+            fetchProfiles();
+        };
+
+        window.addEventListener('refreshPage', handleRefresh);
+        // console.log("Event listener added for refreshPage");
+
+        return () => 
+        {
+            // console.log("Cleaning up event listener");
+            window.removeEventListener('refreshPage', handleRefresh);
+        };
+    }, [user, activeOrganization]);
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // DETETE / UNASSIGN TASK FROM PROFILE
@@ -238,6 +324,8 @@ export default function ProfilePage()
         };
     }, []);
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Check email is available
     const checkEmailAvailability = async (emailToCheck: string) =>
     {
         if (!emailToCheck.trim())
@@ -384,6 +472,7 @@ export default function ProfilePage()
         setTaskHasChanges(nameChanged || descChanged);
     }, [taskName, taskDescription, selectedTask]);
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // ── Save edited task ───────────────────────────────────────────────────────
     const handleTaskSave = async () => 
     {
@@ -465,16 +554,6 @@ export default function ProfilePage()
         setTaskHasChanges(false);
     };
 
-    // ── Change organization ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
-    {
-        if (!user) return;
-        if (activeOrganization) 
-        {
-            fetchProfiles();
-        }
-    }, [user, activeOrganization]);
-
     // ── Selected Profile changed ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     useEffect(() => 
     {
@@ -491,8 +570,11 @@ export default function ProfilePage()
             setNickname(selectedProfile.user?.nickname || "");
             setWorkFunction(selectedProfile.user?.workFunction || "DEVELOPER");
             setRole(selectedProfile.user?.role || "USER");
+
+            // Fetch events for this profile
+            fetchEvents(selectedProfile.id);
         }
-        else 
+        else
         {
             setName("");
             setDescription("");
@@ -502,6 +584,7 @@ export default function ProfilePage()
             setNickname("");
             setWorkFunction("DEVELOPER");
             setRole("USER");
+            setEvents([]);
         }
     }, [selectedProfile]);
 
@@ -615,33 +698,6 @@ export default function ProfilePage()
         setHasChanges(false);
         setEmailValid(null);
         setIsNewDialogOpen(false);
-    };
-
-    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // FETCH PROFILES
-    const fetchProfiles = async () => 
-    {
-        if (!activeOrganization) return;
-
-        try 
-        {
-            const res = await fetch(`/api/profile?organizationId=${activeOrganization.id}`);
-            const data = await res.json();
-            if (!data.success) 
-            {
-                console.error('Failed tNewo fetch profiles:', data.error);
-                return;
-            }
-            setProfiles(data.data);
-        } 
-        catch (error) 
-        {
-            console.error('Failed to fetch profiles:', error);
-        } 
-        finally 
-        {
-            setLoading(false);
-        }
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1203,13 +1259,12 @@ export default function ProfilePage()
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
               <TableHead className="w-28 text-right">Tasks</TableHead>
-              <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentProfiles.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   {filterText ? "No profiles match your filter" : "No profiles found"}
                 </TableCell>
               </TableRow>
@@ -1236,28 +1291,6 @@ export default function ProfilePage()
                   </TableCell>
                   <TableCell className="w-28 text-right tabular-nums">
                     {profile.taskProfiles?.length || 0}
-                  </TableCell>
-                  <TableCell className="w-20 text-right">
-                    <div onClick={(e) => e.stopPropagation()} className="flex justify-end gap-2">
-                      <button
-                        className="hover:text-primary p-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedProfile(profile);
-                        }}
-                      >
-                        <SquarePen size={16} className="cursor-pointer" />
-                      </button>
-                      <button
-                        className="hover:text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setProfileToDelete(profile.id);
-                        }}
-                      >
-                        <Trash2 size={16} className="cursor-pointer" />
-                      </button>
-                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -1315,8 +1348,8 @@ export default function ProfilePage()
               <hr className="my-8" />
 
               <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-                <div className="relative w-full max-w-200">
-                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-4">
+                <div className="relative w-full max-w-300">
+                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-6">
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
@@ -1335,12 +1368,27 @@ export default function ProfilePage()
                     >
                       Tasks ({selectedProfile.taskProfiles?.length || 0})
                     </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      value="audit"
+                    >
+                      Audit Trail ({events.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      value="actions"
+                    >
+                      Actions
+                    </TabsTrigger>
                   </TabsList>
                   <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
-                      width: '25%',
-                      left: activeTab === 'login' ? '25%' : activeTab === 'tasks' ? '50%' : activeTab === 'organizations' ? '75%' : '0%'
+                      width: '16.666%',
+                      left: activeTab === 'login' ? '16.666%' :
+                           activeTab === 'tasks' ? '33.333%' :
+                           activeTab === 'audit' ? '50%' :
+                           activeTab === 'actions' ? '66.666%' : '0%'
                     }}
                   />
                 </div>
@@ -1561,6 +1609,147 @@ export default function ProfilePage()
                     )}
                     </TableBody>
                   </Table>
+                </TabsContent>
+
+                {/* Audit Trail Tab */}
+                <TabsContent value="audit" className="mt-6">
+                  {loadingEvents ? (
+                    <div className="text-center text-muted-foreground py-8">Loading events...</div>
+                  ) : events.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-8">No events for this profile</div>
+                  ) : (
+                    <>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-20 text-right">ID</TableHead>
+                            <TableHead className="w-40">Date</TableHead>
+                            <TableHead className="w-40">User</TableHead>
+                            <TableHead className="w-32">Importance</TableHead>
+                            <TableHead>Message</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {(() => {
+                            const startIdx = (eventsCurrentPage - 1) * eventsPerPage;
+                            const endIdx = startIdx + eventsPerPage;
+                            const currentEvents = events.slice(startIdx, endIdx);
+
+                            return currentEvents.map((event: any) => (
+                              <TableRow key={event.id}>
+                                <TableCell className="w-20 text-right tabular-nums">{event.id}</TableCell>
+                                <TableCell className="w-40 text-xs">
+                                  {new Date(event.createdAt).toLocaleString()}
+                                </TableCell>
+                                <TableCell className="w-40">
+                                  {event.user?.name || 'System'}
+                                </TableCell>
+                                <TableCell className="w-32">
+                                  {event.importance ? (
+                                    <Badge
+                                      variant="secondary"
+                                      className={`px-2 py-1 text-xs ${
+                                        event.importance === 'HIGH' ? 'bg-red-500/20 text-red-400' :
+                                        event.importance === 'MIDDLE' ? 'bg-yellow-500/20 text-yellow-400' :
+                                        'bg-blue-500/20 text-blue-400'
+                                      }`}
+                                    >
+                                      {event.importance}
+                                    </Badge>
+                                  ) : (
+                                    <span className="text-muted-foreground text-xs">-</span>
+                                  )}
+                                </TableCell>
+                                <TableCell>{event.message}</TableCell>
+                              </TableRow>
+                            ));
+                          })()}
+                        </TableBody>
+                      </Table>
+
+                      {/* Events Pagination */}
+                      {(() => {
+                        const totalEventsPages = Math.ceil(events.length / eventsPerPage);
+                        const startIdx = (eventsCurrentPage - 1) * eventsPerPage;
+                        const endIdx = Math.min(startIdx + eventsPerPage, events.length);
+
+                        return totalEventsPages > 1 && (
+                          <div className="flex items-center justify-between mt-6">
+                            <div className="text-sm text-muted-foreground">
+                              Showing {startIdx + 1} to {endIdx} of {events.length} events
+                            </div>
+
+                            <div className="flex justify-end">
+                              <Pagination>
+                                <PaginationContent>
+                                  <PaginationItem>
+                                    <PaginationPrevious
+                                      onClick={() => setEventsCurrentPage(prev => Math.max(prev - 1, 1))}
+                                      className={eventsCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                    />
+                                  </PaginationItem>
+
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex gap-1">
+                                      {Array.from({ length: totalEventsPages }, (_, i) => i + 1).map((page) => (
+                                        <PaginationItem key={page}>
+                                          <PaginationLink
+                                            onClick={() => setEventsCurrentPage(page)}
+                                            isActive={eventsCurrentPage === page}
+                                            className="cursor-pointer"
+                                          >
+                                            {page}
+                                          </PaginationLink>
+                                        </PaginationItem>
+                                      ))}
+                                    </div>
+
+                                    <PaginationItem>
+                                      <PaginationNext
+                                        onClick={() => setEventsCurrentPage(prev => Math.min(prev + 1, totalEventsPages))}
+                                        className={eventsCurrentPage === totalEventsPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                      />
+                                    </PaginationItem>
+                                  </div>
+                                </PaginationContent>
+                              </Pagination>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </>
+                  )}
+                </TabsContent>
+
+                {/* Actions Tab */}
+                <TabsContent value="actions" className="mt-6">
+                  <div className="space-y-6 max-w-2xl">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">Profile Actions</h3>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Manage this profile with the actions below.
+                      </p>
+                    </div>
+
+                    <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-destructive mb-1">Delete Profile</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Permanently delete this profile and all associated data. This action cannot be undone.
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          onClick={() => setProfileToDelete(selectedProfile.id)}
+                          className="shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete Profile
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>

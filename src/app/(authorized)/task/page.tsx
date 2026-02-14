@@ -8,7 +8,7 @@ import { TASK_STATUS_LABELS, TASK_STATUSES }    from '@/lib/constants/task-statu
 import { TaskStatus }                           from '@prisma/client';
 import { format }                               from "date-fns";
 
-import { SquarePen, Trash2 } from 'lucide-react';
+import { Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 
 import {
@@ -97,7 +97,19 @@ export default function TaskPage()
     const [isDeleting, setIsDeleting] = useState(false);
 
     const [filterText, setFilterText] = useState("");
-    const [activeTab, setActiveTab] = useState("details");
+    const [activeTab, setActiveTab] = useState("messages");
+    const [messages, setMessages] = useState<any[]>([]);
+    const [loadingMessages, setLoadingMessages] = useState(false);
+    const [messagesCurrentPage, setMessagesCurrentPage] = useState(1);
+    const messagesPerPage = 8;
+    const [artifactsCurrentPage, setArtifactsCurrentPage] = useState(1);
+    const artifactsPerPage = 10;
+    const [profilesCurrentPage, setProfilesCurrentPage] = useState(1);
+    const profilesPerPage = 10;
+    const [events, setEvents] = useState<any[]>([]);
+    const [loadingEvents, setLoadingEvents] = useState(false);
+    const [eventsCurrentPage, setEventsCurrentPage] = useState(1);
+    const eventsPerPage = 8;
 
     const [selectedArtifact, setSelectedArtifact] = useState<any | null>(null);
     const [isEditArtifactDialogOpen, setIsEditArtifactDialogOpen] = useState(false);
@@ -116,6 +128,241 @@ export default function TaskPage()
 
     // For removing profiles from this task
     const [profileToRemove, setProfileToRemove] = useState<number | null>(null);
+
+    // For adding profiles to this task
+    const [isAddProfileDialogOpen, setIsAddProfileDialogOpen] = useState(false);
+    const [searchProfileText, setSearchProfileText] = useState("");
+    const [availableProfiles, setAvailableProfiles] = useState<any[]>([]);
+    const [selectedProfileToAdd, setSelectedProfileToAdd] = useState<number | null>(null);
+
+    // For viewing full message in modal
+    const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
+    const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH TASKS
+    const fetchTasks = async () =>
+    {
+        if (!activeOrganization) return;
+
+        try
+        {
+            const res = await fetch(`/api/task?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+              console.error('Failed to fetch tasks:', data.message);
+              return;
+            }
+            setTasks(data.data);
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch tasks:', error);
+        }
+        finally
+        {
+            setLoading(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH MESSAGES FOR SELECTED TASK
+    const fetchMessages = async (taskId: number) =>
+    {
+        setLoadingMessages(true);
+        try
+        {
+            const res = await fetch(`/api/message?taskId=${taskId}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch messages:', data.message);
+                setMessages([]);
+                return;
+            }
+            setMessages(data.data || []);
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch messages:', error);
+            setMessages([]);
+        }
+        finally
+        {
+            setLoadingMessages(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH EVENTS FOR SELECTED TASK
+    const fetchEvents = async (taskId: number) =>
+    {
+        console.log('Fetching events for task:', taskId);
+        setLoadingEvents(true);
+        try
+        {
+            const res = await fetch(`/api/event?taskId=${taskId}`);
+            console.log('Event API response status:', res.status);
+            const data = await res.json();
+            console.log('Event API response data:', data);
+            if (!data.success)
+            {
+                console.error('Failed to fetch events:', data.error || data.message);
+                setEvents([]);
+                return;
+            }
+            console.log('Setting events:', data.data?.length || 0, 'events');
+            setEvents(data.data || []);
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch events:', error);
+            setEvents([]);
+        }
+        finally
+        {
+            setLoadingEvents(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // CREATE EVENT
+    const createEvent = async (message: string, importance: 'LOW' | 'MIDDLE' | 'HIGH', taskId: number) =>
+    {
+        try
+        {
+            await fetch('/api/event', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    message,
+                    importance,
+                    taskId,
+                    organizationId: activeOrganization?.id,
+                }),
+            });
+            // Refresh events list
+            fetchEvents(taskId);
+        }
+        catch (error)
+        {
+            console.error('Failed to create event:', error);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // VIEW MESSAGE IN MODAL
+    const handleViewMessage = (message: any) =>
+    {
+        setSelectedMessage(message);
+        setIsMessageModalOpen(true);
+
+        // Mark as read if it's unread
+        if (!message.isRead) {
+            handleMarkMessageAsRead(message.id);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // MARK SINGLE MESSAGE AS READ
+    const handleMarkMessageAsRead = async (messageId: number) =>
+    {
+        const message = messages.find(m => m.id === messageId);
+        if (!message || message.isRead) return;
+
+        try
+        {
+            const res = await fetch(`/api/message/${messageId}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ isRead: true }),
+            });
+
+            if (res.ok)
+            {
+                // Update local state
+                setMessages(prev => prev.map(m =>
+                    m.id === messageId ? { ...m, isRead: true } : m
+                ));
+
+                // Trigger global refresh to update bell icon count
+                window.dispatchEvent(new Event('refreshPage'));
+            }
+        }
+        catch (error)
+        {
+            console.error('Failed to mark message as read:', error);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // MARK ALL MESSAGES AS READ
+    const handleMarkAllAsRead = async () =>
+    {
+        if (!selectedTask) return;
+
+        const unreadMessages = messages.filter(m => !m.isRead);
+        if (unreadMessages.length === 0) return;
+
+        try
+        {
+            // Mark all unread messages as read
+            const promises = unreadMessages.map(message =>
+                fetch(`/api/message/${message.id}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isRead: true }),
+                })
+            );
+
+            await Promise.all(promises);
+
+            // Update local state
+            setMessages(prevMessages =>
+                prevMessages.map(m => ({ ...m, isRead: true }))
+            );
+
+            // Trigger global refresh to update bell icon count
+            window.dispatchEvent(new Event('refreshPage'));
+
+            toast.success('All messages marked as read');
+        }
+        catch (error)
+        {
+            console.error('Failed to mark messages as read:', error);
+            toast.error('Failed to mark messages as read');
+        }
+    };
+
+    // ── Change organization + Initial Load + Refresh ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    useEffect(() => 
+    {
+        if (!user) return;
+        if (!activeOrganization) return;
+
+        fetchTasks();
+
+        // Listen for refresh event
+        const handleRefresh = () =>
+        {
+            fetchTasks();
+            // Also refresh messages and events if a task is selected
+            if (selectedTask) {
+                fetchMessages(selectedTask.id);
+                fetchEvents(selectedTask.id);
+            }
+        };
+
+        window.addEventListener('refreshPage', handleRefresh);
+
+        return () =>
+        {
+            window.removeEventListener('refreshPage', handleRefresh);
+        };
+
+    }, [user, activeOrganization, selectedTask]);
+
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // REMOVE ARTIFACT FROM TASK
@@ -231,16 +478,6 @@ export default function TaskPage()
         }
     };
 
-    // ── Change organization ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
-    {
-        if (!user) return;
-        if (activeOrganization) 
-        {
-            fetchTasks();
-        }
-    }, [user, activeOrganization]);
-
     useEffect(() =>
     {
       if (selectedTask)
@@ -251,8 +488,10 @@ export default function TaskPage()
           setStartAt(selectedTask.startAt ? new Date(selectedTask.startAt).toISOString().slice(0, 10) : "");
           setEndAt(selectedTask.endAt ? new Date(selectedTask.endAt).toISOString().slice(0, 10) : "");
           setStatus(selectedTask.status || TaskStatus.NOT_STARTED);
-      } 
-      else 
+          fetchMessages(selectedTask.id);
+          fetchEvents(selectedTask.id);
+      }
+      else
       {
           setName("");
           setDescription("");
@@ -260,6 +499,8 @@ export default function TaskPage()
           setStartAt("");
           setEndAt("");
           setStatus(TaskStatus.NOT_STARTED);
+          setMessages([]);
+          setEvents([]);
       }
     }, [selectedTask]);
 
@@ -285,10 +526,24 @@ export default function TaskPage()
         setHasChanges(nameChanged || descChanged || evidenceChanged || statusChanged || startChanged || endChanged);
     }, [name, description, expectedEvidence, status, startAt, endAt, selectedTask]);
 
-  useEffect(() => 
+  useEffect(() =>
   {
       setCurrentPage(1);
   }, [filterText]);
+
+  // Reset message pagination when messages change
+  useEffect(() =>
+  {
+      setMessagesCurrentPage(1);
+  }, [messages]);
+
+  // Reset artifact, profile, and events pagination when task changes
+  useEffect(() =>
+  {
+      setArtifactsCurrentPage(1);
+      setProfilesCurrentPage(1);
+      setEventsCurrentPage(1);
+  }, [selectedTask]);
 
   const handleRowClick = (task: any) => 
   {
@@ -395,14 +650,46 @@ export default function TaskPage()
 
             const updatedTask = data.data;
 
-            if (isNew) 
+            if (isNew)
             {
                 setTasks(prev => [...prev, updatedTask]);
                 setSelectedTask(null);
                 setIsNewDialogOpen(false);
-            } 
-            else 
+            }
+            else
             {
+                // Track changes and create events
+                const changes = [];
+
+                if (selectedTask.name !== name.trim()) {
+                    changes.push({ message: 'Task name changed', importance: 'LOW' as const });
+                }
+                if (selectedTask.description !== description.trim()) {
+                    changes.push({ message: 'Task description changed', importance: 'LOW' as const });
+                }
+                if (selectedTask.expectedEvidence !== expectedEvidence.trim()) {
+                    changes.push({ message: 'Expected evidence changed', importance: 'LOW' as const });
+                }
+
+                const oldStartAt = selectedTask.startAt ? new Date(selectedTask.startAt).toISOString().slice(0, 10) : '';
+                if (oldStartAt !== startAt) {
+                    changes.push({ message: 'Start date changed', importance: 'MIDDLE' as const });
+                }
+
+                const oldEndAt = selectedTask.endAt ? new Date(selectedTask.endAt).toISOString().slice(0, 10) : '';
+                if (oldEndAt !== endAt) {
+                    changes.push({ message: 'End date changed', importance: 'MIDDLE' as const });
+                }
+
+                if (selectedTask.status !== status) {
+                    changes.push({ message: `Task status changed from ${selectedTask.status} to ${status}`, importance: 'HIGH' as const });
+                }
+
+                // Create events for all changes
+                for (const change of changes) {
+                    await createEvent(change.message, change.importance, updatedTask.id);
+                }
+
                 setTasks(prev => prev.map(t => t.id === selectedTask.id ? updatedTask : t));
                 setSelectedTask(updatedTask);
             }
@@ -653,44 +940,111 @@ useEffect(() => {
 
             toast.success("Profile updated successfully");
             setIsEditProfileDialogOpen(false);
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
             console.error(err);
             toast.error("Could not save profile");
-        } 
-        finally 
+        }
+        finally
         {
             setIsSaving(false);
         }
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // FETCH TASKS
-    const fetchTasks = async () => 
+    // ADD PROFILE TO TASK
+    const handleAddProfile = async () =>
     {
-        if (!activeOrganization) return;
+        if (!selectedProfileToAdd || !selectedTask) return;
 
-        try 
+        setIsSaving(true);
+
+        try
         {
-            const res = await fetch(`/api/task?organizationId=${activeOrganization.id}`);
+            const res = await fetch('/api/task-profile',
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    taskId: selectedTask.id,
+                    profileId: selectedProfileToAdd,
+                }),
+            });
+
+            if (!res.ok)
+            {
+                const err = await res.json();
+                throw new Error(err.message || 'Failed to add profile to task');
+            }
+
             const data = await res.json();
             if (!data.success)
             {
-              console.error('Failed to fetch tasks:', data.message);
-              return;
+                throw new Error(data.message || 'Operation failed');
             }
-            setTasks(data.data);
-        } 
-        catch (error) 
+
+            const taskProfile = data.data;
+
+            // Update tasks list
+            setTasks(prevTasks =>
+                prevTasks.map(task => {
+                    if (task.id !== selectedTask.id) return task;
+                    return {
+                        ...task,
+                        taskProfiles: [...task.taskProfiles, taskProfile],
+                    };
+                })
+            );
+
+            // Update selected task
+            setSelectedTask(prev => {
+                if (!prev) return prev;
+                return {
+                    ...prev,
+                    taskProfiles: [...prev.taskProfiles, taskProfile],
+                };
+            });
+
+            toast.success("Profile added to task");
+            setIsAddProfileDialogOpen(false);
+            setSelectedProfileToAdd(null);
+            setSearchProfileText("");
+        }
+        catch (err: any)
         {
-            console.error('Failed to fetch tasks:', error);
-        } 
-        finally 
+            console.error(err);
+            toast.error(err.message || "Could not add profile to task");
+        }
+        finally
         {
-            setLoading(false);
+            setIsSaving(false);
         }
     };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH AVAILABLE PROFILES (not yet assigned to this task)
+    useEffect(() => {
+        const fetchAvailableProfiles = async () => {
+            if (!isAddProfileDialogOpen || !selectedTask || !activeOrganization) return;
+
+            try {
+                const res = await fetch(`/api/profile?organizationId=${activeOrganization.id}`);
+                const data = await res.json();
+
+                if (data.success) {
+                    // Filter out profiles already assigned to this task
+                    const assignedProfileIds = selectedTask.taskProfiles.map((tp: any) => tp.profile.id);
+                    const available = data.data.filter((p: any) => !assignedProfileIds.includes(p.id));
+                    setAvailableProfiles(available);
+                }
+            } catch (error) {
+                console.error('Error fetching profiles:', error);
+            }
+        };
+
+        fetchAvailableProfiles();
+    }, [isAddProfileDialogOpen, selectedTask, activeOrganization]);
 
   const filteredTasks = tasks.filter(task =>
     task.name.toLowerCase().includes(filterText.toLowerCase()) ||
@@ -710,6 +1064,19 @@ useEffect(() => {
             OPEN        : 'bg-[var(--color-status-open)]',
             COMPLETED   : 'bg-[var(--color-status-completed)]',
             CLOSED      : 'bg-[var(--color-status-closed)]'
+        };
+        return styles[taskStatus as keyof typeof styles] || '';
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Audit Trail Importance badges.
+    const getEventImportanceBadge = (taskStatus: string) =>
+    {
+        const styles = 
+        {
+            LOW     : 'bg-[var(--color-event-low)]',
+            MIDDLE  : 'bg-[var(--color-event-middle)]',
+            HIGH    : 'bg-[var(--color-event-high)]',
         };
         return styles[taskStatus as keyof typeof styles] || '';
     };
@@ -785,6 +1152,29 @@ useEffect(() => {
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>
+
+{/* View full message modal */}
+<Dialog open={isMessageModalOpen} onOpenChange={setIsMessageModalOpen}>
+  <DialogContent className="max-w-2xl">
+    <DialogHeader>
+      <DialogTitle className="flex items-center gap-2">
+        {selectedMessage?.type === 'SYSTEM' ? (
+          <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
+            System
+          </Badge>
+        ) : (
+          <span>Message from {selectedMessage?.sender?.name || 'Unknown User'}</span>
+        )}
+      </DialogTitle>
+      <DialogDescription>
+        {selectedMessage && new Date(selectedMessage.createdAt).toLocaleString()}
+      </DialogDescription>
+    </DialogHeader>
+    <div className="mt-4 max-h-[60vh] overflow-y-auto pr-2">
+      <p className="text-sm whitespace-pre-wrap">{selectedMessage?.content}</p>
+    </div>
+  </DialogContent>
+</Dialog>
 
 
       <AlertDialog
@@ -1024,6 +1414,77 @@ useEffect(() => {
   </DialogContent>
 </Dialog>
 
+{/* Add Profile to Task Dialog */}
+<Dialog open={isAddProfileDialogOpen} onOpenChange={setIsAddProfileDialogOpen}>
+  <DialogContent className="sm:max-w-125">
+    <DialogHeader>
+      <DialogTitle>Add Profile to Task</DialogTitle>
+      <DialogDescription>
+        Select a profile to assign to this task.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="py-4">
+      <Input
+        placeholder="Search profiles..."
+        value={searchProfileText}
+        onChange={(e) => setSearchProfileText(e.target.value)}
+        className="mb-4"
+      />
+
+      <div className="border rounded-lg max-h-80 overflow-y-auto">
+        {availableProfiles
+          .filter(profile =>
+            profile.name.toLowerCase().includes(searchProfileText.toLowerCase()) ||
+            profile.id.toString().includes(searchProfileText)
+          )
+          .map((profile) => (
+            <div
+              key={profile.id}
+              className={`
+                p-3 border-b last:border-b-0 cursor-pointer transition-colors
+                ${selectedProfileToAdd === profile.id ? 'bg-muted' : 'hover:bg-muted/50'}
+              `}
+              onClick={() => setSelectedProfileToAdd(profile.id)}
+            >
+              <div className="font-medium">#{profile.id} - {profile.name}</div>
+              {profile.description && (
+                <div className="text-sm text-muted-foreground truncate">
+                  {profile.description}
+                </div>
+              )}
+            </div>
+          ))}
+        {availableProfiles.length === 0 && (
+          <div className="p-4 text-center text-muted-foreground">
+            No available profiles to add
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setIsAddProfileDialogOpen(false);
+          setSelectedProfileToAdd(null);
+          setSearchProfileText("");
+        }}
+        disabled={isSaving}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleAddProfile}
+        disabled={!selectedProfileToAdd || isSaving}
+      >
+        {isSaving ? "Adding..." : "Add Profile"}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
 
       <div className="space-y-8 p-6">
         <div className="flex justify-center">
@@ -1052,13 +1513,12 @@ useEffect(() => {
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead className="w-32">Status</TableHead>
-              <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentTasks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foregroundX">
+                <TableCell colSpan={4} className="text-center text-muted-foregroundX">
                   {filterText ? "No tasks match your filter" : "No tasks found"}
                 </TableCell>
               </TableRow>
@@ -1079,28 +1539,6 @@ useEffect(() => {
                     <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs status-badge`}>
                       {task.status.replace('_', ' ')}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="w-20 text-right">
-                    <div onClick={(e) => e.stopPropagation()} className="flex justify-end gap-2">
-                      <button
-                        className="hover:text-primary p-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedTask(task);
-                        }}
-                      >
-                        <SquarePen size={16} className="cursor-pointer" />
-                      </button>
-                      <button
-                        className="hover:text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setTaskToDelete(task.id);
-                        }}
-                      >
-                        <Trash2 size={16} className="cursor-pointer" />
-                      </button>
-                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -1157,36 +1595,196 @@ useEffect(() => {
             <div>
               <hr className="my-8" />
 
-              <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-                <div className="relative w-full max-w-150">
-                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-3">
+              <Tabs defaultValue="messages" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
+                <div className="relative w-full max-w-300">
+                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-6">
                     <TabsTrigger
-                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
+                      value="messages"
+                    >
+                      <span>Messages ({messages.length})</span>
+                      {(() => {
+                        const unreadCount = messages.filter(m => !m.isRead).length;
+                        return unreadCount > 0 && (
+                          <Badge variant="destructive" className="ml-2 h-5 px-2 text-xs">
+                            {unreadCount} new
+                          </Badge>
+                        );
+                      })()}
+                    </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="details"
                     >
                       Details
                     </TabsTrigger>
                     <TabsTrigger
-                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
+                      value="profiles"
+                    >
+                      Profiles ({selectedTask.taskProfiles?.length || 0})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="artifacts"
                     >
                       Artifacts ({selectedTask.taskArtifacts?.length || 0})
                     </TabsTrigger>
                     <TabsTrigger
-                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
-                      value="profiles"
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
+                      value="audit"
                     >
-                      Profiles ({selectedTask.taskProfiles?.length || 0})
+                      Audit Trail ({events.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
+                      value="actions"
+                    >
+                      Actions
                     </TabsTrigger>
                   </TabsList>
                   <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
-                      width: '33.333%',
-                      left: activeTab === 'artifacts' ? '33.333%' : activeTab === 'profiles' ? '66.666%' : '0%'
+                      width: '16.666%',
+                      left: activeTab === 'details' ? '16.666%' :
+                           activeTab === 'profiles' ? '33.333%' :
+                           activeTab === 'artifacts' ? '50%' :
+                           activeTab === 'audit' ? '66.666%' :
+                           activeTab === 'actions' ? '83.333%' : '0%'
                     }}
                   />
                 </div>
+
+                {/* ----------------------------------------------------------- */}
+                {/* Messages Tab */}
+                <TabsContent value="messages" className="mt-6">
+                  {loadingMessages ? (
+                    <div className="text-center text-muted-foreground py-8">Loading messages...</div>
+                  ) : messages.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-8">No messages for this task</div>
+                  ) : (
+                    <>
+                      {/* Mark all as read button */}
+                      {(() => {
+                        const unreadCount = messages.filter(m => !m.isRead).length;
+                        return unreadCount > 0 && (
+                          <div className="flex justify-end mb-4 max-w-3xl">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={handleMarkAllAsRead}
+                            >
+                              Mark all as read ({unreadCount})
+                            </Button>
+                          </div>
+                        );
+                      })()}
+
+                      <div className="space-y-4 max-w-3xl">
+                        {(() => {
+                          const totalMessagesPages = Math.ceil(messages.length / messagesPerPage);
+                          const startIndex = (messagesCurrentPage - 1) * messagesPerPage;
+                          const endIndex = startIndex + messagesPerPage;
+                          const currentMessages = messages.slice(startIndex, endIndex);
+
+                          return currentMessages.map((message) => (
+                            <div
+                              key={message.id}
+                              onClick={() => handleViewMessage(message)}
+                              className={`
+                                p-4 rounded-lg border relative cursor-pointer
+                                ${message.type === 'SYSTEM'
+                                  ? 'bg-blue-500/10 border-blue-500/30'
+                                  : 'bg-muted/50 border-border'
+                                }
+                                ${!message.isRead ? 'ring-2 ring-blue-400/30 hover:ring-blue-400/50' : 'hover:bg-muted/70'}
+                                transition-all
+                              `}
+                            >
+                              {!message.isRead && (
+                                <div className="absolute top-4 left-0 w-2 h-2 bg-blue-500 rounded-full -ml-1"></div>
+                              )}
+                              <div className="flex justify-between items-start mb-2">
+                                <div className="flex items-center gap-2">
+                                  {!message.isRead && (
+                                    <Badge variant="default" className="bg-blue-500 text-white text-[10px] px-1.5 py-0">
+                                      NEW
+                                    </Badge>
+                                  )}
+                                  {message.type === 'SYSTEM' ? (
+                                    <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
+                                      System
+                                    </Badge>
+                                  ) : (
+                                    <span className={`text-sm ${!message.isRead ? 'font-bold' : 'font-semibold'}`}>
+                                      {message.sender?.name || 'Unknown User'}
+                                    </span>
+                                  )}
+                                </div>
+                                <span className="text-xs text-muted-foreground">
+                                  {new Date(message.createdAt).toLocaleString()}
+                                </span>
+                              </div>
+                              <p className="text-sm whitespace-pre-wrap line-clamp-2">{message.content}</p>
+                            </div>
+                          ));
+                        })()}
+                      </div>
+
+                      {/* Messages Pagination */}
+                      {(() => {
+                        const totalMessagesPages = Math.ceil(messages.length / messagesPerPage);
+                        const startIndex = (messagesCurrentPage - 1) * messagesPerPage;
+                        const endIndex = Math.min(startIndex + messagesPerPage, messages.length);
+
+                        return totalMessagesPages > 1 && (
+                          <div className="flex items-center justify-between mt-6 max-w-3xl">
+                            <div className="text-sm text-muted-foreground">
+                              Showing {startIndex + 1} to {endIndex} of {messages.length} messages
+                            </div>
+
+                            <div className="flex justify-end">
+                              <Pagination>
+                                <PaginationContent>
+                                  <PaginationItem>
+                                    <PaginationPrevious
+                                      onClick={() => setMessagesCurrentPage(prev => Math.max(prev - 1, 1))}
+                                      className={messagesCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                    />
+                                  </PaginationItem>
+
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex gap-1">
+                                      {Array.from({ length: totalMessagesPages }, (_, i) => i + 1).map((page) => (
+                                        <PaginationItem key={page}>
+                                          <PaginationLink
+                                            onClick={() => setMessagesCurrentPage(page)}
+                                            isActive={messagesCurrentPage === page}
+                                            className="cursor-pointer"
+                                          >
+                                            {page}
+                                          </PaginationLink>
+                                        </PaginationItem>
+                                      ))}
+                                    </div>
+
+                                    <PaginationItem>
+                                      <PaginationNext
+                                        onClick={() => setMessagesCurrentPage(prev => Math.min(prev + 1, totalMessagesPages))}
+                                        className={messagesCurrentPage === totalMessagesPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                      />
+                                    </PaginationItem>
+                                  </div>
+                                </PaginationContent>
+                              </Pagination>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </>
+                  )}
+                </TabsContent>
 
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
@@ -1295,41 +1893,109 @@ useEffect(() => {
                     <TableBody>
                       {selectedTask.taskArtifacts?.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={3} className="text-center text-muted-foreground">
+                          <TableCell colSpan={4} className="text-center text-muted-foreground">
                             No artifacts found for this task
                           </TableCell>
                         </TableRow>
                       ) : (
-                        selectedTask.taskArtifacts?.map((ta: any) => (
-                          <TableRow 
-                            key={ta.artifact.id}
-                            className="cursor-pointer hover:bg-muted/50"
-                            onClick={() => handleArtifactRowClick(ta.artifact)}
-                          >
-                            <TableCell className="w-20 text-right tabular-nums">{ta.artifact.id}</TableCell>
-                            <TableCell>{ta.artifact.name}</TableCell>
-                            <TableCell>{ta.artifact.description || '-'}</TableCell>
-                            <TableCell className="text-right">
-                              <button
-                                className="hover:text-destructive p-1"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setArtifactToRemove(ta.artifact.id);
-                                }}
-                              >
-                                <Trash2 size={16} className="cursor-pointer" />
-                              </button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                        (() => {
+                          const artifacts = selectedTask.taskArtifacts || [];
+                          const startIndex = (artifactsCurrentPage - 1) * artifactsPerPage;
+                          const endIndex = startIndex + artifactsPerPage;
+                          const currentArtifacts = artifacts.slice(startIndex, endIndex);
+
+                          return currentArtifacts.map((ta: any) => (
+                            <TableRow
+                              key={ta.artifact.id}
+                              className="cursor-pointer hover:bg-muted/50"
+                              onClick={() => handleArtifactRowClick(ta.artifact)}
+                            >
+                              <TableCell className="w-20 text-right tabular-nums">{ta.artifact.id}</TableCell>
+                              <TableCell>{ta.artifact.name}</TableCell>
+                              <TableCell>{ta.artifact.description || '-'}</TableCell>
+                              <TableCell className="text-right">
+                                <button
+                                  className="hover:text-destructive p-1"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setArtifactToRemove(ta.artifact.id);
+                                  }}
+                                >
+                                  <Trash2 size={16} className="cursor-pointer" />
+                                </button>
+                              </TableCell>
+                            </TableRow>
+                          ));
+                        })()
                       )}
                     </TableBody>
                   </Table>
+
+                  {/* Artifacts Pagination */}
+                  {(() => {
+                    const artifacts = selectedTask.taskArtifacts || [];
+                    const totalPages = Math.ceil(artifacts.length / artifactsPerPage);
+                    const startIndex = (artifactsCurrentPage - 1) * artifactsPerPage;
+                    const endIndex = Math.min(startIndex + artifactsPerPage, artifacts.length);
+
+                    return totalPages > 1 && (
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-sm text-muted-foreground">
+                          Showing {startIndex + 1} to {endIndex} of {artifacts.length} artifacts
+                        </div>
+
+                        <div className="flex justify-end">
+                          <Pagination>
+                            <PaginationContent>
+                              <PaginationItem>
+                                <PaginationPrevious
+                                  onClick={() => setArtifactsCurrentPage(prev => Math.max(prev - 1, 1))}
+                                  className={artifactsCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                />
+                              </PaginationItem>
+
+                              <div className="flex items-center gap-2">
+                                <div className="flex gap-1">
+                                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <PaginationItem key={page}>
+                                      <PaginationLink
+                                        onClick={() => setArtifactsCurrentPage(page)}
+                                        isActive={artifactsCurrentPage === page}
+                                        className="cursor-pointer"
+                                      >
+                                        {page}
+                                      </PaginationLink>
+                                    </PaginationItem>
+                                  ))}
+                                </div>
+
+                                <PaginationItem>
+                                  <PaginationNext
+                                    onClick={() => setArtifactsCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    className={artifactsCurrentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                  />
+                                </PaginationItem>
+                              </div>
+                            </PaginationContent>
+                          </Pagination>
+                        </div>
+                      </div>
+                    );
+                  })()}
                 </TabsContent>
 
                 {/* ----------------------------------------------------------- */ }
                 {/* Profile Table */ }
                 <TabsContent value="profiles" className="mt-6">
+                  <div className="flex justify-center mb-4">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => setIsAddProfileDialogOpen(true)}
+                    >
+                      Add Profile
+                    </Button>
+                  </div>
                   <Table>
                     <TableHeader>
                       <TableRow>
@@ -1342,36 +2008,231 @@ useEffect(() => {
                     <TableBody>
                       {selectedTask.taskProfiles?.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={3} className="text-center text-muted-foreground">
+                          <TableCell colSpan={4} className="text-center text-muted-foreground">
                             No profiles assigned to this task
                           </TableCell>
                         </TableRow>
                       ) : (
-                        selectedTask.taskProfiles?.map((tp: any) => (
-                          <TableRow 
-                            key={tp.profile.id}
+                        (() => {
+                          const profiles = selectedTask.taskProfiles || [];
+                          const startIndex = (profilesCurrentPage - 1) * profilesPerPage;
+                          const endIndex = startIndex + profilesPerPage;
+                          const currentProfiles = profiles.slice(startIndex, endIndex);
+
+                          return currentProfiles.map((tp: any) => (
+                            <TableRow
+                              key={tp.profile.id}
                               className="cursor-pointer hover:bg-muted/50"
                               onClick={() => handleProfileRowClick(tp.profile)}
-                          >
-                            <TableCell className="w-20 text-right tabular-nums">{tp.profile.id}</TableCell>
-                            <TableCell>{tp.profile.name}</TableCell>
-                            <TableCell>{tp.profile.description || '-'}</TableCell>
-                            <TableCell className="text-right">
-                              <button
-                                className="hover:text-destructive p-1"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  setProfileToRemove(tp.profile.id);
-                                }}
-                              >
-                                <Trash2 size={16} className="cursor-pointer" />
-                              </button>
-                            </TableCell>
-                          </TableRow>
-                        ))
+                            >
+                              <TableCell className="w-20 text-right tabular-nums">{tp.profile.id}</TableCell>
+                              <TableCell>{tp.profile.name}</TableCell>
+                              <TableCell>{tp.profile.description || '-'}</TableCell>
+                              <TableCell className="text-right">
+                                <button
+                                  className="hover:text-destructive p-1"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setProfileToRemove(tp.profile.id);
+                                  }}
+                                >
+                                  <Trash2 size={16} className="cursor-pointer" />
+                                </button>
+                              </TableCell>
+                            </TableRow>
+                          ));
+                        })()
                       )}
                     </TableBody>
                   </Table>
+
+                  {/* Profiles Pagination */}
+                  {(() => {
+                    const profiles = selectedTask.taskProfiles || [];
+                    const totalPages = Math.ceil(profiles.length / profilesPerPage);
+                    const startIndex = (profilesCurrentPage - 1) * profilesPerPage;
+                    const endIndex = Math.min(startIndex + profilesPerPage, profiles.length);
+
+                    return totalPages > 1 && (
+                      <div className="flex items-center justify-between mt-4">
+                        <div className="text-sm text-muted-foreground">
+                          Showing {startIndex + 1} to {endIndex} of {profiles.length} profiles
+                        </div>
+
+                        <div className="flex justify-end">
+                          <Pagination>
+                            <PaginationContent>
+                              <PaginationItem>
+                                <PaginationPrevious
+                                  onClick={() => setProfilesCurrentPage(prev => Math.max(prev - 1, 1))}
+                                  className={profilesCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                />
+                              </PaginationItem>
+
+                              <div className="flex items-center gap-2">
+                                <div className="flex gap-1">
+                                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                                    <PaginationItem key={page}>
+                                      <PaginationLink
+                                        onClick={() => setProfilesCurrentPage(page)}
+                                        isActive={profilesCurrentPage === page}
+                                        className="cursor-pointer"
+                                      >
+                                        {page}
+                                      </PaginationLink>
+                                    </PaginationItem>
+                                  ))}
+                                </div>
+
+                                <PaginationItem>
+                                  <PaginationNext
+                                    onClick={() => setProfilesCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                                    className={profilesCurrentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                  />
+                                </PaginationItem>
+                              </div>
+                            </PaginationContent>
+                          </Pagination>
+                        </div>
+                      </div>
+                    );
+                  })()}
+                </TabsContent>
+
+                {/* ----------------------------------------------------------- */ }
+                {/* Audit Trail Table */ }
+                <TabsContent value="audit" className="mt-6">
+                  {loadingEvents ? (
+                    <div className="text-center text-muted-foreground py-8">Loading events...</div>
+                  ) : events.length === 0 ? (
+                    <div className="text-center text-muted-foreground py-8">No events for this task</div>
+                  ) : (
+                    <>
+                      <Table>
+                        <TableHeader>
+                          <TableRow>
+                            <TableHead className="w-20 text-right">ID</TableHead>
+                            <TableHead className="w-40">Date</TableHead>
+                            <TableHead className="w-40">User</TableHead>
+                            <TableHead className="w-32">Importance</TableHead>
+                            <TableHead>Message</TableHead>
+                          </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                          {(() => {
+                            const startIndex = (eventsCurrentPage - 1) * eventsPerPage;
+                            const endIndex = startIndex + eventsPerPage;
+                            const currentEvents = events.slice(startIndex, endIndex);
+
+                            return currentEvents.map((event: any) => (
+                              <TableRow key={event.id}>
+                                <TableCell className="w-20 text-right tabular-nums">{event.id}</TableCell>
+                                <TableCell className="w-40 text-xs">
+                                  {new Date(event.createdAt).toLocaleString()}
+                                </TableCell>
+                                <TableCell className="w-40">
+                                  {event.user?.name || 'System'}
+                                </TableCell>
+                                <TableCell className="w-32">
+                                    {event.importance ? (
+                                        <Badge variant="secondary" className={`${getEventImportanceBadge(event.importance)} px-2 py-1 text-xs audit-event-badge`}>
+                                            {event.importance.replace('_', ' ')}
+                                        </Badge>
+                                    ) : (
+                                        <span className="text-muted-foreground text-xs">-</span>
+                                    )}
+                                </TableCell>
+                                <TableCell>{event.message}</TableCell>
+                              </TableRow>
+                            ));
+                          })()}
+                        </TableBody>
+                      </Table>
+
+                      {/* Events Pagination */}
+                      {(() => {
+                        const totalEventsPages = Math.ceil(events.length / eventsPerPage);
+                        const startIndex = (eventsCurrentPage - 1) * eventsPerPage;
+                        const endIndex = Math.min(startIndex + eventsPerPage, events.length);
+
+                        return totalEventsPages > 1 && (
+                          <div className="flex items-center justify-between mt-6">
+                            <div className="text-sm text-muted-foreground">
+                              Showing {startIndex + 1} to {endIndex} of {events.length} events
+                            </div>
+
+                            <div className="flex justify-end">
+                              <Pagination>
+                                <PaginationContent>
+                                  <PaginationItem>
+                                    <PaginationPrevious
+                                      onClick={() => setEventsCurrentPage(prev => Math.max(prev - 1, 1))}
+                                      className={eventsCurrentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                    />
+                                  </PaginationItem>
+
+                                  <div className="flex items-center gap-2">
+                                    <div className="flex gap-1">
+                                      {Array.from({ length: totalEventsPages }, (_, i) => i + 1).map((page) => (
+                                        <PaginationItem key={page}>
+                                          <PaginationLink
+                                            onClick={() => setEventsCurrentPage(page)}
+                                            isActive={eventsCurrentPage === page}
+                                            className="cursor-pointer"
+                                          >
+                                            {page}
+                                          </PaginationLink>
+                                        </PaginationItem>
+                                      ))}
+                                    </div>
+
+                                    <PaginationItem>
+                                      <PaginationNext
+                                        onClick={() => setEventsCurrentPage(prev => Math.min(prev + 1, totalEventsPages))}
+                                        className={eventsCurrentPage === totalEventsPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                                      />
+                                    </PaginationItem>
+                                  </div>
+                                </PaginationContent>
+                              </Pagination>
+                            </div>
+                          </div>
+                        );
+                      })()}
+                    </>
+                  )}
+                </TabsContent>
+
+                {/* ----------------------------------------------------------- */ }
+                {/* Actions Tab */ }
+                <TabsContent value="actions" className="mt-6">
+                  <div className="space-y-6 max-w-2xl">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">Task Actions</h3>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        Manage this task with the actions below.
+                      </p>
+                    </div>
+
+                    <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-destructive mb-1">Delete Task</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Permanently delete this task and all associated data. This action cannot be undone.
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          onClick={() => setTaskToDelete(selectedTask.id)}
+                          className="shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          Delete Task
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>
