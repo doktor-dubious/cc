@@ -2,38 +2,103 @@
 
   * Tech Stack (React, Nextjs, Tailwind, Prisma, Postgres, Git)
       # Docker
-  * Overall Design & Theme Switcher
+
+  * Overall Design decisions
+
   * Login
       # Strengthen
       # Two Factor
       # Pen
-  * General Layout (Menus, Sidebars, etc)
-  * Organization Switcher
+
+  * General Layout
+      -> SideBar
+      -> Organization Switcher
+      -> Top Menu
+      -> Action Icons
+          --> New Messages notification
+          --> Refresh
+      -> Theme (Light/Dark) Switcher.
+
   * PAGE: Organization Maintanence
+      -> New Organization PopUp (Name, Description) => Audit Event
+      -> Details : Name, Description (View / Edit => Audit Event)
+      -> Settings (View / Edit => Audit Event) :: Upload Directory, Download Directory, Asset Directory
+      -> Profiles
+          --> Add / Remove Profiles from Organization => Audit Event
+          --> Edit Profiles (Name, Description) => Audit Event
+      -> Tasks
+          --> Add / Remove Tasks from Organization => Audit Event
+          --> Edit Tasks (Name, Description) => Audit Event
+      -> Audit Trail (View)
+      -> Actions (Delete => Audit Event)
+
   * PAGE: Profile Maintanence
+      -> New Profile PopUp (Profile Name, Description + Login Information: Email, Password, Login Name, Nickename, Role) => Audit Event
+      -> Details : Name Description (View / Edit => Audit Event)
+      -> Login : Login Name, Email, Password, Nickname, Role (View / Edit => Audit Event)
+          --> Email: Checked for validity, availability
+          --> Password: Verified for strength
+      -> Tasks
+          --> Add / Remove Tasks from Profile => Audit Event
+          --> Edit Tasks (Name, Description) => Audit Event
+      -> Audit Trail (View)
+      -> Actions (Delete => Audit Event)
+
   * PAGE: Task Maintanence
+      -> New Task PopUp (Task Name, Description, Expected Evidence, Start Date, End Date, Status) => Audit Event
+      -> Messages
+          --> New Message
+          --> Edit message (own only)
+          --> Delete messages
+      -> Details (Task Name, Description, Expected Evidence, Start Date, End Date, Status) (View / Edit => Audit Event)
+      -> Profiles
+          --> Add / Remove Profiles from Task => Audit Event
+          --> Edit Profiles (Name, Description) => Audit Event
+      -> Artifacts (Assets)
+          --> Remove Artifact from Task => Audit Event
+          --> Edit Artifact (Name, Description) => Audit Event
+      -> Audit Trail (View)
+      -> Actions (Delete => Audit Event)
+
       # Empty / Link New Task
       # Direct to Incomming Files / Upload Files
-      # Messages
       # Attach Task to Safeguard(s)
-  * PAGE: Asset Maintanence
+
+  * PAGE: Asset (Artifact) Maintanence
       # Download Asset
       # Preview Asset
+
   * PAGE: Incomming Files -> Assets
       # Preview
       # S3
       # MinIO
       # Localstack
-  * PAGE: Setup (partially)
+
+  * PAGE: Messages
+      -> View +Delete Message
+
+  * PAGE: Audit Trail
+
+  * PAGE: Application Setup (SUPER ADMIN)
+      -> View Edit (Application Name, Home Directory, Polling Interval)
+
+  * PAGE: Profile Setup (partially)
       # CC Setup (Super Admins)
         ## Home Directory
         ## FTP/SFTP Logins
       # Profile Setup
 
+
 ── Small Fixes / Errors ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  * Move delete button from master table to action tab in detail pane (too dangerous to have it in the master table).
+  ── To Do:
+  * ARTIFACT: Move delete button from master table to action tab in detail pane (too dangerous to have it in the master table).
   * Clean up colour schemas (globals.css)
+
+  ── Fixed:
+  * New Profile button on Profile page is not "default" style
+  * New Artifact button on Artifact page is not "default" style
+  * Audit badges on Profile page: wrong colours
 
 ── Not Started ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -42,11 +107,9 @@
       # Tasks
       # Messages
   * PAGE: Upload Files (Drag & Drop)
-  * PAGE: Messages (for overall list of all messages across Tasks - Task page still lacks messages)
   * PAGE: Reports
       -> Status Reports
       -> Progress Reports
-  * PAGE: Audit Trail
   * PAGE: Mechanical Turk (automatization setup)
       -> fetch files from external SFTP / S3, etc.
   * Documentstion
@@ -59,8 +122,6 @@
         -> PAGE: Terms of Service
   * Debug Console (Super Admin)
   * Log Viewer (Super Admin)
-  * Refresh Icon (top bar) / Functionality
-  * New Message(s) Icon  (top bar) / Pop Up functionality.
 
 
 ── Worked On ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -121,11 +182,81 @@
 * Page Profile : Added Audit Trail & Action tabs
 
 
+────────────────────
+── Sunday 15 Feb
+* Fixed pagniation elements being selectable on all pages (minor design improvement)
+* Fixed Organization save Error.
+* Added events to Profile
+* Added some more events to Organization
+* Fixed error when saving changing to a Profile
+* Page: Messages. Created new page to display all messages.
+* Page Task: Created button and functionality to create new messages.
+* Page Task: Added edit and delete to message popups.
+* Page: Audit Trail. Created new page to display all Audit Event.
+
 ----------
 The Events table should also have an "importance" column, with values: LOW, MIDDLE, HIGH. Which should also be included in the Audit Trail table.
 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
+
+* On the Organization Page. When editing a Profile (Profile Name, Description) it should generate an Audit Event, same as if the Profile had been updated from the Profile page. Same as with the Task (Name, Description) being updated. => Task Audit Event.
+
+* On the Profile Page. When editing a Task (Name, Description) it should generate an Audit Event, same as if the Task had been updated from the Task page.
+
+* On the Profile Page. When removing an artifact from the Task => generate an Audit Event (importance: MIDDLE) and when editing an Artifact (Name, Description) it should generate an Audit Event, same as if the Artifact had been updated from the Artifact page.
+
+* On the Artifact Page. 
+there should be two additional tab to the rightmost: Audit Trail and Actions.
+The action tab should have a delete button. The functionality taken from the delete button on the overview table. And the delete icon (as well as the edit icon) removed from the overview table.
+This is the same as on the Task page.
+
+* On the Artifact Page Editing "Artifact Name", "Description", and "Artifact Type" and "MIME Type" should generate events of LOW importance.
+
+* Editing an Artifact (name, description, type) generates an error:
+    Runtime TypeError
+
+    Cannot read properties of undefined (reading 'name')
+    src/app/(authorized)/asset/page.tsx (538:16) @ <unknown>
+
+
+      536 |
+      537 |     const filteredArtifacts = artifacts.filter(artifact =>
+    > 538 |       artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||
+          |                ^
+      539 |       artifact.id.toString().includes(filterText)
+      540 |     );
+
+
+* On the Artifact Page. When editing a Task (Name, Description) it should generate an Audit Event, same as if the Task had been updated from the Task page.
+
+* On the Artifact Page. The should be a button on the Task tab, to add a Task to an artifact. It should look about the same as the Add Profile button/pop up on the Tasks page under the Profiles tab. I.e., a search tasks input, and a list of all available tasks to select from. 
+
+* On the Artifact Page. The Action tab should have a button: Download Asset. Clicking on this should download the asset file to the local computer.
+
+* On the Artifact Page. The Action tab should have a button: Preview Asset. Clicking on this should generate functionality depending on the asset type.
+  **) if an image, open the image in a new tab.
+
+* On the Sidebar Menu. Clicking on New Task, should open the same popup/functionality as clicking on the button New Task on the Task page.
+
+* The Sidebar Menu is no longer being minimzed correctly. When minimized the Compliance Circle logo on the top should be displayed.
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+-------
+
+
+
+
+
+
+
+
+
 
 I added this to the Schema:
 
@@ -193,13 +324,6 @@ Also add an "Audit Trail" - same as on the Task page.
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
--- HERETO
--- HERETO
--- HERETO
--- HERETO
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
 I get an error: "Could not delete organization" when trying to delete an Organization
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -208,11 +332,10 @@ The pagination elements (< Previous, 1,2,3,4,, Next >) should be non-selectable 
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-On the Organization page
 
-When an Organization is created/deleted: -> Event with HIGH importance
+An error:
+I get an error: "Could not delete organization" when trying to delete an Organization
 
-------------------------------------------------------------------------------------------------------------------------------------------------------
 
 On the Profile page
 
@@ -220,3 +343,60 @@ When a profile is created/deleted: -> Event with HIGH importance
 
 Profile Name, Description, Login Name, Email, Nickname: Event of LOW importance
 Role: Event of HIGH importance
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+-- HERETO
+-- HERETO
+-- HERETO
+-- HERETO
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+And New Events:
+
+On the Organization page
+
+When an Organization is created/deleted: -> Event with HIGH importance
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create a new page for displaying messages. It should have a table to display the messages.
+
+The table should have the messages, the tasks (name) they belong to, and the sender profile (name). Clicking on the message pops-up a modal to display the full message. Like on the Task oage, The popup should also have a delete button for deleting the message, The table should have pagination and search.
+
+The page is accessible by clicking on the messages sidebar menu item.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Task Page: 
+1) The Message tab should have a button to create a new message. It should open a pop-up where the message can be written. With cancel/Save Changes buttons.
+
+2) When clicking on messages on the list, the pop-up should have a delete button, to delete (active=false) the message.
+
+3) It should also be able to edit ones own messages in the popup.
+
+------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Create a new page for displaying audit events. It should have a table to display the event message.
+
+The table should have the event messages. The user who initiated the event. And the task,organization,profile, or artifact the event is attached to.
+
+It should not be possible to edit or delete events. But there should be a button to redirect to the page displaying the task,organization,profile, or artifact. The table should have pagination and search.
+
+The page is accessible by clicking on a sidebar menu item "Audit Trail" which should be below the Messages sidebar menuitem.
+
+
+
+
+
+
+
+Profile AUditr trail colors
+
+
+  * PAGE: Messages (for overall list of all messages across Tasks - Task page still lacks messages)
+  * PAGE: Reports
+      -> Status Reports
+      -> Progress Reports
+  * PAGE: Audit Trail

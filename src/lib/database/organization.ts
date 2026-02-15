@@ -422,7 +422,7 @@ export const organizationRepository =
 
     async delete(id: number): Promise<organizationData>
     {
-        log.info({ name: data.name, description: data.description }, 'SQL - organization: delete');
+        log.info({ id }, 'SQL - organization: delete');
         
         return prisma.organization.update(
         {

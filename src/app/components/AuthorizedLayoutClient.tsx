@@ -666,8 +666,11 @@ function SidebarLogo()
                   )}
 
                   <DropdownMenuSeparator />
-                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/incomming-files')}>
+                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/message')}>
                     Messages
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/audit-trail')}>
+                    Audit Trail
                   </DropdownMenuItem>
 
                   <DropdownMenuSub>

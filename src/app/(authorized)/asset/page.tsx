@@ -802,7 +802,7 @@ export default function ArtifactPage()
       <div className="space-y-8 p-6">
         <div className="flex justify-center">
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
             onClick={handleNewArtifact}
             className="cursor-pointer rounded-none"

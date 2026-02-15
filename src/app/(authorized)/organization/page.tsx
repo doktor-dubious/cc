@@ -912,6 +912,9 @@ export default function OrganizationPage()
 
         setIsDeleting(true);
 
+        // Capture org name before deletion
+        const deletedOrg = organizations.find(o => o.id === orgToDelete);
+
         try
         {
             const res = await fetch(`/api/organization/${orgToDelete}`, {
@@ -941,8 +944,10 @@ export default function OrganizationPage()
                 setSelectedOrg(null);
             }
 
+            await createEvent(`Organization deleted: "${deletedOrg?.name || 'Unknown'}"`, 'HIGH', orgToDelete);
+
             toast.success("Organization deleted successfully");
-            
+
             // Reset
             setOrgToDelete(null);
         }

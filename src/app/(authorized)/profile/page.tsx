@@ -190,6 +190,30 @@ export default function ProfilePage()
         }
     };
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // CREATE EVENT (audit trail)
+    const createEvent = async (message: string, importance: 'LOW' | 'MIDDLE' | 'HIGH', profileId: number) =>
+    {
+        try
+        {
+            await fetch('/api/event', {
+                method  : 'POST',
+                headers : { 'Content-Type': 'application/json' },
+                body    : JSON.stringify({ message, importance, profileId }),
+            });
+
+            // Refresh the audit trail if viewing this profile
+            if (selectedProfile?.id === profileId)
+            {
+                fetchEvents(profileId);
+            }
+        }
+        catch (error)
+        {
+            console.error('Failed to create event:', error);
+        }
+    };
+
     // ── Change organization + Initial Load──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     useEffect(() => 
     {
@@ -565,6 +589,7 @@ export default function ProfilePage()
             
             // Login tab
             setEmail(selectedProfile.user?.email || "");
+            setEmailValid(0); // Existing profile email is already valid
             setPassword(""); // Never pre-fill password
             setLoginName(selectedProfile.user?.name || "");
             setNickname(selectedProfile.user?.nickname || "");
@@ -798,16 +823,54 @@ export default function ProfilePage()
 
             const updatedProfile = data.data;
 
-            if (isNew) 
+            if (isNew)
             {
                 setProfiles(prev => [...prev, updatedProfile]);
                 setSelectedProfile(null);
                 setIsNewDialogOpen(false);
-            } 
-            else 
+
+                // Event: profile created
+                await createEvent(`Profile created: "${updatedProfile.name}"`, 'HIGH', updatedProfile.id);
+            }
+            else
             {
+                // Capture originals before updating state
+                const origName      = selectedProfile.name || "";
+                const origDesc      = selectedProfile.description || "";
+                const origLoginName = selectedProfile.user?.name || "";
+                const origEmail     = selectedProfile.user?.email || "";
+                const origNickname  = selectedProfile.user?.nickname || "";
+                const origRole      = selectedProfile.user?.role || "USER";
+
                 setProfiles(prev => prev.map(p => p.id === selectedProfile.id ? updatedProfile : p));
                 setSelectedProfile(updatedProfile);
+
+                // Events: field changes (LOW importance)
+                if (name.trim() !== origName.trim())
+                {
+                    await createEvent(`Profile name changed from "${origName}" to "${name.trim()}"`, 'LOW', selectedProfile.id);
+                }
+                if (description.trim() !== origDesc.trim())
+                {
+                    await createEvent('Profile description changed', 'LOW', selectedProfile.id);
+                }
+                if (loginName.trim() !== origLoginName.trim())
+                {
+                    await createEvent(`Login name changed from "${origLoginName}" to "${loginName.trim()}"`, 'LOW', selectedProfile.id);
+                }
+                if (email.trim() !== origEmail.trim())
+                {
+                    await createEvent(`Email changed from "${origEmail}" to "${email.trim()}"`, 'LOW', selectedProfile.id);
+                }
+                if (nickname.trim() !== origNickname.trim())
+                {
+                    await createEvent(`Nickname changed from "${origNickname}" to "${nickname.trim()}"`, 'LOW', selectedProfile.id);
+                }
+                // Event: role change (HIGH importance)
+                if (role !== origRole)
+                {
+                    await createEvent(`Role changed from "${origRole}" to "${role}"`, 'HIGH', selectedProfile.id);
+                }
             }
 
             setHasChanges(false);
@@ -846,10 +909,34 @@ export default function ProfilePage()
               throw new Error(err.error || 'Failed to delete profile');
           }
 
+          // Capture name before removing from state
+          const deletedProfileName = profiles.find(p => p.id === profileToDelete)?.name || 'Unknown';
+
           setProfiles(prev => prev.filter(p => p.id !== profileToDelete));
-          if (selectedProfile?.id === profileToDelete) 
+          if (selectedProfile?.id === profileToDelete)
           {
               setSelectedProfile(null);
+          }
+
+          // Event: profile deleted (linked to organization since profile is gone)
+          if (activeOrganization)
+          {
+              try
+              {
+                  await fetch('/api/event', {
+                      method  : 'POST',
+                      headers : { 'Content-Type': 'application/json' },
+                      body    : JSON.stringify({
+                          message        : `Profile deleted: "${deletedProfileName}"`,
+                          importance     : 'HIGH',
+                          organizationId : activeOrganization.id,
+                      }),
+                  });
+              }
+              catch (error)
+              {
+                  console.error('Failed to create event:', error);
+              }
           }
 
           toast.success("Profile deleted successfully");
@@ -912,6 +999,19 @@ export default function ProfilePage()
             OPEN        : 'bg-[var(--color-status-open)]',
             COMPLETED   : 'bg-[var(--color-status-completed)]',
             CLOSED      : 'bg-[var(--color-status-closed)]'
+        };
+        return styles[taskStatus as keyof typeof styles] || '';
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // Audit Trail Importance badges.
+    const getEventImportanceBadge = (taskStatus: string) =>
+    {
+        const styles = 
+        {
+            LOW     : 'bg-[var(--color-event-low)]',
+            MIDDLE  : 'bg-[var(--color-event-middle)]',
+            HIGH    : 'bg-[var(--color-event-high)]',
         };
         return styles[taskStatus as keyof typeof styles] || '';
     };
@@ -1231,7 +1331,7 @@ export default function ProfilePage()
         { /* New Profile Button */ }
         <div className="flex justify-center">
           <Button
-            variant="outline"
+            variant="default"
             size="sm"
             onClick={handleNewProfile}
             className="cursor-pointer rounded-none"
@@ -1645,20 +1745,13 @@ export default function ProfilePage()
                                   {event.user?.name || 'System'}
                                 </TableCell>
                                 <TableCell className="w-32">
-                                  {event.importance ? (
-                                    <Badge
-                                      variant="secondary"
-                                      className={`px-2 py-1 text-xs ${
-                                        event.importance === 'HIGH' ? 'bg-red-500/20 text-red-400' :
-                                        event.importance === 'MIDDLE' ? 'bg-yellow-500/20 text-yellow-400' :
-                                        'bg-blue-500/20 text-blue-400'
-                                      }`}
-                                    >
-                                      {event.importance}
-                                    </Badge>
-                                  ) : (
-                                    <span className="text-muted-foreground text-xs">-</span>
-                                  )}
+                                    {event.importance ? (
+                                        <Badge variant="secondary" className={`${getEventImportanceBadge(event.importance)} px-2 py-1 text-xs audit-event-badge`}>
+                                            {event.importance.replace('_', ' ')}
+                                        </Badge>
+                                    ) : (
+                                        <span className="text-muted-foreground text-xs">-</span>
+                                    )}
                                 </TableCell>
                                 <TableCell>{event.message}</TableCell>
                               </TableRow>

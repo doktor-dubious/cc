@@ -139,6 +139,19 @@ export default function TaskPage()
     const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
+    // For creating new messages
+    const [isNewMessageDialogOpen, setIsNewMessageDialogOpen] = useState(false);
+    const [newMessageContent, setNewMessageContent] = useState("");
+    const [isSendingMessage, setIsSendingMessage] = useState(false);
+
+    // For editing messages
+    const [isEditingMessage, setIsEditingMessage] = useState(false);
+    const [editMessageContent, setEditMessageContent] = useState("");
+
+    // For deleting messages
+    const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
+    const [isDeletingMessage, setIsDeletingMessage] = useState(false);
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FETCH TASKS
     const fetchTasks = async () =>
@@ -332,6 +345,133 @@ export default function TaskPage()
         {
             console.error('Failed to mark messages as read:', error);
             toast.error('Failed to mark messages as read');
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // SEND NEW MESSAGE
+    const handleSendMessage = async () =>
+    {
+        if (!selectedTask || !newMessageContent.trim()) return;
+
+        setIsSendingMessage(true);
+
+        try
+        {
+            const res = await fetch('/api/message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    taskId: selectedTask.id,
+                    content: newMessageContent.trim(),
+                    type: 'USER',
+                }),
+            });
+
+            const data = await res.json();
+            if (!data.success)
+            {
+                throw new Error(data.error || 'Failed to send message');
+            }
+
+            // Add new message to list
+            setMessages(prev => [data.data, ...prev]);
+            setNewMessageContent("");
+            setIsNewMessageDialogOpen(false);
+            toast.success("Message sent");
+        }
+        catch (err: any)
+        {
+            console.error("Send message error:", err);
+            toast.error(err.message || "Could not send message");
+        }
+        finally
+        {
+            setIsSendingMessage(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // EDIT MESSAGE
+    const handleEditMessage = async () =>
+    {
+        if (!selectedMessage || !editMessageContent.trim()) return;
+
+        setIsSendingMessage(true);
+
+        try
+        {
+            const res = await fetch(`/api/message/${selectedMessage.id}`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ content: editMessageContent.trim() }),
+            });
+
+            const data = await res.json();
+            if (!data.success)
+            {
+                throw new Error(data.error || 'Failed to edit message');
+            }
+
+            // Update in list
+            setMessages(prev =>
+                prev.map(m => m.id === selectedMessage.id ? { ...m, content: editMessageContent.trim() } : m)
+            );
+            setSelectedMessage({ ...selectedMessage, content: editMessageContent.trim() });
+            setIsEditingMessage(false);
+            toast.success("Message updated");
+        }
+        catch (err: any)
+        {
+            console.error("Edit message error:", err);
+            toast.error(err.message || "Could not edit message");
+        }
+        finally
+        {
+            setIsSendingMessage(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // DELETE MESSAGE
+    const handleDeleteMessage = async () =>
+    {
+        if (!messageToDelete) return;
+
+        setIsDeletingMessage(true);
+
+        try
+        {
+            const res = await fetch(`/api/message/${messageToDelete}`, {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+            });
+
+            const data = await res.json();
+            if (!data.success)
+            {
+                throw new Error(data.error || 'Failed to delete message');
+            }
+
+            setMessages(prev => prev.filter(m => m.id !== messageToDelete));
+
+            if (selectedMessage?.id === messageToDelete)
+            {
+                setIsMessageModalOpen(false);
+                setSelectedMessage(null);
+            }
+
+            toast.success("Message deleted");
+            setMessageToDelete(null);
+        }
+        catch (err: any)
+        {
+            console.error("Delete message error:", err);
+            toast.error(err.message || "Could not delete message");
+        }
+        finally
+        {
+            setIsDeletingMessage(false);
         }
     };
 
@@ -1154,7 +1294,10 @@ useEffect(() => {
 </AlertDialog>
 
 {/* View full message modal */}
-<Dialog open={isMessageModalOpen} onOpenChange={setIsMessageModalOpen}>
+<Dialog open={isMessageModalOpen} onOpenChange={(open) => {
+  setIsMessageModalOpen(open);
+  if (!open) { setIsEditingMessage(false); }
+}}>
   <DialogContent className="max-w-2xl">
     <DialogHeader>
       <DialogTitle className="flex items-center gap-2">
@@ -1171,11 +1314,132 @@ useEffect(() => {
       </DialogDescription>
     </DialogHeader>
     <div className="mt-4 max-h-[60vh] overflow-y-auto pr-2">
-      <p className="text-sm whitespace-pre-wrap">{selectedMessage?.content}</p>
+      {isEditingMessage ? (
+        <Textarea
+          value={editMessageContent}
+          onChange={(e) => setEditMessageContent(e.target.value)}
+          className="min-h-30"
+          autoFocus
+        />
+      ) : (
+        <p className="text-sm whitespace-pre-wrap">{selectedMessage?.content}</p>
+      )}
+    </div>
+    <div className="flex justify-between mt-4">
+      <Button
+        variant="destructive"
+        size="sm"
+        onClick={() => setMessageToDelete(selectedMessage?.id)}
+      >
+        Delete
+      </Button>
+      <div className="flex gap-2">
+        {selectedMessage?.type !== 'SYSTEM' && selectedMessage?.sender?.email === user?.email && (
+          isEditingMessage ? (
+            <>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setIsEditingMessage(false)}
+                disabled={isSendingMessage}
+              >
+                Cancel
+              </Button>
+              <Button
+                size="sm"
+                onClick={handleEditMessage}
+                disabled={isSendingMessage || !editMessageContent.trim() || editMessageContent.trim() === selectedMessage?.content}
+              >
+                {isSendingMessage ? "Saving..." : "Save Changes"}
+              </Button>
+            </>
+          ) : (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => {
+                setEditMessageContent(selectedMessage?.content || "");
+                setIsEditingMessage(true);
+              }}
+            >
+              Edit
+            </Button>
+          )
+        )}
+      </div>
     </div>
   </DialogContent>
 </Dialog>
 
+{/* Delete message confirmation */}
+<AlertDialog
+  open={messageToDelete !== null}
+  onOpenChange={(open) => {
+    if (!open) setMessageToDelete(null);
+  }}
+>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogDescription>
+        This action cannot be undone. This will permanently delete this message.
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel disabled={isDeletingMessage}>Cancel</AlertDialogCancel>
+      <AlertDialogAction
+        onClick={handleDeleteMessage}
+        disabled={isDeletingMessage}
+        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+      >
+        {isDeletingMessage ? "Deleting..." : "Delete"}
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
+
+
+{/* New Message Dialog */}
+<Dialog open={isNewMessageDialogOpen} onOpenChange={(open) => {
+  setIsNewMessageDialogOpen(open);
+  if (!open) setNewMessageContent("");
+}}>
+  <DialogContent className="sm:max-w-125">
+    <DialogHeader>
+      <DialogTitle>New Message</DialogTitle>
+      <DialogDescription>
+        Write a message for this task.
+      </DialogDescription>
+    </DialogHeader>
+    <div className="grid gap-4 py-4">
+      <Textarea
+        value={newMessageContent}
+        onChange={(e) => setNewMessageContent(e.target.value)}
+        placeholder="Type your message..."
+        className="min-h-30"
+        autoFocus
+      />
+    </div>
+    <div className="flex justify-end gap-3">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setIsNewMessageDialogOpen(false);
+          setNewMessageContent("");
+        }}
+        disabled={isSendingMessage}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleSendMessage}
+        disabled={isSendingMessage || !newMessageContent.trim()}
+      >
+        {isSendingMessage ? "Sending..." : "Save Changes"}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
 
       <AlertDialog
         open={taskToDelete !== null}
@@ -1659,27 +1923,33 @@ useEffect(() => {
                 {/* ----------------------------------------------------------- */}
                 {/* Messages Tab */}
                 <TabsContent value="messages" className="mt-6">
+                  <div className="flex justify-between items-center mb-4 max-w-3xl">
+                    <Button
+                      variant="default"
+                      size="sm"
+                      onClick={() => setIsNewMessageDialogOpen(true)}
+                    >
+                      New Message
+                    </Button>
+                    {(() => {
+                      const unreadCount = messages.filter(m => !m.isRead).length;
+                      return unreadCount > 0 && (
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={handleMarkAllAsRead}
+                        >
+                          Mark all as read ({unreadCount})
+                        </Button>
+                      );
+                    })()}
+                  </div>
                   {loadingMessages ? (
                     <div className="text-center text-muted-foreground py-8">Loading messages...</div>
                   ) : messages.length === 0 ? (
                     <div className="text-center text-muted-foreground py-8">No messages for this task</div>
                   ) : (
                     <>
-                      {/* Mark all as read button */}
-                      {(() => {
-                        const unreadCount = messages.filter(m => !m.isRead).length;
-                        return unreadCount > 0 && (
-                          <div className="flex justify-end mb-4 max-w-3xl">
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={handleMarkAllAsRead}
-                            >
-                              Mark all as read ({unreadCount})
-                            </Button>
-                          </div>
-                        );
-                      })()}
 
                       <div className="space-y-4 max-w-3xl">
                         {(() => {
