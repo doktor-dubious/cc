@@ -21,7 +21,7 @@ import type { /* User???,*/ UserRole, WorkFunction } from '@prisma/client';
 
 type SafeUser =
 {
-    id              : number;
+    id              : string;
     email           : string;
     name            : string;
     nickname        : string;
@@ -41,7 +41,7 @@ const selectFields =
 
 export const userRepository =
 {
-    async findById(id: number): Promise<SafeUser | null>
+    async findById(id: string): Promise<SafeUser | null>
     {
         log.info('SQL - user: findById');
 
@@ -85,7 +85,7 @@ export const userRepository =
         });
     },
 
-    async updateProfile(id: number, data: { name: string; nickname: string; workFunction?: WorkFunction }): Promise<SafeUser>
+    async updateProfile(id: string, data: { name: string; nickname: string; workFunction?: WorkFunction }): Promise<SafeUser>
     {
         log.info({ ID: id, name: data.name }, 'SQL - user: updateProfile');
 

@@ -14,15 +14,15 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     log.debug('(PRISMA API : organization/[id] - PATCH');
 
     const { id } = await params;
-    const organizationId = parseInt(id, 10);
+    const organizationId = id;
 
-    if (isNaN(organizationId) || organizationId <= 0) 
+    if (!organizationId)
     {
         return NextResponse.json<ApiResponse>(
-            { 
-                success: false, 
-                error: 'Invalid organization ID' 
-            }, 
+            {
+                success: false,
+                error: 'Invalid organization ID'
+            },
             { status: 400 }
         );
     }
@@ -34,10 +34,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         if (!session?.user)
         {
             return NextResponse.json<ApiResponse>(
-                { 
-                    success: false, 
-                    error  : 'Unauthorized' 
-                }, 
+                {
+                    success: false,
+                    error  : 'Unauthorized'
+                },
                 { status: 401 });
         }
 
@@ -49,8 +49,8 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             return NextResponse.json<ApiResponse>(
                 {
                     success: false,
-                    error  : 'Invalid token' 
-                }, 
+                    error  : 'Invalid token'
+                },
                 { status: 401 });
         }
 
@@ -140,14 +140,14 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     log.debug('(PRISMA API : organization/[id] - DELETE');
 
     const { id } = await params;
-    const organizationId = parseInt(id, 10);
-    if (isNaN(organizationId) || organizationId <= 0) 
+    const organizationId = id;
+    if (!organizationId)
     {
         return NextResponse.json<ApiResponse>(
-            { 
-                success: false, 
-                error: 'Invalid organization ID' 
-            }, 
+            {
+                success: false,
+                error: 'Invalid organization ID'
+            },
             { status: 400 }
         );
     }
@@ -159,10 +159,10 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         if (!session?.user)
         {
             return NextResponse.json<ApiResponse>(
-                { 
-                    success: false, 
-                    error  : 'Unauthorized' 
-                }, 
+                {
+                    success: false,
+                    error  : 'Unauthorized'
+                },
                 { status: 401 });
         }
 
@@ -174,8 +174,8 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
             return NextResponse.json<ApiResponse>(
                 {
                     success: false,
-                    error  : 'Invalid token' 
-                }, 
+                    error  : 'Invalid token'
+                },
                 { status: 401 });
         }
 

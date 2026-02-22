@@ -8,6 +8,7 @@ import { SquarePen, Trash2 }                    from 'lucide-react';
 import { Button }                               from "@/components/ui/button";
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
 import { ArtifactType }                         from '@prisma/client';
+import { useTranslations }                      from 'next-intl';
 
 import {
   Table,
@@ -62,11 +63,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { refresh } from 'next/cache';
 
-export default function ArtifactPage() 
+export default function ArtifactPage()
 {
     const user = useUser();
     const { activeOrganization } = useOrganization();
     const router = useRouter();
+    const t = useTranslations('Asset');
+    const tc = useTranslations('Common');
 
     const [artifacts, setArtifacts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -108,43 +111,43 @@ export default function ArtifactPage()
     const [taskHasChanges, setTaskHasChanges] = useState(false);
 
     // ── Fetch Artifacts ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    const fetchArtifacts = async () => 
+    const fetchArtifacts = async () =>
     {
         if (!activeOrganization) return;
 
-        try 
+        try
         {
             const res = await fetch(`/api/artifact?organizationId=${activeOrganization.id}`);
             const data = await res.json();
 
-            if (!data.success) 
+            if (!data.success)
             {
                 console.error('Failed to fetch artifacts:', data.message);
                 return;
             }
 
             setArtifacts(data.data);
-        } 
-        catch (error) 
+        }
+        catch (error)
         {
             console.error('Failed to fetch artifacts:', error);
-        } 
-        finally 
+        }
+        finally
         {
             setLoading(false);
         }
     };
 
     // ── Change organization + Initial Load + Refresh ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!user) return;
         if (!activeOrganization) return;
-        
+
         fetchArtifacts();
 
         // Listen for refresh event
-        const handleRefresh = () => 
+        const handleRefresh = () =>
         {
             fetchArtifacts();
         };
@@ -152,7 +155,7 @@ export default function ArtifactPage()
         window.addEventListener('refreshPage', handleRefresh);
         // console.log("Event listener added for refreshPage");
 
-        return () => 
+        return () =>
         {
             // console.log("Cleaning up event listener");
             window.removeEventListener('refreshPage', handleRefresh);
@@ -161,15 +164,15 @@ export default function ArtifactPage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // REMOVE / UNLINK TASK FROM ARTIFACT
-    const handleRemoveTask = async () => 
+    const handleRemoveTask = async () =>
     {
         if (!taskToRemove || !selectedArtifact) return;
 
         setIsDeleting(true);
 
-        try 
+        try
         {
-            const res = await fetch('/api/task-artifact', 
+            const res = await fetch('/api/task-artifact',
             {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
@@ -179,14 +182,14 @@ export default function ArtifactPage()
                 }),
             });
 
-            if (!res.ok) 
+            if (!res.ok)
             {
                 const err = await res.json();
                 throw new Error(err.error || 'Failed to remove task from artifact');
             }
 
             const data = await res.json();
-            if (!data.success) 
+            if (!data.success)
             {
                 throw new Error(data.message || 'Operation failed');
             }
@@ -211,14 +214,14 @@ export default function ArtifactPage()
               };
             });
 
-          toast.success("Task removed from artifact");
-        } 
-        catch (err: any) 
+          toast.success(t('toast.taskRemovedSuccess'));
+        }
+        catch (err: any)
         {
             console.error("Remove task from artifact error:", err);
-            toast.error(err.message || "Could not remove task from artifact");
-        } 
-        finally 
+            toast.error(err.message || t('toast.removeTaskError'));
+        }
+        finally
         {
             setIsDeleting(false);
             setTaskToRemove(null);
@@ -229,7 +232,7 @@ export default function ArtifactPage()
     // EDIT TASK
 
     // Click on Task table row.
-    const handleTaskRowClick = (task: any) => 
+    const handleTaskRowClick = (task: any) =>
     {
         setSelectedTask(task);
         setTaskName(task.name || "");
@@ -239,7 +242,7 @@ export default function ArtifactPage()
     };
 
     // Task change detection.
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!selectedTask) return;
         const nameChanged = taskName.trim() !== (selectedTask.name ?? "").trim();
@@ -252,9 +255,9 @@ export default function ArtifactPage()
       if (!selectedTask || !taskHasChanges || !selectedArtifact) return;
 
       setIsSaving(true);
-      try 
+      try
       {
-          const res = await fetch(`/api/task/${selectedTask.id}`, 
+          const res = await fetch(`/api/task/${selectedTask.id}`,
           {
               method    : "PATCH",
               headers   : { "Content-Type": "application/json" },
@@ -265,14 +268,14 @@ export default function ArtifactPage()
               }),
           });
 
-          if (!res.ok) 
+          if (!res.ok)
           {
               const err = await res.json();
               throw new Error(err.error || "Failed to update task");
           }
 
           const data = await res.json();
-          if (!data.success) 
+          if (!data.success)
           {
               throw new Error(data.error || "Update failed");
           }
@@ -281,7 +284,7 @@ export default function ArtifactPage()
 
           // Optimistic update in artifacts list
           setArtifacts((prevArtifacts) =>
-            prevArtifacts.map((a) => 
+            prevArtifacts.map((a) =>
             {
                 if (a.id !== selectedArtifact.id) return a;
                 return {
@@ -294,7 +297,7 @@ export default function ArtifactPage()
           );
 
           // Update selected artifact view
-          setSelectedArtifact((prev) => 
+          setSelectedArtifact((prev) =>
           {
               if (!prev) return prev;
               return {
@@ -305,22 +308,22 @@ export default function ArtifactPage()
               };
           });
 
-          toast.success("Task updated successfully");
+          toast.success(t('toast.taskUpdatedSuccess'));
           setIsEditTaskDialogOpen(false);
           setSelectedTask(null);
-      } 
-      catch (err: any) 
+      }
+      catch (err: any)
       {
           console.error("Task update error:", err);
-          toast.error(err.message || "Could not update task");
-      } 
-      finally 
+          toast.error(err.message || t('toast.updateTaskError'));
+      }
+      finally
       {
           setIsSaving(false);
       }
     };
 
-    const handleTaskCancel = () => 
+    const handleTaskCancel = () =>
     {
         setIsEditTaskDialogOpen(false);
         setSelectedTask(null);
@@ -330,16 +333,16 @@ export default function ArtifactPage()
     };
 
     // ── Selected Artifact changed ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
+    useEffect(() =>
     {
-        if (selectedArtifact) 
+        if (selectedArtifact)
         {
             setName(selectedArtifact.name || "");
             setDescription(selectedArtifact.description || "");
             setArtifactType(selectedArtifact.type || "DOCUMENT");
             setMimeType(selectedArtifact.mimeType || "");
-        } 
-        else 
+        }
+        else
         {
             setName("");
             setDescription("");
@@ -348,9 +351,9 @@ export default function ArtifactPage()
         }
     }, [selectedArtifact]);
 
-    useEffect(() => 
+    useEffect(() =>
     {
-        if (!selectedArtifact) 
+        if (!selectedArtifact)
         {
             const hasContent = name.trim() !== "";
             setHasChanges(hasContent);
@@ -400,29 +403,29 @@ export default function ArtifactPage()
     setIsNewDialogOpen(false);
   };
 
-    const handleSave = async () => 
+    const handleSave = async () =>
     {
-        if (!name.trim()) 
+        if (!name.trim())
         {
-            toast.error("Artifact name is required");
+            toast.error(t('toast.nameRequired'));
             return;
         }
 
-        if (!activeOrganization) 
+        if (!activeOrganization)
         {
-            toast.error("No organization selected");
+            toast.error(t('toast.noOrganization'));
             return;
         }
 
       setIsSaving(true);
 
-      try 
+      try
       {
           const isNew = !selectedArtifact;
           const url = isNew ? '/api/artifact' : `/api/artifact/${selectedArtifact.id}`;
           const method = isNew ? 'POST' : 'PATCH';
 
-          const body: any = 
+          const body: any =
           {
               name           : name.trim(),
               description    : description.trim() || undefined,
@@ -435,48 +438,48 @@ export default function ArtifactPage()
               body.mimeType = mimeType.trim();
           }
 
-          const res = await fetch(url, 
+          const res = await fetch(url,
           {
               method,
               headers: { 'Content-Type': 'application/json' },
               body   : JSON.stringify(body),
           });
 
-          if (!res.ok) 
+          if (!res.ok)
           {
               const err = await res.json();
               throw new Error(err.error || 'Save failed');
           }
 
           const data = await res.json();
-          if (!data.success) 
+          if (!data.success)
           {
               throw new Error(data.message || 'Save failed');
           }
 
           const updatedArtifact = data.artifact;
 
-          if (isNew) 
+          if (isNew)
           {
               setArtifacts(prev => [...prev, updatedArtifact]);
               setSelectedArtifact(null);
               setIsNewDialogOpen(false);
-          } 
-          else 
+          }
+          else
           {
               setArtifacts(prev => prev.map(a => a.id === selectedArtifact.id ? updatedArtifact : a));
               setSelectedArtifact(updatedArtifact);
           }
 
           setHasChanges(false);
-          toast.success(isNew ? "Artifact created" : "Artifact updated");
-      } 
-      catch (err) 
+          toast.success(isNew ? t('toast.artifactCreated') : t('toast.artifactUpdated'));
+      }
+      catch (err)
       {
           console.error(err);
-          toast.error("Could not save artifact");
-      } 
-      finally 
+          toast.error(t('toast.saveError'));
+      }
+      finally
       {
           setIsSaving(false);
       }
@@ -484,15 +487,15 @@ export default function ArtifactPage()
 
     // ------------------------------------------------------------
     // Delete Artifact.
-    const handleDelete = async () => 
+    const handleDelete = async () =>
     {
         if (!artifactToDelete) return;
 
         setIsDeleting(true);
 
-        try 
+        try
         {
-            const res = await fetch(`/api/artifact/${artifactToDelete}`, 
+            const res = await fetch(`/api/artifact/${artifactToDelete}`,
             {
                 method  : 'DELETE',
                 headers : { 'Content-Type': 'application/json' },
@@ -502,33 +505,33 @@ export default function ArtifactPage()
                 }),
             });
 
-            if (!res.ok) 
+            if (!res.ok)
             {
                 throw new Error('Failed to delete artifact');
             }
 
             setArtifacts(prev => prev.filter(a => a.id !== artifactToDelete));
 
-            if (selectedArtifact?.id === artifactToDelete) 
+            if (selectedArtifact?.id === artifactToDelete)
             {
                 setSelectedArtifact(null);
             }
 
             toast.success
             (
-              deleteFromFilesystem 
-                ? "Artifact and file deleted successfully" 
-                : "Artifact deleted successfully"
+              deleteFromFilesystem
+                ? t('toast.artifactAndFileDeletedSuccess')
+                : t('toast.artifactDeletedSuccess')
             );
-            
+
             setArtifactToDelete(null);
             setDeleteFromFilesystem(false);
-          } 
-          catch (err) 
+          }
+          catch (err)
           {
-              toast.error("Could not delete artifact");
-          } 
-          finally 
+              toast.error(t('toast.deleteError'));
+          }
+          finally
           {
               setIsDeleting(false);
           }
@@ -544,9 +547,9 @@ export default function ArtifactPage()
     const endIndex = startIndex + itemsPerPage;
     const currentArtifacts = filteredArtifacts.slice(startIndex, endIndex);
 
-    const getTypeBadge = (type: string) => 
+    const getTypeBadge = (type: string) =>
     {
-        const styles: Record<ArtifactType, string> = 
+        const styles: Record<ArtifactType, string> =
         {
             [ArtifactType.DOCUMENT]:     'bg-[var(--color_asset_type_1)]',
             [ArtifactType.EXCEL]:        'bg-[var(--color_asset_type_2)]',
@@ -570,7 +573,7 @@ export default function ArtifactPage()
     };
 
     // Helper function to format file size
-    const formatFileSize = (sizeStr: string | null) => 
+    const formatFileSize = (sizeStr: string | null) =>
     {
         if (!sizeStr) return '-';
         const bytes = parseInt(sizeStr, 10);
@@ -582,24 +585,24 @@ export default function ArtifactPage()
         return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i];
     };
 
-    if (!user) 
+    if (!user)
     {
-        return <div>Loading user...</div>;
+        return <div>{t('loading.loadingUser')}</div>;
     }
 
-    if (!activeOrganization) 
+    if (!activeOrganization)
     {
-        return <div>Please select an organization</div>;
+        return <div>{t('loading.selectOrganization')}</div>;
     }
 
-    if (loading) 
+    if (loading)
     {
-        return <div>Loading artifacts...</div>;
+        return <div>{t('loading.loadingArtifacts')}</div>;
     }
 
     const getStatusBadge = (taskStatus: string) =>
     {
-        const styles = 
+        const styles =
         {
             NOT_STARTED : 'bg-[var(--color-status-not-started)]',
             OPEN        : 'bg-[var(--color-status-open)]',
@@ -620,29 +623,27 @@ export default function ArtifactPage()
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Remove task from artifact?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.removeTaskTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This will unlink the task from the current artifact (delete the link in TaskArtifact).
-        The task itself remains in the system and can still be assigned to other artifacts or profiles.
-        This action cannot be undone.
+        {t('dialogs.removeTaskDescription')}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         variant="destructive"
         onClick={handleRemoveTask}
         disabled={isDeleting}
       >
-        {isDeleting ? "Removing..." : "Remove task"}
+        {isDeleting ? t('buttons.removing') : t('buttons.removeTask')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>
 
     { /* Delete Artifact Alert */ }
-<AlertDialog 
-  open={artifactToDelete !== null} 
+<AlertDialog
+  open={artifactToDelete !== null}
   onOpenChange={(open) => {
     if (!open) {
       setArtifactToDelete(null);
@@ -652,11 +653,9 @@ export default function ArtifactPage()
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete the artifact
-        "{artifacts.find(a => a.id === artifactToDelete)?.name || 'this item'}"
-        and remove it from the system.
+        {t('dialogs.deleteDescription', { name: artifacts.find(a => a.id === artifactToDelete)?.name || 'this item' })}
       </AlertDialogDescription>
     </AlertDialogHeader>
 
@@ -673,18 +672,18 @@ export default function ArtifactPage()
         htmlFor="delete-file"
         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
       >
-        Also delete file from filesystem
+        {t('dialogs.alsoDeleteFile')}
       </label>
     </div>
 
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         onClick={handleDelete}
         disabled={isDeleting}
         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
       >
-        {isDeleting ? "Deleting..." : "Delete"}
+        {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -694,35 +693,35 @@ export default function ArtifactPage()
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Create New Artifact</DialogTitle>
+            <DialogTitle>{t('dialogs.createTitle')}</DialogTitle>
             <DialogDescription>
-              Enter the details for the new artifact. Click Save when you're done.
+              {t('dialogs.createDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm">Artifact name</label>
+              <label className="block text-sm">{t('labels.artifactName')}</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter artifact name"
+                placeholder={t('placeholders.enterArtifactName')}
                 autoFocus
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Description</label>
+              <label className="block text-sm">{t('labels.description')}</label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter artifact description"
+                placeholder={t('placeholders.enterDescription')}
                 className="min-h-[120px]"
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Artifact Type</label>
+              <label className="block text-sm">{t('labels.artifactType')}</label>
               <Select value={artifactType} onValueChange={setArtifactType}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -740,10 +739,10 @@ export default function ArtifactPage()
 
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
-              Cancel
+              {tc('buttons.cancel')}
             </Button>
             <Button onClick={handleSave} disabled={!hasChanges || isSaving}>
-              {isSaving ? 'Creating...' : 'Create artifact'}
+              {isSaving ? t('buttons.creating') : t('buttons.createArtifact')}
             </Button>
           </div>
         </DialogContent>
@@ -753,29 +752,29 @@ export default function ArtifactPage()
       <Dialog open={isEditTaskDialogOpen} onOpenChange={setIsEditTaskDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
-            <DialogTitle>Edit Task</DialogTitle>
+            <DialogTitle>{t('dialogs.editTaskTitle')}</DialogTitle>
             <DialogDescription>
-              Update the name and description of the task.
+              {t('dialogs.editTaskDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm">Task name</label>
+              <label className="block text-sm">{t('labels.taskName')}</label>
               <Input
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
-                placeholder="Enter task name"
+                placeholder={t('placeholders.enterTaskName')}
                 autoFocus
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Description</label>
+              <label className="block text-sm">{t('labels.description')}</label>
               <Textarea
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
-                placeholder="Enter task description"
+                placeholder={t('placeholders.enterTaskDescription')}
                 className="min-h-[120px]"
               />
             </div>
@@ -787,13 +786,13 @@ export default function ArtifactPage()
               onClick={handleTaskCancel}
               disabled={isSaving}
             >
-              Cancel
+              {tc('buttons.cancel')}
             </Button>
             <Button
               onClick={handleTaskSave}
               disabled={!taskHasChanges || isSaving}
             >
-              {isSaving ? "Saving..." : "Save changes"}
+              {isSaving ? t('buttons.saving') : t('buttons.saveChanges')}
             </Button>
           </div>
         </DialogContent>
@@ -807,13 +806,13 @@ export default function ArtifactPage()
             onClick={handleNewArtifact}
             className="cursor-pointer rounded-none"
           >
-            New Artifact
+            {t('buttons.newArtifact')}
           </Button>
         </div>
 
         <div className="flex justify-end">
           <Input
-            placeholder="Filter by name or ID..."
+            placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
@@ -823,18 +822,17 @@ export default function ArtifactPage()
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20 text-right">ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="w-40">Type</TableHead>
+              <TableHead>{tc('table.name')}</TableHead>
+              <TableHead>{tc('table.description')}</TableHead>
+              <TableHead className="w-40">{tc('table.type')}</TableHead>
               <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentArtifacts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  {filterText ? "No artifacts match your filter" : "No artifacts found"}
+                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                  {filterText ? t('empty.noArtifactsMatch') : t('empty.noArtifactsFound')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -847,7 +845,6 @@ export default function ArtifactPage()
                   `}
                   onClick={() => handleRowClick(artifact)}
                 >
-                  <TableCell className="w-20 text-right tabular-nums">{artifact.id}</TableCell>
                   <TableCell>{artifact.name}</TableCell>
                   <TableCell className="max-w-md truncate">{artifact.description || '-'}</TableCell>
                   <TableCell className="w-40">
@@ -886,7 +883,7 @@ export default function ArtifactPage()
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredArtifacts.length)} of {filteredArtifacts.length} artifacts
+              {t('pagination.showing', { start: startIndex + 1, end: Math.min(endIndex, filteredArtifacts.length), total: filteredArtifacts.length })}
             </div>
 
             <div className="flex justify-end">
@@ -939,19 +936,19 @@ export default function ArtifactPage()
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
                     >
-                      Details
+                      {t('tabs.details')}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="file-details"
                     >
-                      File Details
+                      {t('tabs.fileDetails')}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="tasks"
                     >
-                      Tasks ({selectedArtifact.taskArtifacts?.length || 0})
+                      {t('tabs.tasks', { count: selectedArtifact.taskArtifacts?.length || 0 })}
                     </TabsTrigger>
                   </TabsList>
                   <div
@@ -966,26 +963,34 @@ export default function ArtifactPage()
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm mb-2">Artifact name</label>
+                      <label className="block text-sm mb-2">{tc('table.id')}</label>
+                      <Input
+                        value={selectedArtifact?.id?.toString() || ''}
+                        disabled
+                        className="opacity-60"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2">{t('labels.artifactName')}</label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter artifact name"
+                        placeholder={t('placeholders.enterArtifactName')}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Description</label>
+                      <label className="block text-sm mb-2">{t('labels.description')}</label>
                       <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Enter artifact description"
+                        placeholder={t('placeholders.enterDescription')}
                         className="min-h-[120px]"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Artifact Type</label>
+                      <label className="block text-sm mb-2">{t('labels.artifactType')}</label>
                       <Select value={artifactType} onValueChange={setArtifactType}>
                         <SelectTrigger className="w-full">
                           <SelectValue />
@@ -1005,16 +1010,16 @@ export default function ArtifactPage()
                 <TabsContent value="file-details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm mb-2">MIME Type</label>
+                      <label className="block text-sm mb-2">{t('labels.mimeType')}</label>
                       <Input
                         value={mimeType}
                         onChange={(e) => setMimeType(e.target.value)}
-                        placeholder="e.g., application/pdf, image/png"
+                        placeholder={t('placeholders.mimeTypeExample')}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">File Extension</label>
+                      <label className="block text-sm mb-2">{t('labels.fileExtension')}</label>
                       <Input
                         value={selectedArtifact.extension || '-'}
                         disabled
@@ -1023,7 +1028,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">File Size</label>
+                      <label className="block text-sm mb-2">{t('labels.fileSize')}</label>
                       <Input
                         value={formatFileSize(selectedArtifact.size)}
                         disabled
@@ -1032,7 +1037,7 @@ export default function ArtifactPage()
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Original File Name</label>
+                      <label className="block text-sm mb-2">{t('labels.originalFileName')}</label>
                       <Input
                         value={selectedArtifact.originalName || '-'}
                         disabled
@@ -1046,10 +1051,10 @@ export default function ArtifactPage()
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-20 text-right">ID</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="w-32">Status</TableHead>
+                        <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                        <TableHead>{tc('table.name')}</TableHead>
+                        <TableHead>{tc('table.description')}</TableHead>
+                        <TableHead className="w-32">{tc('table.status')}</TableHead>
                         <TableHead className="text-right"></TableHead>
                       </TableRow>
                     </TableHeader>
@@ -1057,7 +1062,7 @@ export default function ArtifactPage()
                       {selectedArtifact.taskArtifacts?.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={5} className="text-center text-muted-foreground">
-                            No tasks connected to this artifact
+                            {t('empty.noTasksConnected')}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -1098,20 +1103,20 @@ export default function ArtifactPage()
 
         {selectedArtifact && hasChanges && (
           <div className={`
-            fixed 
-            bottom-0 
-            left-var(--sidebar-width) 
-            right-0 
-            bg-neutral-900 
-            border-t 
-            border-neutral-800 
-            px-6 
-            py-2 
+            fixed
+            bottom-0
+            left-var(--sidebar-width)
+            right-0
+            bg-neutral-900
+            border-t
+            border-neutral-800
+            px-6
+            py-2
             w-full
-            flex 
-            justify-end 
+            flex
+            justify-end
             gap-3
-            transition-transform 
+            transition-transform
             duration-500
             ease-in-out
             ${hasChanges ? 'translate-y-0' : 'translate-y-full'}
@@ -1121,13 +1126,13 @@ export default function ArtifactPage()
               onClick={handleCancel}
               disabled={isSaving}
             >
-              Cancel
+              {tc('buttons.cancel')}
             </Button>
             <Button
               onClick={handleSave}
               disabled={!hasChanges || isSaving}
             >
-              {isSaving ? 'Saving...' : 'Save changes'}
+              {isSaving ? t('buttons.saving') : t('buttons.saveChanges')}
             </Button>
           </div>
         )}

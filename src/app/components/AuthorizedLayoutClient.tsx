@@ -88,9 +88,10 @@ import {
   
 } from "lucide-react"
 
-import { GB, DK, SE, NO, FR, DE, ES } from 'country-flag-icons/react/3x2'
-
 import { useTheme } from "next-themes"
+import { useLocale, useTranslations } from 'next-intl';
+import { locales, localeConfig, type Locale } from '@/i18n/locales';
+import { setLocale } from '@/app/actions/locale';
 
 import { 
   ChevronDownIcon, 
@@ -131,6 +132,8 @@ export default function AuthorizedLayout({children, user, organizations, tasks}:
 {
     const { theme, setTheme } = useTheme();
     const router = useRouter();
+    const locale = useLocale();
+    const t = useTranslations('Sidebar');
     const [openSubmenu, setOpenSubmenu] = useState<string | null>('tasks1'); // ← Set initial value here
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [messageCount, setMessageCount] = useState(0);
@@ -145,14 +148,14 @@ let pathname = usePathname();
 // Map routes to titles
 const getPageTitle = () => 
 {
-    if (pathname.includes('/asset'))            return 'Assets';
-    if (pathname.includes('/task'))             return 'Tasks';
-    if (pathname.includes('/organization'))     return 'Organizations';
-    if (pathname.includes('/profile'))          return 'Profile';
-    if (pathname.includes('/upload-files'))     return 'Upload Files';
-    if (pathname.includes('/incomming-files'))  return 'Incoming Files';
-    if (pathname.includes('/settings'))         return 'Settings';
-    if (pathname.includes('/home'))             return 'Home';
+    if (pathname.includes('/asset'))            return t('assets');
+    if (pathname.includes('/task'))             return t('tasks');
+    if (pathname.includes('/organization'))     return t('organizations');
+    if (pathname.includes('/profile'))          return t('profiles');
+    if (pathname.includes('/upload-files'))     return t('uploadFiles');
+    if (pathname.includes('/incomming-files'))  return t('incommingFiles');
+    if (pathname.includes('/settings'))         return t('profileSettings');
+    if (pathname.includes('/home'))             return t('home');
 
     return 'Dashboard';
 };
@@ -224,7 +227,7 @@ function OrganizationSwitcher()
     <DropdownMenuContent align="center" className="
         rounded-none 
         w-(--sidebar-width)">
-      <DropdownMenuLabel>Organizations</DropdownMenuLabel>
+      <DropdownMenuLabel>{t('organizations')}</DropdownMenuLabel>
       <DropdownMenuSeparator />
       {organizations.map(org => (
         <DropdownMenuItem
@@ -289,6 +292,20 @@ function SidebarLogo()
   const openTasks = tasks.filter(task => task.status === 'OPEN');
   const waitingTasks = tasks.filter(task => task.status === 'NOT_STARTED');
   const closedTasks = tasks.filter(task => task.status === 'CLOSED');
+
+  const urgentTasks = tasks.filter(task => {
+    if (task.status === 'CLOSED' || task.status === 'COMPLETED') return false;
+    if (!task.endAt) return false;
+    const now = Date.now();
+    const end = new Date(task.endAt).getTime();
+    if (now >= end) return true; // past due
+    if (!task.startAt) return false;
+    const start = new Date(task.startAt).getTime();
+    const total = end - start;
+    if (total <= 0) return true;
+    const remaining = end - now;
+    return remaining <= total * 0.1;
+  });
 
   // Fetch settings to get polling interval
   const fetchSettings = async () => {
@@ -394,11 +411,12 @@ function SidebarLogo()
             </div>
 
             <Button
-              variant="ghost" 
+              variant="ghost"
               className="rounded-none mx-2 mt-2 pl-2"
+              onClick={() => router.push('/task?new=1')}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0"><PlusSquare size={16} className="mr-1" />
-                New Task
+                {t('newTask')}
               </div>
             </Button>
             <SidebarSeparator />
@@ -415,7 +433,7 @@ function SidebarLogo()
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
                       <Target size={16} />
-                      <span>Current Tasks</span>
+                      <span>{t('currentTasks')}</span>
                       <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -436,7 +454,7 @@ function SidebarLogo()
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
-                                <Link href="/task-overview" title={task.name} className="flex items-start gap-2">
+                                <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
                                   <CheckSquare size={16} className="shrink-0 mt-0.5" />
                                   <div className="line-clamp-3">{task.name}</div>
                                 </Link>
@@ -464,7 +482,7 @@ function SidebarLogo()
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none rounded-none">
                       <Target size={16} />
-                      <span>Waiting Tasks</span>
+                      <span>{t('waitingTasks')}</span>
                       <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
@@ -485,7 +503,7 @@ function SidebarLogo()
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
-                                <Link href="/task-overview" title={task.name} className="flex items-start gap-2">
+                                <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
                                   <CheckSquare size={16} className="shrink-0 mt-0.5" />
                                   <div className="line-clamp-3">{task.name}</div>
                                 </Link>
@@ -505,8 +523,8 @@ function SidebarLogo()
 
               {/* -------------------------------------------------------------------------------------------- */}
               {/* Urgent Task Section */}
-              <Collapsible 
-                open={openSubmenu === 'tasks3'} 
+              <Collapsible
+                open={openSubmenu === 'tasks3'}
                 onOpenChange={() => handleSubmenuToggle('tasks3')}
                 className="group/collapsible"
               >
@@ -514,28 +532,28 @@ function SidebarLogo()
                   <CollapsibleTrigger asChild>
                     <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
                       <Target size={16} />
-                      <span>Urgent Tasks</span>
+                      <span>{t('urgentTasks')}</span>
                       <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
                     </SidebarMenuButton>
                   </CollapsibleTrigger>
                 </SidebarMenuItem>
-                  
-                <CollapsibleContent 
+
+                <CollapsibleContent
                   className="
-                    overflow-hidden 
-                    transition-all 
-                    duration-400 ease-in-out 
-                    data-[state=closed]:animate-collapsible-up 
+                    overflow-hidden
+                    transition-all
+                    duration-400 ease-in-out
+                    data-[state=closed]:animate-collapsible-up
                     data-[state=open]:animate-collapsible-down
                   ">
-                    {openTasks.map(task => (
+                    {urgentTasks.map(task => (
                     <SidebarMenuSub key={task.id}>
                       <SidebarMenuSubItem className="h-auto">
                         <TooltipProvider>
                           <Tooltip>
                             <TooltipTrigger asChild>
                               <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
-                                <Link href="/task-overview" title={task.name} className="flex items-start gap-2">
+                                <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
                                   <CheckSquare size={16} className="shrink-0 mt-0.5" />
                                   <div className="line-clamp-3">{task.name}</div>
                                 </Link>
@@ -583,7 +601,7 @@ function SidebarLogo()
 
 
                   <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/home')}>
-                    Home
+                    {t('home')}
                     <DropdownMenuShortcut><Home /></DropdownMenuShortcut>
                   </DropdownMenuItem>
 
@@ -597,7 +615,7 @@ function SidebarLogo()
                     {/* Organizations (SUPER_ADMIN) */}
                     {user.role === 'SUPER_ADMIN' && (
                       <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/organization')}>
-                        Organizations
+                        {t('organizations')}
                       </DropdownMenuItem>
                     )}
 
@@ -605,7 +623,7 @@ function SidebarLogo()
                     {/* Organizations (ADMIN) */}
                     {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                       <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/profile')}>
-                        Profiles
+                        {t('profiles')}
                       </DropdownMenuItem>
                     )}
 
@@ -613,7 +631,7 @@ function SidebarLogo()
                     {/* Tasks (ADMIN) */}
                     {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                       <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/task')}>
-                        Tasks
+                        {t('tasks')}
                       </DropdownMenuItem>
                     )}
 
@@ -621,7 +639,7 @@ function SidebarLogo()
                     {/* Assets (ADMIN) */}
                     {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                       <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/asset')}>
-                        Assets
+                        {t('assets')}
                       </DropdownMenuItem>
                     )}
 
@@ -644,13 +662,13 @@ function SidebarLogo()
     pt-2 pr-2 pb-1 pl-0
     m-0
   "
->External Asset Management</DropdownMenuLabel>
+>{t('externalAssetManagement')}</DropdownMenuLabel>
 
                       {/* ------------------------------------------------------------- */}
                       {/* Incomming files (SFTP/FTP) (ADMIN) */}
                       {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                         <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/upload-files')}>
-                          Upload Files
+                          {t('uploadFiles')}
                         </DropdownMenuItem>
                       )}
 
@@ -658,7 +676,7 @@ function SidebarLogo()
                       {/* Incomming files (SFTP/FTP) (ADMIN) */}
                       {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                         <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/incomming-files')}>
-                          Incomming Files
+                          {t('incommingFiles')}
                         </DropdownMenuItem>
                       )}
                     </DropdownMenuGroup>
@@ -667,25 +685,25 @@ function SidebarLogo()
 
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/message')}>
-                    Messages
+                    {t('messages')}
                   </DropdownMenuItem>
                   <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/audit-trail')}>
-                    Audit Trail
+                    {t('auditTrail')}
                   </DropdownMenuItem>
 
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>Reports</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger>{t('reports')}</DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
-                        <DropdownMenuItem>Status Reports</DropdownMenuItem>
-                        <DropdownMenuItem>Status Reports</DropdownMenuItem>
+                        <DropdownMenuItem>{t('statusReports')}</DropdownMenuItem>
+                        <DropdownMenuItem>{t('statusReports')}</DropdownMenuItem>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
 
                   <DropdownMenuSeparator />
                   <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/turk')}>
-                    Mechanical Turk
+                    {t('mechanicalTurk')}
                   </DropdownMenuItem>
 
 
@@ -702,28 +720,28 @@ function SidebarLogo()
     pt-2 pr-2 pb-1 pl-0
     m-0
   "
->Documentation</DropdownMenuLabel>
+>{t('documentation')}</DropdownMenuLabel>
 
                   <DropdownMenuGroup>
-                  <DropdownMenuItem>
-                    Wheel
+                  <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/cis/controls')}>
+                    {t('cis')}
                     <DropdownMenuShortcut><Cog /></DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>Academy</DropdownMenuItem>
+                  <DropdownMenuItem>{t('academy')}</DropdownMenuItem>
                   <DropdownMenuItem>
-                    AI
+                    {t('ai')}
                     <DropdownMenuShortcut><Bot /></DropdownMenuShortcut>
                   </DropdownMenuItem>
 
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>Learn More</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger>{t('learnMore')}</DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
-                        <DropdownMenuItem>About Compliance Circle</DropdownMenuItem>
+                        <DropdownMenuItem>{t('aboutComplianceCircle')}</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>Privacy Policy</DropdownMenuItem>
-                        <DropdownMenuItem>Terms of Service</DropdownMenuItem>
-                        <DropdownMenuItem>Blog
+                        <DropdownMenuItem>{t('privacyPolicy')}</DropdownMenuItem>
+                        <DropdownMenuItem>{t('termsOfService')}</DropdownMenuItem>
+                        <DropdownMenuItem>{t('blog')}
                           <DropdownMenuShortcut><ExternalLink /></DropdownMenuShortcut>
                         </DropdownMenuItem>
                       </DropdownMenuSubContent>
@@ -734,7 +752,7 @@ function SidebarLogo()
                   {/* Settings Section */}
                   <DropdownMenuGroup>
                     {/* Theme Toggle Button */}
-                    <DropdownMenuLabel className="flex text-muted-foreground font-normal">Theme
+                    <DropdownMenuLabel className="flex text-muted-foreground font-normal">{t('theme')}
                     <span
                       className="ml-auto"
                       onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
@@ -749,24 +767,29 @@ function SidebarLogo()
                     </DropdownMenuLabel>
 
                     <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
-                      Profile Settings
+                      {t('profileSettings')}
                     </DropdownMenuItem>
                     {user.role === 'SUPER_ADMIN' && (
                       <DropdownMenuItem onClick={() => router.push('/settings/application')}>
-                        Application Settings
+                        {t('applicationSettings')}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>Language</DropdownMenuSubTrigger>
+                      <DropdownMenuSubTrigger>{t('language')}</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent className="text-muted-foreground font-normal">
-                          <DropdownMenuItem><GB className="w-4 h-3" />English</DropdownMenuItem>
-                          <DropdownMenuItem><DK className="w-4 h-3" />Dansk</DropdownMenuItem>
-                          <DropdownMenuItem><SE className="w-4 h-3" />Svenska</DropdownMenuItem>
-                          <DropdownMenuItem><NO className="w-4 h-3" />Norsk</DropdownMenuItem>
-                          <DropdownMenuItem><FR className="w-4 h-3" />Français</DropdownMenuItem>
-                          <DropdownMenuItem><DE className="w-4 h-3" />Deutsch</DropdownMenuItem>
-                          <DropdownMenuItem><ES className="w-4 h-3" />Español</DropdownMenuItem>
+                          {locales.map((code) => {
+                            const { label, flag: Flag } = localeConfig[code];
+                            return (
+                              <DropdownMenuItem
+                                key={code}
+                                className={`cursor-pointer ${locale === code ? 'font-bold' : ''}`}
+                                onClick={async () => { await setLocale(code); router.refresh(); }}
+                              >
+                                <Flag className="w-4 h-3" />{label}
+                              </DropdownMenuItem>
+                            );
+                          })}
                         </DropdownMenuSubContent>
                       </DropdownMenuPortal>
                     </DropdownMenuSub>
@@ -778,7 +801,7 @@ function SidebarLogo()
                       await fetch('/api/user/logout', { method: 'POST' });
                       router.push('/login');
                     }}>
-                    Log out
+                    {t('logOut')}
                     <DropdownMenuShortcut><LogOut /></DropdownMenuShortcut>
                   </DropdownMenuItem>
                   </DropdownMenuGroup>

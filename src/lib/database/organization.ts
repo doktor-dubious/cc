@@ -40,27 +40,27 @@ import { prisma }            from '@/lib/prisma';
 
 type ProfileData =
 {
-    id              : number;
+    id              : string;
     name            : string;
     description     : string | null;
-    organizationId  : number;
+    organizationId  : string | null;
 };
 
 type TaskData =
 {
-    id               : number;
+    id               : string;
     name             : string;
     description      : string | null;
     expectedEvidence : string | null;
     startAt          : Date | null;
     endAt            : Date | null;
     status           : string;
-    organizationId   : number | null;
+    organizationId   : string | null;
 };
 
 type OrganizationWithProfiles =
 {
-    id               : number;
+    id               : string;
     name             : string;
     description      : string | null;
     profiles         : ProfileData[];
@@ -68,7 +68,7 @@ type OrganizationWithProfiles =
 
 type OrganizationWithTasks =
 {
-    id               : number;
+    id               : string;
     name             : string;
     description      : string | null;
     tasks            : TaskData[];
@@ -76,7 +76,7 @@ type OrganizationWithTasks =
 
 type OrganizationWithProfilesAndTasks =
 {
-    id               : number;
+    id               : string;
     name             : string;
     description      : string | null;
     profiles         : ProfileData[];
@@ -85,15 +85,15 @@ type OrganizationWithProfilesAndTasks =
 
 export type organizationData =
 {
-    id              : number;
+    id              : string;
     name            : string;
     description     : string | null;
 };
 
 export type OrganisationSettingsData =
 {
-    id                : number;
-    organizationId    : number;
+    id                : string;
+    organizationId    : string;
     uploadDirectory   : string;
     downloadDirectory : string;
     artifactDirectory : string;
@@ -101,7 +101,7 @@ export type OrganisationSettingsData =
 
 type OrganizationWithSettings =
 {
-    id              : number;
+    id              : string;
     name            : string;
     description     : string | null;
     settings        : OrganisationSettingsData | null;
@@ -109,7 +109,7 @@ type OrganizationWithSettings =
 
 export type OrganizationWithAll =
 {
-    id              : number;
+    id              : string;
     name            : string;
     description     : string | null;
     profiles        : ProfileData[];
@@ -253,7 +253,7 @@ const selectFieldsWithProfilesTasksAndSettings =
 
 export const organizationRepository =
 {
-    async findById(id: number): Promise<organizationData | null>
+    async findById(id: string): Promise<organizationData | null>
     {
         log.info('SQL - organization: findById');
 
@@ -312,7 +312,7 @@ export const organizationRepository =
         });
     },
 
-    async findAllByUserId(userId: number): Promise<organizationData[]>
+    async findAllByUserId(userId: string): Promise<organizationData[]>
     {
         log.info('SQL - organization: findAllByUserId');
 
@@ -335,7 +335,7 @@ export const organizationRepository =
         });
     },
 
-    async findByIdWithSettings(id: number): Promise<OrganizationWithSettings | null>
+    async findByIdWithSettings(id: string): Promise<OrganizationWithSettings | null>
     {
         log.info('SQL - organization: findByIdWithSettings');
 
@@ -370,7 +370,7 @@ export const organizationRepository =
         });
     },
 
-    async updateOrganization(id: number, data: { name: string; description: string | null }): Promise<organizationData>
+    async updateOrganization(id: string, data: { name: string; description: string | null }): Promise<organizationData>
     {
         log.info({ ID: id, name: data.name }, 'SQL - organization: update');
 
@@ -382,7 +382,7 @@ export const organizationRepository =
         });
     },
 
-    async updateSettings(organizationId: number,
+    async updateSettings(organizationId: string,
         data:
         {
             uploadDirectory   : string;
@@ -420,7 +420,7 @@ export const organizationRepository =
         return prisma.organization.create({ data, select: selectFieldsWithProfilesAndTasks });
     },
 
-    async delete(id: number): Promise<organizationData>
+    async delete(id: string): Promise<organizationData>
     {
         log.info({ id }, 'SQL - organization: delete');
         

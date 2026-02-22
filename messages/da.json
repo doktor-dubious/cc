@@ -1,0 +1,837 @@
+{
+  "Common": {
+    "buttons": {
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "save": "Gem",
+      "saveChanges": "Gem ændringer",
+      "edit": "Rediger",
+      "creating": "Opretter...",
+      "saving": "Gemmer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Tilføjer..."
+    },
+    "table": {
+      "id": "ID",
+      "name": "Navn",
+      "description": "Beskrivelse",
+      "type": "Type",
+      "status": "Status",
+      "date": "Dato",
+      "user": "Bruger",
+      "importance": "Vigtighed",
+      "message": "Besked",
+      "email": "E-mail",
+      "role": "Rolle",
+      "tasks": "Opgaver",
+      "profiles": "Profiler",
+      "sender": "Afsender",
+      "task": "Opgave"
+    },
+    "loading": {
+      "loadingUser": "Indlæser bruger...",
+      "selectOrganization": "Vælg venligst en organisation"
+    },
+    "dialogs": {
+      "deleteTitle": "Er du helt sikker?",
+      "cannotBeUndone": "Denne handling kan ikke fortrydes."
+    }
+  },
+  "Sidebar": {
+    "newTask": "Ny opgave",
+    "currentTasks": "Aktuelle opgaver",
+    "waitingTasks": "Afventende opgaver",
+    "urgentTasks": "Kritiske opgaver",
+    "home": "Hjem",
+    "organizations": "Organisationer",
+    "profiles": "Profiler",
+    "tasks": "Opgaver",
+    "assets": "Aktiver",
+    "uploadFiles": "Upload filer",
+    "incommingFiles": "Indkommende filer",
+    "messages": "Beskeder",
+    "auditTrail": "Revisionsspor",
+    "reports": "Rapporter",
+    "statusReports": "Statusrapporter",
+    "mechanicalTurk": "Mechanical Turk",
+    "cis": "CIS",
+    "academy": "Akademi",
+    "ai": "AI",
+    "learnMore": "Læs mere",
+    "aboutComplianceCircle": "Om Compliance Circle",
+    "privacyPolicy": "Privatlivspolitik",
+    "termsOfService": "Servicevilkår",
+    "blog": "Blog",
+    "theme": "Tema",
+    "profileSettings": "Profilindstillinger",
+    "applicationSettings": "Programindstillinger",
+    "language": "Sprog",
+    "logOut": "Log ud",
+    "externalAssetManagement": "Ekstern aktivstyring",
+    "documentation": "Dokumentation"
+  },
+  "Dashboard": {
+    "welcome": "Velkommen {name}",
+    "email": "E-mail: {email}",
+    "nickname": "Kælenavn: {nickname}"
+  },
+  "Asset": {
+    "buttons": {
+      "newArtifact": "Nyt aktiv",
+      "createArtifact": "Opret aktiv",
+      "saveChanges": "Gem ændringer",
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "addToTask": "Tilføj til opgave",
+      "removeTask": "Fjern opgave",
+      "previewAsset": "Forhåndsvis aktiv",
+      "downloadAsset": "Download aktiv",
+      "deleteThisArtifact": "Slet dette aktiv",
+      "creating": "Opretter...",
+      "saving": "Gemmer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Tilføjer..."
+    },
+    "dialogs": {
+      "createTitle": "Opret nyt aktiv",
+      "createDescription": "Indtast detaljer for det nye aktiv. Klik Gem når du er færdig.",
+      "editTaskTitle": "Rediger opgave",
+      "editTaskDescription": "Opdater navn og beskrivelse på opgaven.",
+      "addToTaskTitle": "Tilføj aktiv til opgave",
+      "addToTaskDescription": "Vælg en opgave som aktivet skal knyttes til.",
+      "removeTaskTitle": "Fjern opgave fra aktiv?",
+      "removeTaskDescription": "Dette fjerner forbindelsen mellem opgaven og det aktuelle aktiv (sletter linket i TaskArtifact). Opgaven forbliver i systemet og kan stadig tildeles andre aktiver eller profiler. Handlingen kan ikke fortrydes.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette aktivet \"{name}\" og fjerne det fra systemet.",
+      "alsoDeleteFile": "Slet også filen fra filsystemet"
+    },
+    "labels": {
+      "artifactName": "Aktivnavn",
+      "description": "Beskrivelse",
+      "artifactType": "Aktivtype",
+      "mimeType": "MIME-type",
+      "fileExtension": "Filtype",
+      "fileSize": "Filstørrelse",
+      "originalFileName": "Oprindeligt filnavn",
+      "taskName": "Opgavenavn"
+    },
+    "placeholders": {
+      "enterArtifactName": "Indtast aktivnavn",
+      "enterDescription": "Indtast beskrivelse af aktivet",
+      "mimeTypeExample": "f.eks. application/pdf, image/png",
+      "filterByNameOrId": "Filtrer efter navn eller ID...",
+      "searchTasks": "Søg efter opgaver...",
+      "enterTaskName": "Indtast opgavenavn",
+      "enterTaskDescription": "Indtast opgavebeskrivelse"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Navn",
+      "description": "Beskrivelse",
+      "type": "Type",
+      "status": "Status",
+      "date": "Dato",
+      "user": "Bruger",
+      "importance": "Vigtighed",
+      "message": "Besked"
+    },
+    "tabs": {
+      "details": "Detaljer",
+      "fileDetails": "Fildetaljer",
+      "tasks": "Opgaver ({count})",
+      "auditTrail": "Revisionsspor ({count})",
+      "actions": "Handlinger"
+    },
+    "sections": {
+      "previewAssetTitle": "Forhåndsvis aktiv",
+      "previewAssetDescription": "Åbn en forhåndsvisning af dette aktiv i en ny fane.",
+      "downloadAssetTitle": "Download aktiv",
+      "downloadAssetDescription": "Download filen der hører til dette aktiv.",
+      "deleteArtifactTitle": "Slet aktiv",
+      "deleteArtifactDescription": "Når du sletter dette aktiv, er der ingen vej tilbage. Vær sikker."
+    },
+    "empty": {
+      "noArtifactsMatch": "Ingen aktiver matcher dit filter",
+      "noArtifactsFound": "Ingen aktiver fundet",
+      "noTasksConnected": "Ingen opgaver knyttet til dette aktiv",
+      "noAvailableTasks": "Ingen tilgængelige opgaver at tilføje",
+      "noEvents": "Ingen hændelser for dette aktiv"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} af {total} aktiver",
+      "showingEvents": "Viser {start} til {end} af {total} hændelser"
+    },
+    "toast": {
+      "taskRemovedSuccess": "Opgave fjernet fra aktiv",
+      "taskUpdatedSuccess": "Opgave opdateret",
+      "taskAddedSuccess": "Opgave tilføjet til aktiv",
+      "artifactCreated": "Aktiv oprettet",
+      "artifactUpdated": "Aktiv opdateret",
+      "artifactDeletedSuccess": "Aktiv slettet",
+      "artifactAndFileDeletedSuccess": "Aktiv og fil slettet",
+      "nameRequired": "Aktivnavn er påkrævet",
+      "noOrganization": "Ingen organisation valgt",
+      "removeTaskError": "Kunne ikke fjerne opgave fra aktiv",
+      "updateTaskError": "Kunne ikke opdatere opgave",
+      "addTaskError": "Kunne ikke tilføje opgave",
+      "saveError": "Kunne ikke gemme aktiv",
+      "deleteError": "Kunne ikke slette aktiv"
+    },
+    "loading": {
+      "loadingUser": "Indlæser bruger...",
+      "selectOrganization": "Vælg venligst en organisation",
+      "loadingArtifacts": "Indlæser aktiver..."
+    },
+    "events": {
+      "loading": "Indlæser hændelser..."
+    }
+  },
+
+  "AuditTrail": {
+    "placeholders": {
+      "filter": "Filtrer efter besked, bruger, entitet eller vigtighed..."
+    },
+    "table": {
+      "entity": "Entitet",
+      "goTo": "Gå til {type}"
+    },
+    "entityTypes": {
+      "task": "Opgave",
+      "organization": "Organisation",
+      "profile": "Profil",
+      "artifact": "Aktiv"
+    },
+    "empty": {
+      "loading": "Indlæser hændelser...",
+      "noEventsMatch": "Ingen hændelser matcher dit filter",
+      "noEventsFound": "Ingen hændelser fundet"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} af {total} hændelser"
+    },
+    "toast": {
+      "loadError": "Kunne ikke indlæse hændelser"
+    }
+  },
+
+  "Task": {
+    "buttons": {
+      "newTask": "Ny opgave",
+      "createTask": "Opret opgave",
+      "saveChanges": "Gem ændringer",
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "deleteTask": "Slet opgave",
+      "addProfile": "Tilføj profil",
+      "addArtifact": "Tilføj aktiv",
+      "newMessage": "Ny besked",
+      "markAllRead": "Marker alle som læst ({count})",
+      "removeArtifact": "Fjern aktiv",
+      "removeProfile": "Fjern profil",
+      "edit": "Rediger",
+      "saveMessage": "Gem ændringer",
+      "creating": "Opretter...",
+      "saving": "Gemmer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Tilføjer..."
+    },
+    "dialogs": {
+      "createTitle": "Opret ny opgave",
+      "createDescription": "Indtast detaljer for den nye opgave. Klik Gem når du er færdig.",
+      "newMessageTitle": "Ny besked",
+      "newMessageDescription": "Skriv en besked til denne opgave.",
+      "editArtifactTitle": "Rediger aktiv",
+      "editArtifactDescription": "Opdater navn og beskrivelse på aktivet.",
+      "editProfileTitle": "Rediger profil",
+      "editProfileDescription": "Opdater navn og beskrivelse på profilen.",
+      "addProfileTitle": "Tilføj profil til opgave",
+      "addProfileDescription": "Vælg en profil der skal tildeles denne opgave.",
+      "addArtifactTitle": "Tilføj aktiv til opgave",
+      "addArtifactDescription": "Vælg et aktiv der skal tildeles denne opgave.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteMessageDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette denne besked.",
+      "deleteTaskDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette opgaven \"{name}\" og fjerne den fra systemet.",
+      "removeArtifactTitle": "Fjern aktiv fra opgave?",
+      "removeArtifactDescription": "Dette fjerner forbindelsen mellem aktivet og den aktuelle opgave (sletter linket i TaskArtifact). Aktivet forbliver i systemet. Handlingen kan ikke fortrydes.",
+      "removeProfileTitle": "Fjern profil fra opgave?",
+      "removeProfileDescription": "Dette fjerner forbindelsen mellem profilen og den aktuelle opgave (sletter linket i TaskProfile). Profilen forbliver i systemet. Handlingen kan ikke fortrydes.",
+      "messageFrom": "Besked fra {name}",
+      "taskLabel": "Opgave: {name}"
+    },
+    "labels": {
+      "taskName": "Opgavenavn",
+      "description": "Beskrivelse",
+      "expectedEvidence": "Forventet evidens",
+      "startDate": "Startdato",
+      "endDate": "Slutdato",
+      "status": "Status",
+      "artifactName": "Aktivnavn",
+      "profileName": "Profilnavn"
+    },
+    "placeholders": {
+      "enterTaskName": "Indtast opgavenavn",
+      "enterTaskDescription": "Indtast opgavebeskrivelse",
+      "enterExpectedEvidence": "Indtast forventet evidens",
+      "selectStartDate": "Vælg startdato",
+      "selectEndDate": "Vælg slutdato",
+      "typeMessage": "Skriv din besked...",
+      "searchProfiles": "Søg profiler...",
+      "searchArtifacts": "Søg aktiver...",
+      "filterByNameOrId": "Filtrer efter navn eller ID...",
+      "enterArtifactName": "Indtast aktivnavn",
+      "enterArtifactDescription": "Indtast aktivbeskrivelse",
+      "enterProfileName": "Indtast profilnavn",
+      "enterProfileDescription": "Indtast profilbeskrivelse"
+    },
+    "tabs": {
+      "messages": "Beskeder ({count})",
+      "details": "Detaljer",
+      "profiles": "Profiler ({count})",
+      "artifacts": "Aktiver ({count})",
+      "auditTrail": "Revisionsspor ({count})",
+      "actions": "Handlinger"
+    },
+    "empty": {
+      "noTasksMatch": "Ingen opgaver matcher dit filter",
+      "noTasksFound": "Ingen opgaver fundet",
+      "noMessages": "Ingen beskeder til denne opgave",
+      "noArtifacts": "Ingen aktiver fundet til denne opgave",
+      "noProfiles": "Ingen profiler tildelt denne opgave",
+      "noEvents": "Ingen hændelser for denne opgave",
+      "noAvailableProfiles": "Ingen tilgængelige profiler at tilføje",
+      "noAvailableArtifacts": "Ingen tilgængelige aktiver at tilføje"
+    },
+    "pagination": {
+      "showingTasks": "Viser {start} til {end} af {total} opgaver",
+      "showingMessages": "Viser {start} til {end} af {total} beskeder",
+      "showingArtifacts": "Viser {start} til {end} af {total} aktiver",
+      "showingProfiles": "Viser {start} til {end} af {total} profiler",
+      "showingEvents": "Viser {start} til {end} af {total} hændelser"
+    },
+    "toast": {
+      "allMessagesRead": "Alle beskeder markeret som læst",
+      "markReadError": "Kunne ikke markere beskeder som læst",
+      "messageSent": "Besked sendt",
+      "sendMessageError": "Kunne ikke sende besked",
+      "messageUpdated": "Besked opdateret",
+      "editMessageError": "Kunne ikke redigere besked",
+      "messageDeleted": "Besked slettet",
+      "deleteMessageError": "Kunne ikke slette besked",
+      "artifactRemoved": "Aktiv fjernet fra opgave",
+      "removeArtifactError": "Kunne ikke fjerne aktiv fra opgave",
+      "profileRemoved": "Profil fjernet fra opgave",
+      "removeProfileError": "Kunne ikke fjerne profil fra opgave",
+      "nameRequired": "Opgavenavn er påkrævet",
+      "noOrganization": "Ingen organisation valgt",
+      "taskCreated": "Opgave oprettet",
+      "taskUpdated": "Opgave opdateret",
+      "saveError": "Kunne ikke gemme opgave",
+      "taskDeleted": "Opgave slettet",
+      "deleteError": "Kunne ikke slette opgave",
+      "artifactNameRequired": "Aktivnavn er påkrævet",
+      "artifactUpdated": "Aktiv opdateret",
+      "saveArtifactError": "Kunne ikke gemme aktiv",
+      "profileNameRequired": "Profilnavn er påkrævet",
+      "profileUpdated": "Profil opdateret",
+      "saveProfileError": "Kunne ikke gemme profil",
+      "profileAdded": "Profil tilføjet til opgave",
+      "addProfileError": "Kunne ikke tilføje profil til opgave",
+      "artifactAdded": "Aktiv tilføjet til opgave",
+      "addArtifactError": "Kunne ikke tilføje aktiv"
+    },
+    "loading": {
+      "loadingUser": "Indlæser bruger...",
+      "selectOrganization": "Vælg venligst en organisation",
+      "loadingTasks": "Indlæser opgaver...",
+      "loadingMessages": "Indlæser beskeder...",
+      "loadingEvents": "Indlæser hændelser..."
+    },
+    "sections": {
+      "taskActions": "Opgavehandlinger",
+      "taskActionsDescription": "Administrer denne opgave med handlingerne nedenfor.",
+      "deleteTaskDescription": "Slet denne opgave og alle tilknyttede data permanent. Kan ikke fortrydes."
+    },
+    "badges": {
+      "new": "ny",
+      "system": "System"
+    }
+  },
+
+  "Profile": {
+    "buttons": {
+      "newProfile": "Ny profil",
+      "createProfile": "Opret profil",
+      "saveChanges": "Gem ændringer",
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "deleteProfile": "Slet profil",
+      "removeTask": "Fjern opgave",
+      "creating": "Opretter...",
+      "saving": "Gemmer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner..."
+    },
+    "dialogs": {
+      "createTitle": "Opret ny profil",
+      "createDescription": "Indtast profil- og loginoplysninger. Alle felter er påkrævet.",
+      "editTaskTitle": "Rediger opgave",
+      "editTaskDescription": "Opdater navn og beskrivelse på opgaven.",
+      "removeTaskTitle": "Fjern opgave fra profil?",
+      "removeTaskDescription": "Dette fjerner opgavetildelingen fra denne profil (sletter linket i TaskProfile). Opgaven forbliver i systemet. Handlingen kan ikke fortrydes.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet."
+    },
+    "labels": {
+      "profileName": "Profilnavn",
+      "description": "Beskrivelse",
+      "email": "E-mail",
+      "password": "Adgangskode",
+      "loginName": "Login-navn",
+      "nickname": "Kælenavn",
+      "role": "Rolle",
+      "taskName": "Opgavenavn",
+      "profileInformation": "Profiloplysninger",
+      "loginInformation": "Login-oplysninger"
+    },
+    "placeholders": {
+      "enterProfileName": "Indtast profilnavn",
+      "enterDescription": "Indtast profilbeskrivelse",
+      "enterEmail": "Indtast e-mail",
+      "enterPassword": "Indtast adgangskode",
+      "enterLoginName": "Indtast login-navn",
+      "enterNickname": "Indtast kælenavn",
+      "enterTaskName": "Indtast opgavenavn",
+      "enterTaskDescription": "Indtast opgavebeskrivelse",
+      "filterByNameOrId": "Filtrer efter navn, e-mail eller ID...",
+      "leaveBlankPassword": "Efterlad tom for at beholde nuværende adgangskode"
+    },
+    "tabs": {
+      "details": "Detaljer",
+      "login": "Login",
+      "tasks": "Opgaver ({count})",
+      "auditTrail": "Revisionsspor ({count})",
+      "actions": "Handlinger"
+    },
+    "roles": {
+      "user": "Bruger",
+      "admin": "Admin",
+      "superAdmin": "Super Admin"
+    },
+    "empty": {
+      "noProfilesMatch": "Ingen profiler matcher dit filter",
+      "noProfilesFound": "Ingen profiler fundet",
+      "noTasks": "Ingen opgaver tildelt denne profil",
+      "noEvents": "Ingen hændelser for denne profil"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} af {total} profiler",
+      "showingEvents": "Viser {start} til {end} af {total} hændelser"
+    },
+    "toast": {
+      "taskRemoved": "Opgave fjernet fra profil",
+      "removeTaskError": "Kunne ikke fjerne opgave",
+      "nameEmailRequired": "Profilnavn og e-mail er påkrævet",
+      "noOrganization": "Ingen organisation valgt",
+      "invalidEmail": "Ugyldig e-mail",
+      "passwordTooWeak": "Adgangskoden er for svag. Gør den stærkere.",
+      "allFieldsRequired": "Alle felter er påkrævet ved oprettelse af nye profiler",
+      "profileCreated": "Profil oprettet",
+      "profileUpdated": "Profil opdateret",
+      "saveError": "Kunne ikke gemme profil",
+      "taskUpdated": "Opgave opdateret",
+      "updateTaskError": "Kunne ikke opdatere opgave",
+      "profileDeleted": "Profil slettet",
+      "deleteError": "Kunne ikke slette profil"
+    },
+    "loading": {
+      "loadingUser": "Indlæser bruger...",
+      "selectOrganization": "Vælg venligst en organisation",
+      "loadingProfiles": "Indlæser profiler...",
+      "loadingEvents": "Indlæser hændelser..."
+    },
+    "sections": {
+      "profileActions": "Profilhandlinger",
+      "profileActionsDescription": "Administrer denne profil med handlingerne nedenfor.",
+      "deleteProfileTitle": "Slet profil",
+      "deleteProfileDescription": "Slet denne profil og alle tilknyttede data permanent. Kan ikke fortrydes."
+    },
+    "password": {
+      "minLength": "Brug mindst 8 tegn med en blanding af bogstaver, tal og symboler",
+      "veryWeak": "Meget svag – let at gætte",
+      "weak": "Svag",
+      "okay": "Okay – kunne være stærkere",
+      "strong": "Stærk",
+      "veryStrong": "Meget stærk",
+      "onlyEnterToChange": "Indtast kun adgangskode hvis du vil ændre den"
+    },
+    "emailValidation": {
+      "invalidFormat": "Ugyldigt e-mail-format",
+      "alreadyTaken": "Denne e-mail er allerede i brug",
+      "available": "E-mail er ledig"
+    }
+  },
+
+  "Organization": {
+    "buttons": {
+      "newOrganisation": "Ny organisation",
+      "createOrganisation": "Opret organisation",
+      "saveChanges": "Gem ændringer",
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "deleteOrganization": "Slet organisation",
+      "addProfile": "Tilføj profil",
+      "addTask": "Tilføj opgave",
+      "removeTask": "Fjern opgave",
+      "removeProfile": "Fjern profil",
+      "creating": "Opretter...",
+      "saving": "Gemmer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Tilføjer..."
+    },
+    "dialogs": {
+      "createTitle": "Opret ny organisation",
+      "createDescription": "Indtast detaljer for den nye organisation. Klik Gem når du er færdig.",
+      "editProfileTitle": "Rediger profil",
+      "editProfileDescription": "Opdater navn og beskrivelse. Klik Gem når du er færdig.",
+      "editTaskTitle": "Rediger opgave",
+      "editTaskDescription": "Opdater opgavenavn og beskrivelse.",
+      "addProfileTitle": "Tilføj eksisterende profil til organisation",
+      "addProfileDescription": "Søg og vælg en profil der skal tildeles denne organisation.",
+      "addTaskTitle": "Tilføj eksisterende opgave til organisation",
+      "addTaskDescription": "Søg og vælg en opgave der skal tildeles denne organisation.",
+      "removeTaskTitle": "Fjern opgave fra organisation?",
+      "removeTaskDescription": "Dette fjerner forbindelsen mellem opgaven og den aktuelle organisation (sætter organizationId til null). Opgaven forbliver i systemet. Handlingen kan ikke fortrydes.",
+      "removeProfileTitle": "Fjern profil fra organisation?",
+      "removeProfileDescription": "Dette fjerner forbindelsen mellem profilen og den aktuelle organisation (sætter organizationId til null). Profilen forbliver i systemet. Handlingen kan ikke fortrydes.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette organisationen \"{name}\" og fjerne den fra systemet."
+    },
+    "labels": {
+      "organisationName": "Organisationsnavn",
+      "description": "Beskrivelse",
+      "profileName": "Profilnavn",
+      "taskName": "Opgavenavn",
+      "uploadDirectory": "Upload-mappe",
+      "downloadDirectory": "Download-mappe",
+      "artifactDirectory": "Aktiv-mappe"
+    },
+    "placeholders": {
+      "enterOrganizationName": "Indtast organisationsnavn",
+      "enterDescription": "Indtast organisationsbeskrivelse",
+      "enterProfileName": "Indtast profilnavn",
+      "enterProfileDescription": "Indtast profilbeskrivelse",
+      "enterTaskName": "Indtast opgavenavn",
+      "enterTaskDescription": "Indtast opgavebeskrivelse",
+      "searchByNameOrEmail": "Søg efter navn eller e-mail...",
+      "searchByName": "Søg efter navn...",
+      "filterByNameOrId": "Filtrer efter navn eller ID...",
+      "enterUploadDirectory": "Indtast sti til upload-mappe (f.eks. /var/uploads)",
+      "enterDownloadDirectory": "Indtast sti til download-mappe (f.eks. /var/downloads)",
+      "enterArtifactDirectory": "Indtast sti til aktiv-mappe (f.eks. /var/artifacts)"
+    },
+    "tabs": {
+      "details": "Detaljer",
+      "settings": "Indstillinger",
+      "profiles": "Profiler ({count})",
+      "tasks": "Opgaver ({count})",
+      "auditTrail": "Revisionsspor ({count})",
+      "actions": "Handlinger"
+    },
+    "empty": {
+      "noOrganizationsMatch": "Ingen organisationer matcher dit filter",
+      "noOrganizationsFound": "Ingen organisationer fundet",
+      "noProfilesFound": "Ingen profiler fundet til denne organisation",
+      "noTasksFound": "Ingen opgaver fundet til denne organisation",
+      "noAvailableProfiles": "Ingen tilgængelige profiler fundet",
+      "noAvailableTasks": "Ingen tilgængelige opgaver fundet",
+      "noEvents": "Ingen hændelser for denne organisation",
+      "noSettings": "Ingen indstillinger konfigureret for denne organisation endnu. Indtast mappestier ovenfor og gem."
+    },
+    "pagination": {
+      "showingOrganizations": "Viser {start} til {end} af {total} organisationer",
+      "showingProfiles": "Viser {start} til {end} af {total} profiler",
+      "showingTasks": "Viser {start} til {end} af {total} opgaver",
+      "showingEvents": "Viser {start} til {end} af {total} hændelser"
+    },
+    "toast": {
+      "profileAssigned": "Profil tildelt organisation",
+      "assignProfileError": "Kunne ikke tildele profil",
+      "taskAssigned": "Opgave tildelt organisation",
+      "assignTaskError": "Kunne ikke tildele opgave",
+      "loadProfilesError": "Kunne ikke indlæse tilgængelige profiler",
+      "loadTasksError": "Kunne ikke indlæse tilgængelige opgaver",
+      "directoryFieldsRequired": "Alle mappefelter er påkrævet",
+      "settingsSaved": "Indstillinger gemt",
+      "saveSettingsError": "Kunne ikke gemme indstillinger",
+      "profileNameRequired": "Profilnavn er påkrævet",
+      "profileUpdated": "Profil opdateret",
+      "saveProfileError": "Kunne ikke gemme profil",
+      "organizationCreated": "Organisation oprettet",
+      "organizationUpdated": "Organisation opdateret",
+      "saveError": "Kunne ikke gemme organisation",
+      "organizationDeleted": "Organisation slettet",
+      "deleteError": "Kunne ikke slette organisation",
+      "taskRemoved": "Opgave fjernet fra organisation",
+      "removeTaskError": "Kunne ikke fjerne opgave",
+      "profileRemoved": "Profil fjernet fra organisation",
+      "removeProfileError": "Kunne ikke fjerne profil",
+      "taskNameRequired": "Opgavenavn er påkrævet",
+      "taskUpdated": "Opgave opdateret",
+      "updateTaskError": "Kunne ikke opdatere opgave"
+    },
+    "loading": {
+      "loadingUser": "Indlæser bruger...",
+      "loadingOrganizations": "Indlæser organisationer...",
+      "loadingEvents": "Indlæser hændelser..."
+    },
+    "sections": {
+      "organizationActions": "Organisationshandlinger",
+      "organizationActionsDescription": "Administrer denne organisation med handlingerne nedenfor.",
+      "deleteOrganizationTitle": "Slet organisation",
+      "deleteOrganizationDescription": "Slet denne organisation og alle tilknyttede data permanent. Kan ikke fortrydes."
+    },
+    "helpers": {
+      "uploadDirectoryHelp": "Mappe hvor uploadede filer midlertidigt gemmes",
+      "downloadDirectoryHelp": "Mappe hvor filer klargøres til download",
+      "artifactDirectoryHelp": "Mappe hvor aktivfiler permanent gemmes"
+    },
+    "status": {
+      "currentlyIn": "Aktuelt i: {name}",
+      "unassigned": "Ikke tildelt",
+      "notAssigned": "Aktuelt ikke tildelt nogen organisation",
+      "noEmail": "Ingen e-mail",
+      "noDescription": "Ingen beskrivelse"
+    }
+  },
+
+  "IncommingFiles": {
+    "buttons": {
+      "assignAsArtifact": "Tildel som aktiv",
+      "createArtifactAndMove": "Opret aktiv & flyt fil",
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "deleting": "Sletter..."
+    },
+    "dialogs": {
+      "deleteTitle": "Slet fil?",
+      "deleteDescription": "Er du sikker på at du vil slette <strong>{name}</strong>? Denne handling kan ikke fortrydes.",
+      "assignTitle": "Tildel fil som aktiv",
+      "assignFileLabel": "Fil: {name}"
+    },
+    "labels": {
+      "artifactName": "Aktivnavn",
+      "description": "Beskrivelse",
+      "type": "Type"
+    },
+    "placeholders": {
+      "enterArtifactName": "Indtast aktivnavn",
+      "enterDescription": "Valgfri beskrivelse",
+      "selectType": "Vælg type"
+    },
+    "table": {
+      "filename": "Filnavn",
+      "size": "Størrelse",
+      "modified": "Ændret",
+      "actions": "Handlinger"
+    },
+    "empty": {
+      "noFiles": "Ingen filer fundet i upload-mappen"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} af {total} filer"
+    },
+    "toast": {
+      "nameRequired": "Navn er påkrævet",
+      "artifactCreated": "Aktiv oprettet og fil flyttet",
+      "assignError": "Kunne ikke tildele fil",
+      "fileDeleted": "Fil slettet",
+      "deleteError": "Kunne ikke slette fil",
+      "loadError": "Kunne ikke indlæse filer fra upload-mappen"
+    }
+  },
+
+  "Message": {
+    "buttons": {
+      "delete": "Slet",
+      "cancel": "Annuller",
+      "deleting": "Sletter..."
+    },
+    "dialogs": {
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette denne besked.",
+      "messageFrom": "Besked fra {name}",
+      "taskLabel": "Opgave: {name}"
+    },
+    "badges": {
+      "system": "System"
+    },
+    "placeholders": {
+      "filter": "Filtrer efter besked, opgave eller afsender..."
+    },
+    "table": {
+      "id": "ID",
+      "message": "Besked",
+      "task": "Opgave",
+      "sender": "Afsender",
+      "date": "Dato"
+    },
+    "empty": {
+      "loading": "Indlæser beskeder...",
+      "noMessagesMatch": "Ingen beskeder matcher dit filter",
+      "noMessagesFound": "Ingen beskeder fundet"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} af {total} beskeder"
+    },
+    "toast": {
+      "messageDeleted": "Besked slettet",
+      "deleteError": "Kunne ikke slette besked",
+      "loadError": "Kunne ikke indlæse beskeder"
+    }
+  },
+
+  "CISControls": {
+    "legends": {
+      "controlGroups": "Kontrolgrupper",
+      "riskScore": "Risikoscore",
+      "low": "Lav (0–33)",
+      "medium": "Mellem (34–66)",
+      "high": "Høj (67–100)",
+      "riskScoreLabel": "Risikoscore: {risk}%"
+    },
+    "table": {
+      "control": "Kontrol",
+      "group": "Gruppe",
+      "risk": "Risiko"
+    }
+  },
+
+  "CISSafeguards": {
+    "buttons": {
+      "backToControls": "Tilbage til kontroller"
+    },
+    "headings": {
+      "control": "Kontrol {id}: {title}",
+      "overview": "Oversigt",
+      "purpose": "Formål",
+      "safeguard": "Sikkerhedsforanstaltning"
+    },
+    "igLabels": {
+      "ig1": "IG-1",
+      "ig2": "IG-2",
+      "ig3": "IG-3"
+    },
+    "igFullLabels": {
+      "ig1": "Implementeringsgruppe 1",
+      "ig2": "Implementeringsgruppe 2",
+      "ig3": "Implementeringsgruppe 3"
+    },
+    "tableColumns": {
+      "asset": "Aktiv",
+      "function": "Funktion",
+      "frequency": "Frekvens",
+      "status": "Status",
+      "priority": "Prioritet",
+      "likelihood": "Sandsynlighed",
+      "impact": "Konsekvens",
+      "owner": "Ejer"
+    },
+    "expandedLabels": {
+      "definition": "Definition",
+      "purpose": "Formål",
+      "why": "Hvorfor",
+      "scope": "Omfang",
+      "approach": "Tilgang",
+      "example": "Eksempel",
+      "resources": "Ressourcer"
+    },
+    "empty": {
+      "controlNotFound": "Kontrol ikke fundet.",
+      "noSafeguards": "Ingen sikkerhedsforanstaltninger defineret for {igLabel} i denne kontrol."
+    }
+  },
+
+  "SettingsProfile": {
+    "title": "Profil",
+    "tabs": {
+      "profile": "Profil",
+      "login": "Login",
+      "account": "Konto",
+      "settings": "Indstillinger",
+      "log": "Log"
+    },
+    "labels": {
+      "fullName": "Fulde navn",
+      "nickname": "Hvad skal Compliance Circle kalde dig?",
+      "workFunction": "Hvad beskriver dit arbejde bedst?"
+    },
+    "workFunctions": {
+      "placeholder": "Vælg din arbejdsfunktion",
+      "engineering": "Teknisk / Ingeniør",
+      "design": "Design",
+      "product": "Produkt",
+      "marketing": "Marketing",
+      "sales": "Salg",
+      "research": "Forskning",
+      "education": "Uddannelse",
+      "other": "Andet"
+    },
+    "buttons": {
+      "cancel": "Annuller",
+      "saveChanges": "Gem ændringer",
+      "saving": "Gemmer..."
+    },
+    "toast": {
+      "accountUpdated": "Konto opdateret",
+      "updateError": "Kunne ikke opdatere profil",
+      "saveError": "Der opstod en fejl under gemning"
+    }
+  },
+
+  "SettingsApplication": {
+    "title": "Programindstillinger",
+    "subtitle": "Administrer globale programindstillinger. Ændringer gælder for alle brugere.",
+    "sidebarLabel": "Program",
+    "labels": {
+      "applicationName": "Programnavn",
+      "homeDirectory": "Hjemmemappe",
+      "pollingInterval": "Opdateringsinterval (millisekunder)"
+    },
+    "placeholders": {
+      "applicationName": "f.eks. Compliance Circle",
+      "homeDirectory": "f.eks. /home/compliance"
+    },
+    "helpers": {
+      "applicationName": "Navnet der vises i hele programmet",
+      "homeDirectory": "Basismappe for programmets filer og data",
+      "pollingInterval": "Hvor ofte programmet automatisk opdaterer data (minimum 1000 ms)",
+      "seconds": "= {seconds} sekunder"
+    },
+    "infoBox": {
+      "title": "Indstillingsinformation",
+      "description": "Disse indstillinger gælder alle brugere. Opdateringsintervallet styrer hvor ofte programmet tjekker efter nye beskeder, opgaver og andre opdateringer. Lavere værdier giver mere realtidsopdateringer men øger serverbelastningen."
+    },
+    "buttons": {
+      "cancel": "Annuller",
+      "saveChanges": "Gem ændringer",
+      "saving": "Gemmer..."
+    },
+    "loading": {
+      "loadingSettings": "Indlæser indstillinger..."
+    },
+    "toast": {
+      "accessDenied": "Adgang nægtet. Kræver SUPER_ADMIN rolle.",
+      "settingsIdNotFound": "Indstillings-ID ikke fundet",
+      "pollingIntervalMin": "Opdateringsinterval skal være mindst 1000 ms (1 sekund)",
+      "settingsUpdated": "Indstillinger opdateret",
+      "updateError": "Kunne ikke opdatere indstillinger",
+      "loadError": "Kunne ikke indlæse indstillinger",
+      "loadErrorGeneric": "Fejl ved indlæsning af indstillinger",
+      "saveError": "Der opstod en fejl under gemning"
+    }
+  }
+}

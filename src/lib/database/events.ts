@@ -61,7 +61,7 @@ export type EventObj = Prisma.EventGetPayload<{
 
 export const eventRepository =
 {
-    async findById(id: number): Promise<EventObj | null>
+    async findById(id: string): Promise<EventObj | null>
     {
         log.info('SQL - event: findById');
 
@@ -84,7 +84,7 @@ export const eventRepository =
         });
     },
 
-    async findByTaskId(taskId: number): Promise<EventObj[]>
+    async findByTaskId(taskId: string): Promise<EventObj[]>
     {
         log.info({ taskId }, 'SQL - event: findByTaskId');
 
@@ -100,7 +100,7 @@ export const eventRepository =
         });
     },
 
-    async findByOrganizationId(organizationId: number): Promise<EventObj[]>
+    async findByOrganizationId(organizationId: string): Promise<EventObj[]>
     {
         log.info({ organizationId }, 'SQL - event: findByOrganizationId');
 
@@ -116,7 +116,7 @@ export const eventRepository =
         });
     },
 
-    async findByProfileId(profileId: number): Promise<EventObj[]>
+    async findByProfileId(profileId: string): Promise<EventObj[]>
     {
         log.info({ profileId }, 'SQL - event: findByProfileId');
 
@@ -132,7 +132,7 @@ export const eventRepository =
         });
     },
 
-    async findByArtifactId(artifactId: number): Promise<EventObj[]>
+    async findByArtifactId(artifactId: string): Promise<EventObj[]>
     {
         log.info({ artifactId }, 'SQL - event: findByArtifactId');
 
@@ -152,11 +152,11 @@ export const eventRepository =
     {
         message         : string;
         importance?     : 'LOW' | 'MIDDLE' | 'HIGH';
-        userId?         : number;
-        organizationId? : number;
-        taskId?         : number;
-        profileId?      : number;
-        artifactId?     : number;
+        userId?         : string;
+        organizationId? : string;
+        taskId?         : string;
+        profileId?      : string;
+        artifactId?     : string;
     }): Promise<EventObj>
     {
         log.info({ message: data.message }, 'SQL - event: create');
@@ -167,7 +167,7 @@ export const eventRepository =
         });
     },
 
-    async delete(id: number): Promise<EventObj>
+    async delete(id: string): Promise<EventObj>
     {
         log.info({ ID: id }, 'SQL - event: delete');
 

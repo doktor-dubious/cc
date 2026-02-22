@@ -1,0 +1,827 @@
+{
+  "Common": {
+    "buttons": {
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "save": "Save",
+      "saveChanges": "Save changes",
+      "edit": "Edit",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "removing": "Removing...",
+      "adding": "Adding..."
+    },
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "status": "Status",
+      "date": "Date",
+      "user": "User",
+      "importance": "Importance",
+      "message": "Message",
+      "email": "Email",
+      "role": "Role",
+      "tasks": "Tasks",
+      "profiles": "Profiles",
+      "sender": "Sender",
+      "task": "Task"
+    },
+    "loading": {
+      "loadingUser": "Loading user...",
+      "selectOrganization": "Please select an organization"
+    },
+    "dialogs": {
+      "deleteTitle": "Are you absolutely sure?",
+      "cannotBeUndone": "This action cannot be undone."
+    }
+  },
+  "Sidebar": {
+    "newTask": "New Task",
+    "currentTasks": "Current Tasks",
+    "waitingTasks": "Waiting Tasks",
+    "urgentTasks": "Urgent Tasks",
+    "home": "Home",
+    "organizations": "Organizations",
+    "profiles": "Profiles",
+    "tasks": "Tasks",
+    "assets": "Assets",
+    "uploadFiles": "Upload Files",
+    "incommingFiles": "Incomming Files",
+    "messages": "Messages",
+    "auditTrail": "Audit Trail",
+    "reports": "Reports",
+    "statusReports": "Status Reports",
+    "mechanicalTurk": "Mechanical Turk",
+    "cis": "CIS",
+    "academy": "Academy",
+    "ai": "AI",
+    "learnMore": "Learn More",
+    "aboutComplianceCircle": "About Compliance Circle",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "blog": "Blog",
+    "theme": "Theme",
+    "profileSettings": "Profile Settings",
+    "applicationSettings": "Application Settings",
+    "language": "Language",
+    "logOut": "Log out",
+    "externalAssetManagement": "External Asset Management",
+    "documentation": "Documentation"
+  },
+  "Dashboard": {
+    "welcome": "Welcome {name}",
+    "email": "Email: {email}",
+    "nickname": "Nickname: {nickname}"
+  },
+  "Asset": {
+    "buttons": {
+      "newArtifact": "New Artifact",
+      "createArtifact": "Create artifact",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "addToTask": "Add to Task",
+      "removeTask": "Remove task",
+      "previewAsset": "Preview Asset",
+      "downloadAsset": "Download Asset",
+      "deleteThisArtifact": "Delete this artifact",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "removing": "Removing...",
+      "adding": "Adding..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Artifact",
+      "createDescription": "Enter the details for the new artifact. Click Save when you're done.",
+      "editTaskTitle": "Edit Task",
+      "editTaskDescription": "Update the name and description of the task.",
+      "addToTaskTitle": "Add Artifact to Task",
+      "addToTaskDescription": "Select a task which the Artifacts should be assign to.",
+      "removeTaskTitle": "Remove task from artifact?",
+      "removeTaskDescription": "This will unlink the task from the current artifact (delete the link in TaskArtifact). The task itself remains in the system and can still be assigned to other artifacts or profiles. This action cannot be undone.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This action cannot be undone. This will permanently delete the artifact \"{name}\" and remove it from the system.",
+      "alsoDeleteFile": "Also delete file from filesystem"
+    },
+    "labels": {
+      "artifactName": "Artifact name",
+      "description": "Description",
+      "artifactType": "Artifact Type",
+      "mimeType": "MIME Type",
+      "fileExtension": "File Extension",
+      "fileSize": "File Size",
+      "originalFileName": "Original File Name",
+      "taskName": "Task name"
+    },
+    "placeholders": {
+      "enterArtifactName": "Enter artifact name",
+      "enterDescription": "Enter artifact description",
+      "mimeTypeExample": "e.g., application/pdf, image/png",
+      "filterByNameOrId": "Filter by name or ID...",
+      "searchTasks": "Search tasks...",
+      "enterTaskName": "Enter task name",
+      "enterTaskDescription": "Enter task description"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "status": "Status",
+      "date": "Date",
+      "user": "User",
+      "importance": "Importance",
+      "message": "Message"
+    },
+    "tabs": {
+      "details": "Details",
+      "fileDetails": "File Details",
+      "tasks": "Tasks ({count})",
+      "auditTrail": "Audit Trail ({count})",
+      "actions": "Actions"
+    },
+    "sections": {
+      "previewAssetTitle": "Preview Asset",
+      "previewAssetDescription": "Open a preview of this asset in a new tab.",
+      "downloadAssetTitle": "Download Asset",
+      "downloadAssetDescription": "Download the file associated with this artifact.",
+      "deleteArtifactTitle": "Delete Artifact",
+      "deleteArtifactDescription": "Once you delete this artifact, there is no going back. Please be certain."
+    },
+    "empty": {
+      "noArtifactsMatch": "No artifacts match your filter",
+      "noArtifactsFound": "No artifacts found",
+      "noTasksConnected": "No tasks connected to this artifact",
+      "noAvailableTasks": "No available tasks to add",
+      "noEvents": "No events for this artifact"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} artifacts",
+      "showingEvents": "Showing {start} to {end} of {total} events"
+    },
+    "toast": {
+      "taskRemovedSuccess": "Task removed from artifact",
+      "taskUpdatedSuccess": "Task updated successfully",
+      "taskAddedSuccess": "Task added to artifact",
+      "artifactCreated": "Artifact created",
+      "artifactUpdated": "Artifact updated",
+      "artifactDeletedSuccess": "Artifact deleted successfully",
+      "artifactAndFileDeletedSuccess": "Artifact and file deleted successfully",
+      "nameRequired": "Artifact name is required",
+      "noOrganization": "No organization selected",
+      "removeTaskError": "Could not remove task from artifact",
+      "updateTaskError": "Could not update task",
+      "addTaskError": "Could not add task",
+      "saveError": "Could not save artifact",
+      "deleteError": "Could not delete artifact"
+    },
+    "loading": {
+      "loadingUser": "Loading user...",
+      "selectOrganization": "Please select an organization",
+      "loadingArtifacts": "Loading artifacts..."
+    },
+    "events": {
+      "loading": "Loading events..."
+    }
+  },
+  "AuditTrail": {
+    "placeholders": {
+      "filter": "Filter by message, user, entity or importance..."
+    },
+    "table": {
+      "entity": "Entity",
+      "goTo": "Go to {type}"
+    },
+    "entityTypes": {
+      "task": "Task",
+      "organization": "Organization",
+      "profile": "Profile",
+      "artifact": "Artifact"
+    },
+    "empty": {
+      "loading": "Loading events...",
+      "noEventsMatch": "No events match your filter",
+      "noEventsFound": "No events found"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} events"
+    },
+    "toast": {
+      "loadError": "Could not load events"
+    }
+  },
+  "Task": {
+    "buttons": {
+      "newTask": "New Task",
+      "createTask": "Create task",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteTask": "Delete Task",
+      "addProfile": "Add Profile",
+      "addArtifact": "Add Artifact",
+      "newMessage": "New Message",
+      "markAllRead": "Mark all as read ({count})",
+      "removeArtifact": "Remove artifact",
+      "removeProfile": "Remove profile",
+      "edit": "Edit",
+      "saveMessage": "Save Changes",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "removing": "Removing...",
+      "adding": "Adding..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Task",
+      "createDescription": "Enter the details for the new task. Click Save when you're done.",
+      "newMessageTitle": "New Message",
+      "newMessageDescription": "Write a message for this task.",
+      "editArtifactTitle": "Edit Artifact",
+      "editArtifactDescription": "Update the artifact name and description.",
+      "editProfileTitle": "Edit Profile",
+      "editProfileDescription": "Update the profile name and description.",
+      "addProfileTitle": "Add Profile to Task",
+      "addProfileDescription": "Select a profile to assign to this task.",
+      "addArtifactTitle": "Add Artifact to Task",
+      "addArtifactDescription": "Select an artifact to assign to this task.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteMessageDescription": "This action cannot be undone. This will permanently delete this message.",
+      "deleteTaskDescription": "This action cannot be undone. This will permanently delete the task \"{name}\" and remove it from the system.",
+      "removeArtifactTitle": "Remove artifact from task?",
+      "removeArtifactDescription": "This will unlink the artifact from the current task (delete the link in TaskArtifact). The artifact itself remains in the system and can still be assigned to other tasks. This action cannot be undone.",
+      "removeProfileTitle": "Remove profile from task?",
+      "removeProfileDescription": "This will unlink the profile from the current task (delete the link in TaskProfile). The profile itself remains in the system and can still be assigned to other tasks. This action cannot be undone.",
+      "messageFrom": "Message from {name}",
+      "taskLabel": "Task: {name}"
+    },
+    "labels": {
+      "taskName": "Task name",
+      "description": "Description",
+      "expectedEvidence": "Expected Evidence",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status",
+      "artifactName": "Artifact name",
+      "profileName": "Profile name"
+    },
+    "placeholders": {
+      "enterTaskName": "Enter task name",
+      "enterTaskDescription": "Enter task description",
+      "enterExpectedEvidence": "Enter expected evidence",
+      "selectStartDate": "Select start date",
+      "selectEndDate": "Select end date",
+      "typeMessage": "Type your message...",
+      "searchProfiles": "Search profiles...",
+      "searchArtifacts": "Search artifacts...",
+      "filterByNameOrId": "Filter by name or ID...",
+      "enterArtifactName": "Enter artifact name",
+      "enterArtifactDescription": "Enter artifact description",
+      "enterProfileName": "Enter profile name",
+      "enterProfileDescription": "Enter profile description"
+    },
+    "tabs": {
+      "messages": "Messages ({count})",
+      "details": "Details",
+      "profiles": "Profiles ({count})",
+      "artifacts": "Artifacts ({count})",
+      "auditTrail": "Audit Trail ({count})",
+      "actions": "Actions"
+    },
+    "empty": {
+      "noTasksMatch": "No tasks match your filter",
+      "noTasksFound": "No tasks found",
+      "noMessages": "No messages for this task",
+      "noArtifacts": "No artifacts found for this task",
+      "noProfiles": "No profiles assigned to this task",
+      "noEvents": "No events for this task",
+      "noAvailableProfiles": "No available profiles to add",
+      "noAvailableArtifacts": "No available artifacts to add"
+    },
+    "pagination": {
+      "showingTasks": "Showing {start} to {end} of {total} tasks",
+      "showingMessages": "Showing {start} to {end} of {total} messages",
+      "showingArtifacts": "Showing {start} to {end} of {total} artifacts",
+      "showingProfiles": "Showing {start} to {end} of {total} profiles",
+      "showingEvents": "Showing {start} to {end} of {total} events"
+    },
+    "toast": {
+      "allMessagesRead": "All messages marked as read",
+      "markReadError": "Failed to mark messages as read",
+      "messageSent": "Message sent",
+      "sendMessageError": "Could not send message",
+      "messageUpdated": "Message updated",
+      "editMessageError": "Could not edit message",
+      "messageDeleted": "Message deleted",
+      "deleteMessageError": "Could not delete message",
+      "artifactRemoved": "Artifact removed from task",
+      "removeArtifactError": "Could not remove artifact from task",
+      "profileRemoved": "Profile removed from task",
+      "removeProfileError": "Could not remove profile from task",
+      "nameRequired": "Task name is required",
+      "noOrganization": "No organization selected",
+      "taskCreated": "Task created",
+      "taskUpdated": "Task updated",
+      "saveError": "Could not save task",
+      "taskDeleted": "Task deleted successfully",
+      "deleteError": "Could not delete task",
+      "artifactNameRequired": "Artifact name is required",
+      "artifactUpdated": "Artifact updated successfully",
+      "saveArtifactError": "Could not save artifact",
+      "profileNameRequired": "Profile name is required",
+      "profileUpdated": "Profile updated successfully",
+      "saveProfileError": "Could not save profile",
+      "profileAdded": "Profile added to task",
+      "addProfileError": "Could not add profile to task",
+      "artifactAdded": "Artifact added to task",
+      "addArtifactError": "Could not add artifact"
+    },
+    "loading": {
+      "loadingUser": "Loading user...",
+      "selectOrganization": "Please select an organization",
+      "loadingTasks": "Loading tasks...",
+      "loadingMessages": "Loading messages...",
+      "loadingEvents": "Loading events..."
+    },
+    "sections": {
+      "taskActions": "Task Actions",
+      "taskActionsDescription": "Manage this task with the actions below.",
+      "deleteTaskDescription": "Permanently delete this task and all associated data. This action cannot be undone."
+    },
+    "badges": {
+      "new": "new",
+      "system": "System"
+    }
+  },
+  "Profile": {
+    "buttons": {
+      "newProfile": "New Profile",
+      "createProfile": "Create profile",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteProfile": "Delete Profile",
+      "removeTask": "Remove task",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "removing": "Removing..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Profile",
+      "createDescription": "Enter the profile and login details. All fields are required.",
+      "editTaskTitle": "Edit Task",
+      "editTaskDescription": "Update the name and description of the task.",
+      "removeTaskTitle": "Remove task from profile?",
+      "removeTaskDescription": "This will remove the task assignment from this profile (delete the link in TaskProfile). The task itself remains in the system and can be assigned to other profiles or organizations. This action cannot be undone.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This action cannot be undone. This will permanently delete the profile \"{name}\" and remove it from the system."
+    },
+    "labels": {
+      "profileName": "Profile name",
+      "description": "Description",
+      "email": "Email",
+      "password": "Password",
+      "loginName": "Login Name",
+      "nickname": "Nickname",
+      "role": "Role",
+      "taskName": "Task name",
+      "profileInformation": "Profile Information",
+      "loginInformation": "Login Information"
+    },
+    "placeholders": {
+      "enterProfileName": "Enter profile name",
+      "enterDescription": "Enter profile description",
+      "enterEmail": "Enter email",
+      "enterPassword": "Enter password",
+      "enterLoginName": "Enter login name",
+      "enterNickname": "Enter nickname",
+      "enterTaskName": "Enter task name",
+      "enterTaskDescription": "Enter task description",
+      "filterByNameOrId": "Filter by name, email or ID...",
+      "leaveBlankPassword": "Leave blank to keep current password"
+    },
+    "tabs": {
+      "details": "Details",
+      "login": "Login",
+      "tasks": "Tasks ({count})",
+      "auditTrail": "Audit Trail ({count})",
+      "actions": "Actions"
+    },
+    "roles": {
+      "user": "User",
+      "admin": "Admin",
+      "superAdmin": "Super Admin"
+    },
+    "empty": {
+      "noProfilesMatch": "No profiles match your filter",
+      "noProfilesFound": "No profiles found",
+      "noTasks": "No tasks assigned to this profile",
+      "noEvents": "No events for this profile"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} profiles",
+      "showingEvents": "Showing {start} to {end} of {total} events"
+    },
+    "toast": {
+      "taskRemoved": "Task removed from profile",
+      "removeTaskError": "Could not remove task",
+      "nameEmailRequired": "Profile name and email are required",
+      "noOrganization": "No organization selected",
+      "invalidEmail": "Invalid email",
+      "passwordTooWeak": "Password is too weak. Please make it stronger.",
+      "allFieldsRequired": "All fields are required for new profiles",
+      "profileCreated": "Profile created",
+      "profileUpdated": "Profile updated",
+      "saveError": "Could not save profile",
+      "taskUpdated": "Task updated successfully",
+      "updateTaskError": "Could not update task",
+      "profileDeleted": "Profile deleted successfully",
+      "deleteError": "Could not delete profile"
+    },
+    "loading": {
+      "loadingUser": "Loading user...",
+      "selectOrganization": "Please select an organization",
+      "loadingProfiles": "Loading profiles...",
+      "loadingEvents": "Loading events..."
+    },
+    "sections": {
+      "profileActions": "Profile Actions",
+      "profileActionsDescription": "Manage this profile with the actions below.",
+      "deleteProfileTitle": "Delete Profile",
+      "deleteProfileDescription": "Permanently delete this profile and all associated data. This action cannot be undone."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
+    }
+  },
+  "Organization": {
+    "buttons": {
+      "newOrganisation": "New Organisation",
+      "createOrganisation": "Create organisation",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteOrganization": "Delete Organization",
+      "addProfile": "Add Profile",
+      "addTask": "Add Task",
+      "removeTask": "Remove task",
+      "removeProfile": "Remove profile",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "removing": "Removing...",
+      "adding": "Adding..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Organisation",
+      "createDescription": "Enter the details for the new organisation. Click Save when you're done.",
+      "editProfileTitle": "Edit Profile",
+      "editProfileDescription": "Update the name and description. Click Save when you're done.",
+      "editTaskTitle": "Edit Task",
+      "editTaskDescription": "Update the task name and description.",
+      "addProfileTitle": "Add Existing Profile to Organization",
+      "addProfileDescription": "Search and select a profile to assign to this organization.",
+      "addTaskTitle": "Add Existing Task to Organization",
+      "addTaskDescription": "Search and select a task to assign to this organization.",
+      "removeTaskTitle": "Remove task from organization?",
+      "removeTaskDescription": "This will unlink the task from the current organization (set organizationId to null). The task record itself will remain in the system. This action cannot be undone.",
+      "removeProfileTitle": "Remove profile from organization?",
+      "removeProfileDescription": "This will unlink the profile from the current organization (set organizationId to null). The profile record itself will remain in the system. This action cannot be undone.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This action cannot be undone. This will permanently delete the organization \"{name}\" and remove it from the system."
+    },
+    "labels": {
+      "organisationName": "Organisation name",
+      "description": "Description",
+      "profileName": "Profile name",
+      "taskName": "Task name",
+      "uploadDirectory": "Upload Directory",
+      "downloadDirectory": "Download Directory",
+      "artifactDirectory": "Artifact Directory"
+    },
+    "placeholders": {
+      "enterOrganizationName": "Enter organization name",
+      "enterDescription": "Enter organization description",
+      "enterProfileName": "Enter profile name",
+      "enterProfileDescription": "Enter profile description",
+      "enterTaskName": "Enter task name",
+      "enterTaskDescription": "Enter task description",
+      "searchByNameOrEmail": "Search by name or email...",
+      "searchByName": "Search by name...",
+      "filterByNameOrId": "Filter by name or ID...",
+      "enterUploadDirectory": "Enter upload directory path (e.g., /var/uploads)",
+      "enterDownloadDirectory": "Enter download directory path (e.g., /var/downloads)",
+      "enterArtifactDirectory": "Enter artifact directory path (e.g., /var/artifacts)"
+    },
+    "tabs": {
+      "details": "Details",
+      "settings": "Settings",
+      "profiles": "Profiles ({count})",
+      "tasks": "Tasks ({count})",
+      "auditTrail": "Audit Trail ({count})",
+      "actions": "Actions"
+    },
+    "empty": {
+      "noOrganizationsMatch": "No organizations match your filter",
+      "noOrganizationsFound": "No organizations found",
+      "noProfilesFound": "No profiles found for this organization",
+      "noTasksFound": "No tasks found for this organization",
+      "noAvailableProfiles": "No available profiles found",
+      "noAvailableTasks": "No available tasks found",
+      "noEvents": "No events for this organization",
+      "noSettings": "No settings configured for this organization yet. Enter the directory paths above and save."
+    },
+    "pagination": {
+      "showingOrganizations": "Showing {start} to {end} of {total} organizations",
+      "showingProfiles": "Showing {start} to {end} of {total} profiles",
+      "showingTasks": "Showing {start} to {end} of {total} tasks",
+      "showingEvents": "Showing {start} to {end} of {total} events"
+    },
+    "toast": {
+      "profileAssigned": "Profile assigned to organization",
+      "assignProfileError": "Could not assign profile",
+      "taskAssigned": "Task assigned to organization",
+      "assignTaskError": "Could not assign task",
+      "loadProfilesError": "Could not load available profiles",
+      "loadTasksError": "Could not load available tasks",
+      "directoryFieldsRequired": "All directory fields are required",
+      "settingsSaved": "Settings saved successfully",
+      "saveSettingsError": "Could not save settings",
+      "profileNameRequired": "Profile name is required",
+      "profileUpdated": "Profile updated successfully",
+      "saveProfileError": "Could not save profile",
+      "organizationCreated": "Organization created",
+      "organizationUpdated": "Organization updated",
+      "saveError": "Could not save organization",
+      "organizationDeleted": "Organization deleted successfully",
+      "deleteError": "Could not delete organization",
+      "taskRemoved": "Task removed from organization",
+      "removeTaskError": "Could not remove task",
+      "profileRemoved": "Profile removed from organization",
+      "removeProfileError": "Could not remove profile",
+      "taskNameRequired": "Task name is required",
+      "taskUpdated": "Task updated",
+      "updateTaskError": "Could not update task"
+    },
+    "loading": {
+      "loadingUser": "Loading user...",
+      "loadingOrganizations": "Loading organizations...",
+      "loadingEvents": "Loading events..."
+    },
+    "sections": {
+      "organizationActions": "Organization Actions",
+      "organizationActionsDescription": "Manage this organization with the actions below.",
+      "deleteOrganizationTitle": "Delete Organization",
+      "deleteOrganizationDescription": "Permanently delete this organization and all associated data. This action cannot be undone."
+    },
+    "helpers": {
+      "uploadDirectoryHelp": "Directory where uploaded files are temporarily stored",
+      "downloadDirectoryHelp": "Directory where files are prepared for download",
+      "artifactDirectoryHelp": "Directory where artifact files are permanently stored"
+    },
+    "status": {
+      "currentlyIn": "Currently in: {name}",
+      "unassigned": "Unassigned",
+      "notAssigned": "Currently not assigned to any organization",
+      "noEmail": "No email",
+      "noDescription": "No description"
+    }
+  },
+  "IncommingFiles": {
+    "buttons": {
+      "assignAsArtifact": "Assign as Artifact",
+      "createArtifactAndMove": "Create Artifact & Move File",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleting": "Deleting..."
+    },
+    "dialogs": {
+      "deleteTitle": "Delete File?",
+      "deleteDescription": "Are you sure you want to delete <strong>{name}</strong>? This action cannot be undone.",
+      "assignTitle": "Assign File as Artifact",
+      "assignFileLabel": "File: {name}"
+    },
+    "labels": {
+      "artifactName": "Artifact Name",
+      "description": "Description",
+      "type": "Type"
+    },
+    "placeholders": {
+      "enterArtifactName": "Enter artifact name",
+      "enterDescription": "Optional description",
+      "selectType": "Select type"
+    },
+    "table": {
+      "filename": "Filename",
+      "size": "Size",
+      "modified": "Modified",
+      "actions": "Actions"
+    },
+    "empty": {
+      "noFiles": "No files found in the upload directory"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} files"
+    },
+    "toast": {
+      "nameRequired": "Name is required",
+      "artifactCreated": "Artifact created and file moved",
+      "assignError": "Could not assign file",
+      "fileDeleted": "File deleted successfully",
+      "deleteError": "Could not delete file",
+      "loadError": "Could not load files from upload directory"
+    }
+  },
+  "Message": {
+    "buttons": {
+      "delete": "Delete",
+      "cancel": "Cancel",
+      "deleting": "Deleting..."
+    },
+    "dialogs": {
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This action cannot be undone. This will permanently delete this message.",
+      "messageFrom": "Message from {name}",
+      "taskLabel": "Task: {name}"
+    },
+    "badges": {
+      "system": "System"
+    },
+    "placeholders": {
+      "filter": "Filter by message, task or sender..."
+    },
+    "table": {
+      "id": "ID",
+      "message": "Message",
+      "task": "Task",
+      "sender": "Sender",
+      "date": "Date"
+    },
+    "empty": {
+      "loading": "Loading messages...",
+      "noMessagesMatch": "No messages match your filter",
+      "noMessagesFound": "No messages found"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} messages"
+    },
+    "toast": {
+      "messageDeleted": "Message deleted successfully",
+      "deleteError": "Could not delete message",
+      "loadError": "Could not load messages"
+    }
+  },
+  "CISControls": {
+    "legends": {
+      "controlGroups": "Control Groups",
+      "riskScore": "Risk Score",
+      "low": "Low (0–33)",
+      "medium": "Medium (34–66)",
+      "high": "High (67–100)",
+      "riskScoreLabel": "Risk Score: {risk}%"
+    },
+    "table": {
+      "control": "Control",
+      "group": "Group",
+      "risk": "Risk"
+    }
+  },
+  "CISSafeguards": {
+    "buttons": {
+      "backToControls": "Back to Controls"
+    },
+    "headings": {
+      "control": "Control {id}: {title}",
+      "overview": "Overview",
+      "purpose": "Purpose",
+      "safeguard": "Safeguard"
+    },
+    "igLabels": {
+      "ig1": "IG-1",
+      "ig2": "IG-2",
+      "ig3": "IG-3"
+    },
+    "igFullLabels": {
+      "ig1": "Implementation Group 1",
+      "ig2": "Implementation Group 2",
+      "ig3": "Implementation Group 3"
+    },
+    "tableColumns": {
+      "asset": "Asset",
+      "function": "Function",
+      "frequency": "Frequency",
+      "status": "Status",
+      "priority": "Priority",
+      "likelihood": "Likelihood",
+      "impact": "Impact",
+      "owner": "Owner"
+    },
+    "expandedLabels": {
+      "definition": "Definition",
+      "purpose": "Purpose",
+      "why": "Why",
+      "scope": "Scope",
+      "approach": "Approach",
+      "example": "Example",
+      "resources": "Resources"
+    },
+    "empty": {
+      "controlNotFound": "Control not found.",
+      "noSafeguards": "No safeguards defined for {igLabel} in this control."
+    }
+  },
+  "SettingsProfile": {
+    "title": "Profile",
+    "tabs": {
+      "profile": "Profile",
+      "login": "Login",
+      "account": "Account",
+      "settings": "Settings",
+      "log": "Log"
+    },
+    "labels": {
+      "fullName": "Full name",
+      "nickname": "What should Compliance Circle call you?",
+      "workFunction": "What best describes your work?"
+    },
+    "workFunctions": {
+      "placeholder": "Select your work function",
+      "engineering": "Engineering",
+      "design": "Design",
+      "product": "Product",
+      "marketing": "Marketing",
+      "sales": "Sales",
+      "research": "Research",
+      "education": "Education",
+      "other": "Other"
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saveChanges": "Save changes",
+      "saving": "Saving..."
+    },
+    "toast": {
+      "accountUpdated": "Account updated",
+      "updateError": "Failed to update profile",
+      "saveError": "An error occurred while saving"
+    }
+  },
+  "SettingsApplication": {
+    "title": "Application Settings",
+    "subtitle": "Manage global application settings. Changes will apply to all users.",
+    "sidebarLabel": "Application",
+    "labels": {
+      "applicationName": "Application Name",
+      "homeDirectory": "Home Directory",
+      "pollingInterval": "Polling Interval (milliseconds)"
+    },
+    "placeholders": {
+      "applicationName": "e.g., Compliance Circle",
+      "homeDirectory": "e.g., /home/compliance"
+    },
+    "helpers": {
+      "applicationName": "The name displayed throughout the application",
+      "homeDirectory": "Base directory for application files and data",
+      "pollingInterval": "How often the application automatically refreshes data (minimum 1000ms)",
+      "seconds": "= {seconds} seconds"
+    },
+    "infoBox": {
+      "title": "Settings Information",
+      "description": "These settings affect all users. The polling interval controls how frequently the application checks for new messages, tasks, and other updates. Lower values provide more real-time updates but increase server load."
+    },
+    "buttons": {
+      "cancel": "Cancel",
+      "saveChanges": "Save changes",
+      "saving": "Saving..."
+    },
+    "loading": {
+      "loadingSettings": "Loading settings..."
+    },
+    "toast": {
+      "accessDenied": "Access denied. SUPER_ADMIN role required.",
+      "settingsIdNotFound": "Settings ID not found",
+      "pollingIntervalMin": "Polling interval must be at least 1000ms (1 second)",
+      "settingsUpdated": "Settings updated successfully",
+      "updateError": "Failed to update settings",
+      "loadError": "Failed to load settings",
+      "loadErrorGeneric": "Error loading settings",
+      "saveError": "An error occurred while saving"
+    }
+  }
+}

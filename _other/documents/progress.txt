@@ -65,8 +65,21 @@
       # Attach Task to Safeguard(s)
 
   * PAGE: Asset (Artifact) Maintanence
-      # Download Asset
-      # Preview Asset
+      -> New Asset PopUp (Artifact Name, Description, Artifact Type) => Audit Event
+      -> Details (Artifact Name, Description, Artifact Type) (View / Edit => Audit Event)
+      -> MIME Type (View / Edit => Audit Event)
+      -> File Extension, File Size, Original File Name (View only)
+      -> Tasks
+          --> Add / Remove Tasks from Artifact => Audit Event
+          --> Edit Tasks (Name, Description) => Audit Event
+      -> Audit Trail (View)
+      -> Actions
+          --> Preview Asset
+              --> Images
+              # Excel
+              # ...
+          --> Download Asset
+          --> Delete => Audit Event
 
   * PAGE: Incomming Files -> Assets
       # Preview
@@ -79,6 +92,14 @@
 
   * PAGE: Audit Trail
 
+  * Learn More
+      ** PAGE: About Compliance Circle
+        -> Initial Version. Conent need to be updated.
+      ** PAGE: Privacy Policy
+        -> Initial Version. Conent need to be updated.
+      ** PAGE: Terms of Service
+        -> Initial Version. Conent need to be updated.
+
   * PAGE: Application Setup (SUPER ADMIN)
       -> View Edit (Application Name, Home Directory, Polling Interval)
 
@@ -88,19 +109,19 @@
         ## FTP/SFTP Logins
       # Profile Setup
 
-
 ── Small Fixes / Errors ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   ── To Do:
   * ARTIFACT: Move delete button from master table to action tab in detail pane (too dangerous to have it in the master table).
   * Clean up colour schemas (globals.css)
+  * Restyle Login
 
   ── Fixed:
   * New Profile button on Profile page is not "default" style
   * New Artifact button on Artifact page is not "default" style
   * Audit badges on Profile page: wrong colours
 
-── Not Started ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Not Started ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   * PAGE: Home / Dashboard
       # Dashboard should show information for all Organizations available to the logged in user. Unlike all other pages which are Organization specific.
@@ -116,24 +137,194 @@
       -> PAGE: Wheel (Wheel & Safeguards)
       -> PAGE: Academy (General dictionary, ..)
       -> PAGE: AI (ask anything related to CC)
-      -> Learn More
-        -> PAGE: About Compliance Circle
-        -> PAGE: Privacy Policy
-        -> PAGE: Terms of Service
   * Debug Console (Super Admin)
   * Log Viewer (Super Admin)
 
-
-── Worked On ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+  * zod validation of database API
+  * Incomming files page: Currently it only looks for uploaded files on the server directory, I need to also look for files on Amazon S3. Can you create an Amazon S3 login and the S3 instance, and the code here to access it.
 
 ────────────────────
-── Thursday 12 Feb
-* Overall Design
-  -> Sitewise unified look&feel for all buttons/tables/etc.
-    --> Work in Dark/Light Themes.
-    --> Page: Tasks
-  -> Better Status Badge colours/design.
-  -> Sidebar restyle
+
+── Sunday 22 Feb
+💀 (12PM)
+💀 (5PM)
+💀 (10PM)
+* Multiple languages (continued)
+  -> Language File
+    --> Sidebar
+    --> Dashboard
+    --> Asset
+    --> AuditTrail
+    --> Task
+    --> Profile
+    --> Organization
+    --> IncommingFiles
+    --> Message
+    --> CIS
+    --> SettingsProfile
+    --> SettingsApplication
+  -> audit-trail page
+  -> task page
+  -> organization page
+  -> incomming-files page
+  -> message page
+  -> settings pages
+  -> dashboard page
+  -> sidebar (AuthorizedLayoutClient)
+  -> Asset page
+  -> profile page
+  -> CIS controls & safeguards pages
+
+* CIS Controls page: Reorder pie segments, so that #1 is on top, and the others follow in clockwise order.
+* All Pages: Removed ID column from master table, and moved to detail tab pane.
+* Sidebar: urgent tasks: tasks which are past due date / within 10% of being at their due date.
+* CIS safeguards page: Details now opens up in a detail pane under the table
+* Fixed more bugs related to IDs going from Int to UUIDs (String).
+
+X
+
+
+
+* CIS controls page: Can you make a third donut, an outer donut of the same size as the inner donut. With this new outer donut, I want to be able to mark pie segments as being inactive, and/or to combine several segments into one larger one.
+* 
+* CIS safeguards page: there should be a button that attaches a Safeguard to a Task. Clicking on the button should open a popup dialog, where you can see avaliable tasks, and select one from the list.
+* Task page: under the action tab, there should be a button where the task can be assigned to a Control Safeguard.
+
+* Sidebar: clicking on a task under Current tasks, correctly redirects to the task page, and shows the selected task in the bottom detail pane. However, the table pagination is not updated correctly. If the current pagination is on page 3, and the selected task i on page 1, the pagination should be updated to page 1
+
+
+* Organization page: the id column should be removed. ID should be showed (in a non-editable) field in the details tab. Same on the Profiles, Tasks, Asset, audit-trail, pages.
+* Sidebar: urgent tasks, should show tasks which are either past their due date, or within 10% of being at their due date.
+CIS safeguards page: clicking on a row in the table, unfolds the detail data under the row being clicked. Can you move the detail data to under the table.
+
+* Create Amazon AWS account for S3 storage.
+      cc@predictioninstitute.com
+      AWS Account Name: Compliance Circle
+      Root Password: !CircleSquareTriagle8800
+
+* Mechanical Turk
+    -> Sub Menu: Configure
+      -> External data sources (remote: URL, login => local)
+    -> Sub Menu: Overview
+    -> Sub Menu: Log
+
+── Saturday 21 Feb
+💀 (4PM)
+💀 (8PM)
+💀 (1AM)
+* Clicking on a task in the sidebar => go to selected Task on the Task page. (continued)
+* Multiple languages 
+    -> Setup next-intl.
+    -> Sidebar Language Submenu.
+    -> Language Files:
+      -> messages/da.json
+      -> messages/en.json
+    --> Edit Pages:
+      -> Internationalize asset page
+      -> Internationalize audit-trail page
+      -> Internationalize task page
+      -> Internationalize profile page
+      -> Internationalize organization page
+      -> Internationalize incomming-files page
+      -> Internationalize message page
+      -> Internationalize dashboard page
+      -> Internationalize CIS controls & safeguards pages
+      -> Internationalize settings pages
+      -> Internationalize sidebar (AuthorizedLayoutClient)
+      -> Update da.json with all new translations      
+
+── Friday 20 Feb
+* Fixed Database (UUID) / Reset
+* Fixed Int to UUID verification.
+* Created test data scripts for all database tables
+  --> npx tsx scripts/seed-organizations.ts
+  --> npx tsx scripts/seed-users.ts
+  --> npx tsx scripts/seed-tasks-and-artifacts.ts
+  --> npx tsx scripts/seed-events.ts
+  --> npx tsx scripts/seed-messages.ts
+  --> npx tsx scripts/seed-large-messages.ts
+* Clicking on a task in the sidebar => go to selected Task on the Task page. (Claude Tokens Kaput)
+
+── Thursday 19 Feb
+* Updated id's in all tables to UUID (improved security) + added seq column
+* Updated all database Prisma client scripts, for using new UUID
+    -> artifact.ts
+    -> events.ts
+    -> organization.ts
+    -> profile.ts
+    -> settings.ts
+    -> task.ts
+    -> users.ts
+* Updated all delete functions in the same scripts (check for exist + removed return value)
+
+── Wednesday 18 Feb
+💀
+
+── Tueday 17 Feb
+* Generated documentation & data for all the Controls & Safeguards (using Grok. 2/2)
+
+── Monday 16 Feb
+* New Page : CIS Controls/Wheel (Doughnut)
+* New Page : CIS Safeguards
+* Generated documentation & data for all the Controls & Safeguards (a lot! 1/2)
+
+────────────────────
+── Sunday 15 Feb
+* Generated CLAUDE.md
+* Fixed pagniation elements being selectable on all pages (minor design improvement)
+* Fixed Organization save Error.
+* Added events to Profile
+* Added some more events to Organization
+* Fixed error when saving changing to a Profile
+* Page: Messages. Created new page to display all messages.
+* Page Task: Created button and functionality to create new messages.
+* Page Task: Added edit and delete to message popups.
+* Page: Audit Trail. Created new page to display all Audit Event.
+* More Audit Events on Organization Page/Profile+Tasks.
+* More Audit Events on Profile Page/Tasks, edit.
+* More Audit Events on Profile Page + Remove Task.
+* More Audit Events on Profile Page + Remove Artifact.
+* More Audit Events on Profile Page/Artifacts, edit.
+* Page Artifacts (Assets): New tabs: Audit Trail + Actions. Delete functionality moved from master table to action tab.
+* More Audit Events on Artifacts Page, edit.
+* Fixed bug, which prevented editing Artifact details.
+* More Audit Events on Artifact Page/Tasks
+* Page Artifacts (Assets): New Task added to Task tab.
+* Page Artifacts (Assets): New Action Button & Functionality = Download Asset.
+* Page Artifacts (Assets): New Action Button & Functionality = Preview Asset (images).
+* Page Artifacts (Assets): Fixed design bug in the Assign Artifact to Task popup.
+* Page Artifacts (Assets): Fixed path bugs in download & preview Asset.
+* Page Tasks: Added button "Add Artifact to Task" to Artifact tab 
+* Page Profile: Bug fix: Edit Task event changed to a Task event (from Profile event)
+* Page Organization: Bug fix: Edit Task event changed to a Task event (from Organization event)
+* Page Organization: Bug fix: Edit Profile event changed to a Profile event (from Organization event)
+* More Audit Events on page Artifact. Create Artifact event
+* Page Audit Trail: bug fix: table too wide.
+* Page Incomming Files. Added pagination to table. Maximum 10 rows per page.
+* New Page About Compliance Circle (content need to be updated)
+* New Page: Privacy Policy (content need to be updated)
+* New Page: Terms of Service (content need to be updated)
+
+────────────────────
+── Saturday 14 Feb
+* Task Page : Added pagination to Messages, Assets, Profiles
+* Task Page + Top Menu bar : Show new messages,
+* Task Page : When clicking a message, open in a pop up
+* Periodic refresh (messages, files, etc) 
+* Application Settings: New Page
+* Database: table and functionality for Event (Audit Trail)
+* Page Task : Added tabs in detail view for Audit Trail & Actions
+* Page Task : Moved delete button from overview table to detail view.
+* Page Task : Added button and functionality to add Profile to Task
+* Page Task : Redesigned tabs - more room.
+* Audit Trail Importance in database.
+* Page Task : Message Popup: maximum height
+* Page Task : Implemented Audit Events.
+* Reworked Periodic refresh
+* Page Organization : Added Audit Trail & Action tabs
+* Page Organization : Moved delete functionality from master table to detail view.
+* Page Organization : Implemented Audit Events.
+* Page Profile : Added Audit Trail & Action tabs
 
 ────────────────────
 ── Friday 13 Feb
@@ -161,38 +352,20 @@
 * Messages: extended Task page with new message tab.
 
 ────────────────────
-── Saturday 14 Feb
-* Task Page : Added pagination to Messages, Assets, Profiles
-* Task Page + Top Menu bar : Show new messages,
-* Task Page : When clicking a message, open in a pop up
-* Periodic refresh (messages, files, etc) 
-* Application Settings: New Page
-* Database: table and functionality for Event (Audit Trail)
-* Page Task : Added tabs in detail view for Audit Trail & Actions
-* Page Task : Moved delete button from overview table to detail view.
-* Page Task : Added button and functionality to add Profile to Task
-* Page Task : Redesigned tabs - more room.
-* Audit Trail Importance in database.
-* Page Task : Message Popup: maximum height
-* Page Task : Implemented Audit Events.
-* Reworked Periodic refresh
-* Page Organization : Added Audit Trail & Action tabs
-* Page Organization : Moved delete functionality from master table to detail view.
-* Page Organization : Implemented Audit Events.
-* Page Profile : Added Audit Trail & Action tabs
+── Thursday 12 Feb
+* Overall Design
+  -> Sitewise unified look&feel for all buttons/tables/etc.
+    --> Work in Dark/Light Themes.
+    --> Page: Tasks
+  -> Better Status Badge colours/design.
+  -> Sidebar restyle
 
 
-────────────────────
-── Sunday 15 Feb
-* Fixed pagniation elements being selectable on all pages (minor design improvement)
-* Fixed Organization save Error.
-* Added events to Profile
-* Added some more events to Organization
-* Fixed error when saving changing to a Profile
-* Page: Messages. Created new page to display all messages.
-* Page Task: Created button and functionality to create new messages.
-* Page Task: Added edit and delete to message popups.
-* Page: Audit Trail. Created new page to display all Audit Event.
+
+
+
+
+
 
 ----------
 The Events table should also have an "importance" column, with values: LOW, MIDDLE, HIGH. Which should also be included in the Audit Trail table.
@@ -200,46 +373,94 @@ The Events table should also have an "importance" column, with values: LOW, MIDD
 
 ------------------------------------------------------------------------------------------------------------------------------------------------------
 
-* On the Organization Page. When editing a Profile (Profile Name, Description) it should generate an Audit Event, same as if the Profile had been updated from the Profile page. Same as with the Task (Name, Description) being updated. => Task Audit Event.
 
-* On the Profile Page. When editing a Task (Name, Description) it should generate an Audit Event, same as if the Task had been updated from the Task page.
+Page Task: The Artifact tab. There should be a button to add an artifact to the task. This should open a pop-up. similar to the one of the Artifact page under Task/Add to Task.
+A Search field, and a list of current tasks to select from.
 
-* On the Profile Page. When removing an artifact from the Task => generate an Audit Event (importance: MIDDLE) and when editing an Artifact (Name, Description) it should generate an Audit Event, same as if the Artifact had been updated from the Artifact page.
+Page Profile: The events generated when making changes to a task, should be connected to the task, not the profile
 
-* On the Artifact Page. 
-there should be two additional tab to the rightmost: Audit Trail and Actions.
-The action tab should have a delete button. The functionality taken from the delete button on the overview table. And the delete icon (as well as the edit icon) removed from the overview table.
-This is the same as on the Task page.
+Page Organization: The events generated when making changes to a task, should be connected to the task, not the organization
 
-* On the Artifact Page Editing "Artifact Name", "Description", and "Artifact Type" and "MIME Type" should generate events of LOW importance.
-
-* Editing an Artifact (name, description, type) generates an error:
-    Runtime TypeError
-
-    Cannot read properties of undefined (reading 'name')
-    src/app/(authorized)/asset/page.tsx (538:16) @ <unknown>
+Page Organization: The events generated when making changes to a profile, should be connected to the profile, not the organization
 
 
-      536 |
-      537 |     const filteredArtifacts = artifacts.filter(artifact =>
-    > 538 |       artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||
-          |                ^
-      539 |       artifact.id.toString().includes(filterText)
-      540 |     );
+Page Organization: I get this error when trying to add a task
+Runtime TypeError
 
 
-* On the Artifact Page. When editing a Task (Name, Description) it should generate an Audit Event, same as if the Task had been updated from the Task page.
 
-* On the Artifact Page. The should be a button on the Task tab, to add a Task to an artifact. It should look about the same as the Add Profile button/pop up on the Tasks page under the Profiles tab. I.e., a search tasks input, and a list of all available tasks to select from. 
+Cannot read properties of undefined (reading 'id')
+src/app/(authorized)/organization/page.tsx (2059:99) @ <unknown>
 
-* On the Artifact Page. The Action tab should have a button: Download Asset. Clicking on this should download the asset file to the local computer.
 
-* On the Artifact Page. The Action tab should have a button: Preview Asset. Clicking on this should generate functionality depending on the asset type.
-  **) if an image, open the image in a new tab.
+  2057 |                                         onClick={() => handleTaskRowClick(task)}
+  2058 |                                     >
+> 2059 |                                         <TableCell className="w-20 text-right tabular-nums">{task.id}</TableCell>
+       |                                                                                                   ^
+  2060 |                                         <TableCell>{task.name}</TableCell>
+  2061 |                                         <TableCell>{task.description || '-'}</TableCell>
+  2062 |                                         <TableCell className="w-32">
 
-* On the Sidebar Menu. Clicking on New Task, should open the same popup/functionality as clicking on the button New Task on the Task page.
+
+* Page Artifact : When creating a new Artifact, it should create an Audit Event with LOW importance.
+
+* Page Audit Trail: the table is too wide. It exceeds the screen's width. Possible because the message column and entity columns have no width restrictions.
+
+* Page Incomming Files. The table needs pagination. Maximum 10 rows per page.
+
+* Create three new pages: 1) About Compliance Circle; 2) Privacy Policy; 3) Terms of Service
+
+Create content for Privacy Policy and Terms of Service
+
+The company is Compliace Circle
+Based in and under legislatio nof Denmark, EU
+The business is in compliance.
+
+
+--- 
+
 
 * The Sidebar Menu is no longer being minimzed correctly. When minimized the Compliance Circle logo on the top should be displayed.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+-----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -250,153 +471,3 @@ This is the same as on the Task page.
 -------
 
 
-
-
-
-
-
-
-
-
-I added this to the Schema:
-
-enum EventImportance {
-    LOW
-    MIDDLE
-    HIGH
-}
-
-and 
-column
-    importance          Int?
-to the event table.
-If everything ok, make changes to the database
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-On the Task page,
-The popup modal when a message is clicked on should have a maxium height. It becomes unmangable if the message is very long.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Can we start to generate some events.
-
-On the Task page, under "Details" when Task Name is changed it should generate an event: LOW importance, message: "Task name changed"
-Same with Description & Expected Evidence
-Same with Start Date/End Date, but MIDDLE importance
-Same with Status, but HIGH importance
-
-When a Profile is added/removed from the Task, HIGH importance
-When an Artifact is added/removed, MIDDLE importance
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-The periodic refresh (  // Periodic refresh - automatically fetch new data based on settings), refreshes the whole screen. This is quite irritating. It should only refresh if there are changes, and preferable only change the things that need to be changed. E.g, the Bell icon for new messages, the message table under Tasks for new messages. 
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-On the Organization page: there should be an additional tab to rightmost called: Actions.
-The action tab should have a delete button. The functionality taken from the delete button on the overview table. And the delete icon (as well as the edit icon) removed from the overview table.
-This is the same as on the Task page.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Also add an "Audit Trail" - same as on the Task page.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-On the Organization page
-
-"Details" when Organization Name is changed it should generate an event: LOW importance, message: "Organization name changed"
-Same with Description
-Same with Upload Directory, Download Directory, Artifact Directory under Settings.
-When a Profile is added/removed from the Organization, HIGH importance
-When an Task is added/removed, MIDDLE importance
-When a new Organization is created, HIGH importance
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-On the Profile page: there should be an additional tab to rightmost called: Actions.
-The action tab should have a delete button. The functionality taken from the delete button on the overview table. And the delete icon (as well as the edit icon) removed from the overview table.
-This is the same as on the Task page.
-
-Also add an "Audit Trail" - same as on the Task page.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-I get an error: "Could not delete organization" when trying to delete an Organization
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-The pagination elements (< Previous, 1,2,3,4,, Next >) should be non-selectable (select-none) Both on the Organization page, and on the Task page and everywhere else
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-An error:
-I get an error: "Could not delete organization" when trying to delete an Organization
-
-
-On the Profile page
-
-When a profile is created/deleted: -> Event with HIGH importance
-
-Profile Name, Description, Login Name, Email, Nickname: Event of LOW importance
-Role: Event of HIGH importance
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
--- HERETO
--- HERETO
--- HERETO
--- HERETO
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-And New Events:
-
-On the Organization page
-
-When an Organization is created/deleted: -> Event with HIGH importance
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Create a new page for displaying messages. It should have a table to display the messages.
-
-The table should have the messages, the tasks (name) they belong to, and the sender profile (name). Clicking on the message pops-up a modal to display the full message. Like on the Task oage, The popup should also have a delete button for deleting the message, The table should have pagination and search.
-
-The page is accessible by clicking on the messages sidebar menu item.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Task Page: 
-1) The Message tab should have a button to create a new message. It should open a pop-up where the message can be written. With cancel/Save Changes buttons.
-
-2) When clicking on messages on the list, the pop-up should have a delete button, to delete (active=false) the message.
-
-3) It should also be able to edit ones own messages in the popup.
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-Create a new page for displaying audit events. It should have a table to display the event message.
-
-The table should have the event messages. The user who initiated the event. And the task,organization,profile, or artifact the event is attached to.
-
-It should not be possible to edit or delete events. But there should be a button to redirect to the page displaying the task,organization,profile, or artifact. The table should have pagination and search.
-
-The page is accessible by clicking on a sidebar menu item "Audit Trail" which should be below the Messages sidebar menuitem.
-
-
-
-
-
-
-
-Profile AUditr trail colors
-
-
-  * PAGE: Messages (for overall list of all messages across Tasks - Task page still lacks messages)
-  * PAGE: Reports
-      -> Status Reports
-      -> Progress Reports
-  * PAGE: Audit Trail

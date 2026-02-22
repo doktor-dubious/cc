@@ -5,6 +5,7 @@ import { useRouter }            from 'next/navigation';
 import { useEffect, useState }  from 'react';
 import { Trash2 }               from 'lucide-react';
 import { Button }               from "@/components/ui/button";
+import { useTranslations }      from 'next-intl';
 
 import {
   Table,
@@ -57,6 +58,8 @@ export default function OrganizationPage()
 {
     const user = useUser();
     const router = useRouter();
+    const t = useTranslations('Organization');
+    const tc = useTranslations('Common');
 
     const [organizations, setOrganizations] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -290,7 +293,7 @@ export default function OrganizationPage()
                 };
             });
 
-            toast.success("Profile assigned to organization");
+            toast.success(t('toast.profileAssigned'));
 
             // Event: profile added
             await createEvent(`Profile added: "${addedProfile.name}"`, 'HIGH', selectedOrg.id);
@@ -301,7 +304,7 @@ export default function OrganizationPage()
         catch (err: any) 
         {
             // -- Debug -- console.error("Add profile error:", err);
-            toast.error(err.message || "Could not assign profile");
+            toast.error(err.message || t('toast.assignProfileError'));
         } 
         finally 
         {
@@ -363,7 +366,7 @@ export default function OrganizationPage()
                 };
             });
 
-            toast.success("Task assigned to organization");
+            toast.success(t('toast.taskAssigned'));
 
             // Event: task added
             await createEvent(`Task added: "${addedTask.name}"`, 'MIDDLE', selectedOrg.id);
@@ -374,7 +377,7 @@ export default function OrganizationPage()
         catch (err: any) 
         {
             // -- Debug -- console.error("Add task error:", err);
-            toast.error(err.message || "Could not assign task");
+            toast.error(err.message || t('toast.assignTaskError'));
             return;
         }
         finally 
@@ -402,15 +405,15 @@ export default function OrganizationPage()
             }
             else
             {
-                toast.error("Failed to load profiles");
+                toast.error(t('toast.loadProfilesError'));
                 router.push('/error');
                 return;
             }
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
             // -- Debug -- console.error("Failed to fetch available profiles", err);
-            toast.error("Could not load available profiles");
+            toast.error(t('toast.loadProfilesError'));
             router.push('/error');
             return;
         }
@@ -441,15 +444,15 @@ export default function OrganizationPage()
             }
             else 
             {
-                toast.error("Failed to load available tasks");
+                toast.error(t('toast.loadTasksError'));
                 router.push('/error');
                 return;
             }
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
             console.error("Failed to fetch available tasks", err);
-            toast.error("Could not load available tasks");
+            toast.error(t('toast.loadTasksError'));
             router.push('/error');
             return;
         }
@@ -514,7 +517,7 @@ export default function OrganizationPage()
 
         if (!uploadDirectory.trim() || !downloadDirectory.trim() || !artifactDirectory.trim()) 
         {
-            toast.error("All directory fields are required");
+            toast.error(t('toast.directoryFieldsRequired'));
             return;
         }
 
@@ -579,13 +582,13 @@ export default function OrganizationPage()
                 await createEvent('Artifact directory changed', 'LOW', selectedOrg.id);
             }
 
-            toast.success("Settings saved successfully");
+            toast.success(t('toast.settingsSaved'));
             setSettingsHasChanges(false);
         } 
         catch (err: any) 
         {
             console.error(err);
-            toast.error(err.error || "Could not save settings");
+            toast.error(err.error || t('toast.saveSettingsError'));
         } 
         finally 
         {
@@ -715,7 +718,7 @@ export default function OrganizationPage()
 
         if (!profileName.trim())
         {
-            toast.error("Profile name is required");
+            toast.error(t('toast.profileNameRequired'));
             return;
         }
 
@@ -772,13 +775,13 @@ export default function OrganizationPage()
                 };
             });
 
-            toast.success("Profile updated successfully");
+            toast.success(t('toast.profileUpdated'));
             setIsEditProfileDialogOpen(false);
         }
         catch (err)
         {
             console.error(err);
-            toast.error("Could not save profile");
+            toast.error(t('toast.saveProfileError'));
         }
         finally 
         {
@@ -890,12 +893,12 @@ export default function OrganizationPage()
             }
 
             setHasChanges(false);
-            toast.success(isNew ? "Organization created" : "Organization updated");
+            toast.success(isNew ? t('toast.organizationCreated') : t('toast.organizationUpdated'));
         }
         catch (err)
         {
             console.error(err);
-            toast.error("Could not save organization");
+            toast.error(t('toast.saveError'));
         }
         finally
         {
@@ -946,7 +949,7 @@ export default function OrganizationPage()
 
             await createEvent(`Organization deleted: "${deletedOrg?.name || 'Unknown'}"`, 'HIGH', orgToDelete);
 
-            toast.success("Organization deleted successfully");
+            toast.success(t('toast.organizationDeleted'));
 
             // Reset
             setOrgToDelete(null);
@@ -954,7 +957,7 @@ export default function OrganizationPage()
         catch (err)
         {
             console.error("Delete error:", err);
-            toast.error("Could not delete organization");
+            toast.error(t('toast.deleteError'));
         }
         finally
         {
@@ -1023,7 +1026,7 @@ export default function OrganizationPage()
             const removedTaskName = selectedOrg.tasks.find((t: any) => t.id === taskToRemove)?.name || 'Unknown';
             await createEvent(`Task removed: "${removedTaskName}"`, 'MIDDLE', selectedOrg.id);
 
-            toast.success("Task removed from organization");
+            toast.success(t('toast.taskRemoved'));
 
             // Close edit dialog if it was open for this task
             if (selectedTask?.id === taskToRemove) 
@@ -1035,7 +1038,7 @@ export default function OrganizationPage()
         catch (err: any) 
         {
             console.error("Remove task error:", err);
-            toast.error(err.message || "Could not remove task");
+            toast.error(err.message || t('toast.removeTaskError'));
         } 
         finally 
         {
@@ -1103,7 +1106,7 @@ export default function OrganizationPage()
             const removedProfileName = selectedOrg.profiles.find((p: any) => p.id === profileToDelete)?.name || 'Unknown';
             await createEvent(`Profile removed: "${removedProfileName}"`, 'HIGH', selectedOrg.id);
 
-            toast.success("Profile removed from organization");
+            toast.success(t('toast.profileRemoved'));
 
             // Close any open edit dialog if it was the deleted one
             if (selectedProfile?.id === profileToDelete) 
@@ -1115,7 +1118,7 @@ export default function OrganizationPage()
         catch (err: any) 
         {
             console.error("Remove profile error:", err);
-            toast.error(err.message || "Could not remove profile");
+            toast.error(err.message || t('toast.removeProfileError'));
         } 
         finally 
         {
@@ -1145,7 +1148,7 @@ export default function OrganizationPage()
 
         if (!taskName.trim())
         {
-            toast.error("Task name is required");
+            toast.error(t('toast.taskNameRequired'));
             return;
         }
 
@@ -1195,13 +1198,13 @@ export default function OrganizationPage()
                 : prev
             );
 
-            toast.success("Task updated");
+            toast.success(t('toast.taskUpdated'));
             setIsEditTaskDialogOpen(false);
         }
         catch (err)
         {
             console.error(err);
-            toast.error("Could not update task");
+            toast.error(t('toast.updateTaskError'));
         }
         finally
         {
@@ -1227,7 +1230,7 @@ export default function OrganizationPage()
     // Show loading while user context is loading
     if (!user)
     {
-        return <div>Loading user...</div>;
+        return <div>{t('loading.loadingUser')}</div>;
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1241,7 +1244,7 @@ export default function OrganizationPage()
     // Loading..
     if (loading)
     {
-        return <div>Loading organizations...</div>;
+        return <div>{t('loading.loadingOrganizations')}</div>;
     }
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1284,21 +1287,19 @@ export default function OrganizationPage()
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Remove task from organization?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.removeTaskTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This will unlink the task from the current organization (set organizationId to null).
-        The task record itself will remain in the system.
-        This action cannot be undone.
+        {t('dialogs.removeTaskDescription')}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         variant="destructive"
         onClick={handleRemoveTask}
         disabled={isDeleting}
       >
-        {isDeleting ? "Removing..." : "Remove task"}
+        {isDeleting ? t('buttons.removing') : t('buttons.removeTask')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -1313,21 +1314,19 @@ export default function OrganizationPage()
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Remove profile from organization?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.removeProfileTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This will unlink the profile from the current organization (set organizationId to null).
-        The profile record itself will remain in the system.
-        This action cannot be undone.
+        {t('dialogs.removeProfileDescription')}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         variant="destructive"
         onClick={handleRemoveProfile}
         disabled={isDeleting}
       >
-        {isDeleting ? "Removing..." : "Remove profile"}
+        {isDeleting ? t('buttons.removing') : t('buttons.removeProfile')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -1342,21 +1341,19 @@ export default function OrganizationPage()
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogTitle>{tc('dialogs.deleteTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete the organization
-        "{organizations.find(o => o.id === orgToDelete)?.name || 'this item'}"
-        and remove it from the system.
+        {t('dialogs.deleteDescription', { name: organizations.find(o => o.id === orgToDelete)?.name || 'this item' })}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         variant="destructive"
         onClick={handleDelete}
         disabled={isDeleting}
       >
-        {isDeleting ? "Deleting..." : "Delete"}
+        {isDeleting ? tc('buttons.deleting') : tc('buttons.delete')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -1366,31 +1363,31 @@ export default function OrganizationPage()
 <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
   <DialogContent className="sm:max-w-[500px]">
     <DialogHeader>
-      <DialogTitle>Create New Organisation</DialogTitle>
+      <DialogTitle>{t('dialogs.createTitle')}</DialogTitle>
       <DialogDescription>
-        Enter the details for the new organisation. Click Save when you're done.
+        {t('dialogs.createDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="block text-sm">Organisation name</label>
+        <label className="block text-sm">{t('labels.organisationName')}</label>
         <input
           type="text"
           value={name}
           onChange={(e) => setName(e.target.value)}
-          placeholder="Enter organization name"
+          placeholder={t('placeholders.enterOrganizationName')}
           className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
           autoFocus
         />
       </div>
 
       <div className="grid gap-2">
-        <label className="block text-sm">Description</label>
+        <label className="block text-sm">{t('labels.description')}</label>
         <Textarea
           value={description}
           onChange={(e) => setDescription(e.target.value)}
-          placeholder="Enter organization description"
+          placeholder={t('placeholders.enterDescription')}
           className="min-h-30 bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
         />
       </div>
@@ -1402,13 +1399,13 @@ export default function OrganizationPage()
         onClick={handleCancel}
         disabled={isSaving}
       >
-        Cancel
+        {tc('buttons.cancel')}
       </Button>
       <Button
         onClick={handleSave}
         disabled={!hasChanges || isSaving}
       >
-        {isSaving ? 'Creating...' : 'Create organisation'}
+        {isSaving ? t('buttons.creating') : t('buttons.createOrganisation')}
       </Button>
     </div>
   </DialogContent>
@@ -1418,37 +1415,37 @@ export default function OrganizationPage()
 <Dialog open={isEditProfileDialogOpen} onOpenChange={setIsEditProfileDialogOpen}>
     <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-        <DialogTitle>Edit Profile</DialogTitle>
+        <DialogTitle>{t('dialogs.editProfileTitle')}</DialogTitle>
         <DialogDescription>
-            Update the name and description. Click Save when you're done.
+            {t('dialogs.editProfileDescription')}
         </DialogDescription>
         </DialogHeader>
         <div className="grid gap-6 py-4">
         <div className="grid gap-2">
-            <label className="block text-sm">Profile name</label>
+            <label className="block text-sm">{t('labels.profileName')}</label>
             <Input
             value={profileName}
             onChange={(e) => setProfileName(e.target.value)}
-            placeholder="Enter profile name"
+            placeholder={t('placeholders.enterProfileName')}
             autoFocus
             />
         </div>
         <div className="grid gap-2">
-            <label className="block text-sm">Description</label>
+            <label className="block text-sm">{t('labels.description')}</label>
             <Textarea
             value={profileDescription}
             onChange={(e) => setProfileDescription(e.target.value)}
-            placeholder="Enter profile description"
+            placeholder={t('placeholders.enterProfileDescription')}
             className="min-h-30"
             />
         </div>
         </div>
         <div className="flex justify-end gap-3">
         <Button variant="outline" onClick={handleProfileCancel} disabled={isSaving}>
-            Cancel
+            {tc('buttons.cancel')}
         </Button>
         <Button onClick={handleProfileSave} disabled={!profileHasChanges || isSaving}>
-            {isSaving ? 'Saving...' : 'Save changes'}
+            {isSaving ? tc('buttons.saving') : tc('buttons.saveChanges')}
         </Button>
         </div>
     </DialogContent>
@@ -1458,15 +1455,15 @@ export default function OrganizationPage()
 <Dialog open={isEditTaskDialogOpen} onOpenChange={setIsEditTaskDialogOpen}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>Edit Task</DialogTitle>
+      <DialogTitle>{t('dialogs.editTaskTitle')}</DialogTitle>
       <DialogDescription>
-        Update the task name and description.
+        {t('dialogs.editTaskDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="text-sm">Task name</label>
+        <label className="text-sm">{t('labels.taskName')}</label>
         <Input
           value={taskName}
           onChange={(e) => setTaskName(e.target.value)}
@@ -1475,7 +1472,7 @@ export default function OrganizationPage()
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm">Description</label>
+        <label className="text-sm">{t('labels.description')}</label>
         <Textarea
           value={taskDescription}
           onChange={(e) => setTaskDescription(e.target.value)}
@@ -1490,14 +1487,14 @@ export default function OrganizationPage()
         onClick={() => setIsEditTaskDialogOpen(false)}
         disabled={isSaving}
       >
-        Cancel
+        {tc('buttons.cancel')}
       </Button>
 
       <Button
         onClick={handleTaskSave}
         disabled={!taskHasChanges || isSaving}
       >
-        {isSaving ? "Saving..." : "Save changes"}
+        {isSaving ? tc('buttons.saving') : tc('buttons.saveChanges')}
       </Button>
     </div>
   </DialogContent>
@@ -1507,15 +1504,15 @@ export default function OrganizationPage()
 <Dialog open={isAddProfileDialogOpen} onOpenChange={setIsAddProfileDialogOpen}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>Add Existing Profile to Organization</DialogTitle>
+      <DialogTitle>{t('dialogs.addProfileTitle')}</DialogTitle>
       <DialogDescription>
-        Search and select a profile to assign to this organization.
+        {t('dialogs.addProfileDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="py-4">
       <Input
-        placeholder="Search by name or email..."
+        placeholder={t('placeholders.searchByNameOrEmail')}
         value={searchProfileText}
         onChange={(e) => setSearchProfileText(e.target.value)}
         className="mb-4"
@@ -1523,7 +1520,7 @@ export default function OrganizationPage()
 
       <div className="max-h-75 overflow-y-auto border rounded">
         {availableProfiles.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">No available profiles found</p>
+          <p className="text-center text-muted-foreground py-8">{t('empty.noAvailableProfiles')}</p>
         ) : (
           availableProfiles
             .filter((p) =>
@@ -1540,11 +1537,11 @@ export default function OrganizationPage()
                 onClick={() => setSelectedProfileToAdd(profile.id)}
               >
                 <div className="font-medium">{profile.name}</div>
-                <div className="text-sm text-muted-foreground">{profile.user?.email || "No email"}</div>
+                <div className="text-sm text-muted-foreground">{profile.user?.email || t('status.noEmail')}</div>
                 <div className="text-xs text-muted-foreground mt-1">
                   {profile.organization
-                    ? `Currently in: ${profile.organization.name}`
-                    : "Unassigned"}
+                    ? t('status.currentlyIn', { name: profile.organization.name })
+                    : t('status.unassigned')}
                 </div>
               </div>
             ))
@@ -1554,13 +1551,13 @@ export default function OrganizationPage()
 
     <div className="flex justify-end gap-3">
       <Button variant="outline" onClick={() => setIsAddProfileDialogOpen(false)}>
-        Cancel
+        {tc('buttons.cancel')}
       </Button>
       <Button
         disabled={!selectedProfileToAdd}
         onClick={handleAddProfile}
       >
-        Add Profile
+        {t('buttons.addProfile')}
       </Button>
     </div>
   </DialogContent>
@@ -1570,15 +1567,15 @@ export default function OrganizationPage()
 <Dialog open={isAddTaskDialogOpen} onOpenChange={setIsAddTaskDialogOpen}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>Add Existing Task to Organization</DialogTitle>
+      <DialogTitle>{t('dialogs.addTaskTitle')}</DialogTitle>
       <DialogDescription>
-        Search and select a task to assign to this organization.
+        {t('dialogs.addTaskDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="py-4">
       <Input
-        placeholder="Search by name..."
+        placeholder={t('placeholders.searchByName')}
         value={searchTaskText}
         onChange={(e) => setSearchTaskText(e.target.value)}
         className="mb-4"
@@ -1586,7 +1583,7 @@ export default function OrganizationPage()
 
       <div className="max-h-75 overflow-y-auto border rounded">
         {availableTasks.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">No available tasks found</p>
+          <p className="text-center text-muted-foreground py-8">{t('empty.noAvailableTasks')}</p>
         ) : (
           availableTasks
             .filter((t) =>
@@ -1604,12 +1601,12 @@ export default function OrganizationPage()
                 <div className="font-medium">{task.name}</div>
                 <div className="text-sm text-muted-foreground space-y-1">
                   <p className="italic leading-tight">
-                    {task.description?.slice(0, 60) || "No description"}...
+                    {task.description?.slice(0, 60) || t('status.noDescription')}...
                   </p>
                   <p className="text-xs">
                     {task.organization
-                      ? `Currently in: ${task.organization.name}`
-                      : "Currently not assigned to any organization"}
+                      ? t('status.currentlyIn', { name: task.organization.name })
+                      : t('status.notAssigned')}
                   </p>
                 </div>
               </div>
@@ -1620,14 +1617,14 @@ export default function OrganizationPage()
 
     <div className="flex justify-end gap-3">
       <Button variant="outline" onClick={() => setIsAddTaskDialogOpen(false)}>
-        Cancel
+        {tc('buttons.cancel')}
       </Button>
       <Button
         variant="default"
         disabled={!selectedTaskToAdd}
         onClick={handleAddTask}
       >
-        Add Task
+        {t('buttons.addTask')}
       </Button>
     </div>
   </DialogContent>
@@ -1642,14 +1639,14 @@ export default function OrganizationPage()
         size="sm"
         onClick={handleNewOrg}
     >
-        New Organisation
+        {t('buttons.newOrganisation')}
     </Button>
     </div>
 
     {/* Filter Input */}
     <div className="flex justify-end">
         <Input
-            placeholder="Filter by name or ID..."
+            placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
@@ -1660,17 +1657,16 @@ export default function OrganizationPage()
     <Table>
         <TableHeader>
             <TableRow>
-                <TableHead className="w-20 text-right">ID</TableHead>
-                <TableHead>Name</TableHead>
-                <TableHead className="w-28 text-right">Profiles</TableHead>
-                <TableHead className="w-28 text-right">Tasks</TableHead>
+                <TableHead>{tc('table.name')}</TableHead>
+                <TableHead className="w-28 text-right">{tc('table.profiles')}</TableHead>
+                <TableHead className="w-28 text-right">{tc('table.tasks')}</TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
 { currentOrganizations.length === 0 ? (
             <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
-                    {filterText ? "No organizations match your filter" : "No organizations found"}
+                <TableCell colSpan={3} className="text-center text-muted-foreground">
+                    {filterText ? t('empty.noOrganizationsMatch') : t('empty.noOrganizationsFound')}
                 </TableCell>
             </TableRow>
 ) : (
@@ -1683,7 +1679,6 @@ export default function OrganizationPage()
                 `}
                 onClick={() => handleRowClick(org)}
             >
-                <TableCell className="w-20 text-right tabular-nums">{org.id}</TableCell>
                 <TableCell>{org.name}</TableCell>
                 <TableCell className="w-28 text-right tabular-nums">{org.profiles?.length || 0}</TableCell>
                 <TableCell className="w-28 text-right tabular-nums">{org.tasks?.length || 0}</TableCell>
@@ -1698,7 +1693,7 @@ export default function OrganizationPage()
 {totalPages > 1 && (
     <div className="flex items-center justify-between mt-4">
         <div className="text-sm text-muted-foreground">
-            Showing {startIndex + 1} to {Math.min(endIndex, filteredOrganizations.length)} of {filteredOrganizations.length} organizations
+            {t('pagination.showingOrganizations', { start: startIndex + 1, end: Math.min(endIndex, filteredOrganizations.length), total: filteredOrganizations.length })}
         </div>
                     
         <div className="flex justify-end">
@@ -1752,37 +1747,37 @@ export default function OrganizationPage()
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
                         value="details"
                     >
-                        Details
+                        {t('tabs.details')}
                     </TabsTrigger>
-                    <TabsTrigger 
-                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="settings"
                     >
-                        Settings
+                        {t('tabs.settings')}
                     </TabsTrigger>
-                    <TabsTrigger 
-                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10" 
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="profiles"
                     >
-                        Profiles ({selectedOrg.profiles?.length || 0})
+                        {t('tabs.profiles', { count: selectedOrg.profiles?.length || 0 })}
                     </TabsTrigger>
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="tasks"
                     >
-                        Tasks ({selectedOrg.tasks?.length || 0})
+                        {t('tabs.tasks', { count: selectedOrg.tasks?.length || 0 })}
                     </TabsTrigger>
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="audit"
                     >
-                        Audit Trail ({events.length})
+                        {t('tabs.auditTrail', { count: events.length })}
                     </TabsTrigger>
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="actions"
                     >
-                        Actions
+                        {t('tabs.actions')}
                     </TabsTrigger>
                 </TabsList>
                 <div
@@ -1802,22 +1797,30 @@ export default function OrganizationPage()
             <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                 <div className="space-y-6">
                     <div>
-                        <label className="block text-sm mb-2">Organisation name</label>
+                        <label className="block text-sm mb-2">{tc('table.id')}</label>
+                        <Input
+                            value={selectedOrg?.id?.toString() || ''}
+                            disabled
+                            className="opacity-60"
+                        />
+                    </div>
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.organisationName')}</label>
                         <input
                             type="text"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            placeholder="Enter organization name"
+                            placeholder={t('placeholders.enterOrganizationName')}
                             className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
                         />
                     </div>
 
                     <div>
-                        <label className="block text-sm mb-2">Description</label>
-                        <Textarea 
+                        <label className="block text-sm mb-2">{t('labels.description')}</label>
+                        <Textarea
                             value={description}
                             onChange={(e) => setDescription(e.target.value)}
-                            placeholder="Enter organization description"
+                            placeholder={t('placeholders.enterDescription')}
                             className="min-h-[120px] bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent" 
                         />
                     </div>
@@ -1828,47 +1831,47 @@ export default function OrganizationPage()
             <TabsContent value="settings" className="space-y-6 max-w-2xl mt-6">
                 <div className="space-y-6">
                     <div>
-                    <label className="block text-sm mb-2">Upload Directory</label>
+                    <label className="block text-sm mb-2">{t('labels.uploadDirectory')}</label>
                     <Input
                         value={uploadDirectory}
                         onChange={(e) => setUploadDirectory(e.target.value)}
-                        placeholder="Enter upload directory path (e.g., /var/uploads)"
+                        placeholder={t('placeholders.enterUploadDirectory')}
                         className="bg-neutral-800 border border-neutral-700 rounded-none"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                        Directory where uploaded files are temporarily stored
+                        {t('helpers.uploadDirectoryHelp')}
                     </p>
                     </div>
 
                     <div>
-                    <label className="block text-sm mb-2">Download Directory</label>
+                    <label className="block text-sm mb-2">{t('labels.downloadDirectory')}</label>
                     <Input
                         value={downloadDirectory}
                         onChange={(e) => setDownloadDirectory(e.target.value)}
-                        placeholder="Enter download directory path (e.g., /var/downloads)"
+                        placeholder={t('placeholders.enterDownloadDirectory')}
                         className="bg-neutral-800 border border-neutral-700 rounded-none"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                        Directory where files are prepared for download
+                        {t('helpers.downloadDirectoryHelp')}
                     </p>
                     </div>
 
                     <div>
-                    <label className="block text-sm mb-2">Artifact Directory</label>
+                    <label className="block text-sm mb-2">{t('labels.artifactDirectory')}</label>
                     <Input
                         value={artifactDirectory}
                         onChange={(e) => setArtifactDirectory(e.target.value)}
-                        placeholder="Enter artifact directory path (e.g., /var/artifacts)"
+                        placeholder={t('placeholders.enterArtifactDirectory')}
                         className="bg-neutral-800 border border-neutral-700 rounded-none"
                     />
                     <p className="text-xs text-muted-foreground mt-1">
-                        Directory where artifact files are permanently stored
+                        {t('helpers.artifactDirectoryHelp')}
                     </p>
                     </div>
 
                     {!selectedOrg.settings && !settingsHasChanges && (
                     <div className="text-sm text-muted-foreground italic">
-                        No settings configured for this organization yet. Enter the directory paths above and save.
+                        {t('empty.noSettings')}
                     </div>
                     )}
                 </div>
@@ -1885,15 +1888,15 @@ export default function OrganizationPage()
                         setIsAddProfileDialogOpen(true);
                         }}
                     >
-                        Add Profile
+                        {t('buttons.addProfile')}
                     </Button>
                 </div>
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-20 text-right">ID</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Description</TableHead>
+                            <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                            <TableHead>{tc('table.name')}</TableHead>
+                            <TableHead>{tc('table.description')}</TableHead>
                             <TableHead className="text-right"></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -1901,7 +1904,7 @@ export default function OrganizationPage()
                         {selectedOrg.profiles?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={4} className="text-center text-muted-foreground">
-                                    No profiles found for this organization
+                                    {t('empty.noProfilesFound')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -1946,7 +1949,7 @@ export default function OrganizationPage()
                     return totalPages > 1 && (
                         <div className="flex items-center justify-between mt-6">
                             <div className="text-sm text-muted-foreground">
-                                Showing {startIdx + 1} to {endIdx} of {totalProfiles} profiles
+                                {t('pagination.showingProfiles', { start: startIdx + 1, end: endIdx, total: totalProfiles })}
                             </div>
                             <div className="flex justify-end">
                                 <Pagination>
@@ -1997,16 +2000,16 @@ export default function OrganizationPage()
                         setIsAddTaskDialogOpen(true);
                         }}
                     >
-                        Add Task
+                        {t('buttons.addTask')}
                     </Button>
                 </div>
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-20 text-right">ID</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Description</TableHead>
-                            <TableHead className="w-32">Status</TableHead>
+                            <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                            <TableHead>{tc('table.name')}</TableHead>
+                            <TableHead>{tc('table.description')}</TableHead>
+                            <TableHead className="w-32">{tc('table.status')}</TableHead>
                             <TableHead className="text-right"></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -2014,7 +2017,7 @@ export default function OrganizationPage()
                         {selectedOrg.tasks?.length === 0 ? (
                             <TableRow>
                                 <TableCell colSpan={5} className="text-center text-muted-foreground">
-                                    No tasks found for this organization
+                                    {t('empty.noTasksFound')}
                                 </TableCell>
                             </TableRow>
                         ) : (
@@ -2061,7 +2064,7 @@ export default function OrganizationPage()
                     return totalPages > 1 && (
                         <div className="flex items-center justify-between mt-6">
                             <div className="text-sm text-muted-foreground">
-                                Showing {startIdx + 1} to {endIdx} of {totalTasks} tasks
+                                {t('pagination.showingTasks', { start: startIdx + 1, end: endIdx, total: totalTasks })}
                             </div>
                             <div className="flex justify-end">
                                 <Pagination>
@@ -2104,19 +2107,19 @@ export default function OrganizationPage()
             {/* Audit Trail Tab */}
             <TabsContent value="audit" className="mt-6">
                 {loadingEvents ? (
-                    <div className="text-center text-muted-foreground py-8">Loading events...</div>
+                    <div className="text-center text-muted-foreground py-8">{t('loading.loadingEvents')}</div>
                 ) : events.length === 0 ? (
-                    <div className="text-center text-muted-foreground py-8">No events for this organization</div>
+                    <div className="text-center text-muted-foreground py-8">{t('empty.noEvents')}</div>
                 ) : (
                     <>
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-20 text-right">ID</TableHead>
-                                <TableHead className="w-40">Date</TableHead>
-                                <TableHead className="w-40">User</TableHead>
-                                <TableHead className="w-32">Importance</TableHead>
-                                <TableHead>Message</TableHead>
+                                <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                                <TableHead className="w-40">{tc('table.date')}</TableHead>
+                                <TableHead className="w-40">{tc('table.user')}</TableHead>
+                                <TableHead className="w-32">{tc('table.importance')}</TableHead>
+                                <TableHead>{tc('table.message')}</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2155,7 +2158,7 @@ export default function OrganizationPage()
                         return totalEventsPages > 1 && (
                             <div className="flex items-center justify-between mt-6">
                                 <div className="text-sm text-muted-foreground">
-                                    Showing {startIdx + 1} to {endIdx} of {events.length} events
+                                    {t('pagination.showingEvents', { start: startIdx + 1, end: endIdx, total: events.length })}
                                 </div>
                                 <div className="flex justify-end">
                                     <Pagination>
@@ -2201,18 +2204,18 @@ export default function OrganizationPage()
             <TabsContent value="actions" className="mt-6">
                 <div className="space-y-6 max-w-2xl">
                     <div>
-                        <h3 className="text-lg font-semibold mb-4">Organization Actions</h3>
+                        <h3 className="text-lg font-semibold mb-4">{t('sections.organizationActions')}</h3>
                         <p className="text-sm text-muted-foreground mb-6">
-                            Manage this organization with the actions below.
+                            {t('sections.organizationActionsDescription')}
                         </p>
                     </div>
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
                         <div className="flex items-start gap-4">
                             <div className="flex-1">
-                                <h4 className="font-medium text-destructive mb-1">Delete Organization</h4>
+                                <h4 className="font-medium text-destructive mb-1">{t('sections.deleteOrganizationTitle')}</h4>
                                 <p className="text-sm text-muted-foreground">
-                                    Permanently delete this organization and all associated data. This action cannot be undone.
+                                    {t('sections.deleteOrganizationDescription')}
                                 </p>
                             </div>
                             <Button
@@ -2221,7 +2224,7 @@ export default function OrganizationPage()
                                 className="shrink-0"
                             >
                                 <Trash2 className="w-4 h-4 mr-2" />
-                                Delete Organization
+                                {t('buttons.deleteOrganization')}
                             </Button>
                         </div>
                     </div>
@@ -2257,7 +2260,7 @@ export default function OrganizationPage()
       disabled={isSaving}
       className="rounded-none"
     >
-      Cancel
+      {tc('buttons.cancel')}
     </Button>
 
     <Button
@@ -2294,7 +2297,7 @@ export default function OrganizationPage()
       }}
       disabled={isSaving || (!hasChanges && !settingsHasChanges)}
     >
-      {isSaving ? 'Saving...' : 'Save changes'}
+      {isSaving ? tc('buttons.saving') : tc('buttons.saveChanges')}
     </Button>
   </div>
 )}

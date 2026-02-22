@@ -95,7 +95,7 @@ export type ProfileWithRelations = Prisma.ProfileGetPayload<{
 
 export const profileRepository =
 {
-    async findById(id: number): Promise<ProfileData | null>
+    async findById(id: string): Promise<ProfileData | null>
     {
         log.info('SQL - profile: findById');
 
@@ -118,11 +118,11 @@ export const profileRepository =
         });
     },
 
-    async findByOrganizationId(organizationId: number): Promise<ProfileWithRelations[]> 
+    async findByOrganizationId(organizationId: string): Promise<ProfileWithRelations[]>
     {
         log.info('SQL - profile: findByOrganizationId');
 
-        if (!Number.isInteger(organizationId) || organizationId <= 0) 
+        if (!organizationId)
         {
             log.warn({ organizationId }, 'Invalid organizationId provided');
             return [];
@@ -130,7 +130,7 @@ export const profileRepository =
 
         return prisma.profile.findMany(
         {
-            where: 
+            where:
             {
                 organizationId,
                 active: true,
@@ -140,12 +140,12 @@ export const profileRepository =
         });
     },
 
-    async create(data: 
+    async create(data:
     {
         name            : string;
         description?    : string;
-        organizationId  : number;
-        user            : 
+        organizationId  : string;
+        user            :
             {
                 email           : string;
                 name            : string;
@@ -215,7 +215,7 @@ export const profileRepository =
     },
 
     async update(
-        id              : number,
+        id              : string,
         profileData     : Prisma.ProfileUpdateInput,
         userData?       : Prisma.UserUpdateInput
     ): Promise<ProfileWithRelations | null> 
@@ -251,7 +251,7 @@ export const profileRepository =
         });
     },
 
-    async delete(id: number): Promise<ProfileData>
+    async delete(id: string): Promise<ProfileData>
     {
         log.info({ ID: id }, 'SQL - profile: delete');
         
@@ -264,7 +264,7 @@ export const profileRepository =
     },
 
     /* Check if Profile with Organization ID exists */
-    async existsWithOrganizationId(profileId: number, organizationId: number): Promise<boolean>
+    async existsWithOrganizationId(profileId: string, organizationId: string): Promise<boolean>
     {
         log.info({ ProfileID: profileId, OrganizationId: organizationId }, 'SQL - profile: exists-organisation');
         

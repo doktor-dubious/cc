@@ -6,6 +6,7 @@ import { useState, useEffect }                  from 'react';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
 import { File, Check, X, Trash2 }               from 'lucide-react';
+import { useTranslations }                      from 'next-intl';
 import { Button }                               from '@/components/ui/button';
 import { Input }                                from '@/components/ui/input';
 import { Textarea }                             from '@/components/ui/textarea';
@@ -42,6 +43,8 @@ type FileItem = {
 export default function ArtifactFilesPage() 
 {
     const { activeOrganization } = useOrganization();
+    const t  = useTranslations('IncommingFiles');
+    const tc = useTranslations('Common');
 
     const [files, setFiles] = useState<FileItem[]>([]);
     const [loading, setLoading] = useState(true);
@@ -96,7 +99,7 @@ export default function ArtifactFilesPage()
         catch (err: any) 
         {
             console.error('Fetch error:', err);
-            toast.error('Could not load files from upload directory');
+            toast.error(t('toast.loadError'));
             setFiles([]);
         } 
         finally {
@@ -133,7 +136,7 @@ export default function ArtifactFilesPage()
     {
         if (!selectedFile || !artifactName.trim()) 
         {
-            toast.error('Name is required');
+            toast.error(t('toast.nameRequired'));
             return;
         }
 
@@ -162,7 +165,7 @@ export default function ArtifactFilesPage()
             const data = await res.json();
             if (!data.success) throw new Error(data.error || 'Operation failed');
 
-            toast.success('Artifact created and file moved');
+            toast.success(t('toast.artifactCreated'));
             setFiles((prev) => prev.filter((f) => f.relativePath !== selectedFile.relativePath));
             setSelectedFile(null);
             setAssignDialogOpen(false);
@@ -173,7 +176,7 @@ export default function ArtifactFilesPage()
         catch (err: any) 
         {
             console.error(err);
-            toast.error(err.message || 'Could not assign file');
+            toast.error(err.message || t('toast.assignError'));
         }
     };
 
@@ -207,7 +210,7 @@ export default function ArtifactFilesPage()
             const data = await res.json();
             if (!data.success) throw new Error(data.error || 'Delete operation failed');
 
-            toast.success('File deleted successfully');
+            toast.success(t('toast.fileDeleted'));
             setFiles((prev) => prev.filter((f) => f.relativePath !== fileToDelete.relativePath));
             setFileToDelete(null);
         } 

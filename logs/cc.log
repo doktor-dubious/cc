@@ -27436,3 +27436,607 @@
 [06:52:30 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
 [06:52:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
 [06:53:10 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[13:13:20 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:13:20 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:13:20 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:13:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[13:13:21 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[13:13:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : event/all - GET (fetch)[39m
+[13:13:21 UTC] [31mERROR[39m: [36m(PRISMA API : event/all - GET) Error[39m 
+    err: {
+      "type": "PrismaClientValidationError",
+      "message": "\nInvalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__[\"prisma\"].event.findMany()` invocation in\n/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__838550f0._.js:294:165\n\n  291 }\n  292 // ── Fetch all events related to this organization ───────────────────────────────\n  293 // Events directly on the org, or on tasks/profiles/artifacts belonging to the org\n→ 294 const events = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__[\"prisma\"].event.findMany({\n        where: {\n          active: true,\n          OR: [\n            {\n              organizationId: 626\n            },\n            {\n              task: {\n                organizationId: 626,\n                active: true\n              }\n            },\n            {\n              profile: {\n                organizationId: 626,\n                active: true\n              }\n            },\n            {\n              artifact: {\n                organizationId: 626,\n                active: true\n              }\n            }\n          ]\n        },\n        include: {\n          user: {\n            select: {\n              id: true,\n              name: true,\n              email: true\n            }\n          },\n          organization: {\n            select: {\n              id: true,\n              name: true\n            }\n          },\n          task: {\n            select: {\n              id: true,\n              name: true\n            }\n          },\n          profile: {\n            select: {\n              id: true,\n              name: true\n            }\n          },\n          artifact: {\n            select: {\n              id: true,\n              name: true\n            }\n          }\n        },\n        orderBy: {\n          createdAt: \"desc\"\n        }\n      })\n\nArgument `organizationId`: Invalid value provided. Expected UuidNullableFilter, String or Null, provided Int.",
+      "stack":
+          PrismaClientValidationError: 
+          Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].event.findMany()` invocation in
+          /home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__838550f0._.js:294:165
+          
+            291 }
+            292 // ── Fetch all events related to this organization ───────────────────────────────
+            293 // Events directly on the org, or on tasks/profiles/artifacts belonging to the org
+          → 294 const events = await __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].event.findMany({
+                  where: {
+                    active: true,
+                    OR: [
+                      {
+                        organizationId: 626
+                      },
+                      {
+                        task: {
+                          organizationId: 626,
+                          active: true
+                        }
+                      },
+                      {
+                        profile: {
+                          organizationId: 626,
+                          active: true
+                        }
+                      },
+                      {
+                        artifact: {
+                          organizationId: 626,
+                          active: true
+                        }
+                      }
+                    ]
+                  },
+                  include: {
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        email: true
+                      }
+                    },
+                    organization: {
+                      select: {
+                        id: true,
+                        name: true
+                      }
+                    },
+                    task: {
+                      select: {
+                        id: true,
+                        name: true
+                      }
+                    },
+                    profile: {
+                      select: {
+                        id: true,
+                        name: true
+                      }
+                    },
+                    artifact: {
+                      select: {
+                        id: true,
+                        name: true
+                      }
+                    }
+                  },
+                  orderBy: {
+                    createdAt: "desc"
+                  }
+                })
+          
+          Argument `organizationId`: Invalid value provided. Expected UuidNullableFilter, String or Null, provided Int.
+              at Nn (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:29:1363)
+              at ei.handleRequestError (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6911)
+              at ei.handleAndLogRequestError (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6593)
+              at ei.request (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6300)
+              at async a (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:130:9551)
+              at async GET (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__838550f0._.js:294:24)
+              at async AppRouteRouteModule.do (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:37866)
+              at async AppRouteRouteModule.handle (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:45156)
+              at async responseGenerator (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__0c037c49._.js:21155:38)
+              at async AppRouteRouteModule.handleResponse (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:1:187713)
+              at async handleResponse (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__0c037c49._.js:21218:32)
+              at async Module.handler (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__0c037c49._.js:21271:13)
+              at async DevServer.renderToResponseWithComponentsImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1422:9)
+              at async DevServer.renderPageComponent (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1474:24)
+              at async DevServer.renderToResponseImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1524:32)
+              at async DevServer.pipeImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1018:25)
+              at async NextNodeServer.handleCatchallRenderRequest (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/next-server.js:395:17)
+              at async DevServer.handleRequestImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:909:17)
+              at async /home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/dev/next-dev-server.js:387:20
+              at async Span.traceAsyncFn (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/trace/trace.js:157:20)
+              at async DevServer.handleRequest (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/dev/next-dev-server.js:383:24)
+              at async invokeRender (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/router-server.js:248:21)
+              at async handleRequest (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/router-server.js:447:24)
+              at async requestHandlerImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/router-server.js:496:13)
+              at async Server.requestListener (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/start-server.js:226:13)
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[13:13:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[13:14:20 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[13:14:51 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[13:15:11 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:11 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:11 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:20 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:20 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:20 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:25 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:25 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:25 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:30 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:30 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:30 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:34 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:34 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:34 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:39 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:39 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:39 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:15:43 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:15:43 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:15:43 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[13:16:06 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[13:16:06 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[13:16:06 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:27 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:27 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:27 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:33 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:33 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:33 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:42 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:42 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:42 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:48 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:48 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:48 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:52 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:52 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:52 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:12:56 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:12:56 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:12:56 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:10 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:10 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:10 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:18 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:18 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:18 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:23 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:23 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:23 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:27 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:27 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:27 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:32 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:32 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:32 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:37 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:37 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:37 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:44 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:44 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:44 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:50 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:50 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:50 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:55 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:55 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:55 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:13:59 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:13:59 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:13:59 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:04 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:04 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:04 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:09 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:09 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:09 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:21 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:21 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:21 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:25 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:25 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:25 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:31 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:31 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:31 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:36 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:36 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:36 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:52 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:52 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:52 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:14:57 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:14:57 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:14:57 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:15:05 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:15:05 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:15:05 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:15:26 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:15:26 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:15:26 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:15:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:15:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:15:41 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:15:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:15:41 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:15:41 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[00:15:51 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[00:15:51 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[00:15:51 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:10:53 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:10:53 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:10:53 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:33:04 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:33:04 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:33:04 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:33:29 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:33:29 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:33:29 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:33:42 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:33:42 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:33:42 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:34:27 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:34:27 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:34:27 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:36:07 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:36:07 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:36:07 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:48 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:48 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:48 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[06:40:54 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[06:40:54 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[06:40:54 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[07:26:30 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[07:26:30 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[07:26:30 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[07:26:30 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[07:26:31 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[07:26:31 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[08:47:59 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[08:47:59 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[08:47:59 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:29:49 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:29:49 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:29:49 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:29:50 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:29:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:29:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:29:50 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:29:50 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:30:20 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:30:20 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:30:20 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:30:20 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:30:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:30:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:30:21 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:30:21 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:30:21 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:30:24 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:30:24 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:30:24 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:30:24 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:30:24 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:30:24 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:32:02 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:32:02 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:32:02 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:32:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : organization - GET[39m
+[10:32:02 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:32:02 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:32:02 UTC] [32mINFO[39m: [36mSQL - organization: findAllWithProfilesTasksAndSettings[39m
+[10:32:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:32:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:33:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:33:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:34:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:34:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:35:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:35:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[10:35:08 UTC] [32mINFO[39m: [36mSQL - event: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:35:08 UTC] [31mERROR[39m: [36m(PRISMA API : event - GET) Error[39m 
+    err: {
+      "type": "PrismaClientValidationError",
+      "message": "\nInvalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__[\"prisma\"].event.findMany()` invocation in\n/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__b6f367f5._.js:334:151\n\n  331 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$log$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__[\"log\"].info({\n  332     organizationId\n  333 }, 'SQL - event: findByOrganizationId');\n→ 334 return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__[\"prisma\"].event.findMany({\n        where: {\n          organizationId: 626,\n                          ~~~\n          active: true\n        },\n        select: {\n          id: true,\n          message: true,\n          importance: true,\n          userId: true,\n          organizationId: true,\n          taskId: true,\n          profileId: true,\n          artifactId: true,\n          active: true,\n          createdAt: true,\n          updatedAt: true,\n          user: {\n            select: {\n              id: true,\n              name: true,\n              email: true\n            }\n          }\n        },\n        orderBy: {\n          createdAt: \"desc\"\n        }\n      })\n\nArgument `organizationId`: Invalid value provided. Expected UuidNullableFilter, String or Null, provided Int.",
+      "stack":
+          PrismaClientValidationError: 
+          Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].event.findMany()` invocation in
+          /home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__b6f367f5._.js:334:151
+          
+            331 __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$log$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["log"].info({
+            332     organizationId
+            333 }, 'SQL - event: findByOrganizationId');
+          → 334 return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$route$5d$__$28$ecmascript$29$__["prisma"].event.findMany({
+                  where: {
+                    organizationId: 626,
+                                    ~~~
+                    active: true
+                  },
+                  select: {
+                    id: true,
+                    message: true,
+                    importance: true,
+                    userId: true,
+                    organizationId: true,
+                    taskId: true,
+                    profileId: true,
+                    artifactId: true,
+                    active: true,
+                    createdAt: true,
+                    updatedAt: true,
+                    user: {
+                      select: {
+                        id: true,
+                        name: true,
+                        email: true
+                      }
+                    }
+                  },
+                  orderBy: {
+                    createdAt: "desc"
+                  }
+                })
+          
+          Argument `organizationId`: Invalid value provided. Expected UuidNullableFilter, String or Null, provided Int.
+              at Nn (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:29:1363)
+              at ei.handleRequestError (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6911)
+              at ei.handleAndLogRequestError (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6593)
+              at ei.request (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6300)
+              at async a (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:130:9551)
+              at async GET (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__b6f367f5._.js:477:22)
+              at async AppRouteRouteModule.do (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:37866)
+              at async AppRouteRouteModule.handle (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:5:45156)
+              at async responseGenerator (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__38856632._.js:21155:38)
+              at async AppRouteRouteModule.handleResponse (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/compiled/next-server/app-route-turbo.runtime.dev.js:1:187713)
+              at async handleResponse (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__38856632._.js:21218:32)
+              at async Module.handler (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/[root-of-the-server]__38856632._.js:21271:13)
+              at async DevServer.renderToResponseWithComponentsImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1422:9)
+              at async DevServer.renderPageComponent (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1474:24)
+              at async DevServer.renderToResponseImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1524:32)
+              at async DevServer.pipeImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:1018:25)
+              at async NextNodeServer.handleCatchallRenderRequest (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/next-server.js:395:17)
+              at async DevServer.handleRequestImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/base-server.js:909:17)
+              at async /home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/dev/next-dev-server.js:387:20
+              at async Span.traceAsyncFn (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/trace/trace.js:157:20)
+              at async DevServer.handleRequest (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/dev/next-dev-server.js:383:24)
+              at async invokeRender (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/router-server.js:248:21)
+              at async handleRequest (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/router-server.js:447:24)
+              at async requestHandlerImpl (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/router-server.js:496:13)
+              at async Server.requestListener (/home/rune/workspace/projects/compliance-circle/node_modules/next/dist/server/lib/start-server.js:226:13)
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:35:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:36:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : profile - GET (fetch)[39m
+[10:36:24 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:36:24 UTC] [32mINFO[39m: [36mSQL - profile: findByOrganizationId[39m
+[10:36:24 UTC] [31mERROR[39m: [36mError in profile GET handler[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : profile - GET (fetch)[39m
+[10:36:24 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:36:24 UTC] [32mINFO[39m: [36mSQL - profile: findByOrganizationId[39m
+[10:36:24 UTC] [31mERROR[39m: [36mError in profile GET handler[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:36:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:36:29 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:36:29 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:36:29 UTC] [31mERROR[39m: [36mError fetching tasks[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:36:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:36:29 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:36:29 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:36:29 UTC] [31mERROR[39m: [36mError fetching tasks[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:36:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[10:36:32 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:36:32 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[10:36:32 UTC] [31mERROR[39m: [36mError fetching artifacts[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:36:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[10:36:32 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:36:32 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[10:36:32 UTC] [31mERROR[39m: [36mError fetching artifacts[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:36:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:37:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:37:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:38:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:38:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:39:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:39:36 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:39:36 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:39:36 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:41:01 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:41:01 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:41:01 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:41:25 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:41:25 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:41:25 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:41:26 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:41:26 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:41:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:41:59 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:41:59 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:41:59 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:41:59 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:41:59 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:41:59 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:42:26 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:42:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:43:26 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:43:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:44:26 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:44:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:45:26 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:45:52 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:45:52 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:45:52 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:45:52 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:45:52 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:46:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:46:52 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:47:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:47:52 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:48:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:48:52 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:49:11 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:49:11 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:49:11 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:49:11 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:49:11 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:49:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:49:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:49:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:49:15 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:49:15 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:49:29 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:49:29 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:49:29 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:49:29 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:49:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:49:36 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:49:36 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:49:36 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:49:36 UTC] [31mERROR[39m: [36mError fetching tasks[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:49:36 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:49:36 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:49:36 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:49:36 UTC] [31mERROR[39m: [36mError fetching tasks[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:49:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:50:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:50:50 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:50:50 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:50:50 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:50:50 UTC] [31mERROR[39m: [36mError fetching tasks[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:50:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:51:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:51:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:52:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:52:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:53:07 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:53:07 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[10:53:07 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[10:53:08 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[10:53:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:53:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[10:53:08 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[10:53:08 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":626}[39m
+[10:53:08 UTC] [31mERROR[39m: [36mError fetching tasks[39m 
+    error: {
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:53:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:54:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:54:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:55:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:55:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:56:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:56:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:57:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[10:57:37 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[10:57:37 UTC] [31mERROR[39m: [36mJWT verification failed[39m 
+    err: {
+      "type": "PrismaClientValidationError",
+      "message": "\nInvalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__[\"prisma\"].user.findUnique()` invocation in\n/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/ssr/[root-of-the-server]__2a42651e._.js:150:148\n\n  147 const userRepository = {\n  148     async findById (id) {\n  149         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$log$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__[\"log\"].info('SQL - user: findById');\n→ 150         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__[\"prisma\"].user.findUnique({\n                where: {\n                  id: \"9a55945d-d60b-461a-ba64-d57852e44680\",\n                      ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~\n                  active: true\n                },\n                select: {\n                  id: true,\n                  email: true,\n                  name: true,\n                  nickname: true,\n                  role: true,\n                  workFunction: true\n                }\n              })\n\nArgument `id`: Invalid value provided. Expected Int, provided String.",
+      "stack":
+          PrismaClientValidationError: 
+          Invalid `__TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].user.findUnique()` invocation in
+          /home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/ssr/[root-of-the-server]__2a42651e._.js:150:148
+          
+            147 const userRepository = {
+            148     async findById (id) {
+            149         __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$log$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["log"].info('SQL - user: findById');
+          → 150         return __TURBOPACK__imported__module__$5b$project$5d2f$src$2f$lib$2f$prisma$2e$ts__$5b$app$2d$rsc$5d$__$28$ecmascript$29$__["prisma"].user.findUnique({
+                          where: {
+                            id: "9a55945d-d60b-461a-ba64-d57852e44680",
+                                ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+                            active: true
+                          },
+                          select: {
+                            id: true,
+                            email: true,
+                            name: true,
+                            nickname: true,
+                            role: true,
+                            workFunction: true
+                          }
+                        })
+          
+          Argument `id`: Invalid value provided. Expected Int, provided String.
+              at Nn (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:29:1363)
+              at ei.handleRequestError (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6911)
+              at ei.handleAndLogRequestError (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6593)
+              at ei.request (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:121:6300)
+              at async a (/home/rune/workspace/projects/compliance-circle/node_modules/@prisma/client/runtime/library.js:130:9551)
+              at async getUserData (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/ssr/[root-of-the-server]__2a42651e._.js:936:22)
+              at async AuthorizedLayout (/home/rune/workspace/projects/compliance-circle/.next/dev/server/chunks/ssr/[root-of-the-server]__2a42651e._.js:966:18)
+      "name": "PrismaClientValidationError",
+      "clientVersion": "6.19.2"
+    }
+[10:57:39 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[10:57:39 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[10:57:39 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[10:58:08 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[10:58:08 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[10:58:08 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[11:01:28 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[11:01:28 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[11:01:28 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[11:08:02 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[11:08:02 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[11:08:02 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m

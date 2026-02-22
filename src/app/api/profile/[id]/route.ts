@@ -22,28 +22,28 @@ export async function PATCH(
     log.debug('(PRISMA API : profile/[id] - PATCH (update)');
 
     const { id } = await params;
-    const targetProfileId = parseInt(id, 10);
-    if (isNaN(targetProfileId) || targetProfileId <= 0)
+    const targetProfileId = id;
+    if (!targetProfileId)
     {
         return NextResponse.json<ApiResponse>(
-            { 
-                success: false, 
-                error  : 'Invalid profile ID' 
-            }, 
+            {
+                success: false,
+                error  : 'Invalid profile ID'
+            },
             { status: 400 });
     }
 
-    try 
+    try
     {
         // ── Authentication & Authorization ──────────────────────────────
         const session = await getServerSession();
         if (!session?.user)
         {
             return NextResponse.json<ApiResponse>(
-                { 
-                    success: false, 
-                    error  : 'Unauthorized' 
-                }, 
+                {
+                    success: false,
+                    error  : 'Unauthorized'
+                },
                 { status: 401 });
         }
 
@@ -53,10 +53,10 @@ export async function PATCH(
         if (!userId || !role || !profileId)
         {
             return NextResponse.json<ApiResponse>(
-                { 
+                {
                     success: false,
-                    error: 'Invalid token' 
-                }, 
+                    error: 'Invalid token'
+                },
                 { status: 401 });
         }
 
@@ -107,15 +107,15 @@ export async function PATCH(
             {
                 profileData.organization = { disconnect: true };
             } 
-            else if (body.organization?.connect?.id) 
+            else if (body.organization?.connect?.id)
             {
-                const orgId = Number(body.organization.connect.id);
-                if (!Number.isInteger(orgId) || orgId <= 0) 
+                const orgId = body.organization.connect.id;
+                if (!orgId)
                 {
                     return NextResponse.json<ApiResponse>(
-                        { 
-                            success: false, 
-                            error  : 'Invalid organization ID in connect' 
+                        {
+                            success: false,
+                            error  : 'Invalid organization ID in connect'
                         },
                         { status: 400 }
                     );
@@ -142,13 +142,13 @@ export async function PATCH(
             } 
             else 
             {
-                const orgId = Number(body.organizationId);
-                if (!Number.isInteger(orgId) || orgId <= 0) {
+                const orgId = body.organizationId;
+                if (!orgId) {
                 return NextResponse.json<ApiResponse>(
-                    { 
-                        success: false, 
-                        error  : 'Invalid organizationId' 
-                    }, 
+                    {
+                        success: false,
+                        error  : 'Invalid organizationId'
+                    },
                     { status: 400 });
                 }
                 profileData.organization = { connect: { id: orgId } };
@@ -289,9 +289,9 @@ export async function DELETE(
     log.debug('(PRISMA API : profile/[id] - DELETE');
 
     const { id } = await params;
-    const targetProfileId = parseInt(id, 10);
+    const targetProfileId = id;
 
-    if (isNaN(targetProfileId) || targetProfileId <= 0) 
+    if (!targetProfileId)
     {
         return NextResponse.json<ApiResponse>(
             { success: false, error: 'Invalid profile ID' },

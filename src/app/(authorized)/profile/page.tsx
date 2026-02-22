@@ -5,6 +5,7 @@ import { zxcvbn }                         from '@/lib/zxcvbn';
 import { useUser }                        from '@/context/UserContext';
 import { useOrganization }                from '@/context/OrganizationContext';
 import { useRouter }                      from 'next/navigation';
+import { useTranslations }                from 'next-intl';
 import { Trash2 }                         from 'lucide-react';
 import { Button }                         from "@/components/ui/button";
 
@@ -60,11 +61,13 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 
-export default function ProfilePage() 
+export default function ProfilePage()
 {
     const user = useUser();
     const { activeOrganization } = useOrganization();
     const router = useRouter();
+    const t = useTranslations('Profile');
+    const tc = useTranslations('Common');
 
     const [profiles, setProfiles] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -137,26 +140,26 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FETCH PROFILES
-    const fetchProfiles = async () => 
+    const fetchProfiles = async () =>
     {
         if (!activeOrganization) return;
 
-        try 
+        try
         {
             const res = await fetch(`/api/profile?organizationId=${activeOrganization.id}`);
             const data = await res.json();
-            if (!data.success) 
+            if (!data.success)
             {
                 console.error('Failed tNewo fetch profiles:', data.error);
                 return;
             }
             setProfiles(data.data);
-        } 
-        catch (error) 
+        }
+        catch (error)
         {
             console.error('Failed to fetch profiles:', error);
-        } 
-        finally 
+        }
+        finally
         {
             setLoading(false);
         }
@@ -215,15 +218,15 @@ export default function ProfilePage()
     };
 
     // ── Change organization + Initial Load──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!user) return;
-        if (!activeOrganization) return; 
+        if (!activeOrganization) return;
 
         fetchProfiles();
 
         // Listen for refresh event
-        const handleRefresh = () => 
+        const handleRefresh = () =>
         {
             fetchProfiles();
         };
@@ -231,7 +234,7 @@ export default function ProfilePage()
         window.addEventListener('refreshPage', handleRefresh);
         // console.log("Event listener added for refreshPage");
 
-        return () => 
+        return () =>
         {
             // console.log("Cleaning up event listener");
             window.removeEventListener('refreshPage', handleRefresh);
@@ -241,7 +244,7 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // DETETE / UNASSIGN TASK FROM PROFILE
-    const handleRemoveTask = async () => 
+    const handleRemoveTask = async () =>
     {
         if (!taskToRemove || !selectedProfile) return;
 
@@ -249,7 +252,7 @@ export default function ProfilePage()
 
         try
         {
-            const res = await fetch('/api/task-profile', 
+            const res = await fetch('/api/task-profile',
             {
                   method: 'DELETE',
                   headers: { 'Content-Type': 'application/json' },
@@ -285,7 +288,7 @@ export default function ProfilePage()
             );
 
             // Update selectedProfile
-            setSelectedProfile((prev) => 
+            setSelectedProfile((prev) =>
             {
                 if (!prev) return prev;
                 return {
@@ -294,14 +297,14 @@ export default function ProfilePage()
                 };
             });
 
-            toast.success("Task removed from profile");
-        } 
-        catch (err: any) 
+            toast.success(t('toast.taskRemoved'));
+        }
+        catch (err: any)
         {
             console.error("Remove task error:", err);
-            toast.error(err.message || "Could not remove task");
-        } 
-        finally 
+            toast.error(err.message || t('toast.removeTaskError'));
+        }
+        finally
         {
             setIsDeleting(false);
             setTaskToRemove(null);
@@ -310,22 +313,22 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // EMAIL CHANGE - check if it is valid and available.
-    const handleEmailChange = (newEmail: string) => 
+    const handleEmailChange = (newEmail: string) =>
     {
         setEmail(newEmail);
 
         // Cancel any previous pending validation
-        if (emailCheckTimeout.current !== null) 
+        if (emailCheckTimeout.current !== null)
         {
             clearTimeout(emailCheckTimeout.current);
             emailCheckTimeout.current = null;
         }
 
         // Set new timeout to check email after 500ms of no typing
-        const timeout = setTimeout(() => 
+        const timeout = setTimeout(() =>
         {
             const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-            if (!emailRegex.test(email)) 
+            if (!emailRegex.test(email))
             {
                 setEmailValid(1);
                 emailCheckTimeout.current = null;
@@ -337,11 +340,11 @@ export default function ProfilePage()
     };
 
     // Reset Email check timer on mount/unmount.
-    useEffect(() => 
+    useEffect(() =>
     {
-        return () => 
+        return () =>
         {
-            if (emailCheckTimeout.current) 
+            if (emailCheckTimeout.current)
             {
                 clearTimeout(emailCheckTimeout.current);
             }
@@ -359,7 +362,7 @@ export default function ProfilePage()
         }
 
         // Don't check if editing existing profile and email hasn't changed
-        if (selectedProfile && emailToCheck === selectedProfile.user?.email) 
+        if (selectedProfile && emailToCheck === selectedProfile.user?.email)
         {
             setEmailValid(0);
             setIsCheckingEmail(false);
@@ -368,21 +371,21 @@ export default function ProfilePage()
 
         setIsCheckingEmail(true);
 
-        try 
+        try
         {
             const res = await fetch(`/api/user/check-email?email=${encodeURIComponent(emailToCheck)}`);
             const data = await res.json();
 
-            if (data.success) 
+            if (data.success)
             {
                 setEmailValid(data.available ? 0 : 2);
             }
-        } 
-        catch (error) 
+        }
+        catch (error)
         {
             console.error('Error checking email:', error);
-        } 
-        finally 
+        }
+        finally
         {
             setIsCheckingEmail(false);
         }
@@ -390,14 +393,14 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // PASSWORD CHANGE - check if it is strong.
-    const checkPasswordStrength = (pwd: string): { score: number; message: string } => 
+    const checkPasswordStrength = (pwd: string): { score: number; message: string } =>
     {
-        if (!pwd || pwd.length === 0) 
+        if (!pwd || pwd.length === 0)
         {
             return { score: null, message: "" };
         }
 
-        if (pwd.length < 8) 
+        if (pwd.length < 8)
         {
             return { score: 1, message: "Password must be at least 8 characters" };
         }
@@ -415,12 +418,12 @@ export default function ProfilePage()
         if (hasNumber) strength++;
         if (hasSpecial) strength++;
 
-        if (strength >= 5) 
+        if (strength >= 5)
         {
             return { score: 0, message: "Strong password" };
         }
 
-        if (strength >= 3) 
+        if (strength >= 3)
         {
             return { score: 2, message: "Medium – consider adding numbers or symbols" };
         }
@@ -455,15 +458,15 @@ export default function ProfilePage()
 
           // Build user-friendly message
           let message = "";
-          if (result.feedback.warning) 
+          if (result.feedback.warning)
           {
               message = result.feedback.warning;
-          } 
-          else if (result.feedback.suggestions.length > 0) 
+          }
+          else if (result.feedback.suggestions.length > 0)
           {
               message = result.feedback.suggestions[0];
-          } 
-          else if (result.score >= 3) 
+          }
+          else if (result.score >= 3)
           {
               message = "Looks good!";
           }
@@ -476,7 +479,7 @@ export default function ProfilePage()
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // EDIT TASK
     // Open Edit Task dialog ────────────────────────────────────────
-    const handleTaskRowClick = (task: any) => 
+    const handleTaskRowClick = (task: any) =>
     {
         setSelectedTask(task);
         setTaskName(task.name || "");
@@ -486,7 +489,7 @@ export default function ProfilePage()
     };
 
     // Detect changes in task form ────────────────────────────────────────
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!selectedTask) return;
 
@@ -498,14 +501,14 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // ── Save edited task ───────────────────────────────────────────────────────
-    const handleTaskSave = async () => 
+    const handleTaskSave = async () =>
     {
         if (!selectedTask || !taskHasChanges) return;
 
         setIsSaving(true);
-        try 
+        try
         {
-            const res = await fetch(`/api/task/${selectedTask.id}`, 
+            const res = await fetch(`/api/task/${selectedTask.id}`,
             {
                 method: "PATCH",
                 headers: { "Content-Type": "application/json" },
@@ -516,14 +519,14 @@ export default function ProfilePage()
                 }),
             });
 
-            if (!res.ok) 
+            if (!res.ok)
             {
                 const err = await res.json();
                 throw new Error(err.error || "Failed to update task");
             }
 
             const data = await res.json();
-            if (!data.success) 
+            if (!data.success)
             {
                 throw new Error(data.error || "Update failed");
             }
@@ -554,22 +557,22 @@ export default function ProfilePage()
             };
           });
 
-          toast.success("Task updated successfully");
+          toast.success(t('toast.taskUpdated'));
           setIsEditTaskDialogOpen(false);
           setSelectedTask(null);
-        } 
-        catch (err: any) 
+        }
+        catch (err: any)
         {
-            toast.error(err.message || "Could not update task");
-        } 
-        finally 
+            toast.error(err.message || t('toast.updateTaskError'));
+        }
+        finally
         {
             setIsSaving(false);
         }
     };
 
     // ── Cancel task edit ───────────────────────────────────────────────────────
-    const handleTaskCancel = () => 
+    const handleTaskCancel = () =>
     {
         setIsEditTaskDialogOpen(false);
         setSelectedTask(null);
@@ -579,14 +582,14 @@ export default function ProfilePage()
     };
 
     // ── Selected Profile changed ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
+    useEffect(() =>
     {
-        if (selectedProfile) 
+        if (selectedProfile)
         {
             // Details tab
             setName(selectedProfile.name || "");
             setDescription(selectedProfile.description || "");
-            
+
             // Login tab
             setEmail(selectedProfile.user?.email || "");
             setEmailValid(0); // Existing profile email is already valid
@@ -614,13 +617,13 @@ export default function ProfilePage()
     }, [selectedProfile]);
 
     // Selected Profile changed.
-    useEffect(() => 
+    useEffect(() =>
     {
         setPassword("");
         setPasswordTouched(false);
     }, [selectedProfile?.id]);
 
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!selectedProfile)
         {
@@ -643,7 +646,7 @@ export default function ProfilePage()
         setPassword(""); // always reset
     }, [selectedProfile]);
 
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!initialForm) return;
 
@@ -668,18 +671,18 @@ export default function ProfilePage()
     initialForm,
     ]);
 
-    useEffect(() => 
+    useEffect(() =>
     {
         setCurrentPage(1);
     }, [filterText]);
 
-  const handleRowClick = (profile: any) => 
+  const handleRowClick = (profile: any) =>
   {
       setSelectedProfile(profile);
       document.getElementById('edit-form')?.scrollIntoView({ behavior: 'smooth' });
   };
 
-    const handleNewProfile = () => 
+    const handleNewProfile = () =>
     {
         setSelectedProfile(null);
         setName("");
@@ -695,9 +698,9 @@ export default function ProfilePage()
         setIsNewDialogOpen(true);
     };
 
-    const handleCancel = () => 
+    const handleCancel = () =>
     {
-        if (!selectedProfile) 
+        if (!selectedProfile)
         {
             setName("");
             setDescription("");
@@ -707,8 +710,8 @@ export default function ProfilePage()
             setNickname("");
             setWorkFunction("DEVELOPER");
             setRole("USER");
-        } 
-        else 
+        }
+        else
         {
             setName(selectedProfile.name || "");
             setDescription(selectedProfile.description || "");
@@ -727,63 +730,63 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // NEW/SAVE PROFILE
-    const handleSave = async () => 
+    const handleSave = async () =>
     {
-        if (!name.trim() || !email.trim()) 
+        if (!name.trim() || !email.trim())
         {
-            toast.error("Profile name and email are required");
+            toast.error(t('toast.nameEmailRequired'));
             return;
         }
 
-        if (!activeOrganization) 
+        if (!activeOrganization)
         {
-            toast.error("No organization selected");
+            toast.error(t('toast.noOrganization'));
             return;
         }
 
         // Validate Email.
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (email && !emailRegex.test(email)) 
+        if (email && !emailRegex.test(email))
         {
-            toast.error("Invalid email");
+            toast.error(t('toast.invalidEmail'));
             return;
         }
 
         // For new profiles: require strong password
-        if (!selectedProfile) 
+        if (!selectedProfile)
         {
             const result = zxcvbn(password, [name, email, loginName, nickname]);
             if (result.score < 3)
             {
-                toast.error("Password is too weak. Please make it stronger.")
+                toast.error(t('toast.passwordTooWeak'))
                 return
             }
         }
 
         // For new profiles, require all fields
-        if (!selectedProfile) 
+        if (!selectedProfile)
         {
-            if (!password.trim() || !loginName.trim() || !nickname.trim()) 
+            if (!password.trim() || !loginName.trim() || !nickname.trim())
             {
-                toast.error("All fields are required for new profiles");
+                toast.error(t('toast.allFieldsRequired'));
                 return;
             }
         }
 
         setIsSaving(true);
 
-        try 
+        try
         {
             const isNew = !selectedProfile;
             const url = isNew ? '/api/profile' : `/api/profile/${selectedProfile.id}`;
             const method = isNew ? 'POST' : 'PATCH';
 
-            const body: any = 
+            const body: any =
             {
                 // Profile fields
                 name        : name.trim(),
                 description : description.trim() || undefined,
-                
+
                 // User fields
                 email       : email.trim(),
                 loginName   : loginName.trim(),
@@ -792,31 +795,31 @@ export default function ProfilePage()
                 role,
             };
 
-            if (isNew) 
+            if (isNew)
             {
                 body.organizationId = parseInt(activeOrganization.id);
                 body.password = password; // Required for new profiles
-            } 
-            else if (password.trim()) 
+            }
+            else if (password.trim())
             {
                 body.password = password; // Optional for updates
             }
 
-            const res = await fetch(url, 
+            const res = await fetch(url,
             {
                 method,
                 headers : { 'Content-Type': 'application/json' },
                 body    : JSON.stringify(body),
             });
 
-            if (!res.ok) 
+            if (!res.ok)
             {
                 const err = await res.json();
                 throw new Error(err.error || 'Save failed');
             }
 
             const data = await res.json();
-            if (!data.success) 
+            if (!data.success)
             {
                 throw new Error(data.error || 'Save failed');
             }
@@ -875,14 +878,14 @@ export default function ProfilePage()
 
             setHasChanges(false);
             setPassword(""); // Clear password after save
-            toast.success(isNew ? "Profile created" : "Profile updated");
-        } 
-        catch (err) 
+            toast.success(isNew ? t('toast.profileCreated') : t('toast.profileUpdated'));
+        }
+        catch (err)
         {
             console.error(err);
-            toast.error("Could not save profile");
-        } 
-        finally 
+            toast.error(t('toast.saveError'));
+        }
+        finally
         {
             setIsSaving(false);
         }
@@ -890,20 +893,20 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // DELETE PROFILE
-    const handleDelete = async () => 
+    const handleDelete = async () =>
     {
         if (!profileToDelete) return;
 
         setIsDeleting(true);
 
-        try 
+        try
         {
             const res = await fetch(`/api/profile/${profileToDelete}`, {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
           });
 
-          if (!res.ok) 
+          if (!res.ok)
           {
               const err = await res.json();
               throw new Error(err.error || 'Failed to delete profile');
@@ -939,15 +942,15 @@ export default function ProfilePage()
               }
           }
 
-          toast.success("Profile deleted successfully");
+          toast.success(t('toast.profileDeleted'));
           setProfileToDelete(null);
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
             console.error("Delete error:", err);
-            toast.error("Could not delete profile");
-        } 
-        finally 
+            toast.error(t('toast.deleteError'));
+        }
+        finally
         {
             setIsDeleting(false);
         }
@@ -964,24 +967,24 @@ export default function ProfilePage()
     const endIndex = startIndex + itemsPerPage;
     const currentProfiles = filteredProfiles.slice(startIndex, endIndex);
 
-    if (!user) 
+    if (!user)
     {
-        return <div>Loading user...</div>;
+        return <div>{tc('loading.loadingUser')}</div>;
     }
 
-    if (!activeOrganization) 
+    if (!activeOrganization)
     {
-        return <div>Please select an organization</div>;
+        return <div>{tc('loading.selectOrganization')}</div>;
     }
 
-    if (loading) 
+    if (loading)
     {
-        return <div>Loading profiles...</div>;
+        return <div>{t('loading.loadingProfiles')}</div>;
     }
 
-    const getRoleBadgeStyle = (role: string) => 
+    const getRoleBadgeStyle = (role: string) =>
     {
-        const styles = 
+        const styles =
         {
             SUPER_ADMIN : 'bg-[var(--color-user-role-super-admin)]',
             ADMIN       : 'bg-[var(--color-user-role-admin)]',
@@ -993,7 +996,7 @@ export default function ProfilePage()
 
     const getStatusBadge = (taskStatus: string) =>
     {
-        const styles = 
+        const styles =
         {
             NOT_STARTED : 'bg-[var(--color-status-not-started)]',
             OPEN        : 'bg-[var(--color-status-open)]',
@@ -1007,7 +1010,7 @@ export default function ProfilePage()
     // Audit Trail Importance badges.
     const getEventImportanceBadge = (taskStatus: string) =>
     {
-        const styles = 
+        const styles =
         {
             LOW     : 'bg-[var(--color-event-low)]',
             MIDDLE  : 'bg-[var(--color-event-middle)]',
@@ -1027,21 +1030,19 @@ export default function ProfilePage()
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Remove task from profile?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dialogs.removeTaskTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This will remove the task assignment from this profile (delete the link in TaskProfile).
-              The task itself remains in the system and can be assigned to other profiles or organizations.
-              This action cannot be undone.
+              {t('dialogs.removeTaskDescription')}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               variant="destructive"
               onClick={handleRemoveTask}
               disabled={isDeleting}
             >
-              {isDeleting ? "Removing..." : "Remove task"}
+              {isDeleting ? t('buttons.removing') : t('buttons.removeTask')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1056,21 +1057,19 @@ export default function ProfilePage()
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the profile
-              "{profiles.find(p => p.id === profileToDelete)?.name || 'this item'}"
-              and remove it from the system.
+              {t('dialogs.deleteDescription', { name: profiles.find(p => p.id === profileToDelete)?.name || 'this item' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? tc('buttons.deleting') : tc('buttons.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1080,32 +1079,32 @@ export default function ProfilePage()
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
         <DialogContent className="sm:max-w-150 max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>Create New Profile</DialogTitle>
+            <DialogTitle>{t('dialogs.createTitle')}</DialogTitle>
             <DialogDescription>
-              Enter the profile and login details. All fields are required.
+              {t('dialogs.createDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="space-y-4">
-              <h3 className="text-sm font-medium">Profile Information</h3>
-              
+              <h3 className="text-sm font-medium">{t('labels.profileInformation')}</h3>
+
               <div className="grid gap-2">
-                <label className="block text-sm">Profile name</label>
+                <label className="block text-sm">{t('labels.profileName')}</label>
                 <Input
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Enter profile name"
+                  placeholder={t('placeholders.enterProfileName')}
                   autoFocus
                 />
               </div>
 
               <div className="grid gap-2">
-                <label className="block text-sm">Description</label>
+                <label className="block text-sm">{t('labels.description')}</label>
                 <Textarea
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Enter profile description"
+                  placeholder={t('placeholders.enterDescription')}
                   className="min-h-20"
                 />
               </div>
@@ -1114,15 +1113,15 @@ export default function ProfilePage()
             <hr />
 
             <div className="space-y-4">
-              <h3 className="text-sm font-medium">Login Information</h3>
-              
+              <h3 className="text-sm font-medium">{t('labels.loginInformation')}</h3>
+
               <div className="grid gap-2">
-                <label className="block text-sm">Email</label>
+                <label className="block text-sm">{t('labels.email')}</label>
                 <Input
                     type="email"
                     value={email}
                     onChange={(e) => handleEmailChange(e.target.value)}
-                    placeholder="Enter email"
+                    placeholder={t('placeholders.enterEmail')}
                     className={`
                         ${emailValid ? 'border-red-500 focus:ring-red-500' : ''}
                         ${!emailValid && email ? 'border-green-500 focus:ring-green-500' : ''}
@@ -1134,18 +1133,18 @@ export default function ProfilePage()
                     </div>
                 )}
               {emailValid == 1 && (
-                <p className="text-xs text-red-500">Invalid email format</p>
+                <p className="text-xs text-red-500">{t('emailValidation.invalidFormat')}</p>
               )}
               {emailValid == 2 && (
-                <p className="text-xs text-red-500">This email is already taken</p>
+                <p className="text-xs text-red-500">{t('emailValidation.alreadyTaken')}</p>
               )}
               {!emailValid && email && (
-                <p className="text-xs text-green-500">Email is available</p>
+                <p className="text-xs text-green-500">{t('emailValidation.available')}</p>
               )}
               </div>
 
               <div className="grid gap-2 relative">
-                <label className="block text-sm">Password</label>
+                <label className="block text-sm">{t('labels.password')}</label>
                 <Input
                   type="password"
                   name="new-password"
@@ -1163,7 +1162,7 @@ export default function ProfilePage()
                           }
                       }, 0);
                   }}
-                  placeholder="Enter password"
+                  placeholder={t('placeholders.enterPassword')}
                   className={`
                         ${passwordStrength === 0 ? 'border-red-600 focus:ring-red-600' : ''}
                         ${passwordStrength === 1 ? 'border-orange-600 focus:ring-orange-600' : ''}
@@ -1191,50 +1190,50 @@ export default function ProfilePage()
                 {/* When empty or not yet evaluated */}
                 {!password && (
                   <p className="text-xs text-neutral-500">
-                    Use at least 8 characters with a mix of letters, numbers & symbols
+                    {t('password.minLength')}
                   </p>
                 )}
               </div>
 
                 <div className="mt-1 text-xs">
-                  {passwordStrength === 0 && <p className="text-red-600">Very weak – easily guessable&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
-                  {passwordStrength === 1 && <p className="text-orange-600">Weak&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
-                  {passwordStrength === 2 && <p className="text-yellow-600">Okay – could be stronger&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
-                  {passwordStrength === 3 && <p className="text-green-600">Strong</p>}
-                  {passwordStrength === 4 && <p className="text-emerald-600">Very strong ✓</p>}
+                  {passwordStrength === 0 && <p className="text-red-600">{t('password.veryWeak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                  {passwordStrength === 1 && <p className="text-orange-600">{t('password.weak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                  {passwordStrength === 2 && <p className="text-yellow-600">{t('password.okay')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                  {passwordStrength === 3 && <p className="text-green-600">{t('password.strong')}</p>}
+                  {passwordStrength === 4 && <p className="text-emerald-600">{t('password.veryStrong')}</p>}
                 </div>
               </div>
 
               <div className="grid gap-2">
-                <label className="block text-sm">Login Name</label>
+                <label className="block text-sm">{t('labels.loginName')}</label>
                 <Input
                   value={loginName}
                   onChange={(e) => setLoginName(e.target.value)}
-                  placeholder="Enter login name"
+                  placeholder={t('placeholders.enterLoginName')}
                 />
               </div>
 
               <div className="grid gap-2">
-                <label className="block text-sm">Nickname</label>
+                <label className="block text-sm">{t('labels.nickname')}</label>
                 <Input
                   value={nickname}
                   onChange={(e) => setNickname(e.target.value)}
-                  placeholder="Enter nickname"
+                  placeholder={t('placeholders.enterNickname')}
                 />
               </div>
 
               <div className="grid gap-4">
                 <div className="grid gap-2">
-                  <label className="block text-sm">Role</label>
+                  <label className="block text-sm">{t('labels.role')}</label>
                   <Select value={role} onValueChange={setRole}>
                     <SelectTrigger className="w-full">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="USER">User</SelectItem>
-                      <SelectItem value="ADMIN">Admin</SelectItem>
+                      <SelectItem value="USER">{t('roles.user')}</SelectItem>
+                      <SelectItem value="ADMIN">{t('roles.admin')}</SelectItem>
                       {user?.role === 'SUPER_ADMIN' && (
-                        <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                        <SelectItem value="SUPER_ADMIN">{t('roles.superAdmin')}</SelectItem>
                       )}
                     </SelectContent>
                   </Select>
@@ -1245,10 +1244,10 @@ export default function ProfilePage()
 
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
-              Cancel
+              {tc('buttons.cancel')}
             </Button>
-            <Button 
-                onClick={handleSave} 
+            <Button
+                onClick={handleSave}
                 disabled={
                       isSaving ||
                       // ── New profile specific validations ────────────────────────
@@ -1266,7 +1265,7 @@ export default function ProfilePage()
                     ))
                   }
               >
-              {isSaving ? 'Creating...' : 'Create profile'}
+              {isSaving ? t('buttons.creating') : t('buttons.createProfile')}
             </Button>
           </div>
         </DialogContent>
@@ -1276,29 +1275,29 @@ export default function ProfilePage()
       <Dialog open={isEditTaskDialogOpen} onOpenChange={setIsEditTaskDialogOpen}>
         <DialogContent className="sm:max-w-125">
           <DialogHeader>
-            <DialogTitle>Edit Task</DialogTitle>
+            <DialogTitle>{t('dialogs.editTaskTitle')}</DialogTitle>
             <DialogDescription>
-              Update the name and description of the task.
+              {t('dialogs.editTaskDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm">Task name</label>
+              <label className="block text-sm">{t('labels.taskName')}</label>
               <Input
                 value={taskName}
                 onChange={(e) => setTaskName(e.target.value)}
-                placeholder="Enter task name"
+                placeholder={t('placeholders.enterTaskName')}
                 autoFocus
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Description</label>
+              <label className="block text-sm">{t('labels.description')}</label>
               <Textarea
                 value={taskDescription}
                 onChange={(e) => setTaskDescription(e.target.value)}
-                placeholder="Enter task description"
+                placeholder={t('placeholders.enterTaskDescription')}
                 className="min-h-30"
               />
             </div>
@@ -1310,13 +1309,13 @@ export default function ProfilePage()
               onClick={handleTaskCancel}
               disabled={isSaving}
             >
-              Cancel
+              {tc('buttons.cancel')}
             </Button>
             <Button
               onClick={handleTaskSave}
               disabled={!taskHasChanges || isSaving}
             >
-              {isSaving ? "Saving..." : "Save changes"}
+              {isSaving ? tc('buttons.saving') : tc('buttons.saveChanges')}
             </Button>
           </div>
         </DialogContent>
@@ -1336,14 +1335,14 @@ export default function ProfilePage()
             onClick={handleNewProfile}
             className="cursor-pointer rounded-none"
           >
-            New Profile
+            {t('buttons.newProfile')}
           </Button>
         </div>
 
         { /* Filter Table Input */ }
         <div className="flex justify-end">
           <Input
-            placeholder="Filter by name, email or ID..."
+            placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
@@ -1354,18 +1353,17 @@ export default function ProfilePage()
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20 text-right">ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Email</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead className="w-28 text-right">Tasks</TableHead>
+              <TableHead>{tc('table.name')}</TableHead>
+              <TableHead>{tc('table.email')}</TableHead>
+              <TableHead>{tc('table.role')}</TableHead>
+              <TableHead className="w-28 text-right">{tc('table.tasks')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentProfiles.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
-                  {filterText ? "No profiles match your filter" : "No profiles found"}
+                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                  {filterText ? t('empty.noProfilesMatch') : t('empty.noProfilesFound')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -1378,12 +1376,11 @@ export default function ProfilePage()
                   `}
                   onClick={() => handleRowClick(profile)}
                 >
-                  <TableCell className="w-20 text-right tabular-nums">{profile.id}</TableCell>
                   <TableCell>{profile.name}</TableCell>
                   <TableCell>{profile.user?.email || '-'}</TableCell>
                   <TableCell>
-                    <Badge 
-                        variant="secondary" 
+                    <Badge
+                        variant="secondary"
                         className={`${getRoleBadgeStyle(profile.user?.role || 'USER')} text-xs user-role-badge`}
                     >
                         {profile.user?.role || 'USER'}
@@ -1401,7 +1398,7 @@ export default function ProfilePage()
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredProfiles.length)} of {filteredProfiles.length} profiles
+              {t('pagination.showing', { start: startIndex + 1, end: Math.min(endIndex, filteredProfiles.length), total: filteredProfiles.length })}
             </div>
 
             <div className="flex justify-end">
@@ -1454,31 +1451,31 @@ export default function ProfilePage()
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
                     >
-                      Details
+                      {t('tabs.details')}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="login"
                     >
-                      Login
+                      {t('tabs.login')}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="tasks"
                     >
-                      Tasks ({selectedProfile.taskProfiles?.length || 0})
+                      {t('tabs.tasks', { count: selectedProfile.taskProfiles?.length || 0 })}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="audit"
                     >
-                      Audit Trail ({events.length})
+                      {t('tabs.auditTrail', { count: events.length })}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="actions"
                     >
-                      Actions
+                      {t('tabs.actions')}
                     </TabsTrigger>
                   </TabsList>
                   <div
@@ -1497,20 +1494,28 @@ export default function ProfilePage()
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm mb-2">Profile name</label>
+                      <label className="block text-sm mb-2">{tc('table.id')}</label>
+                      <Input
+                        value={selectedProfile?.id?.toString() || ''}
+                        disabled
+                        className="opacity-60"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2">{t('labels.profileName')}</label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter profile name"
+                        placeholder={t('placeholders.enterProfileName')}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Description</label>
+                      <label className="block text-sm mb-2">{t('labels.description')}</label>
                       <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Enter profile description"
+                        placeholder={t('placeholders.enterDescription')}
                         className="min-h-30"
                       />
                     </div>
@@ -1523,22 +1528,22 @@ export default function ProfilePage()
 
                     {/* -- Login Name */}
                     <div>
-                      <label className="block text-sm mb-2">Login Name</label>
+                      <label className="block text-sm mb-2">{t('labels.loginName')}</label>
                       <Input
                         value={loginName}
                         onChange={(e) => setLoginName(e.target.value)}
-                        placeholder="Enter login name"
+                        placeholder={t('placeholders.enterLoginName')}
                       />
                     </div>
 
                     {/* -- Email */}
                     <div className="grid gap-2">
-                      <label className="block text-sm mb-2">Email</label>
+                      <label className="block text-sm mb-2">{t('labels.email')}</label>
                       <Input
                           type="email"
                           value={email}
                           onChange={(e) => handleEmailChange(e.target.value)}
-                          placeholder="Enter email"
+                          placeholder={t('placeholders.enterEmail')}
                           className={`
                               ${emailValid ? 'border-red-500 focus:ring-red-500' : ''}
                               ${!emailValid && email ? 'border-green-500 focus:ring-green-500' : ''}
@@ -1552,13 +1557,13 @@ export default function ProfilePage()
                         </div>
                       )}
                       {emailValid == 1 && (
-                        <p className="text-xs text-red-500">Invalid email format</p>
+                        <p className="text-xs text-red-500">{t('emailValidation.invalidFormat')}</p>
                       )}
                       {emailValid == 2 && email !== selectedProfile?.user?.email && (
-                        <p className="text-xs text-red-500">This email is already taken</p>
+                        <p className="text-xs text-red-500">{t('emailValidation.alreadyTaken')}</p>
                       )}
                       {!emailValid && email !== selectedProfile?.user?.email && (
-                        <p className="text-xs text-green-500">Email is available</p>
+                        <p className="text-xs text-green-500">{t('emailValidation.available')}</p>
                       )}
                       </>
                       )}
@@ -1566,7 +1571,7 @@ export default function ProfilePage()
 
                     {/* -- Password */}
                     <div className="grid gap-2 relative">
-                      <label className="block text-sm mb-2">Password</label>
+                      <label className="block text-sm mb-2">{t('labels.password')}</label>
                       <Input
                         type="password"
                         name="new-password"
@@ -1584,7 +1589,7 @@ export default function ProfilePage()
                                 }
                             }, 0);
                         }}
-                        placeholder="Leave blank to keep current password"
+                        placeholder={t('placeholders.leaveBlankPassword')}
                         className={`
                               ${passwordStrength === 0 ? 'border-red-600 focus:ring-red-600' : ''}
                               ${passwordStrength === 1 ? 'border-orange-600 focus:ring-orange-600' : ''}
@@ -1609,30 +1614,30 @@ export default function ProfilePage()
                   </div>
 
                         <div className="mt-1 text-xs">
-                          {passwordStrength === 0 && <p className="text-red-600">Very weak – easily guessable&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
-                          {passwordStrength === 1 && <p className="text-orange-600">Weak&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
-                          {passwordStrength === 2 && <p className="text-yellow-600">Okay – could be stronger&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
-                          {passwordStrength === 3 && <p className="text-green-600">Strong</p>}
-                          {passwordStrength === 4 && <p className="text-emerald-600">Very strong ✓</p>}
+                          {passwordStrength === 0 && <p className="text-red-600">{t('password.veryWeak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                          {passwordStrength === 1 && <p className="text-orange-600">{t('password.weak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                          {passwordStrength === 2 && <p className="text-yellow-600">{t('password.okay')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                          {passwordStrength === 3 && <p className="text-green-600">{t('password.strong')}</p>}
+                          {passwordStrength === 4 && <p className="text-emerald-600">{t('password.veryStrong')}</p>}
                         </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        Only enter a password if you want to change it
+                        {t('password.onlyEnterToChange')}
                       </p>
                     </div>
 
                     {/* -- Nickname */}
                     <div>
-                      <label className="block text-sm mb-2">Nickname</label>
+                      <label className="block text-sm mb-2">{t('labels.nickname')}</label>
                       <Input
                         value={nickname}
                         onChange={(e) => setNickname(e.target.value)}
-                        placeholder="Enter nickname"
+                        placeholder={t('placeholders.enterNickname')}
                       />
                     </div>
 
                     {/* -- ole */}
                     <div className="grid gap-2">
-                        <label className="block text-sm mb-2">Role</label>
+                        <label className="block text-sm mb-2">{t('labels.role')}</label>
                         <Select value={role} onValueChange={setRole}>
                           <SelectTrigger className="w-full">
                             <SelectValue />
@@ -1641,12 +1646,12 @@ export default function ProfilePage()
                               position="popper"
                               side="bottom"
                               sideOffset={4}
-                              className="max-h-75 overflow-y-auto"                          
+                              className="max-h-75 overflow-y-auto"
                           >
-                            <SelectItem value="USER">User</SelectItem>
-                            <SelectItem value="ADMIN">Admin</SelectItem>
+                            <SelectItem value="USER">{t('roles.user')}</SelectItem>
+                            <SelectItem value="ADMIN">{t('roles.admin')}</SelectItem>
                             {user?.role === 'SUPER_ADMIN' && (
-                              <SelectItem value="SUPER_ADMIN">Super Admin</SelectItem>
+                              <SelectItem value="SUPER_ADMIN">{t('roles.superAdmin')}</SelectItem>
                             )}
                           </SelectContent>
                         </Select>
@@ -1659,17 +1664,17 @@ export default function ProfilePage()
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-20 text-right">ID</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
-                        <TableHead className="w-32">Status</TableHead>
+                        <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                        <TableHead>{tc('table.name')}</TableHead>
+                        <TableHead>{tc('table.description')}</TableHead>
+                        <TableHead className="w-32">{tc('table.status')}</TableHead>
                         <TableHead className="text-right"></TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                     {selectedProfile.taskProfiles?.length ? (
                         selectedProfile.taskProfiles.map((tp: any) => (
-                        <TableRow 
+                        <TableRow
                           key={tp.task.id}
                           className="cursor-pointer hover:bg-muted/50"
                           onClick={() => handleTaskRowClick(tp.task)}
@@ -1685,7 +1690,7 @@ export default function ProfilePage()
                               </Badge>
                           </TableCell>
                             <TableCell>
-                                <button 
+                                <button
                                     className="hover:text-destructive"
                                     onClick={(e) => {
                                         e.stopPropagation();
@@ -1703,7 +1708,7 @@ export default function ProfilePage()
                             colSpan={4}
                             className="text-center text-muted-foreground"
                         >
-                            No tasks assigned to this profile
+                            {t('empty.noTasks')}
                         </TableCell>
                         </TableRow>
                     )}
@@ -1714,19 +1719,19 @@ export default function ProfilePage()
                 {/* Audit Trail Tab */}
                 <TabsContent value="audit" className="mt-6">
                   {loadingEvents ? (
-                    <div className="text-center text-muted-foreground py-8">Loading events...</div>
+                    <div className="text-center text-muted-foreground py-8">{t('loading.loadingEvents')}</div>
                   ) : events.length === 0 ? (
-                    <div className="text-center text-muted-foreground py-8">No events for this profile</div>
+                    <div className="text-center text-muted-foreground py-8">{t('empty.noEvents')}</div>
                   ) : (
                     <>
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-20 text-right">ID</TableHead>
-                            <TableHead className="w-40">Date</TableHead>
-                            <TableHead className="w-40">User</TableHead>
-                            <TableHead className="w-32">Importance</TableHead>
-                            <TableHead>Message</TableHead>
+                            <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                            <TableHead className="w-40">{tc('table.date')}</TableHead>
+                            <TableHead className="w-40">{tc('table.user')}</TableHead>
+                            <TableHead className="w-32">{tc('table.importance')}</TableHead>
+                            <TableHead>{tc('table.message')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -1769,7 +1774,7 @@ export default function ProfilePage()
                         return totalEventsPages > 1 && (
                           <div className="flex items-center justify-between mt-6">
                             <div className="text-sm text-muted-foreground">
-                              Showing {startIdx + 1} to {endIdx} of {events.length} events
+                              {t('pagination.showingEvents', { start: startIdx + 1, end: endIdx, total: events.length })}
                             </div>
 
                             <div className="flex justify-end">
@@ -1818,18 +1823,18 @@ export default function ProfilePage()
                 <TabsContent value="actions" className="mt-6">
                   <div className="space-y-6 max-w-2xl">
                     <div>
-                      <h3 className="text-lg font-semibold mb-4">Profile Actions</h3>
+                      <h3 className="text-lg font-semibold mb-4">{t('sections.profileActions')}</h3>
                       <p className="text-sm text-muted-foreground mb-6">
-                        Manage this profile with the actions below.
+                        {t('sections.profileActionsDescription')}
                       </p>
                     </div>
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
                       <div className="flex items-start gap-4">
                         <div className="flex-1">
-                          <h4 className="font-medium text-destructive mb-1">Delete Profile</h4>
+                          <h4 className="font-medium text-destructive mb-1">{t('sections.deleteProfileTitle')}</h4>
                           <p className="text-sm text-muted-foreground">
-                            Permanently delete this profile and all associated data. This action cannot be undone.
+                            {t('sections.deleteProfileDescription')}
                           </p>
                         </div>
                         <Button
@@ -1838,7 +1843,7 @@ export default function ProfilePage()
                           className="shrink-0"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Delete Profile
+                          {t('buttons.deleteProfile')}
                         </Button>
                       </div>
                     </div>
@@ -1851,20 +1856,20 @@ export default function ProfilePage()
 
         {selectedProfile && hasChanges && (
           <div className={`
-            fixed 
-            bottom-0 
-            left-var(--sidebar-width) 
-            right-0 
+            fixed
+            bottom-0
+            left-var(--sidebar-width)
+            right-0
             bg-background
-            border-t 
-            border-neutral-800 
-            px-6 
-            py-2 
+            border-t
+            border-neutral-800
+            px-6
+            py-2
             w-full
-            flex 
-            justify-end 
+            flex
+            justify-end
             gap-3
-            transition-transform 
+            transition-transform
             duration-500
             ease-in-out
             ${hasChanges ? 'translate-y-0' : 'translate-y-full'}
@@ -1874,18 +1879,18 @@ export default function ProfilePage()
               onClick={handleCancel}
               disabled={isSaving}
             >
-              Cancel
+              {tc('buttons.cancel')}
             </Button>
             <Button
               variant="default"
               onClick={handleSave}
-              disabled={!hasChanges 
-                || isSaving 
+              disabled={!hasChanges
+                || isSaving
                 || emailValid !== 0
                 || ( !!password && (passwordStrength === null || passwordStrength < 3))
               }
             >
-              {isSaving ? 'Saving...' : 'Save changes'}
+              {isSaving ? tc('buttons.saving') : tc('buttons.saveChanges')}
             </Button>
           </div>
         )}

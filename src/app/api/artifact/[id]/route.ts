@@ -19,20 +19,20 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
     log.debug('(PRISMA API : artifact/[id] - PATCH (update)');
 
     const { id } = await params;
-    const artifactId = parseInt(id, 10);
+    const artifactId = id;
 
-    if (isNaN(artifactId) || artifactId <= 0) 
+    if (!artifactId)
     {
         return NextResponse.json<ApiResponse>(
-            { 
-                success: false, 
-                error: 'Invalid artifact ID' 
-            }, 
+            {
+                success: false,
+                error: 'Invalid artifact ID'
+            },
             { status: 400 }
         );
     }
 
-    try 
+    try
     {
         // ── Authentication ────────────────────────────────────────────────────────────────
         const session = await getServerSession();
@@ -198,14 +198,14 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
     log.debug('(PRISMA API : artifact/[id] - DELETE');
 
     const { id } = await params;
-    const artifactId = parseInt(id, 10);
+    const artifactId = id;
 
-    if (isNaN(artifactId) || artifactId <= 0) 
+    if (!artifactId)
     {
         return NextResponse.json<ApiResponse>(
             {
-                success: false, 
-                error  : 'Invalid Artifact ID' 
+                success: false,
+                error  : 'Invalid Artifact ID'
             },
             { status: 400 }
         );

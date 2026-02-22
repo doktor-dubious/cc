@@ -7,7 +7,7 @@ import { prisma }   from '@/lib/prisma';
 
 export type SettingsData =
 {
-    id                  : number;
+    id                  : string;
     applicationName     : string;
     homeDirectory       : string;
     pollingInterval     : number;
@@ -38,7 +38,7 @@ export const settingsRepository =
     /**
      * Get settings by ID
      */
-    async findById(id: number): Promise<SettingsData | null> 
+    async findById(id: string): Promise<SettingsData | null> 
     {
         return prisma.settings.findUnique(
         {
@@ -97,7 +97,7 @@ export const settingsRepository =
      * Update settings by ID and make it active (deactivating others)
      */
     async update(
-        id: number,
+        id: string,
         data:
         {
             applicationName?    : string;
@@ -148,7 +148,7 @@ export const settingsRepository =
     /**
      * Activate a specific settings record (deactivating all others)
      */
-    async activate(id: number): Promise<SettingsData> 
+    async activate(id: string): Promise<SettingsData> 
     {
         log.info({ id }, 'Activating settings');
 
@@ -185,7 +185,7 @@ export const settingsRepository =
     /**
      * Delete settings (soft delete by deactivating)
      */
-    async delete(id: number): Promise<SettingsData> 
+    async delete(id: string): Promise<SettingsData> 
     {
         log.info({ id }, 'Deleting settings');
 

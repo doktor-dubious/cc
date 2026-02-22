@@ -1,0 +1,835 @@
+{
+  "Common": {
+    "buttons": {
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "save": "Lagre",
+      "saveChanges": "Lagre endringer",
+      "edit": "Rediger",
+      "creating": "Oppretter...",
+      "saving": "Lagrer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Legger til..."
+    },
+    "table": {
+      "id": "ID",
+      "name": "Navn",
+      "description": "Beskrivelse",
+      "type": "Type",
+      "status": "Status",
+      "date": "Dato",
+      "user": "Bruker",
+      "importance": "Viktighet",
+      "message": "Melding",
+      "email": "E-post",
+      "role": "Rolle",
+      "tasks": "Oppgaver",
+      "profiles": "Profiler",
+      "sender": "Avsender",
+      "task": "Oppgave"
+    },
+    "loading": {
+      "loadingUser": "Laster bruker...",
+      "selectOrganization": "Velg en organisasjon"
+    },
+    "dialogs": {
+      "deleteTitle": "Er du helt sikker?",
+      "cannotBeUndone": "Denne handlingen kan ikke angres."
+    }
+  },
+  "Sidebar": {
+    "newTask": "Ny oppgave",
+    "currentTasks": "Aktive oppgaver",
+    "waitingTasks": "Ventende oppgaver",
+    "urgentTasks": "Hasteoppgaver",
+    "home": "Hjem",
+    "organizations": "Organisasjoner",
+    "profiles": "Profiler",
+    "tasks": "Oppgaver",
+    "assets": "Ressurser",
+    "uploadFiles": "Last opp filer",
+    "incommingFiles": "Innkommende filer",
+    "messages": "Meldinger",
+    "auditTrail": "Revisjonslogg",
+    "reports": "Rapporter",
+    "statusReports": "Statusrapporter",
+    "mechanicalTurk": "Mechanical Turk",
+    "cis": "CIS",
+    "academy": "Akademi",
+    "ai": "AI",
+    "learnMore": "Lær mer",
+    "aboutComplianceCircle": "Om Compliance Circle",
+    "privacyPolicy": "Personvernerklæring",
+    "termsOfService": "Brukervilkår",
+    "blog": "Blogg",
+    "theme": "Tema",
+    "profileSettings": "Profilinnstillinger",
+    "applicationSettings": "Programinnstillinger",
+    "language": "Språk",
+    "logOut": "Logg ut",
+    "externalAssetManagement": "Ekstern ressursstyring",
+    "documentation": "Dokumentasjon"
+  },
+  "Dashboard": {
+    "welcome": "Velkommen {name}",
+    "email": "E-post: {email}",
+    "nickname": "Kallenavn: {nickname}"
+  },
+  "Asset": {
+    "buttons": {
+      "newArtifact": "Ny ressurs",
+      "createArtifact": "Opprett ressurs",
+      "saveChanges": "Lagre endringer",
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "addToTask": "Legg til oppgave",
+      "removeTask": "Fjern oppgave",
+      "previewAsset": "Forhåndsvis ressurs",
+      "downloadAsset": "Last ned ressurs",
+      "deleteThisArtifact": "Slett denne ressursen",
+      "creating": "Oppretter...",
+      "saving": "Lagrer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Legger til..."
+    },
+    "dialogs": {
+      "createTitle": "Opprett ny ressurs",
+      "createDescription": "Skriv inn detaljene for den nye ressursen. Klikk Lagre når du er ferdig.",
+      "editTaskTitle": "Rediger oppgave",
+      "editTaskDescription": "Oppdater navn og beskrivelse på oppgaven.",
+      "addToTaskTitle": "Legg ressurs til oppgave",
+      "addToTaskDescription": "Velg en oppgave som ressursen skal knyttes til.",
+      "removeTaskTitle": "Fjern oppgave fra ressurs?",
+      "removeTaskDescription": "Dette fjerner koblingen mellom oppgaven og den gjeldende ressursen (sletter lenken i TaskArtifact). Oppgaven beholdes i systemet og kan fortsatt tildeles andre ressurser eller profiler. Handlingen kan ikke angres.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette ressursen \"{name}\" og fjerne den fra systemet.",
+      "alsoDeleteFile": "Slett også filen fra filsystemet"
+    },
+    "labels": {
+      "artifactName": "Ressursnavn",
+      "description": "Beskrivelse",
+      "artifactType": "Ressurstype",
+      "mimeType": "MIME-type",
+      "fileExtension": "Filendelse",
+      "fileSize": "Filstørrelse",
+      "originalFileName": "Opprinnelig filnavn",
+      "taskName": "Oppgavenavn"
+    },
+    "placeholders": {
+      "enterArtifactName": "Skriv inn ressursnavn",
+      "enterDescription": "Skriv inn beskrivelse av ressursen",
+      "mimeTypeExample": "f.eks. application/pdf, image/png",
+      "filterByNameOrId": "Filtrer etter navn eller ID...",
+      "searchTasks": "Søk etter oppgaver...",
+      "enterTaskName": "Skriv inn oppgavenavn",
+      "enterTaskDescription": "Skriv inn oppgavebeskrivelse"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Navn",
+      "description": "Beskrivelse",
+      "type": "Type",
+      "status": "Status",
+      "date": "Dato",
+      "user": "Bruker",
+      "importance": "Viktighet",
+      "message": "Melding"
+    },
+    "tabs": {
+      "details": "Detaljer",
+      "fileDetails": "Fildetaljer",
+      "tasks": "Oppgaver ({count})",
+      "auditTrail": "Revisjonslogg ({count})",
+      "actions": "Handlinger"
+    },
+    "sections": {
+      "previewAssetTitle": "Forhåndsvis ressurs",
+      "previewAssetDescription": "Åpne en forhåndsvisning av denne ressursen i en ny fane.",
+      "downloadAssetTitle": "Last ned ressurs",
+      "downloadAssetDescription": "Last ned filen som hører til denne ressursen.",
+      "deleteArtifactTitle": "Slett ressurs",
+      "deleteArtifactDescription": "Når du sletter denne ressursen, er det ingen vei tilbake. Vær sikker."
+    },
+    "empty": {
+      "noArtifactsMatch": "Ingen ressurser matcher filteret ditt",
+      "noArtifactsFound": "Ingen ressurser funnet",
+      "noTasksConnected": "Ingen oppgaver knyttet til denne ressursen",
+      "noAvailableTasks": "Ingen tilgjengelige oppgaver å legge til",
+      "noEvents": "Ingen hendelser for denne ressursen"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} av {total} ressurser",
+      "showingEvents": "Viser {start} til {end} av {total} hendelser"
+    },
+    "toast": {
+      "taskRemovedSuccess": "Oppgave fjernet fra ressurs",
+      "taskUpdatedSuccess": "Oppgave oppdatert",
+      "taskAddedSuccess": "Oppgave lagt til ressurs",
+      "artifactCreated": "Ressurs opprettet",
+      "artifactUpdated": "Ressurs oppdatert",
+      "artifactDeletedSuccess": "Ressurs slettet",
+      "artifactAndFileDeletedSuccess": "Ressurs og fil slettet",
+      "nameRequired": "Ressursnavn er påkrevd",
+      "noOrganization": "Ingen organisasjon valgt",
+      "removeTaskError": "Kunne ikke fjerne oppgave fra ressurs",
+      "updateTaskError": "Kunne ikke oppdatere oppgave",
+      "addTaskError": "Kunne ikke legge til oppgave",
+      "saveError": "Kunne ikke lagre ressurs",
+      "deleteError": "Kunne ikke slette ressurs"
+    },
+    "loading": {
+      "loadingUser": "Laster bruker...",
+      "selectOrganization": "Velg en organisasjon",
+      "loadingArtifacts": "Laster ressurser..."
+    },
+    "events": {
+      "loading": "Laster hendelser..."
+    }
+  },
+  "AuditTrail": {
+    "placeholders": {
+      "filter": "Filtrer etter melding, bruker, enhet eller viktighet..."
+    },
+    "table": {
+      "entity": "Enhet",
+      "goTo": "Gå til {type}"
+    },
+    "entityTypes": {
+      "task": "Oppgave",
+      "organization": "Organisasjon",
+      "profile": "Profil",
+      "artifact": "Ressurs"
+    },
+    "empty": {
+      "loading": "Laster hendelser...",
+      "noEventsMatch": "Ingen hendelser matcher filteret ditt",
+      "noEventsFound": "Ingen hendelser funnet"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} av {total} hendelser"
+    },
+    "toast": {
+      "loadError": "Kunne ikke laste hendelser"
+    }
+  },
+  "Task": {
+    "buttons": {
+      "newTask": "Ny oppgave",
+      "createTask": "Opprett oppgave",
+      "saveChanges": "Lagre endringer",
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "deleteTask": "Slett oppgave",
+      "addProfile": "Legg til profil",
+      "addArtifact": "Legg til ressurs",
+      "newMessage": "Ny melding",
+      "markAllRead": "Merk alle som lest ({count})",
+      "removeArtifact": "Fjern ressurs",
+      "removeProfile": "Fjern profil",
+      "edit": "Rediger",
+      "saveMessage": "Lagre endringer",
+      "creating": "Oppretter...",
+      "saving": "Lagrer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Legger til..."
+    },
+    "dialogs": {
+      "createTitle": "Opprett ny oppgave",
+      "createDescription": "Skriv inn detaljene for den nye oppgaven. Klikk Lagre når du er ferdig.",
+      "newMessageTitle": "Ny melding",
+      "newMessageDescription": "Skriv en melding til denne oppgaven.",
+      "editArtifactTitle": "Rediger ressurs",
+      "editArtifactDescription": "Oppdater navn og beskrivelse på ressursen.",
+      "editProfileTitle": "Rediger profil",
+      "editProfileDescription": "Oppdater navn og beskrivelse på profilen.",
+      "addProfileTitle": "Legg til profil i oppgave",
+      "addProfileDescription": "Velg en profil som skal tildeles denne oppgaven.",
+      "addArtifactTitle": "Legg til ressurs i oppgave",
+      "addArtifactDescription": "Velg en ressurs som skal tildeles denne oppgaven.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteMessageDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette denne meldingen.",
+      "deleteTaskDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette oppgaven \"{name}\" og fjerne den fra systemet.",
+      "removeArtifactTitle": "Fjern ressurs fra oppgave?",
+      "removeArtifactDescription": "Dette fjerner koblingen mellom ressursen og den gjeldende oppgaven (sletter lenken i TaskArtifact). Ressursen beholdes i systemet. Handlingen kan ikke angres.",
+      "removeProfileTitle": "Fjern profil fra oppgave?",
+      "removeProfileDescription": "Dette fjerner koblingen mellom profilen og den gjeldende oppgaven (sletter lenken i TaskProfile). Profilen beholdes i systemet. Handlingen kan ikke angres.",
+      "messageFrom": "Melding fra {name}",
+      "taskLabel": "Oppgave: {name}"
+    },
+    "labels": {
+      "taskName": "Oppgavenavn",
+      "description": "Beskrivelse",
+      "expectedEvidence": "Forventet bevis",
+      "startDate": "Startdato",
+      "endDate": "Sluttdato",
+      "status": "Status",
+      "artifactName": "Ressursnavn",
+      "profileName": "Profilnavn"
+    },
+    "placeholders": {
+      "enterTaskName": "Skriv inn oppgavenavn",
+      "enterTaskDescription": "Skriv inn oppgavebeskrivelse",
+      "enterExpectedEvidence": "Skriv inn forventet bevis",
+      "selectStartDate": "Velg startdato",
+      "selectEndDate": "Velg sluttdato",
+      "typeMessage": "Skriv meldingen din...",
+      "searchProfiles": "Søk profiler...",
+      "searchArtifacts": "Søk ressurser...",
+      "filterByNameOrId": "Filtrer etter navn eller ID...",
+      "enterArtifactName": "Skriv inn ressursnavn",
+      "enterArtifactDescription": "Skriv inn ressursbeskrivelse",
+      "enterProfileName": "Skriv inn profilnavn",
+      "enterProfileDescription": "Skriv inn profilbeskrivelse"
+    },
+    "tabs": {
+      "messages": "Meldinger ({count})",
+      "details": "Detaljer",
+      "profiles": "Profiler ({count})",
+      "artifacts": "Ressurser ({count})",
+      "auditTrail": "Revisjonslogg ({count})",
+      "actions": "Handlinger"
+    },
+    "empty": {
+      "noTasksMatch": "Ingen oppgaver matcher filteret ditt",
+      "noTasksFound": "Ingen oppgaver funnet",
+      "noMessages": "Ingen meldinger for denne oppgaven",
+      "noArtifacts": "Ingen ressurser funnet for denne oppgaven",
+      "noProfiles": "Ingen profiler tildelt denne oppgaven",
+      "noEvents": "Ingen hendelser for denne oppgaven",
+      "noAvailableProfiles": "Ingen tilgjengelige profiler å legge til",
+      "noAvailableArtifacts": "Ingen tilgjengelige ressurser å legge til"
+    },
+    "pagination": {
+      "showingTasks": "Viser {start} til {end} av {total} oppgaver",
+      "showingMessages": "Viser {start} til {end} av {total} meldinger",
+      "showingArtifacts": "Viser {start} til {end} av {total} ressurser",
+      "showingProfiles": "Viser {start} til {end} av {total} profiler",
+      "showingEvents": "Viser {start} til {end} av {total} hendelser"
+    },
+    "toast": {
+      "allMessagesRead": "Alle meldinger markert som lest",
+      "markReadError": "Kunne ikke markere meldinger som lest",
+      "messageSent": "Melding sendt",
+      "sendMessageError": "Kunne ikke sende melding",
+      "messageUpdated": "Melding oppdatert",
+      "editMessageError": "Kunne ikke redigere melding",
+      "messageDeleted": "Melding slettet",
+      "deleteMessageError": "Kunne ikke slette melding",
+      "artifactRemoved": "Ressurs fjernet fra oppgave",
+      "removeArtifactError": "Kunne ikke fjerne ressurs fra oppgave",
+      "profileRemoved": "Profil fjernet fra oppgave",
+      "removeProfileError": "Kunne ikke fjerne profil fra oppgave",
+      "nameRequired": "Oppgavenavn er påkrevd",
+      "noOrganization": "Ingen organisasjon valgt",
+      "taskCreated": "Oppgave opprettet",
+      "taskUpdated": "Oppgave oppdatert",
+      "saveError": "Kunne ikke lagre oppgave",
+      "taskDeleted": "Oppgave slettet",
+      "deleteError": "Kunne ikke slette oppgave",
+      "artifactNameRequired": "Ressursnavn er påkrevd",
+      "artifactUpdated": "Ressurs oppdatert",
+      "saveArtifactError": "Kunne ikke lagre ressurs",
+      "profileNameRequired": "Profilnavn er påkrevd",
+      "profileUpdated": "Profil oppdatert",
+      "saveProfileError": "Kunne ikke lagre profil",
+      "profileAdded": "Profil lagt til oppgave",
+      "addProfileError": "Kunne ikke legge til profil i oppgave",
+      "artifactAdded": "Ressurs lagt til oppgave",
+      "addArtifactError": "Kunne ikke legge til ressurs"
+    },
+    "loading": {
+      "loadingUser": "Laster bruker...",
+      "selectOrganization": "Velg en organisasjon",
+      "loadingTasks": "Laster oppgaver...",
+      "loadingMessages": "Laster meldinger...",
+      "loadingEvents": "Laster hendelser..."
+    },
+    "sections": {
+      "taskActions": "Oppgavehandlinger",
+      "taskActionsDescription": "Administrer denne oppgaven med handlingene nedenfor.",
+      "deleteTaskDescription": "Slett denne oppgaven og alle tilknyttede data permanent. Kan ikke angres."
+    },
+    "badges": {
+      "new": "ny",
+      "system": "System"
+    }
+  },
+
+  "Profile": {
+    "buttons": {
+      "newProfile": "Ny profil",
+      "createProfile": "Opprett profil",
+      "saveChanges": "Lagre endringer",
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "deleteProfile": "Slett profil",
+      "removeTask": "Fjern oppgave",
+      "creating": "Oppretter...",
+      "saving": "Lagrer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner..."
+    },
+    "dialogs": {
+      "createTitle": "Opprett ny profil",
+      "createDescription": "Skriv inn profil- og påloggingsdetaljer. Alle felt er påkrevd.",
+      "editTaskTitle": "Rediger oppgave",
+      "editTaskDescription": "Oppdater navn og beskrivelse på oppgaven.",
+      "removeTaskTitle": "Fjern oppgave fra profil?",
+      "removeTaskDescription": "Dette fjerner oppgavetildelingen fra denne profilen (sletter lenken i TaskProfile). Oppgaven beholdes i systemet. Handlingen kan ikke angres.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet."
+    },
+    "labels": {
+      "profileName": "Profilnavn",
+      "description": "Beskrivelse",
+      "email": "E-post",
+      "password": "Passord",
+      "loginName": "Påloggingsnavn",
+      "nickname": "Kallenavn",
+      "role": "Rolle",
+      "taskName": "Oppgavenavn",
+      "profileInformation": "Profilinformasjon",
+      "loginInformation": "Påloggingsinformasjon"
+    },
+    "placeholders": {
+      "enterProfileName": "Skriv inn profilnavn",
+      "enterDescription": "Skriv inn profilbeskrivelse",
+      "enterEmail": "Skriv inn e-post",
+      "enterPassword": "Skriv inn passord",
+      "enterLoginName": "Skriv inn påloggingsnavn",
+      "enterNickname": "Skriv inn kallenavn",
+      "enterTaskName": "Skriv inn oppgavenavn",
+      "enterTaskDescription": "Skriv inn oppgavebeskrivelse",
+      "filterByNameOrId": "Filtrer etter navn, e-post eller ID...",
+      "leaveBlankPassword": "La stå tomt for å beholde nåværende passord"
+    },
+    "tabs": {
+      "details": "Detaljer",
+      "login": "Pålogging",
+      "tasks": "Oppgaver ({count})",
+      "auditTrail": "Revisjonslogg ({count})",
+      "actions": "Handlinger"
+    },
+    "roles": {
+      "user": "Bruker",
+      "admin": "Admin",
+      "superAdmin": "Superadmin"
+    },
+    "empty": {
+      "noProfilesMatch": "Ingen profiler matcher filteret ditt",
+      "noProfilesFound": "Ingen profiler funnet",
+      "noTasks": "Ingen oppgaver tildelt denne profilen",
+      "noEvents": "Ingen hendelser for denne profilen"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} av {total} profiler",
+      "showingEvents": "Viser {start} til {end} av {total} hendelser"
+    },
+    "toast": {
+      "taskRemoved": "Oppgave fjernet fra profil",
+      "removeTaskError": "Kunne ikke fjerne oppgave",
+      "nameEmailRequired": "Profilnavn og e-post er påkrevd",
+      "noOrganization": "Ingen organisasjon valgt",
+      "invalidEmail": "Ugyldig e-post",
+      "passwordTooWeak": "Passordet er for svakt. Gjør det sterkere.",
+      "allFieldsRequired": "Alle felt er påkrevd for nye profiler",
+      "profileCreated": "Profil opprettet",
+      "profileUpdated": "Profil oppdatert",
+      "saveError": "Kunne ikke lagre profil",
+      "taskUpdated": "Oppgave oppdatert",
+      "updateTaskError": "Kunne ikke oppdatere oppgave",
+      "profileDeleted": "Profil slettet",
+      "deleteError": "Kunne ikke slette profil"
+    },
+    "loading": {
+      "loadingUser": "Laster bruker...",
+      "selectOrganization": "Velg en organisasjon",
+      "loadingProfiles": "Laster profiler...",
+      "loadingEvents": "Laster hendelser..."
+    },
+    "sections": {
+      "profileActions": "Profilhandlinger",
+      "profileActionsDescription": "Administrer denne profilen med handlingene nedenfor.",
+      "deleteProfileTitle": "Slett profil",
+      "deleteProfileDescription": "Slett denne profilen og alle tilknyttede data permanent. Kan ikke angres."
+    },
+    "password": {
+      "minLength": "Bruk minst 8 tegn med en blanding av bokstaver, tall og symboler",
+      "veryWeak": "Veldig svakt – lett å gjette",
+      "weak": "Svakt",
+      "okay": "OK – kunne vært sterkere",
+      "strong": "Sterkt",
+      "veryStrong": "Veldig sterkt",
+      "onlyEnterToChange": "Skriv kun inn passord hvis du vil endre det"
+    },
+    "emailValidation": {
+      "invalidFormat": "Ugyldig e-postformat",
+      "alreadyTaken": "Denne e-posten er allerede i bruk",
+      "available": "E-post er ledig"
+    }
+  },
+
+  "Organization": {
+    "buttons": {
+      "newOrganisation": "Ny organisasjon",
+      "createOrganisation": "Opprett organisasjon",
+      "saveChanges": "Lagre endringer",
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "deleteOrganization": "Slett organisasjon",
+      "addProfile": "Legg til profil",
+      "addTask": "Legg til oppgave",
+      "removeTask": "Fjern oppgave",
+      "removeProfile": "Fjern profil",
+      "creating": "Oppretter...",
+      "saving": "Lagrer...",
+      "deleting": "Sletter...",
+      "removing": "Fjerner...",
+      "adding": "Legger til..."
+    },
+    "dialogs": {
+      "createTitle": "Opprett ny organisasjon",
+      "createDescription": "Skriv inn detaljene for den nye organisasjonen. Klikk Lagre når du er ferdig.",
+      "editProfileTitle": "Rediger profil",
+      "editProfileDescription": "Oppdater navn og beskrivelse. Klikk Lagre når du er ferdig.",
+      "editTaskTitle": "Rediger oppgave",
+      "editTaskDescription": "Oppdater oppgavenavn og beskrivelse.",
+      "addProfileTitle": "Legg til eksisterende profil i organisasjon",
+      "addProfileDescription": "Søk og velg en profil som skal tildeles denne organisasjonen.",
+      "addTaskTitle": "Legg til eksisterende oppgave i organisasjon",
+      "addTaskDescription": "Søk og velg en oppgave som skal tildeles denne organisasjonen.",
+      "removeTaskTitle": "Fjern oppgave fra organisasjon?",
+      "removeTaskDescription": "Dette fjerner koblingen mellom oppgaven og den gjeldende organisasjonen (setter organizationId til null). Oppgaven beholdes i systemet. Handlingen kan ikke angres.",
+      "removeProfileTitle": "Fjern profil fra organisasjon?",
+      "removeProfileDescription": "Dette fjerner koblingen mellom profilen og den gjeldende organisasjonen (setter organizationId til null). Profilen beholdes i systemet. Handlingen kan ikke angres.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette organisasjonen \"{name}\" og fjerne den fra systemet."
+    },
+    "labels": {
+      "organisationName": "Organisasjonsnavn",
+      "description": "Beskrivelse",
+      "profileName": "Profilnavn",
+      "taskName": "Oppgavenavn",
+      "uploadDirectory": "Opplastingsmappe",
+      "downloadDirectory": "Nedlastingsmappe",
+      "artifactDirectory": "Ressursmappe"
+    },
+    "placeholders": {
+      "enterOrganizationName": "Skriv inn organisasjonsnavn",
+      "enterDescription": "Skriv inn organisasjonsbeskrivelse",
+      "enterProfileName": "Skriv inn profilnavn",
+      "enterProfileDescription": "Skriv inn profilbeskrivelse",
+      "enterTaskName": "Skriv inn oppgavenavn",
+      "enterTaskDescription": "Skriv inn oppgavebeskrivelse",
+      "searchByNameOrEmail": "Søk etter navn eller e-post...",
+      "searchByName": "Søk etter navn...",
+      "filterByNameOrId": "Filtrer etter navn eller ID...",
+      "enterUploadDirectory": "Skriv inn sti til opplastingsmappe (f.eks. /var/uploads)",
+      "enterDownloadDirectory": "Skriv inn sti til nedlastingsmappe (f.eks. /var/downloads)",
+      "enterArtifactDirectory": "Skriv inn sti til ressursmappe (f.eks. /var/artifacts)"
+    },
+    "tabs": {
+      "details": "Detaljer",
+      "settings": "Innstillinger",
+      "profiles": "Profiler ({count})",
+      "tasks": "Oppgaver ({count})",
+      "auditTrail": "Revisjonslogg ({count})",
+      "actions": "Handlinger"
+    },
+    "empty": {
+      "noOrganizationsMatch": "Ingen organisasjoner matcher filteret ditt",
+      "noOrganizationsFound": "Ingen organisasjoner funnet",
+      "noProfilesFound": "Ingen profiler funnet for denne organisasjonen",
+      "noTasksFound": "Ingen oppgaver funnet for denne organisasjonen",
+      "noAvailableProfiles": "Ingen tilgjengelige profiler funnet",
+      "noAvailableTasks": "Ingen tilgjengelige oppgaver funnet",
+      "noEvents": "Ingen hendelser for denne organisasjonen",
+      "noSettings": "Ingen innstillinger konfigurert for denne organisasjonen ennå. Skriv inn mappestier ovenfor og lagre."
+    },
+    "pagination": {
+      "showingOrganizations": "Viser {start} til {end} av {total} organisasjoner",
+      "showingProfiles": "Viser {start} til {end} av {total} profiler",
+      "showingTasks": "Viser {start} til {end} av {total} oppgaver",
+      "showingEvents": "Viser {start} til {end} av {total} hendelser"
+    },
+    "toast": {
+      "profileAssigned": "Profil tildelt organisasjon",
+      "assignProfileError": "Kunne ikke tildele profil",
+      "taskAssigned": "Oppgave tildelt organisasjon",
+      "assignTaskError": "Kunne ikke tildele oppgave",
+      "loadProfilesError": "Kunne ikke laste tilgjengelige profiler",
+      "loadTasksError": "Kunne ikke laste tilgjengelige oppgaver",
+      "directoryFieldsRequired": "Alle mappefelter er påkrevd",
+      "settingsSaved": "Innstillinger lagret",
+      "saveSettingsError": "Kunne ikke lagre innstillinger",
+      "profileNameRequired": "Profilnavn er påkrevd",
+      "profileUpdated": "Profil oppdatert",
+      "saveProfileError": "Kunne ikke lagre profil",
+      "organizationCreated": "Organisasjon opprettet",
+      "organizationUpdated": "Organisasjon oppdatert",
+      "saveError": "Kunne ikke lagre organisasjon",
+      "organizationDeleted": "Organisasjon slettet",
+      "deleteError": "Kunne ikke slette organisasjon",
+      "taskRemoved": "Oppgave fjernet fra organisasjon",
+      "removeTaskError": "Kunne ikke fjerne oppgave",
+      "profileRemoved": "Profil fjernet fra organisasjon",
+      "removeProfileError": "Kunne ikke fjerne profil",
+      "taskNameRequired": "Oppgavenavn er påkrevd",
+      "taskUpdated": "Oppgave oppdatert",
+      "updateTaskError": "Kunne ikke oppdatere oppgave"
+    },
+    "loading": {
+      "loadingUser": "Laster bruker...",
+      "loadingOrganizations": "Laster organisasjoner...",
+      "loadingEvents": "Laster hendelser..."
+    },
+    "sections": {
+      "organizationActions": "Organisasjonshandlinger",
+      "organizationActionsDescription": "Administrer denne organisasjonen med handlingene nedenfor.",
+      "deleteOrganizationTitle": "Slett organisasjon",
+      "deleteOrganizationDescription": "Slett denne organisasjonen og alle tilknyttede data permanent. Kan ikke angres."
+    },
+    "helpers": {
+      "uploadDirectoryHelp": "Mappe der opplastede filer midlertidig lagres",
+      "downloadDirectoryHelp": "Mappe der filer klargjøres for nedlasting",
+      "artifactDirectoryHelp": "Mappe der ressursfiler permanent lagres"
+    },
+    "status": {
+      "currentlyIn": "For tiden i: {name}",
+      "unassigned": "Ikke tildelt",
+      "notAssigned": "Ikke tildelt noen organisasjon for øyeblikket",
+      "noEmail": "Ingen e-post",
+      "noDescription": "Ingen beskrivelse"
+    }
+  },
+
+  "IncommingFiles": {
+    "buttons": {
+      "assignAsArtifact": "Tildel som ressurs",
+      "createArtifactAndMove": "Opprett ressurs & flytt fil",
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "deleting": "Sletter..."
+    },
+    "dialogs": {
+      "deleteTitle": "Slett fil?",
+      "deleteDescription": "Er du sikker på at du vil slette <strong>{name}</strong>? Denne handlingen kan ikke angres.",
+      "assignTitle": "Tildel fil som ressurs",
+      "assignFileLabel": "Fil: {name}"
+    },
+    "labels": {
+      "artifactName": "Ressursnavn",
+      "description": "Beskrivelse",
+      "type": "Type"
+    },
+    "placeholders": {
+      "enterArtifactName": "Skriv inn ressursnavn",
+      "enterDescription": "Valgfri beskrivelse",
+      "selectType": "Velg type"
+    },
+    "table": {
+      "filename": "Filnavn",
+      "size": "Størrelse",
+      "modified": "Endret",
+      "actions": "Handlinger"
+    },
+    "empty": {
+      "noFiles": "Ingen filer funnet i opplastingsmappen"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} av {total} filer"
+    },
+    "toast": {
+      "nameRequired": "Navn er påkrevd",
+      "artifactCreated": "Ressurs opprettet og fil flyttet",
+      "assignError": "Kunne ikke tildele fil",
+      "fileDeleted": "Fil slettet",
+      "deleteError": "Kunne ikke slette fil",
+      "loadError": "Kunne ikke laste filer fra opplastingsmappe"
+    }
+  },
+
+  "Message": {
+    "buttons": {
+      "delete": "Slett",
+      "cancel": "Avbryt",
+      "deleting": "Sletter..."
+    },
+    "dialogs": {
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette denne meldingen.",
+      "messageFrom": "Melding fra {name}",
+      "taskLabel": "Oppgave: {name}"
+    },
+    "badges": {
+      "system": "System"
+    },
+    "placeholders": {
+      "filter": "Filtrer etter melding, oppgave eller avsender..."
+    },
+    "table": {
+      "id": "ID",
+      "message": "Melding",
+      "task": "Oppgave",
+      "sender": "Avsender",
+      "date": "Dato"
+    },
+    "empty": {
+      "loading": "Laster meldinger...",
+      "noMessagesMatch": "Ingen meldinger matcher filteret ditt",
+      "noMessagesFound": "Ingen meldinger funnet"
+    },
+    "pagination": {
+      "showing": "Viser {start} til {end} av {total} meldinger"
+    },
+    "toast": {
+      "messageDeleted": "Melding slettet",
+      "deleteError": "Kunne ikke slette melding",
+      "loadError": "Kunne ikke laste meldinger"
+    }
+  },
+
+  "CISControls": {
+    "legends": {
+      "controlGroups": "Kontrollgrupper",
+      "riskScore": "Risikoscore",
+      "low": "Lav (0–33)",
+      "medium": "Middels (34–66)",
+      "high": "Høy (67–100)",
+      "riskScoreLabel": "Risikoscore: {risk}%"
+    },
+    "table": {
+      "control": "Kontrol",
+      "group": "Gruppe",
+      "risk": "Risiko"
+    }
+  },
+
+  "CISSafeguards": {
+    "buttons": {
+      "backToControls": "Tilbake til kontroller"
+    },
+    "headings": {
+      "control": "Kontrol {id}: {title}",
+      "overview": "Oversikt",
+      "purpose": "Formål",
+      "safeguard": "Sikkerhetstiltak"
+    },
+    "igLabels": {
+      "ig1": "IG-1",
+      "ig2": "IG-2",
+      "ig3": "IG-3"
+    },
+    "igFullLabels": {
+      "ig1": "Implementeringsgruppe 1",
+      "ig2": "Implementeringsgruppe 2",
+      "ig3": "Implementeringsgruppe 3"
+    },
+    "tableColumns": {
+      "asset": "Ressurs",
+      "function": "Funksjon",
+      "frequency": "Frekvens",
+      "status": "Status",
+      "priority": "Prioritet",
+      "likelihood": "Sannsynlighet",
+      "impact": "Konsekvens",
+      "owner": "Eier"
+    },
+    "expandedLabels": {
+      "definition": "Definisjon",
+      "purpose": "Formål",
+      "why": "Hvorfor",
+      "scope": "Omfang",
+      "approach": "Tilnærming",
+      "example": "Eksempel",
+      "resources": "Ressurser"
+    },
+    "empty": {
+      "controlNotFound": "Kontrol ikke funnet.",
+      "noSafeguards": "Ingen sikkerhetstiltak definert for {igLabel} i denne kontrollen."
+    }
+  },
+
+  "SettingsProfile": {
+    "title": "Profil",
+    "tabs": {
+      "profile": "Profil",
+      "login": "Pålogging",
+      "account": "Konto",
+      "settings": "Innstillinger",
+      "log": "Logg"
+    },
+    "labels": {
+      "fullName": "Fullt navn",
+      "nickname": "Hva skal Compliance Circle kalle deg?",
+      "workFunction": "Hva beskriver arbeidet ditt best?"
+    },
+    "workFunctions": {
+      "placeholder": "Velg arbeidsfunksjon",
+      "engineering": "Ingeniørfag",
+      "design": "Design",
+      "product": "Produkt",
+      "marketing": "Markedsføring",
+      "sales": "Salg",
+      "research": "Forskning",
+      "education": "Utdanning",
+      "other": "Annet"
+    },
+    "buttons": {
+      "cancel": "Avbryt",
+      "saveChanges": "Lagre endringer",
+      "saving": "Lagrer..."
+    },
+    "toast": {
+      "accountUpdated": "Konto oppdatert",
+      "updateError": "Kunne ikke oppdatere profil",
+      "saveError": "Det oppstod en feil under lagring"
+    }
+  },
+
+  "SettingsApplication": {
+    "title": "Programinnstillinger",
+    "subtitle": "Administrer globale programinnstillinger. Endringer gjelder alle brukere.",
+    "sidebarLabel": "Program",
+    "labels": {
+      "applicationName": "Programnavn",
+      "homeDirectory": "Hjemmemappe",
+      "pollingInterval": "Oppdateringsintervall (millisekunder)"
+    },
+    "placeholders": {
+      "applicationName": "f.eks. Compliance Circle",
+      "homeDirectory": "f.eks. /home/compliance"
+    },
+    "helpers": {
+      "applicationName": "Navnet som vises gjennom hele programmet",
+      "homeDirectory": "Basismappe for programmets filer og data",
+      "pollingInterval": "Hvor ofte programmet automatisk oppdaterer data (minimum 1000 ms)",
+      "seconds": "= {seconds} sekunder"
+    },
+    "infoBox": {
+      "title": "Informasjon om innstillinger",
+      "description": "Disse innstillingene påvirker alle brukere. Oppdateringsintervallet styrer hvor ofte programmet sjekker etter nye meldinger, oppgaver og andre oppdateringer. Lavere verdier gir mer sanntidsoppdateringer, men øker belastningen på serveren."
+    },
+    "buttons": {
+      "cancel": "Avbryt",
+      "saveChanges": "Lagre endringer",
+      "saving": "Lagrer..."
+    },
+    "loading": {
+      "loadingSettings": "Laster innstillinger..."
+    },
+    "toast": {
+      "accessDenied": "Tilgang nektet. Krever SUPER_ADMIN-rolle.",
+      "settingsIdNotFound": "Innstilling-ID ikke funnet",
+      "pollingIntervalMin": "Oppdateringsintervallet må være minst 1000 ms (1 sekund)",
+      "settingsUpdated": "Innstillinger oppdatert",
+      "updateError": "Kunne ikke oppdatere innstillinger",
+      "loadError": "Kunne ikke laste innstillinger",
+      "loadErrorGeneric": "Feil ved lasting av innstillinger",
+      "saveError": "Det oppstod en feil under lagring"
+    }
+  }
+}

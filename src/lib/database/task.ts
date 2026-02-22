@@ -107,7 +107,7 @@ export type TaskWithRelations = Prisma.TaskGetPayload<{
 
 export const taskRepository =
 {
-    async findById(id: number): Promise<TaskObj | null>
+    async findById(id: string): Promise<TaskObj | null>
     {
         log.info('SQL - task: findById');
 
@@ -130,13 +130,13 @@ export const taskRepository =
         });
     },
 
-    async findByOrganizationId(organizationId: number): Promise<TaskWithRelations[]> 
+    async findByOrganizationId(organizationId: string): Promise<TaskWithRelations[]>
     {
         log.info({ organizationId: organizationId}, 'SQL - task: findByOrganizationId');
 
         return prisma.task.findMany(
         {
-            where: 
+            where:
             {
                 organizationId,
                 active: true,
@@ -176,16 +176,16 @@ export const taskRepository =
         });
     },
 
-    async create(data: 
+    async create(data:
     {
         name                : string;
-        organizationId      : number;
+        organizationId      : string;
         description?        : string;
         expectedEvidence?   : string;
         startAt?            : Date;
         endAt?              : Date;
         status?             : TaskStatus;
-    }): Promise<TaskObj> 
+    }): Promise<TaskObj>
     {
         log.info({ name: data.name }, 'SQL - task: create');
 
@@ -196,7 +196,7 @@ export const taskRepository =
     },
 
     async update(
-        id: number,
+        id: string,
         data:
         {
             name?               : string;
@@ -213,7 +213,6 @@ export const taskRepository =
         const existing = await this.findById(id);
         if (!existing)
         {
-            // return null;
             throw new Error('Task not found or inactive');
         }
 
@@ -224,7 +223,7 @@ export const taskRepository =
         });
     },
 
-    async delete(id: number): Promise<TaskObj>
+    async delete(id: string): Promise<TaskObj>
     {
         log.info({ ID: id }, 'SQL - task: delete');
 
@@ -236,7 +235,7 @@ export const taskRepository =
         });
     },
 
-    async restore(id: number): Promise<TaskObj>
+    async restore(id: string): Promise<TaskObj>
     {
         log.info({ ID: id }, 'SQL - task: restore');
 
@@ -249,10 +248,10 @@ export const taskRepository =
     },
 
     /* Check if Task belongs to same Organization as Profile  */
-    async validateAdminTaskAccess(taskId: number, profileId: number): Promise<boolean> 
+    async validateAdminTaskAccess(taskId: string, profileId: string): Promise<boolean>
     {
         log.info({ TaskId: taskId, ProfileId: profileId }, 'SQL - task: belongs-to-same-organization');
-        
+
         const result = await prisma.task.findFirst({
             where: {
             id: taskId,

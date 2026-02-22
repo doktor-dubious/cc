@@ -1,0 +1,114 @@
+{
+  "Asset": {
+    "buttons": {
+      "newArtifact": "New Artifact",
+      "createArtifact": "Create artifact",
+      "saveChanges": "Save changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "addToTask": "Add to Task",
+      "removeTask": "Remove task",
+      "previewAsset": "Preview Asset",
+      "downloadAsset": "Download Asset",
+      "deleteThisArtifact": "Delete this artifact",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting...",
+      "removing": "Removing...",
+      "adding": "Adding..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Artifact",
+      "createDescription": "Enter the details for the new artifact. Click Save when you're done.",
+      "editTaskTitle": "Edit Task",
+      "editTaskDescription": "Update the name and description of the task.",
+      "addToTaskTitle": "Add Artifact to Task",
+      "addToTaskDescription": "Select a task which the Artifacts should be assign to.",
+      "removeTaskTitle": "Remove task from artifact?",
+      "removeTaskDescription": "This will unlink the task from the current artifact (delete the link in TaskArtifact). The task itself remains in the system and can still be assigned to other artifacts or profiles. This action cannot be undone.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This action cannot be undone. This will permanently delete the artifact \"{name}\" and remove it from the system.",
+      "alsoDeleteFile": "Also delete file from filesystem"
+    },
+    "labels": {
+      "artifactName": "Artifact name",
+      "description": "Description",
+      "artifactType": "Artifact Type",
+      "mimeType": "MIME Type",
+      "fileExtension": "File Extension",
+      "fileSize": "File Size",
+      "originalFileName": "Original File Name",
+      "taskName": "Task name"
+    },
+    "placeholders": {
+      "enterArtifactName": "Enter artifact name",
+      "enterDescription": "Enter artifact description",
+      "mimeTypeExample": "e.g., application/pdf, image/png",
+      "filterByNameOrId": "Filter by name or ID...",
+      "searchTasks": "Search tasks...",
+      "enterTaskName": "Enter task name",
+      "enterTaskDescription": "Enter task description"
+    },
+    "table": {
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "type": "Type",
+      "status": "Status",
+      "date": "Date",
+      "user": "User",
+      "importance": "Importance",
+      "message": "Message"
+    },
+    "tabs": {
+      "details": "Details",
+      "fileDetails": "File Details",
+      "tasks": "Tasks ({count})",
+      "auditTrail": "Audit Trail ({count})",
+      "actions": "Actions"
+    },
+    "sections": {
+      "previewAssetTitle": "Preview Asset",
+      "previewAssetDescription": "Open a preview of this asset in a new tab.",
+      "downloadAssetTitle": "Download Asset",
+      "downloadAssetDescription": "Download the file associated with this artifact.",
+      "deleteArtifactTitle": "Delete Artifact",
+      "deleteArtifactDescription": "Once you delete this artifact, there is no going back. Please be certain."
+    },
+    "empty": {
+      "noArtifactsMatch": "No artifacts match your filter",
+      "noArtifactsFound": "No artifacts found",
+      "noTasksConnected": "No tasks connected to this artifact",
+      "noAvailableTasks": "No available tasks to add",
+      "noEvents": "No events for this artifact"
+    },
+    "pagination": {
+      "showing": "Showing {start} to {end} of {total} artifacts",
+      "showingEvents": "Showing {start} to {end} of {total} events"
+    },
+    "toast": {
+      "taskRemovedSuccess": "Task removed from artifact",
+      "taskUpdatedSuccess": "Task updated successfully",
+      "taskAddedSuccess": "Task added to artifact",
+      "artifactCreated": "Artifact created",
+      "artifactUpdated": "Artifact updated",
+      "artifactDeletedSuccess": "Artifact deleted successfully",
+      "artifactAndFileDeletedSuccess": "Artifact and file deleted successfully",
+      "nameRequired": "Artifact name is required",
+      "noOrganization": "No organization selected",
+      "removeTaskError": "Could not remove task from artifact",
+      "updateTaskError": "Could not update task",
+      "addTaskError": "Could not add task",
+      "saveError": "Could not save artifact",
+      "deleteError": "Could not delete artifact"
+    },
+    "loading": {
+      "loadingUser": "Loading user...",
+      "selectOrganization": "Please select an organization",
+      "loadingArtifacts": "Loading artifacts..."
+    },
+    "events": {
+      "loading": "Loading events..."
+    }
+  }
+}

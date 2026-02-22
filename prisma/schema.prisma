@@ -7,305 +7,297 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum WorkFunction {
-    DEVELOPER
-    DESIGNER
-    PRODUCT_MANAGER
-    MARKETING
-    SALES
-    HR
-    FINANCE
-    OPERATIONS
-    EXECUTIVE
-    OTHER
-}
-
-enum UserRole {
-    USER
-    ADMIN                               /* Admin of Organisations.                                   */
-    SUPER_ADMIN                         /* Compliance-Circle Admin. Can create/delete Organisations. */
-}
-
-enum TaskStatus {
-    NOT_STARTED
-    OPEN
-    COMPLETED
-    CLOSED                              /* Stopped without completing */
-}
-
-enum ArtifactType {
-    DOCUMENT                            /* PDF, DOC, DOCX, TXT      */
-    EXCEL                               /* XLS, XLSX, CSV           */
-    IMAGE                               /* PNG, JPG, JPEG, SVG      */
-    PRESENTATION                        /* PPT / PPTX / PDF slides  */
-    PDF                                 /* PDF                      */
-    CONTRACT                            /* Contracts, Policies, Terms & conditions, Legal statements */
-    LEGAL
-    POLICY
-    PROCEDURE
-    REPORT                              /* Risk reports, Audit reports, Management reports */
-    VIDEO                               /* MP4, MOV, WEBM */
-    AUDIO                               /* interviews or incident logs */
-    ARCHIVE                             /* ZIPs, bundles, exported data. */
-    DATA                                /* JSON, XML, CSV (if not Excel) */
-    SOURCE_CODE
-    OTHER
-}
-
-enum MessageType {
-    SYSTEM                              /* System-generated message */
-    USER                                /* Message from a user      */
-}
-
-enum EventImportance {
-    LOW
-    MIDDLE
-    HIGH
-}
-
-/* Global Settings */
+/// Global Settings
 model Settings {
-    id                  Int       @id(map: "settings_pkey") @default(autoincrement())
+  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq             Int      @default(autoincrement())
+  applicationName String   @map("application_name")
+  homeDirectory   String   @map("home_directory")
+  /// Refresh interval in milliseconds
+  pollingInterval Int      @default(30000) @map("polling_interval")
+  active          Boolean  @default(true)
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
-    applicationName     String                                                            @map("application_name")
-    homeDirectory       String                                                            @map("home_directory")
-    pollingInterval     Int       @default(30000)                                         @map("polling_interval")  /* Refresh interval in milliseconds */
-
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-
-    @@map("settings")
+  @@map("settings")
 }
 
 model User {
-    id                  Int       @id(map: "user_pkey") @default(autoincrement())
-    email               String    @unique(map: "user_email_key") @db.VarChar(255)
-    role                UserRole  @default(USER)
-    name                String    @db.VarChar(100)
-    nickname            String    @db.VarChar(50)
-    workFunction        WorkFunction                                                      @map("work_function")
-    passwordHash        String    @db.VarChar(255)                                        @map("password_hash")
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-    profile             Profile?
-    messages            Message[]
-    events              Event[]
+  id           String       @id(map: "user_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq          Int          @default(autoincrement())
+  email        String       @unique(map: "user_email_key") @db.VarChar(255)
+  role         UserRole     @default(USER)
+  name         String       @db.VarChar(100)
+  nickname     String       @db.VarChar(50)
+  workFunction WorkFunction @map("work_function")
+  passwordHash String       @map("password_hash") @db.VarChar(255)
+  active       Boolean      @default(true)
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events       Event[]
+  messages     Message[]
+  profile      Profile?
 
-    @@map("login")
+  @@map("login")
 }
 
 model Organization {
-    id                  Int       @id(map: "organization_pkey") @default(autoincrement())
-    name                String
-    description         String?
-    settings            OrganisationSettings?
+  id          String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq         Int                   @default(autoincrement())
+  name        String
+  description String?
+  active      Boolean               @default(true)
+  createdAt   DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+  artifacts   Artifact[]
+  events      Event[]
+  settings    OrganisationSettings?
+  profiles    Profile[]
+  tasks       Task[]
 
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-
-    profiles            Profile[]
-    tasks               Task[]
-    artifacts           Artifact[]
-    events              Event[]
-
-    @@map("organization")
+  @@map("organization")
 }
 
 model OrganisationSettings {
-    id                  Int       @id(map: "organization_settings_pkey") @default(autoincrement())
-    organizationId      Int       @unique                                                 @map("organization_id")
+  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq               Int          @default(autoincrement())
+  organizationId    String       @unique @map("organization_id") @db.Uuid
+  uploadDirectory   String       @map("upload_directory")
+  downloadDirectory String       @map("download_directory")
+  artifactDirectory String       @map("artifact_directory")
+  active            Boolean      @default(true)
+  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
-    uploadDirectory     String                                                            @map("upload_directory")
-    downloadDirectory   String                                                            @map("download_directory")
-    artifactDirectory   String                                                            @map("artifact_directory")
-
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-
-    organization        Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-    @@index([organizationId])
-    @@map("organization_settings")
+  @@index([organizationId])
+  @@map("organization_settings")
 }
 
-/* Note.
-        * Profiles can be detached from Organization (organizationId can be null)
-        * organizationId holds the relation to Oranization (Profile 1<->MANY Organization)
-        * currentOrganizationId is the current selected Organization. Not the only Organizaion the Profile may have access to
-*/
+/// Note.
+///         * Profiles can be detached from Organization (organizationId can be null)
+///         * organizationId holds the relation to Oranization (Profile 1<->MANY Organization)
+///         * currentOrganizationId is the current selected Organization. Not the only Organizaion the Profile may have access to
 model Profile {
-    id                          Int       @id(map: "profile_pkey") @default(autoincrement())
-    currentOrganizationId       Int?                                                        @map("current_organization_id")
-    organizationId              Int?                                                        @map("organization_id")
-    userId                      Int       @unique                                           @map("user_id")
-    name                        String
-    description                 String?
-    active                      Boolean   @default(true)
-    createdAt                   DateTime  @default(now()) @db.Timestamptz(3)                @map("created_at")
-    updatedAt                   DateTime  @updatedAt      @db.Timestamptz(3)                @map("updated_at")
+  id                    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq                   Int           @default(autoincrement())
+  currentOrganizationId String?       @map("current_organization_id") @db.Uuid
+  organizationId        String?       @map("organization_id") @db.Uuid
+  userId                String        @unique @map("user_id") @db.Uuid
+  name                  String
+  description           String?
+  active                Boolean       @default(true)
+  createdAt             DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events                Event[]
+  organization          Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskProfiles          TaskProfile[]
 
-    user                        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    organization                Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    taskProfiles                TaskProfile[]
-    events                      Event[]
-
-    @@index([organizationId])
-    @@index([userId])
-
-    @@map("profile")
+  @@index([organizationId])
+  @@index([userId])
+  @@map("profile")
 }
 
-/* An Artifact belongs to an Organization. Can be associated with zero or more Tasks (under the same Organization)
-   
-   size is of type String, since BigInt was too much hazzle to work with.
-*/
+/// An Artifact belongs to an Organization. Can be associated with zero or more Tasks (under the same Organization)
+///    
+///    size is of type String, since BigInt was too much hazzle to work with.
 model Artifact {
-    id                  Int       @id(map: "artifact_pkey") @default(autoincrement())
-    organizationId      Int                                                                 @map("organization_id")
-    name                String
-    description         String?
-    type                ArtifactType
-    mimeType            String?                                                             @map("mime_type")
-    extension           String?
-    size                String?                                                             @map("size")
-    originalName        String?                                                             @map("original_name")
+  id             String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int            @default(autoincrement())
+  organizationId String         @map("organization_id") @db.Uuid
+  name           String
+  description    String?
+  type           ArtifactType
+  mimeType       String?        @map("mime_type")
+  extension      String?
+  size           String?        @map("size")
+  originalName   String?        @map("original_name")
+  active         Boolean        @default(true)
+  createdAt      DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  events         Event[]
+  taskArtifacts  TaskArtifact[]
 
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                        @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                        @map("updated_at")
-
-    organization        Organization  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    taskArtifacts       TaskArtifact[]
-    events              Event[]
-
-    @@index([organizationId])
-
-    @@map("artifact")
+  @@index([organizationId])
+  @@map("artifact")
 }
 
-/* Note. Tasks can be detached from Organization (organizationId can be null) */
+/// Note. Tasks can be detached from Organization (organizationId can be null)
 model Task {
-    id                  Int       @id(map: "task_pkey") @default(autoincrement())
-    organizationId      Int?                                                              @map("organization_id")
-    name                String
-    description         String?
-    expectedEvidence    String?                                                           @map("expected_evidence")
+  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq              Int            @default(autoincrement())
+  organizationId   String?        @map("organization_id") @db.Uuid
+  name             String
+  description      String?
+  expectedEvidence String?        @map("expected_evidence")
+  startAt          DateTime?      @map("start_at") @db.Timestamptz(3)
+  endAt            DateTime?      @map("end_at") @db.Timestamptz(3)
+  status           TaskStatus     @default(NOT_STARTED)
+  active           Boolean        @default(true)
+  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events           Event[]
+  messages         Message[]
+  organization     Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  taskArtifacts    TaskArtifact[]
+  taskProfiles     TaskProfile[]
 
-    startAt             DateTime? @db.Timestamptz(3)                                      @map("start_at")
-    endAt               DateTime? @db.Timestamptz(3)                                      @map("end_at")
-    status              TaskStatus @default(NOT_STARTED)
-
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-
-    organization        Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    taskProfiles        TaskProfile[]                                                                                         /* Zero or more Profiles */
-    taskArtifacts       TaskArtifact[]                                                                                        /* Zero or more Artifacts */
-    messages            Message[]                                                                                             /* Zero or more Messages */
-    events              Event[]                                                                                               /* Zero or more Events */
-
-    @@index([organizationId])
-    @@index([startAt])
-    @@index([endAt])
-    @@map("task")
+  @@index([organizationId])
+  @@index([startAt])
+  @@index([endAt])
+  @@map("task")
 }
 
 model TaskProfile {
-    taskId              Int                                                               @map("task_id")
-    profileId           Int                                                               @map("profile_id")
-    createdAt           DateTime @default(now())                                          @map("created_at")
+  taskId    String   @map("task_id") @db.Uuid
+  profileId String   @map("profile_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [profileId], references: [id])
+  task      Task     @relation(fields: [taskId], references: [id])
 
-    task                Task     @relation(fields: [taskId], references: [id])
-    profile             Profile @relation(fields: [profileId], references: [id])
-
-    @@id([taskId, profileId])
-    @@index([taskId])
-    @@index([profileId])
-
-    @@map("task_profile")
+  @@id([taskId, profileId])
+  @@index([taskId])
+  @@index([profileId])
+  @@map("task_profile")
 }
 
 model TaskArtifact {
-    taskId              Int                                                               @map("task_id")
-    artifactId          Int                                                               @map("artifact_id")
-    createdAt           DateTime @default(now())                                          @map("created_at")
+  taskId     String   @map("task_id") @db.Uuid
+  artifactId String   @map("artifact_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+  artifact   Artifact @relation(fields: [artifactId], references: [id])
+  task       Task     @relation(fields: [taskId], references: [id])
 
-    task                Task     @relation(fields: [taskId], references: [id])
-    artifact            Artifact @relation(fields: [artifactId], references: [id])
-
-    @@id([taskId, artifactId])
-    @@index([taskId])
-    @@index([artifactId])
-
-    @@map("task_artifact")
+  @@id([taskId, artifactId])
+  @@index([taskId])
+  @@index([artifactId])
+  @@map("task_artifact")
 }
 
-/* Messages tied to Tasks - can be system-generated or from users */
+/// Messages tied to Tasks - can be system-generated or from users
 model Message {
-    id                  Int       @id(map: "message_pkey") @default(autoincrement())
-    taskId              Int                                                               @map("task_id")
-    type                MessageType @default(USER)
-    content             String    @db.Text
+  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq       Int         @default(autoincrement())
+  taskId    String      @map("task_id") @db.Uuid
+  /// If type is USER, senderId should be set. If SYSTEM, it can be null
+  senderId  String?     @map("sender_id") @db.Uuid
+  type      MessageType @default(USER)
+  content   String
+  isRead    Boolean     @default(false) @map("is_read")
+  active    Boolean     @default(true)
+  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  sender    User?       @relation(fields: [senderId], references: [id])
+  task      Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
 
-    /* If type is USER, senderId should be set. If SYSTEM, it can be null */
-    senderId            Int?                                                              @map("sender_id")
-
-    isRead              Boolean   @default(false)                                         @map("is_read")
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-
-    task                Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
-    sender              User?     @relation(fields: [senderId], references: [id], onDelete: SetNull)
-
-    @@index([taskId])
-    @@index([senderId])
-    @@index([isRead])
-    @@index([createdAt])
-
-    @@map("message")
+  @@index([taskId])
+  @@index([senderId])
+  @@index([isRead])
+  @@index([createdAt])
+  @@map("message")
 }
 
-/* Event/Audit Log - Tracks actions across different entities */
+/// Event/Audit Log - Tracks actions across different entities
 model Event {
-    id                  Int       @id(map: "event_pkey") @default(autoincrement())
-    importance          EventImportance?
+  id             String           @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int              @default(autoincrement())
+  /// User who initiated the action (null if system-generated)
+  userId         String?          @map("user_id") @db.Uuid
+  /// The event can be attached to one of these entities
+  organizationId String?          @map("organization_id") @db.Uuid
+  taskId         String?          @map("task_id") @db.Uuid
+  profileId      String?          @map("profile_id") @db.Uuid
+  artifactId     String?          @map("artifact_id") @db.Uuid
+  importance     EventImportance?
+  message        String
+  active         Boolean          @default(true)
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime         @updatedAt @map("updated_at") @db.Timestamptz(3)
+  artifact       Artifact?        @relation(fields: [artifactId], references: [id], onDelete: Cascade)
+  organization   Organization?    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  profile        Profile?         @relation(fields: [profileId], references: [id], onDelete: Cascade)
+  task           Task?            @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  user           User?            @relation(fields: [userId], references: [id])
 
-    message             String    @db.Text
-
-    /* User who initiated the action (null if system-generated) */
-    userId              Int?                                                              @map("user_id")
-
-    /* The event can be attached to one of these entities */
-    organizationId      Int?                                                              @map("organization_id")
-    taskId              Int?                                                              @map("task_id")
-    profileId           Int?                                                              @map("profile_id")
-    artifactId          Int?                                                              @map("artifact_id")
-
-    active              Boolean   @default(true)
-    createdAt           DateTime  @default(now()) @db.Timestamptz(3)                      @map("created_at")
-    updatedAt           DateTime  @updatedAt      @db.Timestamptz(3)                      @map("updated_at")
-
-    /* Relations */
-    user                User?         @relation(fields: [userId], references: [id], onDelete: SetNull)
-    organization        Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-    task                Task?         @relation(fields: [taskId], references: [id], onDelete: Cascade)
-    profile             Profile?      @relation(fields: [profileId], references: [id], onDelete: Cascade)
-    artifact            Artifact?     @relation(fields: [artifactId], references: [id], onDelete: Cascade)
-
-    @@index([userId])
-    @@index([organizationId])
-    @@index([taskId])
-    @@index([profileId])
-    @@index([artifactId])
-    @@index([createdAt])
-
-    @@map("event")
+  @@index([userId])
+  @@index([organizationId])
+  @@index([taskId])
+  @@index([profileId])
+  @@index([artifactId])
+  @@index([createdAt])
+  @@map("event")
 }
 
+enum WorkFunction {
+  DEVELOPER
+  DESIGNER
+  PRODUCT_MANAGER
+  MARKETING
+  SALES
+  HR
+  FINANCE
+  OPERATIONS
+  EXECUTIVE
+  OTHER
+}
 
+enum UserRole {
+  USER
+  /// Admin of Organisations.
+  ADMIN
+  /// Compliance-Circle Admin. Can create/delete Organisations.
+  SUPER_ADMIN
+}
+
+enum TaskStatus {
+  NOT_STARTED
+  OPEN
+  COMPLETED
+  /// Stopped without completing
+  CLOSED
+}
+
+enum ArtifactType {
+  /// PDF, DOC, DOCX, TXT
+  DOCUMENT
+  /// XLS, XLSX, CSV
+  EXCEL
+  /// PNG, JPG, JPEG, SVG
+  IMAGE
+  /// PPT / PPTX / PDF slides
+  PRESENTATION
+  /// PDF
+  PDF
+  /// Contracts, Policies, Terms & conditions, Legal statements
+  CONTRACT
+  LEGAL
+  POLICY
+  PROCEDURE
+  /// Risk reports, Audit reports, Management reports
+  REPORT
+  /// MP4, MOV, WEBM
+  VIDEO
+  /// interviews or incident logs
+  AUDIO
+  /// ZIPs, bundles, exported data.
+  ARCHIVE
+  /// JSON, XML, CSV (if not Excel)
+  DATA
+  SOURCE_CODE
+  OTHER
+}
+
+enum MessageType {
+  /// System-generated message
+  SYSTEM
+  /// Message from a user
+  USER
+}
+
+enum EventImportance {
+  LOW
+  MIDDLE
+  HIGH
+}

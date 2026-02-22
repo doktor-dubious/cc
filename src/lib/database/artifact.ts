@@ -4,26 +4,26 @@ import { log }                  from '@/lib/log';
 import { prisma }               from '@/lib/prisma';
 import type { ArtifactType }    from '@prisma/client';
 
-export type ArtifactData = 
+export type ArtifactData =
 {
-    id              : number;
+    id              : string;
     name            : string;
     description     : string | null;
     type            : ArtifactType;
-    mimeType        : string;
-    extension       : string;
+    mimeType        : string | null;
+    extension       : string | null;
     size            : string | null;
     originalName    : string | null;
-    organizationId  : number;
+    organizationId  : string;
 };
 
-type ArtifactWithRelations = ArtifactData & 
+type ArtifactWithRelations = ArtifactData &
 {
     taskArtifacts: Array<
     {
-        task: 
+        task:
         {
-            id          : number;
+            id          : string;
             name        : string;
             description : string | null;
             status      : string;
@@ -75,7 +75,7 @@ const selectFieldsWithRelations =
 
 export const artifactRepository = 
 {
-    async findById(id: number): Promise<ArtifactData | null> 
+    async findById(id: string): Promise<ArtifactData | null>
     {
         log.info('SQL - artifact: findById');
 
@@ -86,7 +86,7 @@ export const artifactRepository =
         });
     },
 
-    async findAll(): Promise<ArtifactData[]> 
+    async findAll(): Promise<ArtifactData[]>
     {
         log.info('SQL - artifact: findAll');
 
@@ -98,15 +98,15 @@ export const artifactRepository =
         });
     },
 
-    async findByOrganizationId(organizationId: number): Promise<ArtifactWithRelations[]> 
+    async findByOrganizationId(organizationId: string): Promise<ArtifactWithRelations[]>
     {
         log.info('SQL - artifact: findByOrganizationId');
 
-        try 
+        try
         {
             return prisma.artifact.findMany(
             {
-                where: 
+                where:
                 {
                     organizationId,
                     active: true,
@@ -114,19 +114,19 @@ export const artifactRepository =
                 select: selectFieldsWithRelations,
                 orderBy: { id: 'asc' },
             });
-        } 
-        catch (error) 
+        }
+        catch (error)
         {
             log.error({ error, organizationId }, 'Failed to fetch artifacts by organization');
             throw new Error('Database error while fetching artifacts');
         }
     },
 
-    async create(data: 
+    async create(data:
     {
         name            : string;
         description?    : string;
-        organizationId  : number;
+        organizationId  : string;
         type            : ArtifactType;
     }): Promise<ArtifactWithRelations> 
     {
@@ -161,9 +161,9 @@ export const artifactRepository =
         return artifact as ArtifactWithRelations;
     },
 
-    async createWithFileDetails(data: 
+    async createWithFileDetails(data:
     {
-        organizationId  : number;
+        organizationId  : string;
         name            : string;
         description?    : string;
         type            : ArtifactType;
@@ -205,7 +205,7 @@ export const artifactRepository =
     },
 
     async update(
-        id      : number,
+        id      : string,
         data    : 
         {
             name?           : string;
@@ -240,7 +240,7 @@ export const artifactRepository =
         return artifact as ArtifactWithRelations;
     },
 
-    async delete(id: number): Promise<ArtifactData> 
+    async delete(id: string): Promise<ArtifactData> 
     {
         log.info({ id: id }, 'SQL - artifact: delete');
 

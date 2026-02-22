@@ -8,16 +8,18 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { useTranslations } from 'next-intl';
 
 export default function ApplicationSettingsPage()
 {
     const user = useUser();
     const router = useRouter();
+    const t = useTranslations('SettingsApplication');
 
     // Redirect if not SUPER_ADMIN
     useEffect(() => {
         if (user.role !== 'SUPER_ADMIN') {
-            toast.error('Access denied. SUPER_ADMIN role required.');
+            toast.error(t('toast.accessDenied'));
             router.push('/dashboard');
         }
     }, [user.role, router]);
@@ -58,11 +60,11 @@ export default function ApplicationSettingsPage()
                         pollingInterval: settings.pollingInterval || 30000
                     });
                 } else {
-                    toast.error('Failed to load settings');
+                    toast.error(t('toast.loadError'));
                 }
             } catch (error) {
                 console.error('Error fetching settings:', error);
-                toast.error('Error loading settings');
+                toast.error(t('toast.loadErrorGeneric'));
             } finally {
                 setIsLoading(false);
             }
@@ -94,13 +96,13 @@ export default function ApplicationSettingsPage()
 
     const handleSave = async () => {
         if (!settingsId) {
-            toast.error('Settings ID not found');
+            toast.error(t('toast.settingsIdNotFound'));
             return;
         }
 
         // Validate polling interval
         if (pollingInterval < 1000) {
-            toast.error('Polling interval must be at least 1000ms (1 second)');
+            toast.error(t('toast.pollingIntervalMin'));
             return;
         }
 
@@ -121,7 +123,7 @@ export default function ApplicationSettingsPage()
             const data = await response.json();
 
             if (response.ok) {
-                toast.success('Settings updated successfully');
+                toast.success(t('toast.settingsUpdated'));
                 setOriginalValues({
                     applicationName,
                     homeDirectory,
@@ -134,11 +136,11 @@ export default function ApplicationSettingsPage()
                     window.location.reload();
                 }, 1000);
             } else {
-                toast.error(data.message || 'Failed to update settings');
+                toast.error(data.message || t('toast.updateError'));
             }
         } catch (error) {
             console.error('Error saving settings:', error);
-            toast.error('An error occurred while saving');
+            toast.error(t('toast.saveError'));
         } finally {
             setIsSaving(false);
         }
@@ -154,7 +156,7 @@ export default function ApplicationSettingsPage()
             <div className="min-h-screen bg-background flex items-center justify-center">
                 <div className="flex items-center gap-2 text-muted-foreground">
                     <RefreshCw className="w-5 h-5 animate-spin" />
-                    <span>Loading settings...</span>
+                    <span>{t('loading.loadingSettings')}</span>
                 </div>
             </div>
         );
@@ -167,7 +169,7 @@ export default function ApplicationSettingsPage()
                 <nav className="space-y-1">
                     <div className="px-4 py-2.5 bg-muted text-foreground flex items-center gap-2">
                         <Settings className="w-4 h-4" />
-                        <span>Application</span>
+                        <span>{t('sidebarLabel')}</span>
                     </div>
                 </nav>
             </div>
@@ -175,9 +177,9 @@ export default function ApplicationSettingsPage()
             {/* Main Content */}
             <div className="flex-1 p-8 max-w-4xl">
                 <div className="mb-8">
-                    <h1 className="text-2xl font-semibold mb-2">Application Settings</h1>
+                    <h1 className="text-2xl font-semibold mb-2">{t('title')}</h1>
                     <p className="text-sm text-muted-foreground">
-                        Manage global application settings. Changes will apply to all users.
+                        {t('subtitle')}
                     </p>
                 </div>
 
@@ -185,43 +187,43 @@ export default function ApplicationSettingsPage()
                     {/* Application Name */}
                     <div>
                         <Label htmlFor="applicationName" className="block text-sm mb-2">
-                            Application Name
+                            {t('labels.applicationName')}
                         </Label>
                         <Input
                             id="applicationName"
                             type="text"
                             value={applicationName}
                             onChange={(e) => setApplicationName(e.target.value)}
-                            placeholder="e.g., Compliance Circle"
+                            placeholder={t('placeholders.applicationName')}
                             className="max-w-md"
                         />
                         <p className="text-xs text-muted-foreground mt-1">
-                            The name displayed throughout the application
+                            {t('helpers.applicationName')}
                         </p>
                     </div>
 
                     {/* Home Directory */}
                     <div>
                         <Label htmlFor="homeDirectory" className="block text-sm mb-2">
-                            Home Directory
+                            {t('labels.homeDirectory')}
                         </Label>
                         <Input
                             id="homeDirectory"
                             type="text"
                             value={homeDirectory}
                             onChange={(e) => setHomeDirectory(e.target.value)}
-                            placeholder="e.g., /home/compliance"
+                            placeholder={t('placeholders.homeDirectory')}
                             className="max-w-md"
                         />
                         <p className="text-xs text-muted-foreground mt-1">
-                            Base directory for application files and data
+                            {t('helpers.homeDirectory')}
                         </p>
                     </div>
 
                     {/* Polling Interval */}
                     <div>
                         <Label htmlFor="pollingInterval" className="block text-sm mb-2">
-                            Polling Interval (milliseconds)
+                            {t('labels.pollingInterval')}
                         </Label>
                         <div className="flex items-center gap-4">
                             <Input
@@ -235,11 +237,11 @@ export default function ApplicationSettingsPage()
                                 className="max-w-xs"
                             />
                             <span className="text-sm text-muted-foreground">
-                                = {(pollingInterval / 1000).toFixed(1)} seconds
+                                {t('helpers.seconds', { seconds: (pollingInterval / 1000).toFixed(1) })}
                             </span>
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
-                            How often the application automatically refreshes data (minimum 1000ms)
+                            {t('helpers.pollingInterval')}
                         </p>
                     </div>
 
@@ -248,11 +250,9 @@ export default function ApplicationSettingsPage()
                         <div className="flex gap-3">
                             <Settings className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                             <div className="text-sm space-y-1">
-                                <p className="font-medium text-blue-400">Settings Information</p>
+                                <p className="font-medium text-blue-400">{t('infoBox.title')}</p>
                                 <p className="text-muted-foreground">
-                                    These settings affect all users. The polling interval controls how frequently
-                                    the application checks for new messages, tasks, and other updates. Lower values
-                                    provide more real-time updates but increase server load.
+                                    {t('infoBox.description')}
                                 </p>
                             </div>
                         </div>
@@ -285,14 +285,14 @@ export default function ApplicationSettingsPage()
                     variant="outline"
                     className="rounded-none"
                 >
-                    Cancel
+                    {t('buttons.cancel')}
                 </Button>
                 <Button
                     onClick={handleSave}
                     disabled={isSaving}
                     className="rounded-none"
                 >
-                    {isSaving ? 'Saving...' : 'Save changes'}
+                    {isSaving ? t('buttons.saving') : t('buttons.saveChanges')}
                 </Button>
             </div>
         </div>

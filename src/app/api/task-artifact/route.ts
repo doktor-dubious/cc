@@ -36,8 +36,8 @@ export async function POST(request: NextRequest) {
     const existing = await prisma.taskArtifact.findUnique({
       where: {
         taskId_artifactId: {
-          taskId: Number(taskId),
-          artifactId: Number(artifactId),
+          taskId: String(taskId),
+          artifactId: String(artifactId),
         },
       },
     });
@@ -51,15 +51,15 @@ export async function POST(request: NextRequest) {
 
     // Get the task to access organizationId
     const task = await prisma.task.findUnique({
-      where: { id: Number(taskId) },
+      where: { id: String(taskId) },
       select: { organizationId: true },
     });
 
     // Create the association
     const taskArtifact = await prisma.taskArtifact.create({
       data: {
-        taskId: Number(taskId),
-        artifactId: Number(artifactId),
+        taskId: String(taskId),
+        artifactId: String(artifactId),
       },
       include: {
         artifact: {
@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
     await eventRepository.create({
       message: 'Artifact added to task',
       importance: 'MIDDLE',
-      userId: Number(payload.sub),
-      taskId: Number(taskId),
+      userId: String(payload.sub),
+      taskId: String(taskId),
       organizationId: task?.organizationId || undefined,
     });
 
@@ -122,15 +122,15 @@ export async function DELETE(request: NextRequest) {
 
     // Get the task to access organizationId before deleting
     const task = await prisma.task.findUnique({
-      where: { id: Number(taskId) },
+      where: { id: String(taskId) },
       select: { organizationId: true },
     });
 
     await prisma.taskArtifact.delete({
       where: {
         taskId_artifactId: {
-          taskId: Number(taskId),
-          artifactId: Number(artifactId),
+          taskId: String(taskId),
+          artifactId: String(artifactId),
         },
       },
     });
@@ -141,8 +141,8 @@ export async function DELETE(request: NextRequest) {
     await eventRepository.create({
       message: 'Artifact removed from task',
       importance: 'MIDDLE',
-      userId: Number(payload.sub),
-      taskId: Number(taskId),
+      userId: String(payload.sub),
+      taskId: String(taskId),
       organizationId: task?.organizationId || undefined,
     });
 

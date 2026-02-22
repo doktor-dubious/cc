@@ -2,11 +2,12 @@
 
 import { useUser }                              from '@/context/UserContext';
 import { useOrganization }                      from '@/context/OrganizationContext';
-import { useRouter }                            from 'next/navigation';
+import { useRouter, useSearchParams }            from 'next/navigation';
 import { useEffect, useState }                  from 'react';
 import { TASK_STATUS_LABELS, TASK_STATUSES }    from '@/lib/constants/task-status';
 import { TaskStatus }                           from '@prisma/client';
 import { format }                               from "date-fns";
+import { useTranslations }                      from 'next-intl';
 
 import { Trash2 } from 'lucide-react';
 import { Button } from "@/components/ui/button";
@@ -70,6 +71,9 @@ export default function TaskPage()
     const user = useUser();
     const { activeOrganization } = useOrganization();
     const router = useRouter();
+    const searchParams = useSearchParams();
+    const t = useTranslations('Task');
+    const tc = useTranslations('Common');
 
     const [tasks, setTasks] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
@@ -339,12 +343,12 @@ export default function TaskPage()
             // Trigger global refresh to update bell icon count
             window.dispatchEvent(new Event('refreshPage'));
 
-            toast.success('All messages marked as read');
+            toast.success(t('toast.allMessagesRead'));
         }
         catch (error)
         {
             console.error('Failed to mark messages as read:', error);
-            toast.error('Failed to mark messages as read');
+            toast.error(t('toast.markReadError'));
         }
     };
 
@@ -378,12 +382,12 @@ export default function TaskPage()
             setMessages(prev => [data.data, ...prev]);
             setNewMessageContent("");
             setIsNewMessageDialogOpen(false);
-            toast.success("Message sent");
+            toast.success(t('toast.messageSent'));
         }
         catch (err: any)
         {
             console.error("Send message error:", err);
-            toast.error(err.message || "Could not send message");
+            toast.error(err.message || t('toast.sendMessageError'));
         }
         finally
         {
@@ -419,12 +423,12 @@ export default function TaskPage()
             );
             setSelectedMessage({ ...selectedMessage, content: editMessageContent.trim() });
             setIsEditingMessage(false);
-            toast.success("Message updated");
+            toast.success(t('toast.messageUpdated'));
         }
         catch (err: any)
         {
             console.error("Edit message error:", err);
-            toast.error(err.message || "Could not edit message");
+            toast.error(err.message || t('toast.editMessageError'));
         }
         finally
         {
@@ -461,13 +465,13 @@ export default function TaskPage()
                 setSelectedMessage(null);
             }
 
-            toast.success("Message deleted");
+            toast.success(t('toast.messageDeleted'));
             setMessageToDelete(null);
         }
         catch (err: any)
         {
             console.error("Delete message error:", err);
-            toast.error(err.message || "Could not delete message");
+            toast.error(err.message || t('toast.deleteMessageError'));
         }
         finally
         {
@@ -502,6 +506,34 @@ export default function TaskPage()
         };
 
     }, [user, activeOrganization, selectedTask]);
+
+    // Open new task dialog when navigated with ?new=1
+    useEffect(() => {
+        if (searchParams.get('new') === '1') {
+            setSelectedTask(null);
+            setName("");
+            setDescription("");
+            setExpectedEvidence("");
+            setStartAt("");
+            setEndAt("");
+            setStatus(TaskStatus.NOT_STARTED);
+            setHasChanges(false);
+            setIsNewDialogOpen(true);
+            router.replace('/task');
+        }
+    }, [searchParams]);
+
+    // Auto-select task when navigated with ?id=<taskId>
+    useEffect(() => {
+        const taskId = searchParams.get('id');
+        if (taskId && tasks.length > 0) {
+            const task = tasks.find((t: any) => t.id === parseInt(taskId, 10));
+            if (task) {
+                setSelectedTask(task);
+                router.replace('/task');
+            }
+        }
+    }, [searchParams, tasks]);
 
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -551,10 +583,10 @@ export default function TaskPage()
             };
           });
 
-          toast.success("Artifact removed from task");
+          toast.success(t('toast.artifactRemoved'));
         } catch (err: any) {
           console.error("Remove artifact error:", err);
-          toast.error(err.message || "Could not remove artifact from task");
+          toast.error(err.message || t('toast.removeArtifactError'));
         } finally {
           setIsDeleting(false);
           setArtifactToRemove(null);
@@ -608,10 +640,10 @@ export default function TaskPage()
             };
           });
 
-          toast.success("Profile removed from task");
+          toast.success(t('toast.profileRemoved'));
         } catch (err: any) {
           console.error("Remove profile error:", err);
-          toast.error(err.message || "Could not remove profile from task");
+          toast.error(err.message || t('toast.removeProfileError'));
         } finally {
           setIsDeleting(false);
           setProfileToRemove(null);
@@ -735,13 +767,13 @@ export default function TaskPage()
     {
         if (!name.trim()) 
         {
-            toast.error("Task name is required");
+            toast.error(t('toast.nameRequired'));
             return;
         }
 
-        if (!activeOrganization) 
+        if (!activeOrganization)
         {
-            toast.error("No organization selected");
+            toast.error(t('toast.noOrganization'));
             return;
         }
 
@@ -835,12 +867,12 @@ export default function TaskPage()
             }
 
             setHasChanges(false);
-            toast.success(isNew ? "Task created" : "Task updated");
-        } 
-        catch (err) 
+            toast.success(isNew ? t('toast.taskCreated') : t('toast.taskUpdated'));
+        }
+        catch (err)
         {
             console.error(err);
-            toast.error("Could not save task");
+            toast.error(t('toast.saveError'));
         } 
         finally 
         {
@@ -876,12 +908,12 @@ export default function TaskPage()
                 setSelectedTask(null);
             }
 
-            toast.success("Task deleted successfully");
+            toast.success(t('toast.taskDeleted'));
             setTaskToDelete(null);
-        } 
-        catch (err) 
+        }
+        catch (err)
         {
-            toast.error("Could not delete task");
+            toast.error(t('toast.deleteError'));
         } 
         finally 
         {
@@ -934,7 +966,7 @@ useEffect(() => {
 
       if (!artifactName.trim()) 
       {
-          toast.error("Artifact name is required");
+          toast.error(t('toast.artifactNameRequired'));
           return;
       }
 
@@ -995,13 +1027,13 @@ useEffect(() => {
               };
           });
 
-          toast.success("Artifact updated successfully");
+          toast.success(t('toast.artifactUpdated'));
           setIsEditArtifactDialogOpen(false);
-      } 
-      catch (err) 
+      }
+      catch (err)
       {
           console.error(err);
-          toast.error("Could not save artifact");
+          toast.error(t('toast.saveArtifactError'));
       } 
       finally 
       {
@@ -1017,7 +1049,7 @@ useEffect(() => {
 
         if (!profileName.trim()) 
         {
-            toast.error("Profile name is required");
+            toast.error(t('toast.profileNameRequired'));
             return;
         }
 
@@ -1078,13 +1110,13 @@ useEffect(() => {
                 };
             });
 
-            toast.success("Profile updated successfully");
+            toast.success(t('toast.profileUpdated'));
             setIsEditProfileDialogOpen(false);
         }
         catch (err)
         {
             console.error(err);
-            toast.error("Could not save profile");
+            toast.error(t('toast.saveProfileError'));
         }
         finally
         {
@@ -1146,7 +1178,7 @@ useEffect(() => {
                 };
             });
 
-            toast.success("Profile added to task");
+            toast.success(t('toast.profileAdded'));
             setIsAddProfileDialogOpen(false);
             setSelectedProfileToAdd(null);
             setSearchProfileText("");
@@ -1154,7 +1186,7 @@ useEffect(() => {
         catch (err: any)
         {
             console.error(err);
-            toast.error(err.message || "Could not add profile to task");
+            toast.error(err.message || t('toast.addProfileError'));
         }
         finally
         {
@@ -1222,15 +1254,15 @@ useEffect(() => {
     };
 
   if (!user) {
-    return <div>Loading user...</div>;
+    return <div>{t('loading.loadingUser')}</div>;
   }
 
   if (!activeOrganization) {
-    return <div>Please select an organization</div>;
+    return <div>{t('loading.selectOrganization')}</div>;
   }
 
   if (loading) {
-    return <div>Loading tasks...</div>;
+    return <div>{t('loading.loadingTasks')}</div>;
   }
 
   return (
@@ -1244,21 +1276,19 @@ useEffect(() => {
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Remove artifact from task?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.removeArtifactTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This will unlink the artifact from the current task (delete the link in TaskArtifact).
-        The artifact itself remains in the system and can still be assigned to other tasks.
-        This action cannot be undone.
+        {t('dialogs.removeArtifactDescription')}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{t('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         variant="destructive"
         onClick={handleRemoveArtifact}
         disabled={isDeleting}
       >
-        {isDeleting ? "Removing..." : "Remove artifact"}
+        {isDeleting ? t('buttons.removing') : t('buttons.removeArtifact')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -1273,21 +1303,19 @@ useEffect(() => {
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Remove profile from task?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.removeProfileTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This will unlink the profile from the current task (delete the link in TaskProfile).
-        The profile itself remains in the system and can still be assigned to other tasks.
-        This action cannot be undone.
+        {t('dialogs.removeProfileDescription')}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeleting}>{t('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         variant="destructive"
         onClick={handleRemoveProfile}
         disabled={isDeleting}
       >
-        {isDeleting ? "Removing..." : "Remove profile"}
+        {isDeleting ? t('buttons.removing') : t('buttons.removeProfile')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -1303,10 +1331,10 @@ useEffect(() => {
       <DialogTitle className="flex items-center gap-2">
         {selectedMessage?.type === 'SYSTEM' ? (
           <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
-            System
+            {t('badges.system')}
           </Badge>
         ) : (
-          <span>Message from {selectedMessage?.sender?.name || 'Unknown User'}</span>
+          <span>{t('dialogs.messageFrom', { name: selectedMessage?.sender?.name || 'Unknown User' })}</span>
         )}
       </DialogTitle>
       <DialogDescription>
@@ -1331,7 +1359,7 @@ useEffect(() => {
         size="sm"
         onClick={() => setMessageToDelete(selectedMessage?.id)}
       >
-        Delete
+        {t('buttons.delete')}
       </Button>
       <div className="flex gap-2">
         {selectedMessage?.type !== 'SYSTEM' && selectedMessage?.sender?.email === user?.email && (
@@ -1343,14 +1371,14 @@ useEffect(() => {
                 onClick={() => setIsEditingMessage(false)}
                 disabled={isSendingMessage}
               >
-                Cancel
+                {t('buttons.cancel')}
               </Button>
               <Button
                 size="sm"
                 onClick={handleEditMessage}
                 disabled={isSendingMessage || !editMessageContent.trim() || editMessageContent.trim() === selectedMessage?.content}
               >
-                {isSendingMessage ? "Saving..." : "Save Changes"}
+                {isSendingMessage ? t('buttons.saving') : t('buttons.saveMessage')}
               </Button>
             </>
           ) : (
@@ -1362,7 +1390,7 @@ useEffect(() => {
                 setIsEditingMessage(true);
               }}
             >
-              Edit
+              {t('buttons.edit')}
             </Button>
           )
         )}
@@ -1380,19 +1408,19 @@ useEffect(() => {
 >
   <AlertDialogContent>
     <AlertDialogHeader>
-      <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+      <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
       <AlertDialogDescription>
-        This action cannot be undone. This will permanently delete this message.
+        {t('dialogs.deleteMessageDescription')}
       </AlertDialogDescription>
     </AlertDialogHeader>
     <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeletingMessage}>Cancel</AlertDialogCancel>
+      <AlertDialogCancel disabled={isDeletingMessage}>{t('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
         onClick={handleDeleteMessage}
         disabled={isDeletingMessage}
         className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
       >
-        {isDeletingMessage ? "Deleting..." : "Delete"}
+        {isDeletingMessage ? t('buttons.deleting') : t('buttons.delete')}
       </AlertDialogAction>
     </AlertDialogFooter>
   </AlertDialogContent>
@@ -1406,16 +1434,16 @@ useEffect(() => {
 }}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>New Message</DialogTitle>
+      <DialogTitle>{t('dialogs.newMessageTitle')}</DialogTitle>
       <DialogDescription>
-        Write a message for this task.
+        {t('dialogs.newMessageDescription')}
       </DialogDescription>
     </DialogHeader>
     <div className="grid gap-4 py-4">
       <Textarea
         value={newMessageContent}
         onChange={(e) => setNewMessageContent(e.target.value)}
-        placeholder="Type your message..."
+        placeholder={t('placeholders.typeMessage')}
         className="min-h-30"
         autoFocus
       />
@@ -1429,13 +1457,13 @@ useEffect(() => {
         }}
         disabled={isSendingMessage}
       >
-        Cancel
+        {t('buttons.cancel')}
       </Button>
       <Button
         onClick={handleSendMessage}
         disabled={isSendingMessage || !newMessageContent.trim()}
       >
-        {isSendingMessage ? "Sending..." : "Save Changes"}
+        {isSendingMessage ? t('buttons.saving') : t('buttons.saveMessage')}
       </Button>
     </div>
   </DialogContent>
@@ -1449,21 +1477,19 @@ useEffect(() => {
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete the task
-              "{tasks.find(t => t.id === taskToDelete)?.name || 'this item'}"
-              and remove it from the system.
+              {t('dialogs.deleteTaskDescription', { name: tasks.find(t => t.id === taskToDelete)?.name || 'this item' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{t('buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDelete}
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting ? "Deleting..." : "Delete"}
+              {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
@@ -1472,39 +1498,39 @@ useEffect(() => {
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
         <DialogContent className="sm:max-w-125">
           <DialogHeader>
-            <DialogTitle>Create New Task</DialogTitle>
+            <DialogTitle>{t('dialogs.createTitle')}</DialogTitle>
             <DialogDescription>
-              Enter the details for the new task. Click Save when you're done.
+              {t('dialogs.createDescription')}
             </DialogDescription>
           </DialogHeader>
 
           <div className="grid gap-6 py-4">
             <div className="grid gap-2">
-              <label className="block text-sm">Task name</label>
+              <label className="block text-sm">{t('labels.taskName')}</label>
               <Input
                 value={name}
                 onChange={(e) => setName(e.target.value)}
-                placeholder="Enter task name"
+                placeholder={t('placeholders.enterTaskName')}
                 autoFocus
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Description</label>
+              <label className="block text-sm">{t('labels.description')}</label>
               <Textarea
                 value={description}
                 onChange={(e) => setDescription(e.target.value)}
-                placeholder="Enter task description"
+                placeholder={t('placeholders.enterTaskDescription')}
                 className="min-h-30"
               />
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Expected Evidence</label>
+              <label className="block text-sm">{t('labels.expectedEvidence')}</label>
               <Textarea
                 value={expectedEvidence}
                 onChange={(e) => setExpectedEvidence(e.target.value)}
-                placeholder="Enter expected evidence"
+                placeholder={t('placeholders.enterExpectedEvidence')}
                 className="min-h-20"
               />
             </div>
@@ -1516,13 +1542,13 @@ useEffect(() => {
                 onPointerDownCapture={(e) => e.preventDefault()}
                 onClick={(e) => e.stopPropagation()}
               >
-                <label className="block text-sm">Start Date</label>
+                <label className="block text-sm">{t('labels.startDate')}</label>
                 <DatePicker
                     value={startAt}
                     onChange={(date) => {
                       setStartAt(date ? format(date, "yyyy-MM-dd") : "");
                     }}
-                    placeholder="Select start date"
+                    placeholder={t('placeholders.selectStartDate')}
                   />
               </div>
 
@@ -1532,13 +1558,13 @@ useEffect(() => {
                 onPointerDownCapture={(e) => e.preventDefault()}
                 onClick={(e) => e.stopPropagation()}
               >
-                <label className="block text-sm">End Date</label>
+                <label className="block text-sm">{t('labels.endDate')}</label>
                 <DatePicker
                   value={endAt}
                   onChange={(date) => {
                     setEndAt(date ? format(date, "yyyy-MM-dd") : "");
                   }}
-                  placeholder="Select end date"
+                  placeholder={t('placeholders.selectEndDate')}
                   disabled={(date) =>
                     (startAt && date < new Date(startAt)) ||
                     date > new Date("2030-12-31") // example max
@@ -1548,7 +1574,7 @@ useEffect(() => {
             </div>
 
             <div className="grid gap-2">
-              <label className="block text-sm">Status</label>
+              <label className="block text-sm">{t('labels.status')}</label>
               <Select value={status} onValueChange={setStatus}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
@@ -1571,10 +1597,10 @@ useEffect(() => {
 
           <div className="flex justify-end gap-3">
             <Button variant="outline" onClick={handleCancel} disabled={isSaving}>
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button onClick={handleSave} disabled={!hasChanges || isSaving}>
-              {isSaving ? 'Creating...' : 'Create task'}
+              {isSaving ? t('buttons.creating') : t('buttons.createTask')}
             </Button>
           </div>
         </DialogContent>
@@ -1584,15 +1610,15 @@ useEffect(() => {
 <Dialog open={isEditArtifactDialogOpen} onOpenChange={setIsEditArtifactDialogOpen}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>Edit Artifact</DialogTitle>
+      <DialogTitle>{t('dialogs.editArtifactTitle')}</DialogTitle>
       <DialogDescription>
-        Update the artifact name and description.
+        {t('dialogs.editArtifactDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="text-sm">Artifact name</label>
+        <label className="text-sm">{t('labels.artifactName')}</label>
         <Input
           value={artifactName}
           onChange={(e) => setArtifactName(e.target.value)}
@@ -1601,7 +1627,7 @@ useEffect(() => {
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm">Description</label>
+        <label className="text-sm">{t('labels.description')}</label>
         <Textarea
           value={artifactDescription}
           onChange={(e) => setArtifactDescription(e.target.value)}
@@ -1616,14 +1642,14 @@ useEffect(() => {
         onClick={() => setIsEditArtifactDialogOpen(false)}
         disabled={isSaving}
       >
-        Cancel
+        {t('buttons.cancel')}
       </Button>
 
       <Button
         onClick={handleArtifactSave}
         disabled={!artifactHasChanges || isSaving}
       >
-        {isSaving ? "Saving..." : "Save changes"}
+        {isSaving ? t('buttons.saving') : t('buttons.saveChanges')}
       </Button>
     </div>
   </DialogContent>
@@ -1633,15 +1659,15 @@ useEffect(() => {
 <Dialog open={isEditProfileDialogOpen} onOpenChange={setIsEditProfileDialogOpen}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>Edit Profile</DialogTitle>
+      <DialogTitle>{t('dialogs.editProfileTitle')}</DialogTitle>
       <DialogDescription>
-        Update the profile name and description.
+        {t('dialogs.editProfileDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="grid gap-6 py-4">
       <div className="grid gap-2">
-        <label className="text-sm">Profile name</label>
+        <label className="text-sm">{t('labels.profileName')}</label>
         <Input
           value={profileName}
           onChange={(e) => setProfileName(e.target.value)}
@@ -1650,7 +1676,7 @@ useEffect(() => {
       </div>
 
       <div className="grid gap-2">
-        <label className="text-sm">Description</label>
+        <label className="text-sm">{t('labels.description')}</label>
         <Textarea
           value={profileDescription}
           onChange={(e) => setProfileDescription(e.target.value)}
@@ -1665,14 +1691,14 @@ useEffect(() => {
         onClick={() => setIsEditProfileDialogOpen(false)}
         disabled={isSaving}
       >
-        Cancel
+        {t('buttons.cancel')}
       </Button>
 
       <Button
         onClick={handleProfileSave}
         disabled={!profileHasChanges || isSaving}
       >
-        {isSaving ? "Saving..." : "Save changes"}
+        {isSaving ? t('buttons.saving') : t('buttons.saveChanges')}
       </Button>
     </div>
   </DialogContent>
@@ -1682,15 +1708,15 @@ useEffect(() => {
 <Dialog open={isAddProfileDialogOpen} onOpenChange={setIsAddProfileDialogOpen}>
   <DialogContent className="sm:max-w-125">
     <DialogHeader>
-      <DialogTitle>Add Profile to Task</DialogTitle>
+      <DialogTitle>{t('dialogs.addProfileTitle')}</DialogTitle>
       <DialogDescription>
-        Select a profile to assign to this task.
+        {t('dialogs.addProfileDescription')}
       </DialogDescription>
     </DialogHeader>
 
     <div className="py-4">
       <Input
-        placeholder="Search profiles..."
+        placeholder={t('placeholders.searchProfiles')}
         value={searchProfileText}
         onChange={(e) => setSearchProfileText(e.target.value)}
         className="mb-4"
@@ -1721,7 +1747,7 @@ useEffect(() => {
           ))}
         {availableProfiles.length === 0 && (
           <div className="p-4 text-center text-muted-foreground">
-            No available profiles to add
+            {t('empty.noAvailableProfiles')}
           </div>
         )}
       </div>
@@ -1737,13 +1763,13 @@ useEffect(() => {
         }}
         disabled={isSaving}
       >
-        Cancel
+        {t('buttons.cancel')}
       </Button>
       <Button
         onClick={handleAddProfile}
         disabled={!selectedProfileToAdd || isSaving}
       >
-        {isSaving ? "Adding..." : "Add Profile"}
+        {isSaving ? t('buttons.adding') : t('buttons.addProfile')}
       </Button>
     </div>
   </DialogContent>
@@ -1757,13 +1783,13 @@ useEffect(() => {
             size="sm"
             onClick={handleNewTask}
           >
-            New Task
+            {t('buttons.newTask')}
           </Button>
         </div>
 
         <div className="flex justify-end">
           <Input
-            placeholder="Filter by name or ID..."
+            placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
@@ -1773,17 +1799,16 @@ useEffect(() => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20 text-right">ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead className="w-32">Status</TableHead>
+              <TableHead>{tc('table.name')}</TableHead>
+              <TableHead>{tc('table.description')}</TableHead>
+              <TableHead className="w-32">{tc('table.status')}</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentTasks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foregroundX">
-                  {filterText ? "No tasks match your filter" : "No tasks found"}
+                <TableCell colSpan={3} className="text-center text-muted-foregroundX">
+                  {filterText ? t('empty.noTasksMatch') : t('empty.noTasksFound')}
                 </TableCell>
               </TableRow>
             ) : (
@@ -1796,7 +1821,6 @@ useEffect(() => {
                   `}
                   onClick={() => handleRowClick(task)}
                 >
-                  <TableCell className="w-20 text-right tabular-nums">{task.id}</TableCell>
                   <TableCell>{task.name}</TableCell>
                   <TableCell className="max-w-md truncate">{task.description || '-'}</TableCell>
                   <TableCell className="w-32">
@@ -1813,7 +1837,7 @@ useEffect(() => {
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">
             <div className="text-sm text-muted-foreground">
-              Showing {startIndex + 1} to {Math.min(endIndex, filteredTasks.length)} of {filteredTasks.length} tasks
+              {t('pagination.showingTasks', { start: startIndex + 1, end: Math.min(endIndex, filteredTasks.length), total: filteredTasks.length })}
             </div>
 
             <div className="flex justify-end">
@@ -1866,12 +1890,12 @@ useEffect(() => {
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="messages"
                     >
-                      <span>Messages ({messages.length})</span>
+                      <span>{t('tabs.messages', { count: messages.length })}</span>
                       {(() => {
                         const unreadCount = messages.filter(m => !m.isRead).length;
                         return unreadCount > 0 && (
                           <Badge variant="destructive" className="ml-2 h-5 px-2 text-xs">
-                            {unreadCount} new
+                            {unreadCount} {t('badges.new')}
                           </Badge>
                         );
                       })()}
@@ -1880,31 +1904,31 @@ useEffect(() => {
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="details"
                     >
-                      Details
+                      {t('tabs.details')}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="profiles"
                     >
-                      Profiles ({selectedTask.taskProfiles?.length || 0})
+                      {t('tabs.profiles', { count: selectedTask.taskProfiles?.length || 0 })}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="artifacts"
                     >
-                      Artifacts ({selectedTask.taskArtifacts?.length || 0})
+                      {t('tabs.artifacts', { count: selectedTask.taskArtifacts?.length || 0 })}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="audit"
                     >
-                      Audit Trail ({events.length})
+                      {t('tabs.auditTrail', { count: events.length })}
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="actions"
                     >
-                      Actions
+                      {t('tabs.actions')}
                     </TabsTrigger>
                   </TabsList>
                   <div
@@ -1929,7 +1953,7 @@ useEffect(() => {
                       size="sm"
                       onClick={() => setIsNewMessageDialogOpen(true)}
                     >
-                      New Message
+                      {t('buttons.newMessage')}
                     </Button>
                     {(() => {
                       const unreadCount = messages.filter(m => !m.isRead).length;
@@ -1939,15 +1963,15 @@ useEffect(() => {
                           size="sm"
                           onClick={handleMarkAllAsRead}
                         >
-                          Mark all as read ({unreadCount})
+                          {t('buttons.markAllRead', { count: unreadCount })}
                         </Button>
                       );
                     })()}
                   </div>
                   {loadingMessages ? (
-                    <div className="text-center text-muted-foreground py-8">Loading messages...</div>
+                    <div className="text-center text-muted-foreground py-8">{t('loading.loadingMessages')}</div>
                   ) : messages.length === 0 ? (
-                    <div className="text-center text-muted-foreground py-8">No messages for this task</div>
+                    <div className="text-center text-muted-foreground py-8">{t('empty.noMessages')}</div>
                   ) : (
                     <>
 
@@ -1984,7 +2008,7 @@ useEffect(() => {
                                   )}
                                   {message.type === 'SYSTEM' ? (
                                     <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
-                                      System
+                                      {t('badges.system')}
                                     </Badge>
                                   ) : (
                                     <span className={`text-sm ${!message.isRead ? 'font-bold' : 'font-semibold'}`}>
@@ -2011,7 +2035,7 @@ useEffect(() => {
                         return totalMessagesPages > 1 && (
                           <div className="flex items-center justify-between mt-6 max-w-3xl">
                             <div className="text-sm text-muted-foreground">
-                              Showing {startIndex + 1} to {endIndex} of {messages.length} messages
+                              {t('pagination.showingMessages', { start: startIndex + 1, end: endIndex, total: messages.length })}
                             </div>
 
                             <div className="flex justify-end">
@@ -2059,30 +2083,38 @@ useEffect(() => {
                 <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
                     <div>
-                      <label className="block text-sm mb-2">Task name</label>
+                      <label className="block text-sm mb-2">{tc('table.id')}</label>
+                      <Input
+                        value={selectedTask?.id?.toString() || ''}
+                        disabled
+                        className="opacity-60"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm mb-2">{t('labels.taskName')}</label>
                       <Input
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        placeholder="Enter task name"
+                        placeholder={t('placeholders.enterTaskName')}
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Description</label>
+                      <label className="block text-sm mb-2">{t('labels.description')}</label>
                       <Textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
-                        placeholder="Enter task description"
+                        placeholder={t('placeholders.enterTaskDescription')}
                         className="min-h-30"
                       />
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Expected Evidence</label>
+                      <label className="block text-sm mb-2">{t('labels.expectedEvidence')}</label>
                       <Textarea
                         value={expectedEvidence}
                         onChange={(e) => setExpectedEvidence(e.target.value)}
-                        placeholder="Enter expected evidence"
+                        placeholder={t('placeholders.enterExpectedEvidence')}
                         className="min-h-20"
                       />
                     </div>
@@ -2094,13 +2126,13 @@ useEffect(() => {
                         onPointerDownCapture={(e) => e.preventDefault()}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <label className="block text-sm">Start Date</label>
+                        <label className="block text-sm">{t('labels.startDate')}</label>
                         <DatePicker
                             value={startAt}
                             onChange={(date) => {
                               setStartAt(date ? format(date, "yyyy-MM-dd") : "");
                             }}
-                            placeholder="Select start date"
+                            placeholder={t('placeholders.selectStartDate')}
                           />
                       </div>
 
@@ -2110,13 +2142,13 @@ useEffect(() => {
                         onPointerDownCapture={(e) => e.preventDefault()}
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <label className="block text-sm">End Date</label>
+                        <label className="block text-sm">{t('labels.endDate')}</label>
                         <DatePicker
                           value={endAt}
                           onChange={(date) => {
                             setEndAt(date ? format(date, "yyyy-MM-dd") : "");
                           }}
-                          placeholder="Select end date"
+                          placeholder={t('placeholders.selectEndDate')}
                           disabled={(date) =>
                             (startAt && date < new Date(startAt)) ||
                             date > new Date("2030-12-31") // example max
@@ -2126,7 +2158,7 @@ useEffect(() => {
                     </div>
 
                     <div>
-                      <label className="block text-sm mb-2">Status</label>
+                      <label className="block text-sm mb-2">{t('labels.status')}</label>
                       <Select value={status} onValueChange={setStatus}>
                         <SelectTrigger className="w-full">
                           <SelectValue />
@@ -2154,9 +2186,9 @@ useEffect(() => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-20 text-right">ID</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
+                        <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                        <TableHead>{tc('table.name')}</TableHead>
+                        <TableHead>{tc('table.description')}</TableHead>
                         <TableHead className="text-right"></TableHead>
                       </TableRow>
                     </TableHeader>
@@ -2164,7 +2196,7 @@ useEffect(() => {
                       {selectedTask.taskArtifacts?.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={4} className="text-center text-muted-foreground">
-                            No artifacts found for this task
+                            {t('empty.noArtifacts')}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -2211,7 +2243,7 @@ useEffect(() => {
                     return totalPages > 1 && (
                       <div className="flex items-center justify-between mt-4">
                         <div className="text-sm text-muted-foreground">
-                          Showing {startIndex + 1} to {endIndex} of {artifacts.length} artifacts
+                          {t('pagination.showingArtifacts', { start: startIndex + 1, end: endIndex, total: artifacts.length })}
                         </div>
 
                         <div className="flex justify-end">
@@ -2263,15 +2295,15 @@ useEffect(() => {
                       size="sm"
                       onClick={() => setIsAddProfileDialogOpen(true)}
                     >
-                      Add Profile
+                      {t('buttons.addProfile')}
                     </Button>
                   </div>
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="w-20 text-right">ID</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Description</TableHead>
+                        <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                        <TableHead>{tc('table.name')}</TableHead>
+                        <TableHead>{tc('table.description')}</TableHead>
                         <TableHead className="text-right"></TableHead>
                       </TableRow>
                     </TableHeader>
@@ -2279,7 +2311,7 @@ useEffect(() => {
                       {selectedTask.taskProfiles?.length === 0 ? (
                         <TableRow>
                           <TableCell colSpan={4} className="text-center text-muted-foreground">
-                            No profiles assigned to this task
+                            {t('empty.noProfiles')}
                           </TableCell>
                         </TableRow>
                       ) : (
@@ -2326,7 +2358,7 @@ useEffect(() => {
                     return totalPages > 1 && (
                       <div className="flex items-center justify-between mt-4">
                         <div className="text-sm text-muted-foreground">
-                          Showing {startIndex + 1} to {endIndex} of {profiles.length} profiles
+                          {t('pagination.showingProfiles', { start: startIndex + 1, end: endIndex, total: profiles.length })}
                         </div>
 
                         <div className="flex justify-end">
@@ -2373,19 +2405,19 @@ useEffect(() => {
                 {/* Audit Trail Table */ }
                 <TabsContent value="audit" className="mt-6">
                   {loadingEvents ? (
-                    <div className="text-center text-muted-foreground py-8">Loading events...</div>
+                    <div className="text-center text-muted-foreground py-8">{t('loading.loadingEvents')}</div>
                   ) : events.length === 0 ? (
-                    <div className="text-center text-muted-foreground py-8">No events for this task</div>
+                    <div className="text-center text-muted-foreground py-8">{t('empty.noEvents')}</div>
                   ) : (
                     <>
                       <Table>
                         <TableHeader>
                           <TableRow>
-                            <TableHead className="w-20 text-right">ID</TableHead>
-                            <TableHead className="w-40">Date</TableHead>
-                            <TableHead className="w-40">User</TableHead>
-                            <TableHead className="w-32">Importance</TableHead>
-                            <TableHead>Message</TableHead>
+                            <TableHead className="w-20 text-right">{tc('table.id')}</TableHead>
+                            <TableHead className="w-40">{tc('table.date')}</TableHead>
+                            <TableHead className="w-40">{tc('table.user')}</TableHead>
+                            <TableHead className="w-32">{tc('table.importance')}</TableHead>
+                            <TableHead>{tc('table.message')}</TableHead>
                           </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -2428,7 +2460,7 @@ useEffect(() => {
                         return totalEventsPages > 1 && (
                           <div className="flex items-center justify-between mt-6">
                             <div className="text-sm text-muted-foreground">
-                              Showing {startIndex + 1} to {endIndex} of {events.length} events
+                              {t('pagination.showingEvents', { start: startIndex + 1, end: endIndex, total: events.length })}
                             </div>
 
                             <div className="flex justify-end">
@@ -2478,18 +2510,18 @@ useEffect(() => {
                 <TabsContent value="actions" className="mt-6">
                   <div className="space-y-6 max-w-2xl">
                     <div>
-                      <h3 className="text-lg font-semibold mb-4">Task Actions</h3>
+                      <h3 className="text-lg font-semibold mb-4">{t('sections.taskActions')}</h3>
                       <p className="text-sm text-muted-foreground mb-6">
-                        Manage this task with the actions below.
+                        {t('sections.taskActionsDescription')}
                       </p>
                     </div>
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
                       <div className="flex items-start gap-4">
                         <div className="flex-1">
-                          <h4 className="font-medium text-destructive mb-1">Delete Task</h4>
+                          <h4 className="font-medium text-destructive mb-1">{t('buttons.deleteTask')}</h4>
                           <p className="text-sm text-muted-foreground">
-                            Permanently delete this task and all associated data. This action cannot be undone.
+                            {t('sections.deleteTaskDescription')}
                           </p>
                         </div>
                         <Button
@@ -2498,7 +2530,7 @@ useEffect(() => {
                           className="shrink-0"
                         >
                           <Trash2 className="w-4 h-4 mr-2" />
-                          Delete Task
+                          {t('buttons.deleteTask')}
                         </Button>
                       </div>
                     </div>
@@ -2534,14 +2566,14 @@ useEffect(() => {
               onClick={handleCancel}
               disabled={isSaving}
             >
-              Cancel
+              {t('buttons.cancel')}
             </Button>
             <Button
               variant="default"
               onClick={handleSave}
               disabled={!hasChanges || isSaving}
             >
-              {isSaving ? 'Saving...' : 'Save changes'}
+              {isSaving ? t('buttons.saving') : t('buttons.saveChanges')}
             </Button>
           </div>
         )}
