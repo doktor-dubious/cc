@@ -33,9 +33,9 @@ export async function PATCH(
 
         // Await params in Next.js 15+
         const resolvedParams = await params;
-        const messageId = parseInt(resolvedParams.id, 10);
+        const messageId = resolvedParams.id;
 
-        if (isNaN(messageId))
+        if (!messageId)
         {
             return NextResponse.json<ApiResponse>(
                 {
@@ -147,9 +147,9 @@ export async function DELETE(
 
         // Await params in Next.js 15+
         const resolvedParams = await params;
-        const messageId = parseInt(resolvedParams.id, 10);
+        const messageId = resolvedParams.id;
 
-        if (isNaN(messageId))
+        if (!messageId)
         {
             return NextResponse.json<ApiResponse>(
                 {

@@ -7,22 +7,22 @@ const JWT_SECRET = process.env.JWT_SECRET;
 if (!JWT_SECRET) { throw new Error('JWT_SECRET environment variable is not set!'); }
 
 type SessionUser = {
-    id              : number;
-    profileId       : number | undefined;
+    id              : string;
+    profileId       : string | undefined;
     email           : string;
     role            : string;
     name            : string;
-    organizationId  : number
+    organizationId  : string
 };
 
 // Rename to avoid conflict with jwt.JwtPayload
 interface CustomJwtPayload {
-    userId          : number;
-    profileId?      : number;
+    userId          : string;
+    profileId?      : string;
     email           : string;
     role            : string;
     name            : string;
-    organizationId  : number;
+    organizationId  : string;
 }
 
 export async function getServerSession(): Promise<{ user: SessionUser } | null>

@@ -148,7 +148,7 @@ export default function ArtifactFilesPage()
                 headers             : { 'Content-Type': 'application/json' },
                 body                : JSON.stringify(
                 {
-                    organizationId  : parseInt(activeOrganization?.id),
+                    organizationId  : activeOrganization?.id,
                     filename        : selectedFile.relativePath,
                     name            : artifactName.trim(),
                     description     : artifactDesc.trim() || undefined,
@@ -196,7 +196,7 @@ export default function ArtifactFilesPage()
                 headers : { 'Content-Type': 'application/json' },
                 body    : JSON.stringify(
                 {
-                    organizationId  : parseInt(activeOrganization?.id),
+                    organizationId  : activeOrganization?.id,
                     filename        : fileToDelete.relativePath,
                 }),
             });

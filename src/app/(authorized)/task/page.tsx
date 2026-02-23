@@ -9,7 +9,8 @@ import { TaskStatus }                           from '@prisma/client';
 import { format }                               from "date-fns";
 import { useTranslations }                      from 'next-intl';
 
-import { Trash2 } from 'lucide-react';
+import { Trash2, Shield, X } from 'lucide-react';
+import { CIS_CONTROLS } from '@/lib/constants/cis-controls';
 import { Button } from "@/components/ui/button";
 
 import {
@@ -139,6 +140,12 @@ export default function TaskPage()
     const [availableProfiles, setAvailableProfiles] = useState<any[]>([]);
     const [selectedProfileToAdd, setSelectedProfileToAdd] = useState<number | null>(null);
 
+    // For CIS Safeguard assignment
+    const [isAssignSafeguardDialogOpen, setIsAssignSafeguardDialogOpen] = useState(false);
+    const [taskSafeguards, setTaskSafeguards] = useState<string[]>([]);
+    const [safeguardSearchText, setSafeguardSearchText] = useState("");
+    const [safeguardToRemove, setSafeguardToRemove] = useState<string | null>(null);
+
     // For viewing full message in modal
     const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
@@ -242,6 +249,93 @@ export default function TaskPage()
             setLoadingEvents(false);
         }
     };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH SAFEGUARDS FOR SELECTED TASK
+    const fetchTaskSafeguards = async (taskId: string) =>
+    {
+        try
+        {
+            const res = await fetch(`/api/task-safeguard?taskId=${taskId}`);
+            const data = await res.json();
+            if (data.success)
+            {
+                setTaskSafeguards((data.data || []).map((ts: any) => ts.safeguardId));
+            }
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch task safeguards:', error);
+        }
+    };
+
+    // ASSIGN SAFEGUARD TO TASK
+    const handleAssignSafeguard = async (safeguardId: string) =>
+    {
+        if (!selectedTask) return;
+        try
+        {
+            const res = await fetch('/api/task-safeguard', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ taskId: selectedTask.id, safeguardId }),
+            });
+            const data = await res.json();
+            if (data.success)
+            {
+                toast.success(`Safeguard ${safeguardId} assigned to task`);
+                fetchTaskSafeguards(selectedTask.id);
+            }
+            else
+            {
+                toast.error(data.message || 'Failed to assign safeguard');
+            }
+        }
+        catch (error)
+        {
+            console.error('Failed to assign safeguard:', error);
+            toast.error('Failed to assign safeguard');
+        }
+    };
+
+    // REMOVE SAFEGUARD FROM TASK
+    const handleRemoveSafeguard = async (safeguardId: string) =>
+    {
+        if (!selectedTask) return;
+        try
+        {
+            const res = await fetch('/api/task-safeguard', {
+                method: 'DELETE',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ taskId: selectedTask.id, safeguardId }),
+            });
+            const data = await res.json();
+            if (data.success)
+            {
+                toast.success(`Safeguard ${safeguardId} removed from task`);
+                setSafeguardToRemove(null);
+                fetchTaskSafeguards(selectedTask.id);
+            }
+            else
+            {
+                toast.error(data.message || 'Failed to remove safeguard');
+            }
+        }
+        catch (error)
+        {
+            console.error('Failed to remove safeguard:', error);
+            toast.error('Failed to remove safeguard');
+        }
+    };
+
+    // Build a flat list of all safeguards with their control info
+    const allSafeguards = CIS_CONTROLS.flatMap(control =>
+        control.safeguards.map(sg => ({
+            ...sg,
+            controlId: control.id,
+            controlTitle: control.title,
+        }))
+    );
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // CREATE EVENT
@@ -495,6 +589,7 @@ export default function TaskPage()
             if (selectedTask) {
                 fetchMessages(selectedTask.id);
                 fetchEvents(selectedTask.id);
+                fetchTaskSafeguards(selectedTask.id);
             }
         };
 
@@ -527,10 +622,19 @@ export default function TaskPage()
     useEffect(() => {
         const taskId = searchParams.get('id');
         if (taskId && tasks.length > 0) {
-            const task = tasks.find((t: any) => t.id === parseInt(taskId, 10));
+            const task = tasks.find((t: any) => t.id === taskId);
             if (task) {
+                // Find the page this task is on and navigate to it
+                const taskIndex = tasks.findIndex((t: any) => t.id === taskId);
+                if (taskIndex >= 0) {
+                    setCurrentPage(Math.floor(taskIndex / itemsPerPage) + 1);
+                }
                 setSelectedTask(task);
                 router.replace('/task');
+                // Scroll to the detail form after a short delay to let the DOM update
+                setTimeout(() => {
+                    document.getElementById('edit-form')?.scrollIntoView({ behavior: 'smooth' });
+                }, 100);
             }
         }
     }, [searchParams, tasks]);
@@ -662,6 +766,7 @@ export default function TaskPage()
           setStatus(selectedTask.status || TaskStatus.NOT_STARTED);
           fetchMessages(selectedTask.id);
           fetchEvents(selectedTask.id);
+          fetchTaskSafeguards(selectedTask.id);
       }
       else
       {
@@ -673,6 +778,7 @@ export default function TaskPage()
           setStatus(TaskStatus.NOT_STARTED);
           setMessages([]);
           setEvents([]);
+          setTaskSafeguards([]);
       }
     }, [selectedTask]);
 
@@ -690,8 +796,8 @@ export default function TaskPage()
         const evidenceChanged = expectedEvidence.trim() !== (selectedTask.expectedEvidence || "").trim();
         const statusChanged = status !== selectedTask.status;
         
-        const originalStartAt = selectedTask.startAt ? new Date(selectedTask.startAt).toISOString().slice(0, 16) : "";
-        const originalEndAt = selectedTask.endAt ? new Date(selectedTask.endAt).toISOString().slice(0, 16) : "";
+        const originalStartAt = selectedTask.startAt ? new Date(selectedTask.startAt).toISOString().slice(0, 10) : "";
+        const originalEndAt = selectedTask.endAt ? new Date(selectedTask.endAt).toISOString().slice(0, 10) : "";
         const startChanged = startAt !== originalStartAt;
         const endChanged = endAt !== originalEndAt;
 
@@ -795,7 +901,7 @@ export default function TaskPage()
 
             if (isNew) 
             {
-                body.organizationId = parseInt(activeOrganization.id);
+                body.organizationId = activeOrganization.id;
             }
 
             if (startAt) body.startAt = new Date(startAt).toISOString();
@@ -1775,6 +1881,77 @@ useEffect(() => {
   </DialogContent>
 </Dialog>
 
+{/* Assign Safeguard Dialog */}
+<Dialog open={isAssignSafeguardDialogOpen} onOpenChange={setIsAssignSafeguardDialogOpen}>
+  <DialogContent className="sm:max-w-lg max-h-[80vh] flex flex-col">
+    <DialogHeader>
+      <DialogTitle>Assign CIS Safeguard</DialogTitle>
+      <DialogDescription>
+        Search and select a CIS Control Safeguard to link to this task.
+      </DialogDescription>
+    </DialogHeader>
+    <div className="mb-3">
+      <Input
+        placeholder="Search safeguards..."
+        value={safeguardSearchText}
+        onChange={(e) => setSafeguardSearchText(e.target.value)}
+      />
+    </div>
+    <div className="flex-1 overflow-y-auto space-y-1 min-h-0 max-h-[50vh]">
+      {allSafeguards
+        .filter(sg => {
+          const q = safeguardSearchText.toLowerCase();
+          return !q || sg.id.toLowerCase().includes(q) || sg.title.toLowerCase().includes(q) || sg.controlTitle.toLowerCase().includes(q);
+        })
+        .filter(sg => !taskSafeguards.includes(sg.id))
+        .map(sg => (
+          <button
+            key={sg.id}
+            className="w-full text-left px-3 py-2 rounded hover:bg-muted/60 transition-colors border border-transparent hover:border-border"
+            onClick={() => {
+              handleAssignSafeguard(sg.id);
+              setIsAssignSafeguardDialogOpen(false);
+            }}
+          >
+            <div className="flex items-center gap-2">
+              <Badge variant="outline" className="shrink-0 text-xs">{sg.id}</Badge>
+              <span className="text-sm font-medium truncate">{sg.title}</span>
+            </div>
+            <p className="text-xs text-muted-foreground mt-0.5 ml-[3.5rem]">Control {sg.controlId}: {sg.controlTitle}</p>
+          </button>
+        ))
+      }
+      {allSafeguards
+        .filter(sg => {
+          const q = safeguardSearchText.toLowerCase();
+          return !q || sg.id.toLowerCase().includes(q) || sg.title.toLowerCase().includes(q) || sg.controlTitle.toLowerCase().includes(q);
+        })
+        .filter(sg => !taskSafeguards.includes(sg.id)).length === 0 && (
+        <p className="text-sm text-muted-foreground text-center py-4">
+          {safeguardSearchText ? 'No matching safeguards found.' : 'All safeguards are already assigned.'}
+        </p>
+      )}
+    </div>
+  </DialogContent>
+</Dialog>
+
+{/* Remove Safeguard Confirmation */}
+<AlertDialog open={safeguardToRemove !== null} onOpenChange={(open) => { if (!open) setSafeguardToRemove(null); }}>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Remove Safeguard</AlertDialogTitle>
+      <AlertDialogDescription>
+        Are you sure you want to remove safeguard {safeguardToRemove} from this task?
+      </AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogCancel>Cancel</AlertDialogCancel>
+      <AlertDialogAction onClick={() => { if (safeguardToRemove) handleRemoveSafeguard(safeguardToRemove); }}>
+        Remove
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>
 
       <div className="space-y-8 p-6">
         <div className="flex justify-center">
@@ -2514,6 +2691,49 @@ useEffect(() => {
                       <p className="text-sm text-muted-foreground mb-6">
                         {t('sections.taskActionsDescription')}
                       </p>
+                    </div>
+
+                    {/* CIS Safeguard Assignment */}
+                    <div className="border rounded-lg p-4">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-medium mb-1">CIS Control Safeguards</h4>
+                          <p className="text-sm text-muted-foreground">
+                            Link this task to CIS Control Safeguards for compliance tracking.
+                          </p>
+                        </div>
+                        <Button
+                          variant="outline"
+                          onClick={() => { setSafeguardSearchText(""); setIsAssignSafeguardDialogOpen(true); }}
+                          className="shrink-0"
+                        >
+                          <Shield className="w-4 h-4 mr-2" />
+                          Assign Safeguard
+                        </Button>
+                      </div>
+
+                      {/* Currently assigned safeguards */}
+                      {taskSafeguards.length > 0 && (
+                        <div className="mt-4 space-y-2">
+                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Assigned Safeguards</p>
+                          <div className="flex flex-wrap gap-2">
+                            {taskSafeguards.map((sgId) => {
+                              const sg = allSafeguards.find(s => s.id === sgId);
+                              return (
+                                <Badge key={sgId} variant="secondary" className="gap-1 pr-1">
+                                  <span>{sgId}{sg ? ` – ${sg.title}` : ''}</span>
+                                  <button
+                                    onClick={() => setSafeguardToRemove(sgId)}
+                                    className="ml-1 hover:text-destructive rounded-full p-0.5"
+                                  >
+                                    <X className="w-3 h-3" />
+                                  </button>
+                                </Badge>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      )}
                     </div>
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">

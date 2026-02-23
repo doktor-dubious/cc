@@ -26,7 +26,7 @@ async function getUserData() {
 
   try {
     const decoded = jwt.verify(token, JWT_SECRET) as {
-      userId: number;
+      userId: string;
       email: string;
     };
 
@@ -43,7 +43,7 @@ async function getUserData() {
   }
 }
 
-async function getOrganizationData(user: { id: number; role: string }) 
+async function getOrganizationData(user: { id: string; role: string }) 
 {
     try 
     {
@@ -85,7 +85,7 @@ export default async function AuthorizedLayout({children,}:
 
     const organizations = organizationsDb.map(org => (
     {
-        id          : org.id.toString(),
+        id          : org.id,
         name        : org.name,
         description : org.description,
     }));

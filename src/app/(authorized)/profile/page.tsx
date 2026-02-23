@@ -94,14 +94,14 @@ export default function ProfilePage()
 
     const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
 
-    const [profileToDelete, setProfileToDelete] = useState<number | null>(null);
+    const [profileToDelete, setProfileToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
 
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
 
     // Detele Task ────────────────────────────────────────
-    const [taskToRemove, setTaskToRemove] = useState<number | null>(null);
+    const [taskToRemove, setTaskToRemove] = useState<string | null>(null);
 
     // Email ────────────────────────────────────────
     const [email, setEmail]                       = useState("");
@@ -167,7 +167,7 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FETCH EVENTS FOR SELECTED PROFILE
-    const fetchEvents = async (profileId: number) =>
+    const fetchEvents = async (profileId: string) =>
     {
         setLoadingEvents(true);
         try
@@ -195,7 +195,7 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // CREATE EVENT (audit trail)
-    const createEvent = async (message: string, importance: 'LOW' | 'MIDDLE' | 'HIGH', profileId: number) =>
+    const createEvent = async (message: string, importance: 'LOW' | 'MIDDLE' | 'HIGH', profileId: string) =>
     {
         try
         {
@@ -393,7 +393,7 @@ export default function ProfilePage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // PASSWORD CHANGE - check if it is strong.
-    const checkPasswordStrength = (pwd: string): { score: number; message: string } =>
+    const checkPasswordStrength = (pwd: string): { score: number | null; message: string } =>
     {
         if (!pwd || pwd.length === 0)
         {
@@ -797,7 +797,7 @@ export default function ProfilePage()
 
             if (isNew)
             {
-                body.organizationId = parseInt(activeOrganization.id);
+                body.organizationId = activeOrganization.id;
                 body.password = password; // Required for new profiles
             }
             else if (password.trim())

@@ -92,6 +92,14 @@
 
   * PAGE: Audit Trail
 
+  * PAGE: Control Wheel
+      # Set Controls as inactive
+      # Group Controls together
+      # Calculate Risc Score
+
+  * PAGE: Safeguards
+      # Assign Safeguard to Task
+
   * Learn More
       ** PAGE: About Compliance Circle
         -> Initial Version. Conent need to be updated.
@@ -134,7 +142,6 @@
   * PAGE: Mechanical Turk (automatization setup)
       -> fetch files from external SFTP / S3, etc.
   * Documentstion
-      -> PAGE: Wheel (Wheel & Safeguards)
       -> PAGE: Academy (General dictionary, ..)
       -> PAGE: AI (ask anything related to CC)
   * Debug Console (Super Admin)
@@ -145,10 +152,15 @@
 
 ────────────────────
 
+── Monday 23 Feb
+💀 (27 Feb/5PM)
+* Task page: New tab: Safegaurds. To display the safeguards the task has been connected to,
+
 ── Sunday 22 Feb
 💀 (12PM)
 💀 (5PM)
 💀 (10PM)
+💀 (4AM)
 * Multiple languages (continued)
   -> Language File
     --> Sidebar
@@ -174,39 +186,14 @@
   -> Asset page
   -> profile page
   -> CIS controls & safeguards pages
-
 * CIS Controls page: Reorder pie segments, so that #1 is on top, and the others follow in clockwise order.
 * All Pages: Removed ID column from master table, and moved to detail tab pane.
 * Sidebar: urgent tasks: tasks which are past due date / within 10% of being at their due date.
 * CIS safeguards page: Details now opens up in a detail pane under the table
 * Fixed more bugs related to IDs going from Int to UUIDs (String).
-
-X
-
-
-
-* CIS controls page: Can you make a third donut, an outer donut of the same size as the inner donut. With this new outer donut, I want to be able to mark pie segments as being inactive, and/or to combine several segments into one larger one.
-* 
-* CIS safeguards page: there should be a button that attaches a Safeguard to a Task. Clicking on the button should open a popup dialog, where you can see avaliable tasks, and select one from the list.
-* Task page: under the action tab, there should be a button where the task can be assigned to a Control Safeguard.
-
-* Sidebar: clicking on a task under Current tasks, correctly redirects to the task page, and shows the selected task in the bottom detail pane. However, the table pagination is not updated correctly. If the current pagination is on page 3, and the selected task i on page 1, the pagination should be updated to page 1
-
-
-* Organization page: the id column should be removed. ID should be showed (in a non-editable) field in the details tab. Same on the Profiles, Tasks, Asset, audit-trail, pages.
-* Sidebar: urgent tasks, should show tasks which are either past their due date, or within 10% of being at their due date.
-CIS safeguards page: clicking on a row in the table, unfolds the detail data under the row being clicked. Can you move the detail data to under the table.
-
-* Create Amazon AWS account for S3 storage.
-      cc@predictioninstitute.com
-      AWS Account Name: Compliance Circle
-      Root Password: !CircleSquareTriagle8800
-
-* Mechanical Turk
-    -> Sub Menu: Configure
-      -> External data sources (remote: URL, login => local)
-    -> Sub Menu: Overview
-    -> Sub Menu: Log
+* Task Page: New Button: Assign to Safeguard.
+* CIS safeguards page: New Button: Assign to Task.
+* CIS Controls page: New outer (3rd) ring. To mark Controls as Inactive / Group multiple together.
 
 ── Saturday 21 Feb
 💀 (4PM)

@@ -52,18 +52,7 @@ export async function GET(request: Request)
             );
         }
 
-        const taskId = parseInt(taskIdParam, 10);
-
-        if (isNaN(taskId))
-        {
-            return NextResponse.json<ApiResponse>(
-                {
-                    success: false,
-                    error: 'Invalid taskId'
-                },
-                { status: 400 }
-            );
-        }
+        const taskId = taskIdParam;
 
         // ── Fetch messages ────────────────────────────────────────────────────────────────
         const messages = await prisma.message.findMany({
@@ -158,7 +147,7 @@ export async function POST(request: Request)
         // ── Create message ────────────────────────────────────────────────────────────────
         const message = await prisma.message.create({
             data: {
-                taskId: parseInt(taskId, 10),
+                taskId: taskId,
                 content: content.trim(),
                 type: type,
                 senderId: type === 'USER' ? userId : null,

@@ -5,7 +5,7 @@ import bcrypt               from 'bcryptjs';
 export async function authenticateUser(
         email: string, 
         password: string)
-: Promise<Pick<User, 'id' | 'email' | 'passwordHash' | 'role' | 'name'> & { profile?: { id: number } } | null>
+: Promise<Pick<User, 'id' | 'email' | 'passwordHash' | 'role' | 'name'> & { profile?: { id: string } } | null>
 {
     const user = await userRepository.findByEmailWithPassword(email);
     if (!user) return null;

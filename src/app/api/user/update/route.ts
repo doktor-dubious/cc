@@ -39,7 +39,7 @@ export async function PATCH(request: NextRequest)
         }
 
         // Update user/login in database.
-        const updatedUser = await userRepository.updateProfile(parseInt(userId as string),
+        const updatedUser = await userRepository.updateProfile(userId as string,
             {
                 name: fullName,
                 nickname,

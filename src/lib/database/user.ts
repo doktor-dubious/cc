@@ -17,7 +17,7 @@ model User {
 
 import { log } from '@/lib/log';
 import { prisma } from '@/lib/prisma';
-import type { /* User???,*/ UserRole, WorkFunction } from '@prisma/client';
+import type { User, UserRole, WorkFunction } from '@prisma/client';
 
 type SafeUser =
 {

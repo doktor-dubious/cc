@@ -49,63 +49,19 @@ export async function GET(request: Request)
         // Fetch events based on which parameter is provided
         if (taskIdParam)
         {
-            const taskId = parseInt(taskIdParam, 10);
-            if (isNaN(taskId))
-            {
-                return NextResponse.json<ApiResponse>(
-                    {
-                        success: false,
-                        error: 'Invalid taskId'
-                    },
-                    { status: 400 }
-                );
-            }
-            events = await eventRepository.findByTaskId(taskId);
+            events = await eventRepository.findByTaskId(taskIdParam);
         }
         else if (organizationIdParam)
         {
-            const organizationId = parseInt(organizationIdParam, 10);
-            if (isNaN(organizationId))
-            {
-                return NextResponse.json<ApiResponse>(
-                    {
-                        success: false,
-                        error: 'Invalid organizationId'
-                    },
-                    { status: 400 }
-                );
-            }
-            events = await eventRepository.findByOrganizationId(organizationId);
+            events = await eventRepository.findByOrganizationId(organizationIdParam);
         }
         else if (profileIdParam)
         {
-            const profileId = parseInt(profileIdParam, 10);
-            if (isNaN(profileId))
-            {
-                return NextResponse.json<ApiResponse>(
-                    {
-                        success: false,
-                        error: 'Invalid profileId'
-                    },
-                    { status: 400 }
-                );
-            }
-            events = await eventRepository.findByProfileId(profileId);
+            events = await eventRepository.findByProfileId(profileIdParam);
         }
         else if (artifactIdParam)
         {
-            const artifactId = parseInt(artifactIdParam, 10);
-            if (isNaN(artifactId))
-            {
-                return NextResponse.json<ApiResponse>(
-                    {
-                        success: false,
-                        error: 'Invalid artifactId'
-                    },
-                    { status: 400 }
-                );
-            }
-            events = await eventRepository.findByArtifactId(artifactId);
+            events = await eventRepository.findByArtifactId(artifactIdParam);
         }
         else
         {
@@ -193,10 +149,10 @@ export async function POST(request: Request)
             message: message.trim(),
             importance: importance as 'LOW' | 'MIDDLE' | 'HIGH' | undefined,
             userId: userId,
-            taskId: taskId ? parseInt(taskId, 10) : undefined,
-            organizationId: organizationId ? parseInt(organizationId, 10) : undefined,
-            profileId: profileId ? parseInt(profileId, 10) : undefined,
-            artifactId: artifactId ? parseInt(artifactId, 10) : undefined,
+            taskId: taskId || undefined,
+            organizationId: organizationId || undefined,
+            profileId: profileId || undefined,
+            artifactId: artifactId || undefined,
         });
 
         return NextResponse.json<ApiResponse>(

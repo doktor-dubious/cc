@@ -76,19 +76,7 @@ export async function GET(request: Request)
             );
         }
 
-        const organizationId = parseInt(organizationIdStr, 10);
-        if (isNaN(organizationId) || organizationId <= 0)
-        {
-            log.error({ organizationId : organizationId }, 'Invalid Organization Id');
-
-            return NextResponse.json<ApiResponse>(
-                { 
-                    success: false,
-                    error: 'Valid organizationId is required' 
-                },
-                { status: 400 }
-            );
-        }
+        const organizationId = organizationIdStr;
 
         // ADMINs & USERs can fetch Artifacts for Organizations which they have access.
         if (!(await validateUserOrganizationAccess(role, profileId, organizationId))) 
@@ -191,7 +179,7 @@ export async function POST(request: Request)
         }
 
         // -- Organization Id
-        if (!organizationId || typeof organizationId !== 'number' || organizationId <= 0)
+        if (!organizationId || typeof organizationId !== 'string')
         {
             return NextResponse.json<ApiResponse>(
                 { 

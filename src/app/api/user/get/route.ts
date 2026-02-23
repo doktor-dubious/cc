@@ -26,7 +26,7 @@ export async function GET(request: NextRequest)
         const userId = payload.sub; // or payload.userId depending on your JWT structure
         log.debug({ userId }, 'User ID');
 
-        const user = await userRepository.findById(parseInt(userId as string));
+        const user = await userRepository.findById(userId as string);
         if (!user)
         {
             return (NextResponse.json({ error: 'User not found' }, { status: 404 }));

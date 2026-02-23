@@ -430,7 +430,7 @@ export default function ArtifactPage()
               name           : name.trim(),
               description    : description.trim() || undefined,
               type           : artifactType,
-              organizationId : parseInt(activeOrganization.id)
+              organizationId : activeOrganization.id
           };
 
           // Only include mimeType if it's been changed and is not empty

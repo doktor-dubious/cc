@@ -242,7 +242,7 @@ export async function PATCH(request: NextRequest)
         const { id, applicationName, homeDirectory, pollingInterval } = body;
 
         // Validate ID
-        if (!id || typeof id !== 'number')
+        if (!id || typeof id !== 'string')
         {
             return NextResponse.json(
                 { success: false, message: 'Settings ID is required' },

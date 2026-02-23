@@ -143,6 +143,7 @@ model Task {
   organization     Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   taskArtifacts    TaskArtifact[]
   taskProfiles     TaskProfile[]
+  taskSafeguards   TaskSafeguard[]
 
   @@index([organizationId])
   @@index([startAt])
@@ -174,6 +175,19 @@ model TaskArtifact {
   @@index([taskId])
   @@index([artifactId])
   @@map("task_artifact")
+}
+
+/// Links a Task to a CIS Safeguard (e.g. "1.1", "3.4"). Safeguards are defined in code, not in DB.
+model TaskSafeguard {
+  taskId      String   @map("task_id") @db.Uuid
+  safeguardId String   @map("safeguard_id") @db.VarChar(10)
+  createdAt   DateTime @default(now()) @map("created_at")
+  task        Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([taskId, safeguardId])
+  @@index([taskId])
+  @@index([safeguardId])
+  @@map("task_safeguard")
 }
 
 /// Messages tied to Tasks - can be system-generated or from users

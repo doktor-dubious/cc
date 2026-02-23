@@ -52,18 +52,7 @@ export async function GET(request: Request)
             );
         }
 
-        const organizationId = parseInt(orgIdParam, 10);
-
-        if (isNaN(organizationId))
-        {
-            return NextResponse.json<ApiResponse>(
-                {
-                    success: false,
-                    error: 'Invalid organizationId'
-                },
-                { status: 400 }
-            );
-        }
+        const organizationId = orgIdParam;
 
         // ── Fetch all messages for tasks in this organization ───────────────────────────
         const messages = await prisma.message.findMany({

@@ -1,12 +1,24 @@
 'use client';
 
-import { useState, useMemo }            from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, useRouter }   from 'next/navigation';
 import { useTranslations }              from 'next-intl';
-import { ArrowLeft }                    from 'lucide-react';
+import { ArrowLeft, Link2 }             from 'lucide-react';
 import { Button }                       from '@/components/ui/button';
+import { Input }                        from '@/components/ui/input';
+import { Badge }                        from '@/components/ui/badge';
+import { toast }                        from 'sonner';
 import { getControlById }               from '@/lib/constants/cis-controls';
 import type { Safeguard }               from '@/lib/constants/cis-controls';
+import { useOrganization }              from '@/context/OrganizationContext';
+
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 type IG = 'ig1' | 'ig2' | 'ig3';
 
@@ -22,11 +34,91 @@ export default function CISSafeguardsPage() {
   const searchParams = useSearchParams();
   const router       = useRouter();
   const t            = useTranslations('CISSafeguards');
+  const { activeOrganization } = useOrganization();
   const controlId    = parseInt(searchParams.get('control') || '1', 10);
   const control      = getControlById(controlId);
 
   const [activeIG, setActiveIG] = useState<IG>('ig1');
   const [selectedSafeguard, setSelectedSafeguard] = useState<Safeguard | null>(null);
+
+  // Link to Task dialog state
+  const [isLinkTaskDialogOpen, setIsLinkTaskDialogOpen] = useState(false);
+  const [availableTasks, setAvailableTasks] = useState<any[]>([]);
+  const [linkedTaskIds, setLinkedTaskIds] = useState<string[]>([]);
+  const [taskSearchText, setTaskSearchText] = useState("");
+  const [loadingTasks, setLoadingTasks] = useState(false);
+
+  // Fetch tasks linked to selected safeguard
+  const fetchLinkedTasks = async (safeguardId: string) => {
+    try {
+      const res = await fetch(`/api/task-safeguard?safeguardId=${safeguardId}`);
+      const data = await res.json();
+      if (data.success) {
+        setLinkedTaskIds((data.data || []).map((ts: any) => ts.taskId));
+      }
+    } catch (error) {
+      console.error('Failed to fetch linked tasks:', error);
+    }
+  };
+
+  // Fetch available tasks from organization
+  const fetchAvailableTasks = async () => {
+    if (!activeOrganization) return;
+    setLoadingTasks(true);
+    try {
+      const res = await fetch(`/api/task?organizationId=${activeOrganization.id}`);
+      const data = await res.json();
+      if (data.success) {
+        setAvailableTasks(data.data || []);
+      }
+    } catch (error) {
+      console.error('Failed to fetch tasks:', error);
+    } finally {
+      setLoadingTasks(false);
+    }
+  };
+
+  // Link safeguard to task
+  const handleLinkTask = async (taskId: string) => {
+    if (!selectedSafeguard) return;
+    try {
+      const res = await fetch('/api/task-safeguard', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ taskId, safeguardId: selectedSafeguard.id }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        toast.success(`Linked to task`);
+        fetchLinkedTasks(selectedSafeguard.id);
+        setIsLinkTaskDialogOpen(false);
+      } else {
+        toast.error(data.message || 'Failed to link task');
+      }
+    } catch (error) {
+      console.error('Failed to link task:', error);
+      toast.error('Failed to link task');
+    }
+  };
+
+  // When safeguard selection changes, fetch linked tasks and available tasks for names
+  useEffect(() => {
+    if (selectedSafeguard) {
+      fetchLinkedTasks(selectedSafeguard.id);
+      if (availableTasks.length === 0) {
+        fetchAvailableTasks();
+      }
+    } else {
+      setLinkedTaskIds([]);
+    }
+  }, [selectedSafeguard]);
+
+  // When dialog opens, fetch available tasks
+  useEffect(() => {
+    if (isLinkTaskDialogOpen) {
+      fetchAvailableTasks();
+    }
+  }, [isLinkTaskDialogOpen]);
 
   // Filter safeguards that have content for the selected IG
   const filteredSafeguards = useMemo(() => {
@@ -129,7 +221,34 @@ export default function CISSafeguardsPage() {
       {/* Detail section below table */}
       {selectedSafeguard && (
         <div className="border rounded-lg p-6 bg-muted/30 space-y-4 max-w-3xl">
-          <h3 className="text-lg font-semibold">{selectedSafeguard.id} – {selectedSafeguard.title}</h3>
+          <div className="flex items-start justify-between">
+            <h3 className="text-lg font-semibold">{selectedSafeguard.id} – {selectedSafeguard.title}</h3>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => { setTaskSearchText(""); setIsLinkTaskDialogOpen(true); }}
+            >
+              <Link2 className="w-4 h-4 mr-2" />
+              Link to Task
+            </Button>
+          </div>
+
+          {/* Linked tasks */}
+          {linkedTaskIds.length > 0 && (
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Linked Tasks</p>
+              <div className="flex flex-wrap gap-2">
+                {linkedTaskIds.map((taskId) => {
+                  const task = availableTasks.find((t: any) => t.id === taskId);
+                  return (
+                    <Badge key={taskId} variant="secondary" className="cursor-pointer" onClick={() => router.push(`/task?id=${taskId}`)}>
+                      {task ? task.name : taskId}
+                    </Badge>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
           <div>
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Definition</p>
@@ -169,6 +288,63 @@ export default function CISSafeguardsPage() {
           </div>
         </div>
       )}
+
+      {/* Link to Task Dialog */}
+      <Dialog open={isLinkTaskDialogOpen} onOpenChange={setIsLinkTaskDialogOpen}>
+        <DialogContent className="sm:max-w-lg max-h-[80vh] flex flex-col">
+          <DialogHeader>
+            <DialogTitle>Link Safeguard to Task</DialogTitle>
+            <DialogDescription>
+              Select a task to link safeguard {selectedSafeguard?.id} to.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="mb-3">
+            <Input
+              placeholder="Search tasks..."
+              value={taskSearchText}
+              onChange={(e) => setTaskSearchText(e.target.value)}
+            />
+          </div>
+          <div className="flex-1 overflow-y-auto space-y-1 min-h-0 max-h-[50vh]">
+            {loadingTasks ? (
+              <p className="text-sm text-muted-foreground text-center py-4">Loading tasks...</p>
+            ) : (
+              <>
+                {availableTasks
+                  .filter(task => {
+                    const q = taskSearchText.toLowerCase();
+                    return !q || task.name.toLowerCase().includes(q) || (task.description || '').toLowerCase().includes(q);
+                  })
+                  .filter(task => !linkedTaskIds.includes(task.id))
+                  .map(task => (
+                    <button
+                      key={task.id}
+                      className="w-full text-left px-3 py-2 rounded hover:bg-muted/60 transition-colors border border-transparent hover:border-border"
+                      onClick={() => handleLinkTask(task.id)}
+                    >
+                      <div className="text-sm font-medium">{task.name}</div>
+                      {task.description && (
+                        <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>
+                      )}
+                      <Badge variant="outline" className="mt-1 text-xs">{task.status}</Badge>
+                    </button>
+                  ))
+                }
+                {availableTasks
+                  .filter(task => {
+                    const q = taskSearchText.toLowerCase();
+                    return !q || task.name.toLowerCase().includes(q) || (task.description || '').toLowerCase().includes(q);
+                  })
+                  .filter(task => !linkedTaskIds.includes(task.id)).length === 0 && (
+                  <p className="text-sm text-muted-foreground text-center py-4">
+                    {taskSearchText ? 'No matching tasks found.' : 'No available tasks to link.'}
+                  </p>
+                )}
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

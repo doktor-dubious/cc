@@ -36,8 +36,8 @@ export async function POST(request: NextRequest) {
     const existing = await prisma.taskProfile.findUnique({
       where: {
         taskId_profileId: {
-          taskId: Number(taskId),
-          profileId: Number(profileId),
+          taskId: taskId,
+          profileId: profileId,
         },
       },
     });
@@ -52,8 +52,8 @@ export async function POST(request: NextRequest) {
     // Create the association
     const taskProfile = await prisma.taskProfile.create({
       data: {
-        taskId: Number(taskId),
-        profileId: Number(profileId),
+        taskId: taskId,
+        profileId: profileId,
       },
       include: {
         profile: {
@@ -70,7 +70,7 @@ export async function POST(request: NextRequest) {
 
     // Get the task to access organizationId
     const task = await prisma.task.findUnique({
-      where: { id: Number(taskId) },
+      where: { id: taskId },
       select: { organizationId: true },
     });
 
@@ -78,8 +78,8 @@ export async function POST(request: NextRequest) {
     await eventRepository.create({
       message: 'Profile added to task',
       importance: 'HIGH',
-      userId: Number(payload.sub),
-      taskId: Number(taskId),
+      userId: payload.sub as string,
+      taskId: taskId,
       organizationId: task?.organizationId || undefined,
     });
 
@@ -122,15 +122,15 @@ export async function DELETE(request: NextRequest) {
 
     // Get the task to access organizationId before deleting
     const task = await prisma.task.findUnique({
-      where: { id: Number(taskId) },
+      where: { id: taskId },
       select: { organizationId: true },
     });
 
     await prisma.taskProfile.delete({
       where: {
         taskId_profileId: {
-          taskId: Number(taskId),
-          profileId: Number(profileId),
+          taskId: taskId,
+          profileId: profileId,
         },
       },
     });
@@ -141,8 +141,8 @@ export async function DELETE(request: NextRequest) {
     await eventRepository.create({
       message: 'Profile removed from task',
       importance: 'HIGH',
-      userId: Number(payload.sub),
-      taskId: Number(taskId),
+      userId: payload.sub as string,
+      taskId: taskId,
       organizationId: task?.organizationId || undefined,
     });
 

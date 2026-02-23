@@ -28040,3 +28040,1903 @@
 [11:08:02 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
 [11:08:02 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
 [11:08:02 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:21:01 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[15:21:01 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[15:21:01 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:28:16 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[15:28:16 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[15:28:16 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:33:35 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[15:33:35 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[15:33:35 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:34:05 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[15:34:05 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[15:34:05 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:34:30 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[15:34:30 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[15:34:30 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:35:53 UTC] [34mDEBUG[39m: [36mUser Logging in[39m [90m{"email":"rfs@skardhamar.com","password":"aa"}[39m
+[15:35:53 UTC] [32mINFO[39m: [36mSQL - user: findByEmailWithPassword[39m
+[15:35:53 UTC] [32mINFO[39m: [36mFetching user for login[39m [90m{"email":"rfs@skardhamar.com"}[39m
+[15:35:53 UTC] [34mDEBUG[39m: [36mUser login lookup result[39m [90m{"user":{"id":"9a55945d-d60b-461a-ba64-d57852e44680","email":"rfs@skardhamar.com"},"found":true}[39m
+[15:35:54 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:35:54 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:35:54 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:35:54 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:35:54 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:35:54 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:35:54 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[15:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:35:54 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[15:35:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[15:35:59 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[15:35:59 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[15:35:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[15:35:59 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[15:35:59 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[15:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:36:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[15:36:30 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[15:36:30 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[15:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:12 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:13 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:14 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:15 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[15:42:16 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[15:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[15:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[16:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[17:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[18:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[19:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[20:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[21:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[22:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[23:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:47:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:47:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:48:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:48:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:49:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:49:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:50:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:50:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:51:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:51:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:52:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:52:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:53:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:53:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:54:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:54:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:55:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:55:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:56:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:56:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:57:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:57:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:58:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:58:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:59:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[00:59:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:00:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:00:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:01:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:01:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:02:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:02:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:03:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:03:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:04:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:04:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:05:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:05:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:06:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:06:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:07:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:07:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:08:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:08:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:09:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:09:33 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:09:33 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:09:33 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:09:33 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:09:33 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:09:33 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:09:37 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:09:37 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:09:37 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:09:37 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:09:37 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:09:37 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:09:37 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:09:37 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:09:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:09:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:09:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:09:56 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:09:56 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:09:56 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:09:56 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:09:56 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"66c526ff-c828-41fd-93dd-38476b334662"}[39m
+[01:09:56 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:10:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:10:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:10:05 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:10:05 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:10:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:10:05 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"5ccab9d7-4d97-4288-b7cf-8b1c1e2f1273"}[39m
+[01:10:05 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:10:05 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:10:15 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[01:10:15 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:10:15 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[01:10:15 UTC] [34mDEBUG[39m: [36m(PRISMA API : artifact - GET (fetch)[39m
+[01:10:15 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:10:15 UTC] [32mINFO[39m: [36mSQL - artifact: findByOrganizationId[39m
+[01:10:18 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:10:18 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:10:18 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:10:18 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:10:18 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:10:18 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:10:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:10:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:11:13 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:13 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:13 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:13 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:13 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:13 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:13 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:11:13 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:16 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:16 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:16 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:16 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:16 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:16 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:16 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"5ccab9d7-4d97-4288-b7cf-8b1c1e2f1273"}[39m
+[01:11:16 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:17 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:17 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:17 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:17 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:17 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:17 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:17 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"66c526ff-c828-41fd-93dd-38476b334662"}[39m
+[01:11:17 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:18 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:18 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:18 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:18 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:18 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:18 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:18 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"5ccab9d7-4d97-4288-b7cf-8b1c1e2f1273"}[39m
+[01:11:18 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:21 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:21 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:21 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:21 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:21 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"25d64c7d-896a-4e86-a44e-f226b6d61201"}[39m
+[01:11:21 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:23 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:23 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:23 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:23 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:23 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:23 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:23 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:11:23 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:24 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:24 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"512e1d5a-e906-4cda-86a9-7093911f64c2"}[39m
+[01:11:24 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:24 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:24 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:24 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"76c93109-c87e-45d7-808a-06862409d9ab"}[39m
+[01:11:24 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:29 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:29 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:29 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:29 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"25d64c7d-896a-4e86-a44e-f226b6d61201"}[39m
+[01:11:29 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:36 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:11:36 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:11:36 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:11:36 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:11:36 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:11:36 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:11:36 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"5ccab9d7-4d97-4288-b7cf-8b1c1e2f1273"}[39m
+[01:11:36 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:11:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:12:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:12:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:13:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:13:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:14:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:14:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:15:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:15:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:16:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:16:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:17:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:17:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:18:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:18:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:19:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:19:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:20:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:20:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:21:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:21:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:22:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:22:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:23:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:23:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:24:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:24:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:25:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:25:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:26:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:26:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:27:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:27:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:28:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:28:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:29:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:29:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:30:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:30:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:31:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:31:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:32:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:32:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:33:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:33:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:34:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:34:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:35:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:35:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:36:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:36:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:37:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:37:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:38:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:38:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:39:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:39:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:40:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:40:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:41:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:41:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:42:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:42:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:43:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:43:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:44:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:44:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:45:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:45:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:45:38 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:45:38 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:45:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:45:38 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:45:38 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:45:43 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:45:43 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:45:43 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:45:43 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:45:43 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:45:43 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:45:43 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:45:43 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:45:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:46:22 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:46:22 UTC] [31mERROR[39m: [36mError fetching task-safeguard associations[39m 
+    error: {}
+[01:46:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:46:22 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:46:22 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:46:24 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:46:26 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:46:26 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:46:26 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:46:27 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard POST[39m
+[01:46:27 UTC] [31mERROR[39m: [36mError adding safeguard to task[39m 
+    error: {}
+[01:46:30 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard POST[39m
+[01:46:30 UTC] [31mERROR[39m: [36mError adding safeguard to task[39m 
+    error: {}
+[01:46:39 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard POST[39m
+[01:46:39 UTC] [31mERROR[39m: [36mError adding safeguard to task[39m 
+    error: {}
+[01:46:54 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:47:31 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[01:47:31 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[01:47:31 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[01:47:32 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[01:47:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:47:33 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:47:33 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:47:33 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:47:33 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:47:34 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:47:34 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:47:34 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:47:38 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[01:47:38 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[01:47:38 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[01:47:38 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:47:38 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[01:47:39 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:47:39 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:47:39 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:47:39 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:47:40 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:47:40 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:47:40 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:47:46 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[01:47:46 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[01:47:46 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[01:47:47 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[01:47:47 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:47:48 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:47:48 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:47:48 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:47:48 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:47:48 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:47:48 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:48:00 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:00 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:00 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:48:01 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:01 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:01 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:48:01 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:48:01 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:48:01 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:48:01 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:48:05 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard POST[39m
+[01:48:05 UTC] [32mINFO[39m: [36mSafeguard added to task[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea","safeguardId":"1.5"}[39m
+[01:48:05 UTC] [32mINFO[39m: [36mSQL - event: create[39m [90m{"message":"Safeguard added to task"}[39m
+[01:48:05 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:48:14 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard POST[39m
+[01:48:14 UTC] [32mINFO[39m: [36mSafeguard added to task[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea","safeguardId":"1.1"}[39m
+[01:48:14 UTC] [32mINFO[39m: [36mSQL - event: create[39m [90m{"message":"Safeguard added to task"}[39m
+[01:48:15 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:48:17 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:48:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:48:22 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:22 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:48:22 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:48:22 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"25d64c7d-896a-4e86-a44e-f226b6d61201"}[39m
+[01:48:22 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:48:47 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:48:51 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:51 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:48:51 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:51 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:48:51 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:48:51 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"40557e22-4880-431a-9a17-c35d0a0b4827"}[39m
+[01:48:51 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:48:52 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[01:48:52 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[01:48:52 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[01:48:53 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[01:48:53 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:48:53 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:53 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:53 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:59 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:48:59 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:48:59 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:48:59 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:49:02 UTC] [32mINFO[39m: [36mSQL - user: findById[39m
+[01:49:02 UTC] [32mINFO[39m: [36mSQL - organization: findAll[39m
+[01:49:02 UTC] [32mINFO[39m: [36mSQL - task: findAll[39m
+[01:49:02 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[01:49:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:49:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:49:02 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:49:02 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"000626fa-136c-4aa7-9036-ffc53f2d42c4"}[39m
+[01:49:04 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:49:04 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:49:04 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:49:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:49:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:49:05 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:49:05 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:49:05 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:49:05 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:49:05 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"512e1d5a-e906-4cda-86a9-7093911f64c2"}[39m
+[01:49:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:49:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:49:08 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:49:08 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:49:08 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:49:08 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:49:08 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"6dca7946-5ade-4577-a850-1aaf8a0c358a"}[39m
+[01:49:10 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:49:10 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:49:10 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:49:10 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:49:10 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:49:10 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:49:10 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"5ccab9d7-4d97-4288-b7cf-8b1c1e2f1273"}[39m
+[01:49:12 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:49:12 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:49:12 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:49:12 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:49:12 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:49:12 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:49:12 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"512e1d5a-e906-4cda-86a9-7093911f64c2"}[39m
+[01:49:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:50:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:50:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:51:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:51:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:52:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:52:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:53:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:53:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:53:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:53:29 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:53:29 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:53:29 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:53:29 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"3e418f0b-f219-4341-9a2b-e89533d562ea"}[39m
+[01:53:29 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:53:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : task - GET (fetch)[39m
+[01:53:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message - GET (fetch)[39m
+[01:53:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : event - GET (fetch)[39m
+[01:53:32 UTC] [34mDEBUG[39m: [36mAPI: task-safeguard GET[39m
+[01:53:32 UTC] [34mDEBUG[39m: [36mPayload[39m [90m{"userId":"9a55945d-d60b-461a-ba64-d57852e44680","profileId":"298dc1d8-2390-43b8-a094-9fd98c08ac57","role":"SUPER_ADMIN"}[39m
+[01:53:32 UTC] [32mINFO[39m: [36mSQL - task: findByOrganizationId[39m [90m{"organizationId":"05e2fb1c-685e-4596-b19e-d42bb069a57f"}[39m
+[01:53:32 UTC] [32mINFO[39m: [36mSQL - event: findByTaskId[39m [90m{"taskId":"6dca7946-5ade-4577-a850-1aaf8a0c358a"}[39m
+[01:53:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:54:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:54:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:55:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:55:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:56:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:56:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:57:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:57:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:58:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:58:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:59:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[01:59:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:00:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:00:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:01:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:01:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:02:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:02:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:03:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:03:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:04:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:04:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:05:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:05:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:06:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:06:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:07:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:07:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:08:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:08:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:09:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:09:11 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[02:09:11 UTC] [34mDEBUG[39m: [36m(::src/app/api/settings/route.ts::GET) (fetch)[39m
+[02:09:32 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m
+[02:10:02 UTC] [34mDEBUG[39m: [36m(PRISMA API : message/unread-count - GET)[39m

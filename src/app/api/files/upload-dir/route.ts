@@ -87,14 +87,14 @@ export async function DELETE(request: NextRequest)
         }
 
         // -- Organization ID
-        if (typeof organizationId !== 'number' || organizationId <= 0)
+        if (typeof organizationId !== 'string' || !organizationId)
         {
             log.error({ organizationId: organizationId }, 'Invalid Organization Id');
 
             return NextResponse.json<ApiResponse>(
-                { 
-                    success: false, 
-                    error  : 'Invalid Organization Id' 
+                {
+                    success: false,
+                    error  : 'Invalid Organization Id'
                 },
                 { status: 400 }
             );

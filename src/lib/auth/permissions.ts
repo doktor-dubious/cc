@@ -31,8 +31,8 @@ export function canUpdateProfiles(role: UserRole | string): boolean
 // ADMINs can access Organizations they are connected to.
 export async function validateAdminOrganizationAccess(
     role            : UserRole | string,
-    profileId       : number,
-    organizationId  : number
+    profileId       : string,
+    organizationId  : string
 ): Promise<boolean> 
 {
     if (role === 'SUPER_ADMIN') return true;
@@ -48,8 +48,8 @@ export async function validateAdminOrganizationAccess(
 // ADMINs & USERs can access Organizations they are connected to.
 export async function validateUserOrganizationAccess(
     role            : UserRole | string,
-    profileId       : number,
-    organizationId  : number
+    profileId       : string,
+    organizationId  : string
 ): Promise<boolean> 
 {
     if (role === 'SUPER_ADMIN') return true;
@@ -86,8 +86,8 @@ export function canDeleteTasks(role: UserRole | string): boolean
 
 export async function validateAdminTaskAccess(
     role            : UserRole | string,
-    profileId       : number,
-    taskId          : number
+    profileId       : string,
+    taskId          : string
 ): Promise<boolean> 
 {
     if (role === 'SUPER_ADMIN') return true;

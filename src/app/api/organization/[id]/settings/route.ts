@@ -14,15 +14,15 @@ export async function POST(
 ) 
 {
     const { id } = await params;
-    const organizationId = parseInt(id, 10);
+    const organizationId = id;
 
-    if (isNaN(organizationId) || organizationId <= 0) 
+    if (!organizationId)
     {
         return NextResponse.json<ApiResponse>(
-            { 
-                success: false, 
-                error: 'Invalid organization ID' 
-            }, 
+            {
+                success: false,
+                error: 'Invalid organization ID'
+            },
             { status: 400 }
         );
     }

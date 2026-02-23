@@ -85,13 +85,13 @@ export async function GET(request: NextRequest)
         }
         else
         {
-            const organizationId = parseInt(organizationIdStr, 10);
-            if (isNaN(organizationId))
+            const organizationId = organizationIdStr;
+            if (!organizationId)
             {
                 return NextResponse.json<ApiResponse>(
-                    { 
-                        success: false, 
-                        error  : 'Invalid organizationId' 
+                    {
+                        success: false,
+                        error  : 'Invalid organizationId'
                     },
                     { status: 400 }
                 );
@@ -204,12 +204,12 @@ export async function POST(request: NextRequest)
         }
 
         // -- Organization ID
-        if (typeof organizationId !== 'number' || organizationId <= 0)
+        if (typeof organizationId !== 'string' || !organizationId)
         {
             return NextResponse.json<ApiResponse>(
-                { 
-                    success: false, 
-                    error  : 'Invalid Organization Id' 
+                {
+                    success: false,
+                    error  : 'Invalid Organization Id'
                 },
                 { status: 400 }
             );

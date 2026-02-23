@@ -2,7 +2,7 @@
 import path from 'path';
 import { prisma } from '@/lib/prisma';
 
-export async function getValidatedOrgDirectories(orgId: number) {
+export async function getValidatedOrgDirectories(orgId: string) {
   const settings = await prisma.organisationSettings.findUnique({
     where: { organizationId: orgId },
     select: { uploadDirectory: true, artifactDirectory: true },

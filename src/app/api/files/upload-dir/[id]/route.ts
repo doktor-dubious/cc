@@ -23,16 +23,16 @@ export async function GET(
     log.debug('API: GET - List files from organization upload directory');
 
     const { id } = await params;
-    const organizationId = parseInt(id, 10);
+    const organizationId = id;
 
-    if (isNaN(organizationId) || organizationId <= 0) 
+    if (!organizationId)
     {
-        log.error({ id : id, organizationId : organizationId }, 'Invalid Organization ID');
+        log.error({ id : id }, 'Invalid Organization ID');
         return NextResponse.json<ApiResponse>(
-            { 
-                success: false, 
-                error: 'Invalid Organization ID' 
-            }, 
+            {
+                success: false,
+                error: 'Invalid Organization ID'
+            },
             { status: 400 }
         );
     }
