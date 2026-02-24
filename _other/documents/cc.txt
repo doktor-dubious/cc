@@ -6,6 +6,143 @@ sudo -u postgres psql
 
 psql -h localhost -U compliance -d compliance
 
+newgrp docker
+-----------------
+-- DOCKER
+-- Lifecycle & State Commands
+		Start everything in background (most common way to run in production/dev):text
+		docker compose up -d
+
+		Stop everything gracefully (without removing containers/volumes/networks):text
+		docker compose stop
+
+		Start already-created services (after a previous down or stop):text
+		docker compose start
+
+		Restart one or all services (without full recreation):text
+		docker compose restart
+		docker compose restart app      # only the 'app' service
+
+		Full clean restart (your variant, but shorter/more common):text
+		docker compose down && docker compose up -d
+
+		or with volumes wipe
+		docker compose down -v && docker compose up -d
+
+-- Status & Inspection
+		List running services/containers (very frequently used):textdocker compose ps
+		docker compose ps -a          # also show stopped/exited ones
+
+		Show real-time resource usage:textdocker compose top
+		docker compose stats
+
+-- Logs & Debugging
+
+		View logs of all services (or specific one)
+		docker compose logs
+		docker compose logs -f                # follow/tail
+		docker compose logs -f --tail=100 app # last 100 lines + follow
+
+		Timestamps + colors (easier to read)
+		docker compose logs -f --timestamps
+
+-- Exec & Running Commands
+		Run a one-off command (without starting the service permanently)
+		docker compose run --rm app python manage.py migrate
+		docker compose run --rm app bash      # get a shell
+		
+		Exec into a running container (like your psql example)
+		docker compose exec app bash          # interactive shell
+		docker compose exec app sh -c "echo hello"
+
+-- Build & Pull
+		Rebuild images (when Dockerfile or dependencies changed):text
+		docker compose build
+		docker compose build --no-cache app   # force full rebuild
+
+		Pull latest images (without rebuilding):text
+		docker compose pull
+
+-- Cleanup & Maintenance
+		Remove stopped containers, networks & dangling images:text
+		docker compose down --remove-orphans
+
+		Prune everything not in use (including volumes — be careful!):text
+		docker compose down --volumes --remove-orphans
+		docker system prune -a --volumes      # global cleanup (not compose-specific)
+
+
+
+
+
+
+
+
+
+
+Restart
+sudo docker compose down -v && sudo docker compose up -d
+
+View Logs:
+docker compose logs -f app
+
+Docker Database login:
+docker compose exec db psql -U compliance -d compliance
+
+
+
+.env:
+NODE_ENV="development"
+DATABASE_URL="postgresql://compliance:hesteogGrise246@localhost:5432/compliance"
+ACCELERATE_URL="prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InBvc3RncmVzOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjUxMjE0L3RlbXBsYXRlMT9zc2xtb2RlPWRpc2FibGUmY29ubmVjdGlvbl9saW1pdD0xJmNvbm5lY3RfdGltZW91dD0wJm1heF9pZGxlX2Nvbm5lY3Rpb25fbGlmZXRpbWU9MCZwb29sX3RpbWVvdXQ9MCZzaW5nbGVfdXNlX2Nvbm5lY3Rpb25zPXRydWUmc29ja2V0X3RpbWVvdXQ9MCIsIm5hbWUiOiJkZWZhdWx0Iiwic2hhZG93RGF0YWJhc2VVcmwiOiJwb3N0Z3JlczovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1MTIxNS90ZW1wbGF0ZTE_c3NsbW9kZT1kaXNhYmxlJmNvbm5lY3Rpb25fbGltaXQ9MSZjb25uZWN0X3RpbWVvdXQ9MCZtYXhfaWRsZV9jb25uZWN0aW9uX2xpZmV0aW1lPTAmcG9vbF90aW1lb3V0PTAmc2luZ2xlX3VzZV9jb25uZWN0aW9ucz10cnVlJnNvY2tldF90aW1lb3V0PTAifQ"
+JWT_SECRET=ad118d76c25c74a8723938070e25a8029a51ce68e999e8b8da6b9dc3a8ef7aea
+
+Database:
+Host: localhost
+Port: 5432
+Database :compliance
+User: compliance
+PW : hesteogGrise246
+
+My .env has this line:
+DATABASE_URL="postgresql://compliance:[password]@localhost:5432/compliance"
+postgresql://${POSTGRES_USER:-compliance}:${POSTGRES_PASSWORD:-compliance}@db:5432/${POSTGRES_DB:-compliance}
+
+
+There is now password in the .env, except in the DATABASE_URL
+There are these: 
+
+NODE_ENV="development"
+DATABASE_URL
+ACCELERATE_URL
+JWT_SECRET
+
+
+NODE_ENV="development"
+DATABASE_URL="postgresql://compliance:hesteogGrise246@localhost:5432/compliance"
+ACCELERATE_URL="prisma+postgres://localhost:51213/?api_key=eyJkYXRhYmFzZVVybCI6InBvc3RncmVzOi8vcG9zdGdyZXM6cG9zdGdyZXNAbG9jYWxob3N0OjUxMjE0L3RlbXBsYXRlMT9zc2xtb2RlPWRpc2FibGUmY29ubmVjdGlvbl9saW1pdD0xJmNvbm5lY3RfdGltZW91dD0wJm1heF9pZGxlX2Nvbm5lY3Rpb25fbGlmZXRpbWU9MCZwb29sX3RpbWVvdXQ9MCZzaW5nbGVfdXNlX2Nvbm5lY3Rpb25zPXRydWUmc29ja2V0X3RpbWVvdXQ9MCIsIm5hbWUiOiJkZWZhdWx0Iiwic2hhZG93RGF0YWJhc2VVcmwiOiJwb3N0Z3JlczovL3Bvc3RncmVzOnBvc3RncmVzQGxvY2FsaG9zdDo1MTIxNS90ZW1wbGF0ZTE_c3NsbW9kZT1kaXNhYmxlJmNvbm5lY3Rpb25fbGltaXQ9MSZjb25uZWN0X3RpbWVvdXQ9MCZtYXhfaWRsZV9jb25uZWN0aW9uX2xpZmV0aW1lPTAmcG9vbF90aW1lb3V0PTAmc2luZ2xlX3VzZV9jb25uZWN0aW9ucz10cnVlJnNvY2tldF90aW1lb3V0PTAifQ"
+JWT_SECRET=ad118d76c25c74a8723938070e25a8029a51ce68e999e8b8da6b9dc3a8ef7aea
+
+
+I get in the log when trying to login:
+app-1  | Login error: Error [PrismaClientKnownRequestError]: 
+app-1  | Invalid `prisma.user.findUnique()` invocation:
+app-1  | 
+app-1  | 
+app-1  | Authentication failed against database server, the provided database credentials for `compliance` are not valid.
+app-1  | 
+app-1  | Please make sure to provide valid database credentials for the database server at the configured address.
+app-1  |     at async g (.next/server/chunks/ssr/_6df83140._.js:1:19872)
+app-1  |     at async l (.next/server/chunks/ssr/_6df83140._.js:1:20663) {
+app-1  |   code: 'P1000',
+app-1  |   meta: [Object],
+app-1  |   clientVersion: '6.19.1'
+app-1  | }
+
+
+The host (localhost), database (compliance), login (compliance, and password are the same as the ones I use in Beehive, where it works.
+
+
 
 npm install
 npm run dev

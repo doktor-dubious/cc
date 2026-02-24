@@ -121,6 +121,27 @@ export function canDeleteOrganizations(role: UserRole | string): boolean
     return role === 'SUPER_ADMIN';
 }
 
+// ── Users (Login Management) ───────────────────────────────────────
+export function canFetchUsers(role: UserRole | string): boolean
+{
+    return role === 'SUPER_ADMIN';
+}
+
+export function canCreateUsers(role: UserRole | string): boolean
+{
+    return role === 'SUPER_ADMIN';
+}
+
+export function canUpdateUsers(role: UserRole | string): boolean
+{
+    return role === 'SUPER_ADMIN';
+}
+
+export function canDeleteUsers(role: UserRole | string): boolean
+{
+    return role === 'SUPER_ADMIN';
+}
+
 // ── Organization Settings ───────────────────────────────────────
 export function canUpdateOrganizationSettings(role: UserRole | string): boolean 
 {

@@ -36,7 +36,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
         const { id: userId, profileId, role } = session.user;
 
-        if (!userId || !role || !profileId)
+        if (!userId || !role || (role !== 'SUPER_ADMIN' && !profileId))
         {
             return NextResponse.json(
                 { success: false, error: 'Invalid token' },

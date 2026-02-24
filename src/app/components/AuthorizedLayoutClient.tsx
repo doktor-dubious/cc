@@ -47,8 +47,6 @@ import {
 } from "@/components/ui/sidebar"
 
 import { 
-  Moon, 
-  Sun, 
   ChevronDown, 
   Home, 
   FileText, 
@@ -66,14 +64,11 @@ import {
   ListTodo,
   ClipboardList,
   FileCheck,
-  Target,
 
   Plus,
   PlusCircle,
-  PlusSquare,
 
   Hexagon,
-  Building2,
   Settings2,
   UserCog,
 
@@ -82,24 +77,34 @@ import {
   CircuitBoard,
   Lightbulb,
 
-  Gear,
   Cog,
-  ExternalLink
-  
+  ExternalLink,
+  PlusSquare
 } from "lucide-react"
+
 
 import { useTheme } from "next-themes"
 import { useLocale, useTranslations } from 'next-intl';
 import { locales, localeConfig, type Locale } from '@/i18n/locales';
 import { setLocale } from '@/app/actions/locale';
 
-import { 
-  ChevronDownIcon, 
-  ChevronRightIcon, 
+import {
+  HomeIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
   CircleChevronDownIcon,
   CogIcon,
-  PanelLeftCloseIcon
+  PanelLeftCloseIcon,
 } from "@/components/ui/cc/icons/animated-icons"
+
+import { SquarePlusIcon } from "@/components/animate-ui/icons/square-plus"
+import { ClipboardListIcon } from "@/components/animate-ui/icons/clipboard-list"
+import { ClockIcon } from "@/components/animate-ui/icons/clock"
+import { BellIcon } from "@/components/animate-ui/icons/bell"
+import { BlocksIcon } from "@/components/animate-ui/icons/blocks"
+import { SunIcon } from "@/components/animate-ui/icons/sun"
+import { MoonIcon } from "@/components/animate-ui/icons/moon"
+import { AnimateIcon } from "@/components/animate-ui/icons/icon"
 
 import { UserProvider }         from '@/context/UserContext';
 import { TaskProvider }         from '@/context/TaskContext';
@@ -110,6 +115,7 @@ import { useTasks } from '@/context/TaskContext';
 import type { UserRole } from '@prisma/client';
 
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from '@/components/ui/badge';
 import { useOrganization } from '@/context/OrganizationContext';
 
@@ -171,29 +177,32 @@ function OrganizationSwitcher()
     if (organizations.length === 1)
     {
         return (
+<AnimateIcon animateOnHover asChild>
 <div className="
-    flex
+    flex items-center
     w-full
     my-3
     py-3
+    pl-3
     bg-secondary
     text-muted-foreground
-    group-data-[collapsible=icon]:justify-center
-    group-data-[collapsible=icon]:px-0"
+    overflow-hidden"
 >
-  <Building2 className="pl-2 h-6 w-6 group-data-[collapsible=icon]:pl-0 group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4" />
+  <BlocksIcon className="h-5 w-5 shrink-0" />
   <Badge
     variant="secondary"
-    className="group-data-[collapsible=icon]:hidden"
+    className="whitespace-nowrap overflow-hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200 ease-in-out"
   >
     {activeOrganization.name}
   </Badge>
 </div>
+</AnimateIcon>
         );
     }
 
     // Multiple Organizations → Dropdown (icon only when collapsed, dropdown on click).
     return (
+<AnimateIcon animateOnHover asChild>
 <div className="
     flex
     w-full
@@ -222,7 +231,7 @@ function OrganizationSwitcher()
             group-data-[collapsible=icon]:px-0
             group-data-[collapsible=icon]:min-w-0"
       >
-        <Building2 className="h-3! w-3! shrink-0" />
+        <BlocksIcon className="h-3! w-3! shrink-0" />
         <span className="ml-2 flex-1 truncate text-left group-data-[collapsible=icon]:hidden">
           {activeOrganization.name}
         </span>
@@ -247,71 +256,45 @@ function OrganizationSwitcher()
     </DropdownMenuContent>
   </DropdownMenu>
 </div>
+</AnimateIcon>
     );
 }
 
 function SidebarLogo()
 {
-    const { toggleSidebar, state } = useSidebar()
+    const { toggleSidebar } = useSidebar()
     const router = useRouter()
 
-    const handleLogoClick = () => {
-      if (state === 'collapsed') {
-        toggleSidebar();
-      } else {
-        router.push('/home');
-      }
-    };
-
     return (
-      <div className="bg-(--sidebar) w-full pr-4 flex items-center group-data-[collapsible=icon]:pr-0 group-data-[collapsible=icon]:justify-center">
-        <button
-          onClick={handleLogoClick}
-          className="
-            bg-(--sidebar)
-            cursor-pointer
-            flex items-center gap-2 flex-1 min-w-0
-            transition-colors
-            group-data-[collapsible=icon]:justify-center
-            group-data-[collapsible=icon]:p-2
-          "
+      <div className="w-full flex items-center px-2 cursor-pointer" onClick={toggleSidebar}>
+        <a
+          onClick={(e) => { e.stopPropagation(); router.push('/home'); }}
+          className="cursor-pointer p-1 shrink-0"
         >
           <img
             src="/compliance-circle-logo.png"
             alt="Compliance Circle"
-            className="cursor-pointer h-6 w-6 group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4"
+            className="shrink-0"
+            style={{ width: 28, height: 28 }}
           />
-          <span
-            className="
-              font-thin
-              text-sm
-              select-none
-              group-data-[collapsible=icon]:hidden
-              hover:tracking-widest
-              duration-800 ease-out
-            ">
-            Compliance Circle
-          </span>
-        </button>
-
-        <button
-          onClick={toggleSidebar}
-          className="
-            cursor-pointer
-            p-1
-            hover:bg-muted/50
-            rounded
-            transition-colors
-            group-data-[collapsible=icon]:hidden
-          "
-        >
-          <PanelLeft
-            size={18}
-            strokeWidth={1.25}
-          />
-        </button>
+        </a>
       </div>
   )
+}
+
+function SidebarToggleFill()
+{
+    const { toggleSidebar, state } = useSidebar()
+
+    return (
+      <div
+        onClick={toggleSidebar}
+        className={`
+          flex-1 min-h-8
+          ${state === 'collapsed' ? 'cursor-e-resize' : 'cursor-w-resize'}
+        `}
+      />
+    )
 }
 
 function TaskSidebarSections({
@@ -329,39 +312,102 @@ function TaskSidebarSections({
   urgentTasks: any[];
   t: (key: string) => string;
 }) {
-  const { state, setOpen } = useSidebar();
-
-  const handleSectionClick = (menuName: string) => {
-    if (state === 'collapsed') {
-      setOpen(true);
-      handleSubmenuToggle(menuName);
-    } else {
-      handleSubmenuToggle(menuName);
-    }
-  };
+  const { state } = useSidebar();
+  const isCollapsed = state === 'collapsed';
 
   const sections = [
-    { key: 'tasks1', label: t('currentTasks'), tasks: openTasks },
-    { key: 'tasks2', label: t('waitingTasks'), tasks: waitingTasks },
-    { key: 'tasks3', label: t('urgentTasks'), tasks: urgentTasks },
+    { key: 'tasks1', label: t('currentTasks'), tasks: openTasks, Icon: ClipboardListIcon, animated: true },
+    { key: 'tasks2', label: t('waitingTasks'), tasks: waitingTasks, Icon: ClockIcon, animated: true },
+    { key: 'tasks3', label: t('urgentTasks'), tasks: urgentTasks, Icon: BellIcon, animated: true },
   ];
 
+  // ── Collapsed: icon buttons with popover flyouts ──
+  if (isCollapsed) {
+    return (
+      <SidebarGroup>
+        {sections.map(({ key, label, tasks, Icon, animated }) => (
+          <SidebarMenuItem key={key}>
+            <Popover>
+              <PopoverTrigger asChild>
+                {animated ? (
+                  <AnimateIcon animateOnHover asChild>
+                    <SidebarMenuButton
+                      tooltip={label}
+                      className="flex w-full items-center justify-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
+                    >
+                      <Icon size={16} />
+                    </SidebarMenuButton>
+                  </AnimateIcon>
+                ) : (
+                  <SidebarMenuButton
+                    tooltip={label}
+                    className="flex w-full items-center justify-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
+                  >
+                    <Icon size={16} />
+                  </SidebarMenuButton>
+                )}
+              </PopoverTrigger>
+              <PopoverContent
+                side="right"
+                align="start"
+                className="w-64 p-0 max-h-80 overflow-y-auto"
+              >
+                <div className="px-3 py-2 border-b">
+                  <p className="text-sm font-medium">{label}</p>
+                </div>
+                {tasks.length === 0 ? (
+                  <div className="px-3 py-4 text-sm text-muted-foreground text-center">
+                    {t('noTasks')}
+                  </div>
+                ) : (
+                  <div className="py-1">
+                    {tasks.map((task: any) => (
+                      <Link
+                        key={task.id}
+                        href={`/task?id=${task.id}`}
+                        className="flex items-start gap-2 px-3 py-2 text-sm hover:bg-muted transition-colors"
+                      >
+                        <CheckSquare size={14} className="shrink-0 mt-0.5 text-muted-foreground" />
+                        <span className="line-clamp-2">{task.name}</span>
+                      </Link>
+                    ))}
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+          </SidebarMenuItem>
+        ))}
+      </SidebarGroup>
+    );
+  }
+
+  // ── Expanded: collapsible sections ──
   return (
     <SidebarGroup>
-      {sections.map(({ key, label, tasks }) => (
+      {sections.map(({ key, label, tasks, Icon, animated }) => (
         <Collapsible
           key={key}
           open={openSubmenu === key}
-          onOpenChange={() => handleSectionClick(key)}
+          onOpenChange={() => handleSubmenuToggle(key)}
           className="group/collapsible"
         >
           <SidebarMenuItem>
             <CollapsibleTrigger asChild>
-              <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
-                <Target size={16} />
-                <span>{label}</span>
-                <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-              </SidebarMenuButton>
+              {animated ? (
+                <AnimateIcon animateOnHover asChild>
+                  <SidebarMenuButton className="flex w-full items-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
+                    <Icon size={16} />
+                    <span className="whitespace-nowrap overflow-hidden">{label}</span>
+                    <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
+                  </SidebarMenuButton>
+                </AnimateIcon>
+              ) : (
+                <SidebarMenuButton className="flex w-full items-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
+                  <Icon size={16} />
+                  <span className="whitespace-nowrap overflow-hidden">{label}</span>
+                  <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
+                </SidebarMenuButton>
+              )}
             </CollapsibleTrigger>
           </SidebarMenuItem>
 
@@ -379,8 +425,9 @@ function TaskSidebarSections({
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
-                        <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
+                        <SidebarMenuSubButton asChild className="cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
                           <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
+                          
                             <CheckSquare size={16} className="shrink-0 mt-0.5" />
                             <div className="line-clamp-3">{task.name}</div>
                           </Link>
@@ -511,7 +558,7 @@ function TaskSidebarSections({
             select-none"
         >
 
-          <SidebarHeader className="h-10 px-2 bg-sidebar border-b flex items-center">
+          <SidebarHeader className="p-0 bg-sidebar border-b flex items-center">
             <SidebarLogo />
           </SidebarHeader>
           
@@ -522,16 +569,19 @@ function TaskSidebarSections({
               <OrganizationSwitcher />
             </div>
 
-            <Button
-              variant="ghost"
-              className="rounded-none mx-2 mt-2 pl-2 group-data-[collapsible=icon]:hidden"
-              onClick={() => router.push('/task?new=1')}
-            >
-              <div className="flex items-center gap-3 flex-1 min-w-0"><PlusSquare size={16} className="mr-1" />
-                {t('newTask')}
-              </div>
-            </Button>
-            <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
+            <AnimateIcon animateOnHover asChild>
+              <Button
+                variant="ghost"
+                className="cursor-pointer rounded-none mt-2 pl-4 justify-start overflow-hidden"
+                onClick={() => router.push('/task?new=1')}
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <SquarePlusIcon size={16} className="shrink-0" />
+                  <span className="whitespace-nowrap overflow-hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200 ease-in-out">{t('newTask')}</span>
+                </div>
+              </Button>
+            </AnimateIcon>
+            <SidebarSeparator />
 
             <TaskSidebarSections
               openSubmenu={openSubmenu}
@@ -541,6 +591,9 @@ function TaskSidebarSections({
               urgentTasks={urgentTasks}
               t={t}
             />
+
+            {/* Empty area: click to toggle sidebar */}
+            <SidebarToggleFill />
           </SidebarContent>
 
           <SidebarFooter className="bg-muted/50 p-0">
@@ -548,16 +601,16 @@ function TaskSidebarSections({
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
-                  className="w-full justify-start h-auto p-3 rounded-none hover:bg-muted/80 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2"
+                  className="w-full justify-start h-auto p-3 rounded-none hover:bg-muted/80 overflow-hidden cursor-pointer"
                 >
-                  <div className="flex items-center gap-3 flex-1 min-w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:gap-0">
-                    <Avatar className="h-8 w-8 group-data-[collapsible=icon]:h-6 group-data-[collapsible=icon]:w-6">
+                  <div className="flex items-center gap-3 flex-1 min-w-0">
+                    <Avatar className="h-8 w-8 shrink-0">
                       <AvatarFallback className="bg-muted-foreground/20">R</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col items-start text-left flex-1 overflow-hidden group-data-[collapsible=icon]:hidden">
+                    <div className="flex flex-col items-start text-left flex-1 overflow-hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200 ease-in-out">
                       <span className="text-xs font-medium truncate block max-w-full">{user.name}</span>
                     </div>
-                    <ChevronUp className="h-4 w-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
+                    <ChevronUp className="h-4 w-4 text-muted-foreground shrink-0 group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200 ease-in-out" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -572,22 +625,29 @@ function TaskSidebarSections({
 
                   <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/home')}>
                     {t('home')}
-                    <DropdownMenuShortcut><Home /></DropdownMenuShortcut>
+                    <DropdownMenuShortcut><HomeIcon /></DropdownMenuShortcut>
                   </DropdownMenuItem>
 
                   <DropdownMenuSeparator />
+                  {/*  ── SUPER ADMIN GROUP ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
+                  {/*  ── Organizations ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
+                  {user.role === 'SUPER_ADMIN' && (
+                    <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/user')}>
+                      {t('users')}
+                    </DropdownMenuItem>
+                  )}
+
+                  {/*  ── Organizations ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
+                  {user.role === 'SUPER_ADMIN' && (
+                    <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/organization')}>
+                      {t('organizations')}
+                    </DropdownMenuItem>
+                  )}
 
                   {(user.role === 'SUPER_ADMIN' || user.role === 'ADMIN') && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
-                    {/* ------------------------------------------------------------- */}
-                    {/* Organizations (SUPER_ADMIN) */}
-                    {user.role === 'SUPER_ADMIN' && (
-                      <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/organization')}>
-                        {t('organizations')}
-                      </DropdownMenuItem>
-                    )}
 
                     {/* ------------------------------------------------------------- */}
                     {/* Organizations (ADMIN) */}
@@ -723,16 +783,18 @@ function TaskSidebarSections({
                   <DropdownMenuGroup>
                     {/* Theme Toggle Button */}
                     <DropdownMenuLabel className="flex text-muted-foreground font-normal">{t('theme')}
-                    <span
-                      className="ml-auto"
-                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                    >
-                      {theme === "dark" ? (
-                        <Sun className="h-4 w-4" />
-                      ) : (
-                        <Moon className="h-4 w-4" />
-                      )}
-                    </span>
+                    <AnimateIcon animateOnHover asChild>
+                      <span
+                        className="ml-auto cursor-pointer"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                      >
+                        {theme === "dark" ? (
+                          <SunIcon className="h-4 w-4" />
+                        ) : (
+                          <MoonIcon className="h-4 w-4" />
+                        )}
+                      </span>
+                    </AnimateIcon>
 
                     </DropdownMenuLabel>
 
@@ -789,12 +851,6 @@ function TaskSidebarSections({
                 {getPageTitle()}
               </h1>
             </div>
-
-            {/* MOVED:: SELECT ORGANIZATION 
-            <div className="flex items-center gap-2">
-              <OrganizationSwitcher />
-            </div>
-            */}
 
             {/* ACTIONS */ }
             <div className="

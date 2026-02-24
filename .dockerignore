@@ -1,8 +1,15 @@
-node_modules
 .next
 .git
 .gitignore
 Dockerfile
 docker-compose.yml
 .env
+.env.local
+.env.*.local
 *.log
+logs/
+_other/
+.claude/
+README.md
+.vscode
+.idea

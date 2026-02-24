@@ -69,7 +69,7 @@ export function exportToExcel(data: any[], columns: ExportColumn[], filename: st
 
 export async function exportToPDF(data: any[], columns: ExportColumn[], filename: string): Promise<void>
 {
-    const jspdfModule = await import('jspdf');
+    const jspdfModule = await import('jspdf') as any;
     const jsPDF = jspdfModule.jsPDF || jspdfModule.default?.jsPDF || jspdfModule.default;
     const autotableModule = await import('jspdf-autotable');
     const autoTable = autotableModule.default || autotableModule.applyPlugin;

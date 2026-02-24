@@ -43,7 +43,9 @@
     "currentTasks": "Current Tasks",
     "waitingTasks": "Waiting Tasks",
     "urgentTasks": "Urgent Tasks",
+    "noTasks": "No tasks",
     "home": "Home",
+    "users": "Users",
     "organizations": "Organizations",
     "profiles": "Profiles",
     "tasks": "Tasks",
@@ -359,6 +361,73 @@
     "badges": {
       "new": "new",
       "system": "System"
+    }
+  },
+  "User": {
+    "buttons": {
+      "newUser": "New Login",
+      "createUser": "Create Login",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteUser": "Delete Login",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Login",
+      "createDescription": "Enter the details for the new login.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system."
+    },
+    "labels": {
+      "name": "Name",
+      "nickname": "Nickname",
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New Password",
+      "role": "Role",
+      "id": "ID"
+    },
+    "placeholders": {
+      "enterName": "Enter full name",
+      "enterNickname": "Enter nickname",
+      "enterEmail": "Enter email address",
+      "enterPassword": "Enter password",
+      "enterNewPassword": "Leave empty to keep current password",
+      "filterByNameOrEmail": "Filter by name or email..."
+    },
+    "tabs": {
+      "details": "Details",
+      "actions": "Actions"
+    },
+    "roles": {
+      "USER": "User",
+      "ADMIN": "Admin",
+      "SUPER_ADMIN": "Super Admin"
+    },
+    "empty": {
+      "noUsersMatch": "No logins match your filter",
+      "noUsersFound": "No logins found"
+    },
+    "pagination": {
+      "showingUsers": "Showing {start} to {end} of {total} logins"
+    },
+    "toast": {
+      "userCreated": "Login created successfully",
+      "userUpdated": "Login updated successfully",
+      "saveError": "Could not save login",
+      "userDeleted": "Login deleted successfully",
+      "deleteError": "Could not delete login",
+      "emailTaken": "A user with this email already exists",
+      "cannotDeleteSelf": "Cannot delete your own account"
+    },
+    "sections": {
+      "userActions": "Login Actions",
+      "userActionsDescription": "Manage this login with the actions below.",
+      "deleteUserTitle": "Delete Login",
+      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
     }
   },
   "Profile": {
@@ -700,6 +769,24 @@
       "high": "High (67–100)",
       "riskScoreLabel": "Risk Score: {risk}%",
       "showInactive": "Show Inactive"
+    },
+    "confirm": {
+      "inactiveTitle": "Set Controls Inactive?",
+      "inactiveDescription": "The following controls will be marked as inactive: {controls}. You can reactivate them at any time.",
+      "confirm": "Confirm",
+      "cancel": "Cancel"
+    },
+    "segments": {
+      "combinedGroups": "Combined Groups",
+      "ctrlClickHint": "Ctrl+Click outer ring segments to select, then combine.",
+      "selected": "Selected",
+      "combine": "Combine",
+      "uncombine": "Uncombine",
+      "clickToRename": "Click to rename",
+      "noGroups": "No combined groups yet.",
+      "renameTitle": "Rename Group",
+      "renameDescription": "Enter a new name for this combined group.",
+      "renameSave": "Save"
     },
     "table": {
       "control": "Control",

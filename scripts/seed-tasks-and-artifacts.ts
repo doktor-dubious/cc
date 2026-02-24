@@ -1,79 +1,31 @@
-// scripts/seed-tasks-artifacts.ts
+// scripts/seed-tasks-and-artifacts.ts
 import { prisma } from '../src/lib/prisma';
 
-const TASKS_PER_ORG = 6;
-const ARTIFACTS_PER_TASK_AVG = 2;
-const TOTAL_ORGS_TO_USE = 20;
+const TASKS_TO_CREATE = 10;
 
-const taskNames = [
-  'Prepare Q1 Financial Report',
-  'Conduct Security Audit 2026',
-  'Onboard New Sales Team',
-  'Update Privacy Policy',
-  'Develop New Mobile App Feature',
-  'Risk Assessment Workshop',
-  'Internal Compliance Training',
-  'Vendor Contract Review',
-  'Incident Response Drill',
-  'Data Protection Impact Assessment',
-  'Annual Board Report Preparation',
-  'GDPR Gap Analysis',
-  'ISO 27001 Certification Prep',
-  'Employee Handbook Revision',
-  'Cybersecurity Awareness Campaign',
-  'Business Continuity Plan Update',
-  'Third-Party Risk Review',
-  'Whistleblower Policy Rollout',
-  'Data Classification Exercise',
-  'Access Control Audit'
+const taskTemplates = [
+  { name: 'Prepare Q1 Financial Report',        description: 'Compile financial statements and notes for board review' },
+  { name: 'Conduct Security Audit 2026',        description: 'Identify vulnerabilities and recommend remediation steps' },
+  { name: 'Update Privacy Policy',              description: 'Review and update company privacy documentation' },
+  { name: 'Risk Assessment Workshop',           description: 'Facilitate workshop with department heads' },
+  { name: 'Internal Compliance Training',       description: 'Deliver mandatory training to all staff' },
+  { name: 'Vendor Contract Review',             description: 'Assess legal and compliance risks in vendor agreements' },
+  { name: 'Incident Response Drill',            description: 'Test incident response procedures with simulated attack' },
+  { name: 'GDPR Gap Analysis',                  description: 'Perform gap analysis against GDPR requirements' },
+  { name: 'ISO 27001 Certification Prep',       description: 'Prepare documentation for upcoming certification audit' },
+  { name: 'Data Classification Exercise',       description: 'Classify all company data assets by sensitivity level' },
 ];
 
-const descriptions = [
-  'Compile financial statements and notes for board review',
-  'Identify vulnerabilities and recommend remediation steps',
-  'Create onboarding materials and schedule training sessions',
-  'Review and update company privacy documentation',
-  'Implement user authentication improvements',
-  'Facilitate workshop with department heads',
-  'Deliver mandatory training to all staff',
-  'Assess legal and compliance risks in vendor agreements',
-  'Test incident response procedures with simulated attack',
-  'Conduct DPIA for new customer-facing feature',
-  'Gather data and draft annual compliance report',
-  'Perform gap analysis against GDPR requirements',
-  'Prepare documentation for upcoming certification audit',
-  'Revise employee handbook with new policies',
-  'Launch phishing simulation and awareness training',
-  'Update BCP with new remote work scenarios',
-  'Evaluate third-party vendors for security posture',
-  'Roll out updated whistleblower reporting system',
-  'Classify all company data assets by sensitivity level',
-  'Review user permissions and remove unnecessary access'
+const artifactTemplates: { type: 'DOCUMENT' | 'EXCEL' | 'PDF' | 'CONTRACT' | 'LEGAL' | 'POLICY' | 'PROCEDURE' | 'REPORT'; mimeType: string; extension: string }[] = [
+  { type: 'DOCUMENT',  mimeType: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', extension: '.docx' },
+  { type: 'EXCEL',     mimeType: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',       extension: '.xlsx' },
+  { type: 'PDF',       mimeType: 'application/pdf',       extension: '.pdf' },
+  { type: 'CONTRACT',  mimeType: 'application/pdf',       extension: '.pdf' },
+  { type: 'POLICY',    mimeType: 'application/pdf',       extension: '.pdf' },
+  { type: 'REPORT',    mimeType: 'application/pdf',       extension: '.pdf' },
 ];
 
-const artifactTypes = ['DOCUMENT', 'EXCEL', 'PDF', 'CONTRACT', 'LEGAL', 'POLICY', 'PROCEDURE', 'REPORT'];
-
-const mimeTypes: Record<string, string> = {
-  DOCUMENT: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-  EXCEL:    'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-  PDF:      'application/pdf',
-  CONTRACT: 'application/pdf',
-  LEGAL:    'application/pdf',
-  POLICY:   'application/pdf',
-  PROCEDURE:'application/pdf',
-  REPORT:   'application/pdf'
-};
-
-const extensions: Record<string, string> = {
-  DOCUMENT: '.docx',
-  EXCEL:    '.xlsx',
-  PDF:      '.pdf',
-  CONTRACT: '.pdf',
-  LEGAL:    '.pdf',
-  POLICY:   '.pdf',
-  PROCEDURE:'.pdf',
-  REPORT:   '.pdf'
-};
+const statuses: ('NOT_STARTED' | 'OPEN' | 'COMPLETED' | 'CLOSED')[] = ['NOT_STARTED', 'OPEN', 'OPEN', 'COMPLETED', 'CLOSED'];
 
 function randomItem<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -91,102 +43,84 @@ function randomPastDate(daysMax = 180): Date {
 
 async function seedTasksAndArtifacts() {
   try {
-    console.log(`\n🌱 Starting to seed tasks & artifacts...\n`);
+    console.log('\n  Starting to seed tasks & artifacts for Acme Ltd...\n');
 
-    // Get organizations
-    const organizations = await prisma.organization.findMany({
-      where: { active: true },
-      take: TOTAL_ORGS_TO_USE,
-      orderBy: { seq: 'asc' },
-      select: { id: true, name: true }
+    // Find "Acme Ltd" organization
+    const org = await prisma.organization.findFirst({
+      where: { name: { contains: 'Acme', mode: 'insensitive' }, active: true },
+      select: { id: true, name: true },
     });
 
-    if (organizations.length === 0) {
-      console.log('❌ No active organizations found. Run seed-organizations.ts first.');
+    if (!org) {
+      console.log('  No active organization matching "Acme" found.');
+      console.log('  Available organizations:');
+      const orgs = await prisma.organization.findMany({ where: { active: true }, select: { name: true } });
+      orgs.forEach(o => console.log(`    - ${o.name}`));
       return;
     }
 
-    console.log(`Found ${organizations.length} organizations to assign tasks to.`);
+    console.log(`  Found organization: ${org.name} (${org.id})\n`);
 
     let totalTasks = 0;
     let totalArtifacts = 0;
 
-    for (const org of organizations) {
-      console.log(`\nWorking on organization: ${org.name} (${org.id})`);
+    for (let i = 0; i < TASKS_TO_CREATE; i++) {
+      const template = taskTemplates[i % taskTemplates.length];
 
-      const tasks = await Promise.all(
-        Array.from({ length: TASKS_PER_ORG }).map(async () => {
-          const taskName = randomItem(taskNames);
-          const taskDesc = randomItem(descriptions);
-          const startAt = randomPastDate();
-          const endAt = randomFutureDate();
+      const task = await prisma.task.create({
+        data: {
+          organizationId: org.id,
+          name: template.name,
+          description: template.description,
+          expectedEvidence: 'Meeting minutes, signed attendance list, action plan',
+          startAt: randomPastDate(),
+          endAt: randomFutureDate(),
+          status: randomItem(statuses),
+          active: true,
+        },
+      });
+      totalTasks++;
 
-          const task = await prisma.task.create({
-            data: {
-              organizationId: org.id,
-              name: taskName,
-              description: taskDesc,
-              expectedEvidence: 'Meeting minutes, signed attendance list, action plan',
-              startAt,
-              endAt,
-              status: randomItem(['NOT_STARTED', 'OPEN', 'COMPLETED', 'CLOSED']),
-              active: true,
-            }
-          });
+      // Create 1-3 artifacts per task
+      const artifactCount = Math.floor(Math.random() * 3) + 1;
 
-          totalTasks++;
+      for (let j = 0; j < artifactCount; j++) {
+        const art = randomItem(artifactTemplates);
+        const artifactName = `${template.name} - ${art.type.toLowerCase()} doc`;
 
-          // Create artifacts for this task
-          const artifactCount = Math.floor(Math.random() * (ARTIFACTS_PER_TASK_AVG + 3)); // 0–5
+        const artifact = await prisma.artifact.create({
+          data: {
+            organizationId: org.id,
+            name: artifactName,
+            description: `Supporting document for "${template.name}"`,
+            type: art.type,
+            mimeType: art.mimeType,
+            extension: art.extension,
+            size: `${Math.floor(Math.random() * 12000) + 500} KB`,
+            originalName: `${artifactName.replace(/ /g, '_')}${art.extension}`,
+            active: true,
+          },
+        });
 
-          if (artifactCount > 0) {
-            await Promise.all(
-              Array.from({ length: artifactCount }).map(async () => {
-                const type = randomItem(artifactTypes);
-                const artifactName = `${taskName} - ${type.toLowerCase()} doc`;
+        await prisma.taskArtifact.create({
+          data: {
+            taskId: task.id,
+            artifactId: artifact.id,
+          },
+        });
 
-                const artifact = await prisma.artifact.create({
-                  data: {
-                    organizationId: org.id,
-                    name: artifactName,
-                    description: `Supporting document for "${taskName}"`,
-                    type,
-                    mimeType: mimeTypes[type] || 'application/octet-stream',
-                    extension: extensions[type] || '.bin',
-                    size: (Math.floor(Math.random() * 12000) + 500).toString() + ' KB',
-                    originalName: `${artifactName.replace(/ /g, '_')}${extensions[type] || '.pdf'}`,
-                    active: true,
-                  }
-                });
+        totalArtifacts++;
+      }
 
-                // Link artifact to task
-                await prisma.taskArtifact.create({
-                  data: {
-                    taskId: task.id,
-                    artifactId: artifact.id
-                  }
-                });
-
-                totalArtifacts++;
-              })
-            );
-          }
-
-          return task;
-        })
-      );
-
-      console.log(`  → Created ${tasks.length} tasks and ~${tasks.length * ARTIFACTS_PER_TASK_AVG} artifacts`);
+      console.log(`  Created task: "${template.name}" with ${artifactCount} artifact(s)`);
     }
 
-    console.log(`\n✅ Seeding completed:`);
-    console.log(`   • Total tasks created:     ${totalTasks}`);
-    console.log(`   • Total artifacts created: ${totalArtifacts}`);
-    console.log(`   • Used ${organizations.length} organizations`);
-
-    console.log('\n✨ Done! You can now browse tasks/artifacts in the app.');
+    console.log(`\n  Seeding completed:`);
+    console.log(`    Tasks created:     ${totalTasks}`);
+    console.log(`    Artifacts created: ${totalArtifacts}`);
+    console.log(`    Organization:      ${org.name}`);
   } catch (err) {
-    console.error('❌ Seeding failed:', err);
+    console.error('  Seeding failed:', err);
     process.exit(1);
   } finally {
     await prisma.$disconnect();

@@ -1,11 +1,23 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useRouter }                    from 'next/navigation';
 import { useTranslations }              from 'next-intl';
 import { useOrganization }              from '@/context/OrganizationContext';
 import { Switch }                       from '@/components/ui/switch';
+import { Input }                        from '@/components/ui/input';
+import { Button }                       from '@/components/ui/button';
 import { PieChart, Pie, Cell, Sector, ResponsiveContainer } from 'recharts';
+import { X }                            from 'lucide-react';
+import {
+  AlertDialog, AlertDialogAction, AlertDialogCancel,
+  AlertDialogContent, AlertDialogDescription, AlertDialogFooter,
+  AlertDialogHeader, AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import {
+  Dialog, DialogContent, DialogDescription, DialogFooter,
+  DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
 
 // ── CIS Controls v8 — 18 controls across 5 groups ──────────────────────────
 
@@ -55,39 +67,55 @@ function riskColor(risk: number): string {
   return '#ef4444';                   // red
 }
 
-const groups = Object.keys(GROUP_COLORS);
+const cisGroups = Object.keys(GROUP_COLORS);
+
+// ── Palette for combined groups (distinct from CIS group colors) ────────────
+
+const COMBINED_GROUP_PALETTE = [
+  '#6366f1', // indigo
+  '#ec4899', // pink
+  '#14b8a6', // teal
+  '#f97316', // orange
+  '#8b5cf6', // violet
+  '#06b6d4', // cyan
+  '#84cc16', // lime
+  '#e11d48', // rose
+];
+
+type CombinedGroup = {
+  dbId?: string;  // DB id (undefined for not-yet-persisted)
+  ids:   number[];
+  name:  string;
+  color: string;
+};
 
 // ── Build outermost ring data with combined groups ──────────────────────────
 
 function buildOutermostData(
   controlsList: Control[],
   inactiveControls: Set<number>,
-  combinedGroups: number[][]
-): Array<{ name: string; title: string; value: number; fill: string; id: number; ids: number[]; active: boolean }> {
-  const result: Array<{ name: string; title: string; value: number; fill: string; id: number; ids: number[]; active: boolean }> = [];
+  combinedGroups: CombinedGroup[]
+): Array<{ name: string; title: string; value: number; fill: string; id: number; ids: number[]; active: boolean; groupIndex: number }> {
+  const result: Array<{ name: string; title: string; value: number; fill: string; id: number; ids: number[]; active: boolean; groupIndex: number }> = [];
   const processed = new Set<number>();
   const visibleIds = new Set(controlsList.map(c => c.id));
 
-  for (const group of combinedGroups) {
-    const visibleGroup = group.filter(id => visibleIds.has(id));
+  for (let gi = 0; gi < combinedGroups.length; gi++) {
+    const group = combinedGroups[gi];
+    const visibleGroup = group.ids.filter(id => visibleIds.has(id));
     if (visibleGroup.length === 0) continue;
 
     const allActive = visibleGroup.every(id => !inactiveControls.has(id));
-    const label = visibleGroup.length > 1
-      ? `${visibleGroup.length} controls`
-      : controls.find(c => c.id === visibleGroup[0])?.short || '';
-    const title = visibleGroup.length > 1
-      ? `Combined: ${visibleGroup.map(id => controls.find(c => c.id === id)?.short).join(', ')}`
-      : controls.find(c => c.id === visibleGroup[0])?.title || '';
 
     result.push({
-      name: label,
-      title,
+      name: group.name,
+      title: `${group.name}: ${visibleGroup.map(id => controls.find(c => c.id === id)?.short).join(', ')}`,
       value: visibleGroup.length,
-      fill: allActive ? '#22c55e' : '#6b7280',
+      fill: allActive ? group.color : '#6b7280',
       id: visibleGroup[0],
       ids: visibleGroup,
       active: allActive,
+      groupIndex: gi,
     });
     visibleGroup.forEach(id => processed.add(id));
   }
@@ -103,6 +131,7 @@ function buildOutermostData(
         id: control.id,
         ids: [control.id],
         active,
+        groupIndex: -1,
       });
     }
   }
@@ -245,13 +274,26 @@ export default function CISControlsPage() {
 
   // Outermost ring configuration state
   const [inactiveControls, setInactiveControls] = useState<Set<number>>(new Set());
-  const [combinedGroups, setCombinedGroups] = useState<number[][]>([]);
+  const [combinedGroups, setCombinedGroups] = useState<CombinedGroup[]>([]);
   const [selectedForCombine, setSelectedForCombine] = useState<Set<number>>(new Set());
 
   // Show/hide inactive controls toggle
   const [showInactive, setShowInactive] = useState(false);
 
-  // ── Fetch active/inactive state from DB ──────────────────────────────────
+  // Confirm dialog for toggling inactive
+  const [confirmInactive, setConfirmInactive] = useState<{ ids: number[]; names: string[] } | null>(null);
+
+  // Rename group dialog
+  const [renameDialog, setRenameDialog] = useState<{ groupIndex: number; name: string } | null>(null);
+
+  // Set of all control IDs that are already in a combined group
+  const groupedControlIds = useMemo(() => {
+    const set = new Set<number>();
+    combinedGroups.forEach(g => g.ids.forEach(id => set.add(id)));
+    return set;
+  }, [combinedGroups]);
+
+  // ── Fetch active/inactive state + combined groups from DB ─────────────────
   useEffect(() => {
     if (!activeOrganization) return;
 
@@ -262,6 +304,20 @@ export default function CISControlsPage() {
           const inactive = new Set<number>();
           data.data.forEach((r: any) => { if (!r.active) inactive.add(r.controlId); });
           setInactiveControls(inactive);
+        }
+      })
+      .catch(() => {});
+
+    fetch(`/api/cis-control-group?organizationId=${activeOrganization.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          setCombinedGroups(data.data.map((g: any) => ({
+            dbId:  g.id,
+            ids:   g.ids,
+            name:  g.name,
+            color: g.color,
+          })));
         }
       })
       .catch(() => {});
@@ -320,47 +376,65 @@ export default function CISControlsPage() {
   };
 
   // ── Click inner/middle ring → navigate to safeguards ─────────────────────
-  const handleSegmentClick = (_: any, index: number) => {
+  const handleSegmentClick = (_: any, index: number, event: React.MouseEvent) => {
+    if (event?.ctrlKey || event?.metaKey) return;
     const controlId = visibleControls[index].id;
     router.push(`/cis/safeguards?control=${controlId}`);
   };
 
-  // ── Click outer ring → toggle active/inactive (persisted to DB) ──────────
-  const handleOuterClick = (e: any, index: number) => {
+  // ── Persist inactive toggle to DB ────────────────────────────────────────
+  const persistInactiveToggle = useCallback((ids: number[]) => {
+    if (!activeOrganization) return;
+
+    setInactiveControls(prev => {
+      const next = new Set(prev);
+      ids.forEach(id => {
+        const willBeActive = next.has(id);
+        if (next.has(id)) next.delete(id);
+        else next.add(id);
+
+        fetch('/api/cis-control', {
+          method: 'PUT',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            organizationId: activeOrganization.id,
+            controlId: id,
+            active: willBeActive,
+          }),
+        });
+      });
+      return next;
+    });
+  }, [activeOrganization]);
+
+  // ── Click outer ring → toggle active/inactive or ctrl+click select ──────
+  const handleOuterClick = (_: any, index: number, event: React.MouseEvent) => {
     const segment = outermostData[index];
 
-    if (e.ctrlKey || e.metaKey) {
+    if (event?.ctrlKey || event?.metaKey) {
+      // Only allow selecting ungrouped individual controls
+      if (segment.groupIndex >= 0) return; // already in a group — skip
       setSelectedForCombine(prev => {
         const next = new Set(prev);
         segment.ids.forEach(id => {
+          if (groupedControlIds.has(id)) return; // safety check
           if (next.has(id)) next.delete(id);
           else next.add(id);
         });
         return next;
       });
     } else {
-      if (!activeOrganization) return;
-
-      setInactiveControls(prev => {
-        const next = new Set(prev);
-        segment.ids.forEach(id => {
-          const willBeActive = next.has(id); // was inactive → becoming active
-          if (next.has(id)) next.delete(id);
-          else next.add(id);
-
-          // Persist to DB
-          fetch('/api/cis-control', {
-            method: 'PUT',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              organizationId: activeOrganization.id,
-              controlId: id,
-              active: willBeActive,
-            }),
-          });
-        });
-        return next;
-      });
+      // If making active segments inactive → show confirm dialog
+      const hasActiveSegments = segment.ids.some(id => !inactiveControls.has(id));
+      if (hasActiveSegments) {
+        const names = segment.ids
+          .filter(id => !inactiveControls.has(id))
+          .map(id => controls.find(c => c.id === id)?.short || `#${id}`);
+        setConfirmInactive({ ids: segment.ids, names });
+      } else {
+        // Reactivating — no confirm needed
+        persistInactiveToggle(segment.ids);
+      }
     }
   };
 
@@ -372,22 +446,72 @@ export default function CISControlsPage() {
     setHighlightRisk(null);
   };
 
-  // ── Combine / uncombine ──────────────────────────────────────────────────
-  const handleCombineSelected = () => {
+  // ── Combine selected → persist to DB ──────────────────────────────────────
+  const handleCombineSelected = useCallback(() => {
     const selected = Array.from(selectedForCombine).sort((a, b) => a - b);
-    if (selected.length < 2) return;
+    if (selected.length < 2 || !activeOrganization) return;
 
-    const filteredGroups = combinedGroups.filter(group =>
-      !group.some(id => selected.includes(id))
-    );
+    const colorIndex = combinedGroups.length % COMBINED_GROUP_PALETTE.length;
+    const defaultName = `Group ${combinedGroups.length + 1}`;
+    const color = COMBINED_GROUP_PALETTE[colorIndex];
 
-    setCombinedGroups([...filteredGroups, selected]);
+    // Optimistic update
+    const newGroup: CombinedGroup = { ids: selected, name: defaultName, color };
+    setCombinedGroups(prev => [...prev, newGroup]);
     setSelectedForCombine(new Set());
-  };
 
-  const handleUncombine = (groupIndex: number) => {
+    // Persist
+    fetch('/api/cis-control-group', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        organizationId: activeOrganization.id,
+        name: defaultName,
+        color,
+        controlIds: selected,
+      }),
+    })
+    .then(res => res.json())
+    .then(data => {
+      if (data.success && data.data) {
+        // Update with the real DB id
+        setCombinedGroups(prev => prev.map(g =>
+          g === newGroup ? { ...g, dbId: data.data.id } : g
+        ));
+      }
+    })
+    .catch(() => {});
+  }, [selectedForCombine, combinedGroups.length, activeOrganization]);
+
+  // ── Uncombine → delete from DB ────────────────────────────────────────────
+  const handleUncombine = useCallback((groupIndex: number) => {
+    const group = combinedGroups[groupIndex];
     setCombinedGroups(prev => prev.filter((_, i) => i !== groupIndex));
-  };
+
+    if (group?.dbId) {
+      fetch(`/api/cis-control-group?id=${group.dbId}`, { method: 'DELETE' }).catch(() => {});
+    }
+  }, [combinedGroups]);
+
+  // ── Rename group → persist to DB ──────────────────────────────────────────
+  const handleRenameGroup = useCallback((groupIndex: number, newName: string) => {
+    const trimmed = newName.trim();
+    if (!trimmed) { setRenameDialog(null); return; }
+
+    setCombinedGroups(prev => prev.map((g, i) =>
+      i === groupIndex ? { ...g, name: trimmed } : g
+    ));
+    setRenameDialog(null);
+
+    const group = combinedGroups[groupIndex];
+    if (group?.dbId) {
+      fetch('/api/cis-control-group', {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: group.dbId, name: trimmed }),
+      }).catch(() => {});
+    }
+  }, [combinedGroups]);
 
   // ── Outermost ring label ─────────────────────────────────────────────────
   const renderOutermostLabel = (props: any) => {
@@ -468,11 +592,62 @@ export default function CISControlsPage() {
     return 1;
   };
 
+  // Only allow combining if all selected controls are ungrouped
+  const canCombine = selectedForCombine.size >= 2 &&
+    Array.from(selectedForCombine).every(id => !groupedControlIds.has(id));
+
   return (
     <div className="@container p-2 space-y-6 select-none">
 
+      {/* Confirm inactive dialog */}
+      <AlertDialog open={!!confirmInactive} onOpenChange={(open) => { if (!open) setConfirmInactive(null); }}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>{t('confirm.inactiveTitle')}</AlertDialogTitle>
+            <AlertDialogDescription>
+              {t('confirm.inactiveDescription', { controls: confirmInactive?.names.join(', ') ?? '' })}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>{t('confirm.cancel')}</AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              if (confirmInactive) persistInactiveToggle(confirmInactive.ids);
+              setConfirmInactive(null);
+            }}>
+              {t('confirm.confirm')}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      {/* Rename group dialog */}
+      <Dialog open={!!renameDialog} onOpenChange={(open) => { if (!open) setRenameDialog(null); }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>{t('segments.renameTitle')}</DialogTitle>
+            <DialogDescription>{t('segments.renameDescription')}</DialogDescription>
+          </DialogHeader>
+          <Input
+            value={renameDialog?.name ?? ''}
+            onChange={(e) => setRenameDialog(prev => prev ? { ...prev, name: e.target.value } : null)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && renameDialog) handleRenameGroup(renameDialog.groupIndex, renameDialog.name);
+            }}
+            autoFocus
+          />
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setRenameDialog(null)}>{t('confirm.cancel')}</Button>
+            <Button onClick={() => {
+              if (renameDialog) handleRenameGroup(renameDialog.groupIndex, renameDialog.name);
+            }}>
+              {t('segments.renameSave')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Chart + Legends */}
-      <div className="flex flex-col @[900px]:flex-row @[900px]:items-center" onMouseLeave={handleMouseLeave}>
+      <div className="flex flex-col @[900px]:flex-row @[900px]:items-start" onMouseLeave={handleMouseLeave}>
 
         {/* Chart */}
         <div className="flex-1 min-w-0 [&_path]:outline-none [&_g]:outline-none [&_.recharts-sector]:outline-none" style={{ height: 'calc(100vh - 100px)', minHeight: 500 }}>
@@ -488,7 +663,7 @@ export default function CISControlsPage() {
                 endAngle={-270}
                 innerRadius="53%"
                 outerRadius="58%"
-                activeIndex={activeInner}
+                {...{ activeIndex: activeInner }}
                 activeShape={renderActiveInner((risk) => t('legends.riskScoreLabel', { risk }))}
                 onMouseEnter={handleInnerEnter}
                 onClick={handleSegmentClick}
@@ -512,7 +687,7 @@ export default function CISControlsPage() {
                 endAngle={-270}
                 innerRadius="58%"
                 outerRadius="78%"
-                activeIndex={activeMiddle}
+                {...{ activeIndex: activeMiddle }}
                 activeShape={renderActiveMiddle}
                 onMouseEnter={handleMiddleEnter}
                 onClick={handleSegmentClick}
@@ -536,7 +711,7 @@ export default function CISControlsPage() {
                 endAngle={-270}
                 innerRadius="80%"
                 outerRadius="85%"
-                activeIndex={activeOuter}
+                {...{ activeIndex: activeOuter }}
                 activeShape={renderActiveOuter}
                 onMouseEnter={handleOuterEnter}
                 onClick={handleOuterClick}
@@ -547,7 +722,7 @@ export default function CISControlsPage() {
                 className="cursor-pointer"
               >
                 {outermostData.map((entry, index) => {
-                  const isSelected = selectedForCombine.has(entry.ids[0]) || entry.ids.some(id => selectedForCombine.has(id));
+                  const isSelected = entry.ids.some(id => selectedForCombine.has(id));
                   return (
                     <Cell
                       key={`outer-${index}`}
@@ -564,12 +739,12 @@ export default function CISControlsPage() {
         </div>
 
         {/* Legends — beside chart on wide screens, below on narrow */}
-        <div className="flex flex-row flex-wrap justify-center gap-6 @[900px]:flex-col @[900px]:gap-8 @[900px]:pl-6 @[900px]:shrink-0">
+        <div className="flex flex-row flex-wrap justify-center gap-6 @[900px]:flex-col @[900px]:gap-8 @[900px]:pl-6 @[900px]:shrink-0 @[900px]:pt-12">
 
           {/* Group legend */}
           <div className="space-y-3">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('legends.controlGroups')}</p>
-            {groups.map((group) => (
+            {cisGroups.map((group) => (
               <div
                 key={group}
                 className="flex items-center gap-2 cursor-pointer transition-opacity"
@@ -616,9 +791,11 @@ export default function CISControlsPage() {
               <div className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: '#ef4444' }} />
               <span className="text-sm text-muted-foreground">{t('legends.high')}</span>
             </div>
+          </div>
 
-            {/* Show inactive controls toggle */}
-            <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+          {/* Show inactive toggle — separated */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
               <Switch
                 checked={showInactive}
                 onCheckedChange={setShowInactive}
@@ -627,60 +804,73 @@ export default function CISControlsPage() {
             </div>
           </div>
 
-        </div>
-      </div>
+          {/* Combined groups section */}
+          <div className="space-y-3">
+            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('segments.combinedGroups')}</p>
 
-      {/* Segment Configuration */}
-      <div className="border rounded-lg p-6 space-y-4">
-        <h3 className="text-lg font-semibold">Segment Configuration</h3>
+            {/* Instructions */}
+            <p className="text-xs text-muted-foreground">{t('segments.ctrlClickHint')}</p>
 
-        {/* Instructions */}
-        <div className="text-sm text-muted-foreground space-y-1">
-          <p>• Click segments in the outermost ring to toggle active/inactive status</p>
-          <p>• Ctrl+Click segments to select them for combining</p>
-          <p>• Selected segments will have a blue border</p>
-        </div>
-
-        {/* Combine button */}
-        {selectedForCombine.size >= 2 && (
-          <button
-            onClick={handleCombineSelected}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
-          >
-            Combine Selected ({selectedForCombine.size} controls)
-          </button>
-        )}
-
-        {/* Combined groups list */}
-        {combinedGroups.length > 0 && (
-          <div className="space-y-2">
-            <p className="text-sm font-medium">Combined Groups:</p>
-            {combinedGroups.map((group, index) => (
-              <div key={index} className="flex items-center gap-3 p-3 bg-muted/50 rounded-md">
-                <div className="flex-1">
-                  <span className="text-sm">
-                    Controls {group.join(', ')} — {group.map(id => controls.find(c => c.id === id)?.short).join(', ')}
-                  </span>
-                </div>
-                <button
-                  onClick={() => handleUncombine(index)}
-                  className="px-3 py-1 text-xs bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
-                >
-                  Uncombine
-                </button>
+            {/* Selected controls info + combine button */}
+            {selectedForCombine.size > 0 && (
+              <div className="space-y-2">
+                <p className="text-xs text-blue-500">
+                  {t('segments.selected')}: {Array.from(selectedForCombine).sort((a, b) => a - b).map(id =>
+                    controls.find(c => c.id === id)?.short
+                  ).join(', ')}
+                </p>
+                {canCombine && (
+                  <Button variant="default" size="sm" onClick={handleCombineSelected}>
+                    {t('segments.combine')} ({selectedForCombine.size})
+                  </Button>
+                )}
               </div>
-            ))}
-          </div>
-        )}
+            )}
 
-        {/* Selected controls info */}
-        {selectedForCombine.size > 0 && (
-          <div className="text-sm text-blue-600">
-            Selected: {Array.from(selectedForCombine).sort((a, b) => a - b).map(id =>
-              controls.find(c => c.id === id)?.short
-            ).join(', ')}
+            {/* Combined groups list */}
+            {combinedGroups.length > 0 ? (
+              <div className="space-y-2">
+                {combinedGroups.map((group, index) => (
+                  <div key={group.dbId ?? index} className="flex items-start gap-2 p-2 bg-muted/50 rounded-md">
+                    <div
+                      className="h-3 w-3 rounded-sm shrink-0 mt-0.5"
+                      style={{ backgroundColor: group.color }}
+                    />
+                    <div className="flex-1 min-w-0">
+                      <span
+                        className="text-xs font-medium cursor-pointer hover:underline"
+                        onClick={() => setRenameDialog({ groupIndex: index, name: group.name })}
+                        title={t('segments.clickToRename')}
+                      >
+                        {group.name}
+                      </span>
+                      <div className="mt-0.5 space-y-0">
+                        {group.ids.map(id => {
+                          const ctrl = controls.find(c => c.id === id);
+                          return (
+                            <p key={id} className="text-xs text-muted-foreground leading-tight">
+                              {ctrl?.short}
+                            </p>
+                          );
+                        })}
+                      </div>
+                    </div>
+                    <button
+                      onClick={() => handleUncombine(index)}
+                      className="text-muted-foreground hover:text-destructive transition-colors shrink-0"
+                      title={t('segments.uncombine')}
+                    >
+                      <X className="h-3.5 w-3.5" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="text-xs text-muted-foreground/60">{t('segments.noGroups')}</p>
+            )}
           </div>
-        )}
+
+        </div>
       </div>
 
       {/* Controls table */}

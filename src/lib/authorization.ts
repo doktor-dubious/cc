@@ -1,6 +1,7 @@
-import type { User }        from '@prisma/client';
-import { userRepository }   from '@/lib/database/user';
-import bcrypt               from 'bcryptjs';
+import { log }                  from '@/lib/log';
+import type { User }            from '@prisma/client';
+import { userRepository }       from '@/lib/database/user';
+import bcrypt                   from 'bcryptjs';
 
 export async function authenticateUser(
         email: string, 
@@ -8,6 +9,9 @@ export async function authenticateUser(
 : Promise<Pick<User, 'id' | 'email' | 'passwordHash' | 'role' | 'name'> & { profile?: { id: string } } | null>
 {
     const user = await userRepository.findByEmailWithPassword(email);
+console.log("USER: ", user);
+log.debug({user: user}, 'USER');
+
     if (!user) return null;
 
     const ok = await bcrypt.compare(password, user.passwordHash);

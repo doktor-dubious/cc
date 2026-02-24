@@ -102,5 +102,67 @@ export const userRepository =
         log.info({ email: data.email, name: data.name }, 'SQL - user: create');
 
         return prisma.user.create({ data, select: selectFields });
+    },
+
+    async findAll(): Promise<SafeUser[]>
+    {
+        log.info('SQL - user: findAll');
+
+        return prisma.user.findMany({
+            where   : { active: true },
+            select  : selectFields,
+            orderBy : { name: 'asc' }
+        });
+    },
+
+    async update(id: string, data: {
+        name         : string;
+        nickname     : string;
+        email        : string;
+        role         : UserRole;
+        passwordHash?: string;
+    }): Promise<SafeUser>
+    {
+        log.info({ ID: id, name: data.name }, 'SQL - user: update');
+
+        const updateData: Record<string, unknown> = {
+            name     : data.name,
+            nickname : data.nickname,
+            email    : data.email,
+            role     : data.role,
+        };
+        if (data.passwordHash) {
+            updateData.passwordHash = data.passwordHash;
+        }
+        return prisma.user.update({
+            where  : { id },
+            data   : updateData,
+            select : selectFields
+        });
+    },
+
+    async softDelete(id: string): Promise<SafeUser>
+    {
+        log.info({ id }, 'SQL - user: softDelete');
+
+        return prisma.user.update({
+            where  : { id },
+            data   : { active: false },
+            select : selectFields
+        });
+    },
+
+    async createWithRole(data: {
+        email        : string;
+        passwordHash : string;
+        name         : string;
+        nickname     : string;
+        workFunction : WorkFunction;
+        role         : UserRole;
+    }): Promise<SafeUser>
+    {
+        log.info({ email: data.email, name: data.name, role: data.role }, 'SQL - user: createWithRole');
+
+        return prisma.user.create({ data, select: selectFields });
     }
 };

@@ -43,6 +43,7 @@
     "currentTasks": "Aktuelle opgaver",
     "waitingTasks": "Afventende opgaver",
     "urgentTasks": "Kritiske opgaver",
+    "noTasks": "Ingen opgaver",
     "home": "Hjem",
     "organizations": "Organisationer",
     "profiles": "Profiler",
@@ -357,6 +358,74 @@
     "badges": {
       "new": "ny",
       "system": "System"
+    }
+  },
+
+  "User": {
+    "buttons": {
+      "newUser": "New Login",
+      "createUser": "Create Login",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteUser": "Delete Login",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Login",
+      "createDescription": "Enter the details for the new login.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system."
+    },
+    "labels": {
+      "name": "Name",
+      "nickname": "Nickname",
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New Password",
+      "role": "Role",
+      "id": "ID"
+    },
+    "placeholders": {
+      "enterName": "Enter full name",
+      "enterNickname": "Enter nickname",
+      "enterEmail": "Enter email address",
+      "enterPassword": "Enter password",
+      "enterNewPassword": "Leave empty to keep current password",
+      "filterByNameOrEmail": "Filter by name or email..."
+    },
+    "tabs": {
+      "details": "Details",
+      "actions": "Actions"
+    },
+    "roles": {
+      "USER": "User",
+      "ADMIN": "Admin",
+      "SUPER_ADMIN": "Super Admin"
+    },
+    "empty": {
+      "noUsersMatch": "No logins match your filter",
+      "noUsersFound": "No logins found"
+    },
+    "pagination": {
+      "showingUsers": "Showing {start} to {end} of {total} logins"
+    },
+    "toast": {
+      "userCreated": "Login created successfully",
+      "userUpdated": "Login updated successfully",
+      "saveError": "Could not save login",
+      "userDeleted": "Login deleted successfully",
+      "deleteError": "Could not delete login",
+      "emailTaken": "A user with this email already exists",
+      "cannotDeleteSelf": "Cannot delete your own account"
+    },
+    "sections": {
+      "userActions": "Login Actions",
+      "userActionsDescription": "Manage this login with the actions below.",
+      "deleteUserTitle": "Delete Login",
+      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
     }
   },
 
@@ -701,7 +770,26 @@
       "low": "Lav (0–33)",
       "medium": "Mellem (34–66)",
       "high": "Høj (67–100)",
-      "riskScoreLabel": "Risikoscore: {risk}%"
+      "riskScoreLabel": "Risikoscore: {risk}%",
+      "showInactive": "Vis inaktive"
+    },
+    "confirm": {
+      "inactiveTitle": "Sæt kontroller inaktive?",
+      "inactiveDescription": "Følgende kontroller markeres som inaktive: {controls}. Du kan genaktivere dem når som helst.",
+      "confirm": "Bekræft",
+      "cancel": "Annuller"
+    },
+    "segments": {
+      "combinedGroups": "Kombinerede grupper",
+      "ctrlClickHint": "Ctrl+Klik på ydre ring-segmenter for at vælge, derefter kombiner.",
+      "selected": "Valgt",
+      "combine": "Kombiner",
+      "uncombine": "Ophæv kombination",
+      "clickToRename": "Klik for at omdøbe",
+      "noGroups": "Ingen kombinerede grupper endnu.",
+      "renameTitle": "Omdøb gruppe",
+      "renameDescription": "Indtast et nyt navn for denne kombinerede gruppe.",
+      "renameSave": "Gem"
     },
     "table": {
       "control": "Kontrol",

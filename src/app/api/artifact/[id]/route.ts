@@ -50,7 +50,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         const { id: userId, profileId, role } = session.user;
         log.debug({ userId: userId, profileId: profileId ?? 'missing profileId', role: role ?? 'missing role' }, 'Payload');
 
-        if (!userId || !role || !profileId)
+        if (!userId || !role || (role !== 'SUPER_ADMIN' && !profileId))
         {
             return NextResponse.json<ApiResponse>(
                 {
@@ -237,7 +237,7 @@ export async function DELETE(request: NextRequest, { params }: { params: Promise
         const { id: userId, profileId, role } = session.user;
         log.debug({ userId: userId, profileId: profileId ?? 'missing profileId', role: role ?? 'missing role' }, 'Payload');
 
-        if (!userId || !role || !profileId)
+        if (!userId || !role || (role !== 'SUPER_ADMIN' && !profileId))
         {
             return NextResponse.json<ApiResponse>(
                 {

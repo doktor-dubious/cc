@@ -104,7 +104,7 @@ const Login = () =>
       <CardHeader className="text-center">
         <CardTitle className="font-playfair font-light text-3xl md:text-4xl text-orange-500 mb-4">Compliance<br />Circle</CardTitle>
         <CardDescription>
-          Login to access Compliance Circle
+          XX Login to access Compliance Circle
         </CardDescription>
       </CardHeader>
       <form id="login-form" onSubmit={handleEmailSubmit} className="space-y-4">

@@ -145,6 +145,7 @@
 
 ── Not Started ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
+  * PAGE: manage logins (super admin) create, delete, edit
   * PAGE: Upload Files (Drag & Drop)
   * PAGE: Reports
       -> Status Reports
@@ -162,6 +163,15 @@
 
 ────────────────────
 
+ToDo:
+* Rethink users/profile pages. DO we need two? There is already login handling on the profile page. Perhaps remove from there?
+* Page CIS18/Controls
+    * Some space between Risk Score legends and Show Inactive 
+    * Can only combine into one group. Must be able to have multiple groups.
+    * Groups should be able to be labeled. Labels & combination/uncombintion buttons to be displayed on the legends side.
+    * Segments in same group given colours in the outer ring. Inactive supersedes groups.
+    * A quick confirm modal to accept rendering a segment inactive
+
 ── Tuesday 24 Feb
 * Page Assets: New Tab: Action. Delete Asset moved from master table to Action tab.
 * Remember selected organization between refresh
@@ -172,22 +182,50 @@
 * Page CIS 18 Safeguard: "back to controls", "Ig1/IG2/IG3" buttons, make non-selectable. (minor)
 * General: Page title made non-selectable (minor)
 * Pages: Dashboard/Organization/Profile/Tasks/Assets/Incomming Files. Added functionality to export table (4) data to Excel, CSV, PDF, JSON, Clipboard. (very major)
+* Docker containerization (very major)
+* Production Environment + deployment script (major)
+* Sidebar collapse/expand fixes.
+  -> Click on Logo -> Home
+  -> Click on rest of header -> Collapse
+  -> Click on unused sidebar space -> collapse/expand
+  -> Logo & Icon location and permanence.
+  -> Collapse/Expande hover Cursor.
+  -> In collapsed mode: menus should pop-out, not expand sidemenu.
+  -> Logo size and position.
+  -> Smoother animation transition.
+  -> Animated Icons.
+  -> Pointer cursor hover on clickable items.
+  -> Logo resized (28x28) and positioned.
+  -> Some animated icons in Drop Down menu.
+* Seed Scripts fixed for new database.
+* New Page: Users (Create, Delete, Edit users)
+* Page CIS18/Controls: 
+  -> CTRL+Click to select segments for combining.
+  -> Combine by clicking on button.
+  -> Combined segments are displayed under the wheel.
+* Page CIS18/Controls: 
+    -> Some space between Risk Score legends and Show Inactive.
+    -> A short confirm modal popup to accept rendering a segment inactive.
+    -> It is currenty only possible to combine segments into a single group. Must be able to have multiple groups. 
+    -> Groups should be able to be labeled with a name. And each group should have their own colors in the outer ring.
+    -> Group labels & combination/uncombintion buttons to be displayed on the legends side, below Risk Score. 
+    --
+    -> Combine button -> Standard Default Button
+    -> Break up Group's Controls to display over multiple lines
+    -> Functionality to name groups with custom name (to replace default "group 1..")
+    -> Store groups in database.
+    -> Fix error where groups could be grouped. 
 
 
-Some changes to the Sidebar collapse functionality. I want it to behave much the same way as on grok.com and claude.ai.
-1) In general the collapse/expanse should flow more smoothly.
-2) Clicking on the logo should redirect to home / not collapse sidebar.
-3) The logo should have same size, and be unchanged between collapse/expanse
-4) Hovering over a part of the sidemenu which has no content should show collapse/expand cursor. Clicking here should collapse/expand
 
+1) The combine button should be a <Button variant="default"
+2) Under the group name, is a list of the controls in the group. This line is too long, perhaps break up so only one control per line.
+3) Clicking on the group should popup a dialog where the group can be given a name, to replace the default name "group 1", "group 2".
+4) There is an error: after a group has been created, you can select the group and it'll let you click the combine button again.
+5) The groups should be stored in the database. Create new tables or columns in existing tables if required.
 
+when you select a group and combine it with a
 
-
-CIS 18 Controls. 1) Make database tables to store if a CIS18 Control is active/inactive for a given Organization. And store the active/inactive state there when the outermost donut is clicked.
-2) By default only acive controls should be displayed in the donouts. In the legend section, under Risk Score, there should be a selector where the user can chose to display also inactive controls.
-
-
-3) Page CIS 18 Controls: make all text on the page non-selectable (select-none).
 
 
 ── Monday 23 Feb
@@ -204,7 +242,20 @@ CIS 18 Controls. 1) Make database tables to store if a CIS18 Control is active/i
 * Dashboard Page: new table Audit Trail.
 
 ---
-l 
+
+Here is a list of task I'd like done. Please complete di everything nessecary without stopping for confirmation.
+
+* All on the Page CIS18/Controls
+    1) Some space between Risk Score legends and Show Inactive.
+    2) A short confirm modal popup to accept rendering a segment inactive.
+    3) It is currenty only possible to combine segments into a single group. Must be able to have multiple groups. 
+    4) Groups should be able to be labeled with a name. And each group should have their own colors in the outer ring.
+    5) Group labels & combination/uncombintion buttons to be displayed on the legends side, below Risk Score. 
+
+    . 
+    * Segments in same group given colours in the outer ring. Inactive supersedes groups.
+
+
 
 
 

@@ -286,7 +286,7 @@ export default function OrganizationPage()
                 })
             );
 
-            setSelectedOrg((prev) => 
+            setSelectedOrg((prev: any) => 
             {
                 if (!prev) return prev;
                 return {
@@ -359,7 +359,7 @@ export default function OrganizationPage()
             })
             );
 
-            setSelectedOrg((prev) => 
+            setSelectedOrg((prev: any) => 
             {
                 if (!prev) return prev;
                 return {
@@ -560,7 +560,7 @@ export default function OrganizationPage()
                 )
             );
 
-            setSelectedOrg(prev => (
+            setSelectedOrg((prev: any) => (
             {
                 ...prev!,
                 settings: data.data
@@ -766,7 +766,7 @@ export default function OrganizationPage()
             );
 
             // Update selectedOrg so the table refreshes immediately
-            setSelectedOrg(prev =>
+            setSelectedOrg((prev: any) =>
             {
                 if (!prev) return prev;
                 return {
@@ -1015,7 +1015,7 @@ export default function OrganizationPage()
             );
 
             // Update selectedOrg
-            setSelectedOrg((prev) => 
+            setSelectedOrg((prev: any) => 
             {
                 if (!prev) return prev;
                 return {
@@ -1095,7 +1095,7 @@ export default function OrganizationPage()
             );
 
             // Also update selectedOrg
-            setSelectedOrg((prev) => 
+            setSelectedOrg((prev: any) => 
             {
                 if (!prev) return prev;
                 return {
@@ -1189,7 +1189,7 @@ export default function OrganizationPage()
             );
 
             // Update selectedOrg
-            setSelectedOrg(prev =>
+            setSelectedOrg((prev: any) =>
             prev
                 ? {
                     ...prev,
@@ -1303,7 +1303,7 @@ export default function OrganizationPage()
     <AlertDialogFooter>
       <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
-        variant="destructive"
+        className="bg-destructive text-white hover:bg-destructive/90"
         onClick={handleRemoveTask}
         disabled={isDeleting}
       >
@@ -1330,7 +1330,7 @@ export default function OrganizationPage()
     <AlertDialogFooter>
       <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
-        variant="destructive"
+        className="bg-destructive text-white hover:bg-destructive/90"
         onClick={handleRemoveProfile}
         disabled={isDeleting}
       >
@@ -1357,7 +1357,7 @@ export default function OrganizationPage()
     <AlertDialogFooter>
       <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
-        variant="destructive"
+        className="bg-destructive text-white hover:bg-destructive/90"
         onClick={handleDelete}
         disabled={isDeleting}
       >

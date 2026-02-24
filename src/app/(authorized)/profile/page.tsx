@@ -290,7 +290,7 @@ export default function ProfilePage()
             );
 
             // Update selectedProfile
-            setSelectedProfile((prev) =>
+            setSelectedProfile((prev: any) =>
             {
                 if (!prev) return prev;
                 return {
@@ -549,7 +549,7 @@ export default function ProfilePage()
           );
 
           // Update selected profile view
-          setSelectedProfile((prev) => {
+          setSelectedProfile((prev: any) => {
             if (!prev) return prev;
             return {
               ...prev,
@@ -1046,7 +1046,7 @@ export default function ProfilePage()
           <AlertDialogFooter>
             <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
-              variant="destructive"
+              className="bg-destructive text-white hover:bg-destructive/90"
               onClick={handleRemoveTask}
               disabled={isDeleting}
             >

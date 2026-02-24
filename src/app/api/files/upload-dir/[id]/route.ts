@@ -64,7 +64,7 @@ export async function GET(
         const { id: userId, profileId, role } = session.user;
         log.debug({ userId, profileId: profileId ?? 'missing', role: role ?? 'missing' }, 'Session');
 
-        if (!userId || !role || !profileId) 
+        if (!userId || !role || (role !== 'SUPER_ADMIN' && !profileId)) 
         {
             return NextResponse.json<ApiResponse>(
               { success: false, error: 'Invalid session' },

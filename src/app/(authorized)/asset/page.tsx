@@ -208,7 +208,7 @@ export default function ArtifactPage()
             );
 
             // Also update selectedArtifact
-            setSelectedArtifact((prev) => {
+            setSelectedArtifact((prev: any) => {
               if (!prev) return prev;
               return {
                 ...prev,
@@ -299,7 +299,7 @@ export default function ArtifactPage()
           );
 
           // Update selected artifact view
-          setSelectedArtifact((prev) =>
+          setSelectedArtifact((prev: any) =>
           {
               if (!prev) return prev;
               return {
@@ -639,7 +639,7 @@ export default function ArtifactPage()
     <AlertDialogFooter>
       <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
-        variant="destructive"
+        className="bg-destructive text-white hover:bg-destructive/90"
         onClick={handleRemoveTask}
         disabled={isDeleting}
       >

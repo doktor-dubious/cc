@@ -127,5 +127,106 @@
       "clipboardSuccess": "In Zwischenablage kopiert",
       "exportError": "Export fehlgeschlagen"
     }
+  },
+  "Sidebar": {
+    "newTask": "New Task",
+    "currentTasks": "Current Tasks",
+    "waitingTasks": "Waiting Tasks",
+    "urgentTasks": "Urgent Tasks",
+    "noTasks": "Keine Aufgaben",
+    "home": "Home",
+    "organizations": "Organizations",
+    "profiles": "Profiles",
+    "tasks": "Tasks",
+    "assets": "Assets",
+    "uploadFiles": "Upload Files",
+    "incommingFiles": "Incomming Files",
+    "messages": "Messages",
+    "auditTrail": "Audit Trail",
+    "reports": "Reports",
+    "statusReports": "Status Reports",
+    "mechanicalTurk": "Mechanical Turk",
+    "cis": "CIS",
+    "academy": "Academy",
+    "ai": "AI",
+    "learnMore": "Learn More",
+    "aboutComplianceCircle": "About Compliance Circle",
+    "privacyPolicy": "Privacy Policy",
+    "termsOfService": "Terms of Service",
+    "blog": "Blog",
+    "theme": "Theme",
+    "profileSettings": "Profile Settings",
+    "applicationSettings": "Application Settings",
+    "language": "Language",
+    "logOut": "Log out",
+    "externalAssetManagement": "External Asset Management",
+    "documentation": "Documentation"
+  },
+  "User": {
+    "buttons": {
+      "newUser": "New Login",
+      "createUser": "Create Login",
+      "saveChanges": "Save Changes",
+      "cancel": "Cancel",
+      "delete": "Delete",
+      "deleteUser": "Delete Login",
+      "creating": "Creating...",
+      "saving": "Saving...",
+      "deleting": "Deleting..."
+    },
+    "dialogs": {
+      "createTitle": "Create New Login",
+      "createDescription": "Enter the details for the new login.",
+      "deleteTitle": "Are you absolutely sure?",
+      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system."
+    },
+    "labels": {
+      "name": "Name",
+      "nickname": "Nickname",
+      "email": "Email",
+      "password": "Password",
+      "newPassword": "New Password",
+      "role": "Role",
+      "id": "ID"
+    },
+    "placeholders": {
+      "enterName": "Enter full name",
+      "enterNickname": "Enter nickname",
+      "enterEmail": "Enter email address",
+      "enterPassword": "Enter password",
+      "enterNewPassword": "Leave empty to keep current password",
+      "filterByNameOrEmail": "Filter by name or email..."
+    },
+    "tabs": {
+      "details": "Details",
+      "actions": "Actions"
+    },
+    "roles": {
+      "USER": "User",
+      "ADMIN": "Admin",
+      "SUPER_ADMIN": "Super Admin"
+    },
+    "empty": {
+      "noUsersMatch": "No logins match your filter",
+      "noUsersFound": "No logins found"
+    },
+    "pagination": {
+      "showingUsers": "Showing {start} to {end} of {total} logins"
+    },
+    "toast": {
+      "userCreated": "Login created successfully",
+      "userUpdated": "Login updated successfully",
+      "saveError": "Could not save login",
+      "userDeleted": "Login deleted successfully",
+      "deleteError": "Could not delete login",
+      "emailTaken": "A user with this email already exists",
+      "cannotDeleteSelf": "Cannot delete your own account"
+    },
+    "sections": {
+      "userActions": "Login Actions",
+      "userActionsDescription": "Manage this login with the actions below.",
+      "deleteUserTitle": "Delete Login",
+      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    }
   }
 }

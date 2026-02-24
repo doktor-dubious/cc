@@ -3,46 +3,57 @@
 # -------------------
 # Build stage
 # -------------------
-FROM node:24-alpine AS builder
+FROM node:22-alpine AS builder
 
 WORKDIR /app
 
-# Copy package files
-COPY package*.json ./
-RUN npm ci
-
-# Copy source code
+# Copy everything including node_modules from host
 COPY . .
 
 # Generate Prisma client
 RUN npx prisma generate
 
-# Build Next.js app
+# Build Next.js app (standalone output)
 RUN npm run build
 
 # -------------------
 # Production stage
 # -------------------
-FROM node:24-alpine AS runner
+FROM node:22-alpine AS runner
 
 WORKDIR /app
 
 ENV NODE_ENV=production
 
-# Install only production dependencies
-COPY package*.json ./
-RUN npm ci --omit=dev && npm cache clean --force
+# Add non-root user for security
+RUN addgroup --system --gid 1001 nodejs && \
+    adduser --system --uid 1001 nextjs
 
-# Copy built app from builder
-COPY --from=builder /app/.next ./.next
+# Copy the standalone build output
+COPY --from=builder /app/.next/standalone ./
+COPY --from=builder /app/.next/static ./.next/static
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/prisma ./prisma
-COPY --from=builder /app/next.config.js ./
-COPY --from=builder /app/package.json ./
 
-# Generate Prisma client again (in case of different arch)
-RUN npx prisma generate
+# Copy Prisma schema and full node_modules for migrations
+COPY --from=builder /app/prisma ./prisma
+COPY --from=builder /app/node_modules ./node_modules
+
+# Copy i18n message files (required at runtime by next-intl)
+COPY --from=builder /app/messages ./messages
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh ./
+RUN chmod +x docker-entrypoint.sh
+
+# Set correct ownership
+RUN chown -R nextjs:nodejs /app
+
+USER nextjs
 
 EXPOSE 3000
 
-CMD ["npm", "start"]
+ENV PORT=3000
+ENV HOSTNAME="0.0.0.0"
+
+ENTRYPOINT ["./docker-entrypoint.sh"]
+CMD ["node", "server.js"]

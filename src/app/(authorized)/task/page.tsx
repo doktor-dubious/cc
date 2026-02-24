@@ -681,7 +681,7 @@ export default function TaskPage()
             })
           );
 
-          setSelectedTask((prev) => {
+          setSelectedTask((prev: any) => {
             if (!prev) return prev;
             return {
               ...prev,
@@ -738,7 +738,7 @@ export default function TaskPage()
             })
           );
 
-          setSelectedTask((prev) => {
+          setSelectedTask((prev: any) => {
             if (!prev) return prev;
             return {
               ...prev,
@@ -1122,14 +1122,14 @@ useEffect(() => {
           );
 
           // Update selectedTask
-          setSelectedTask(prev => 
+          setSelectedTask((prev: any) =>
           {
               if (!prev) return prev;
               return {
                 ...prev,
                 taskArtifacts: prev.taskArtifacts.map((ta: any) =>
-                  ta.artifact.id === selectedArtifact.id 
-                    ? { ...ta, artifact: updatedArtifact } 
+                  ta.artifact.id === selectedArtifact.id
+                    ? { ...ta, artifact: updatedArtifact }
                     : ta
                 ),
               };
@@ -1205,14 +1205,14 @@ useEffect(() => {
             );
 
             // Update selectedTask
-            setSelectedTask(prev => 
+            setSelectedTask((prev: any) =>
             {
                 if (!prev) return prev;
                 return {
                   ...prev,
                   taskProfiles: prev.taskProfiles.map((tp: any) =>
-                    tp.profile.id === selectedProfile.id 
-                      ? { ...tp, profile: updatedProfile } 
+                    tp.profile.id === selectedProfile.id
+                      ? { ...tp, profile: updatedProfile }
                       : tp
                   ),
                 };
@@ -1278,7 +1278,7 @@ useEffect(() => {
             );
 
             // Update selected task
-            setSelectedTask(prev => {
+            setSelectedTask((prev: any) => {
                 if (!prev) return prev;
                 return {
                     ...prev,
@@ -1398,7 +1398,7 @@ useEffect(() => {
     <AlertDialogFooter>
       <AlertDialogCancel disabled={isDeleting}>{t('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
-        variant="destructive"
+        className="bg-destructive text-white hover:bg-destructive/90"
         onClick={handleRemoveArtifact}
         disabled={isDeleting}
       >
@@ -1425,7 +1425,7 @@ useEffect(() => {
     <AlertDialogFooter>
       <AlertDialogCancel disabled={isDeleting}>{t('buttons.cancel')}</AlertDialogCancel>
       <AlertDialogAction
-        variant="destructive"
+        className="bg-destructive text-white hover:bg-destructive/90"
         onClick={handleRemoveProfile}
         disabled={isDeleting}
       >
@@ -1689,7 +1689,7 @@ useEffect(() => {
 
             <div className="grid gap-2">
               <label className="block text-sm">{t('labels.status')}</label>
-              <Select value={status} onValueChange={setStatus}>
+              <Select value={status} onValueChange={(v) => setStatus(v as any)}>
                 <SelectTrigger className="w-full">
                   <SelectValue />
                 </SelectTrigger>
@@ -2352,7 +2352,7 @@ useEffect(() => {
 
                     <div>
                       <label className="block text-sm mb-2">{t('labels.status')}</label>
-                      <Select value={status} onValueChange={setStatus}>
+                      <Select value={status} onValueChange={(v) => setStatus(v as any)}>
                         <SelectTrigger className="w-full">
                           <SelectValue />
                         </SelectTrigger>
