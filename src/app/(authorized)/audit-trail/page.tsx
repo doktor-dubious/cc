@@ -11,6 +11,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { ExportMenu } from '@/components/ui/export-menu';
+import type { ExportColumn } from '@/lib/export';
 
 import {
   Table,
@@ -153,6 +155,14 @@ export default function AuditTrailPage()
     const endIndex = startIndex + perPage;
     const currentEvents = filteredEvents.slice(startIndex, endIndex);
 
+    const exportColumns: ExportColumn[] = [
+        { header: 'Date', accessor: (row: any) => new Date(row.createdAt).toLocaleString() },
+        { header: 'User', accessor: (row: any) => row.user?.name || 'System' },
+        { header: 'Importance', accessor: (row: any) => row.importance || '' },
+        { header: 'Message', accessor: 'message' },
+        { header: 'Entity', accessor: (row: any) => row.task?.name || row.organization?.name || row.profile?.name || row.artifact?.name || '' },
+    ];
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // RENDER
 
@@ -161,13 +171,14 @@ export default function AuditTrailPage()
     return (
       <div className="space-y-8 p-6">
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Input
             placeholder={t('placeholders.filter')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
           />
+          <ExportMenu data={filteredEvents} columns={exportColumns} filename="audit-trail" />
         </div>
 
         <Table>

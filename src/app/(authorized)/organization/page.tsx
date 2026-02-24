@@ -53,6 +53,8 @@ import { Input } from "@/components/ui/input"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { ExportMenu } from '@/components/ui/export-menu';
+import type { ExportColumn } from '@/lib/export';
 
 export default function OrganizationPage()
 {
@@ -1274,6 +1276,12 @@ export default function OrganizationPage()
         return styles[taskStatus as keyof typeof styles] || '';
     };
 
+    const exportColumns: ExportColumn[] = [
+        { header: 'Name', accessor: 'name' },
+        { header: 'Profiles', accessor: (row: any) => String(row.profiles?.length || 0) },
+        { header: 'Tasks', accessor: (row: any) => String(row.tasks?.length || 0) },
+    ];
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // DOM
     return (
@@ -1644,13 +1652,14 @@ export default function OrganizationPage()
     </div>
 
     {/* Filter Input */}
-    <div className="flex justify-end">
+    <div className="flex justify-end gap-2">
         <Input
             placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
         />
+        <ExportMenu data={filteredOrganizations} columns={exportColumns} filename="organizations" />
     </div>
 
     {/* Organisations table */}

@@ -60,6 +60,8 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { ExportMenu } from '@/components/ui/export-menu';
+import type { ExportColumn } from '@/lib/export';
 
 export default function ProfilePage()
 {
@@ -1019,6 +1021,12 @@ export default function ProfilePage()
         return styles[taskStatus as keyof typeof styles] || '';
     };
 
+    const exportColumns: ExportColumn[] = [
+        { header: 'Name', accessor: 'name' },
+        { header: 'Email', accessor: (row: any) => row.user?.email || '' },
+        { header: 'Role', accessor: (row: any) => row.user?.role || '' },
+    ];
+
     return (
     <>
       { /* Delete Task Alert */ }
@@ -1340,13 +1348,14 @@ export default function ProfilePage()
         </div>
 
         { /* Filter Table Input */ }
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Input
             placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
           />
+          <ExportMenu data={filteredProfiles} columns={exportColumns} filename="profiles" />
         </div>
 
         { /* Profile Table */ }

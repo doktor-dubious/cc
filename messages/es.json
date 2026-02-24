@@ -110,5 +110,22 @@
     "events": {
       "loading": "Loading events..."
     }
+  },
+  "Export": {
+    "formats": {
+      "csv": "Exportar como CSV",
+      "excel": "Exportar como Excel",
+      "pdf": "Exportar como PDF",
+      "json": "Exportar como JSON",
+      "clipboard": "Copiar al portapapeles"
+    },
+    "toast": {
+      "csvSuccess": "Exportado como CSV",
+      "excelSuccess": "Exportado como Excel",
+      "pdfSuccess": "Exportado como PDF",
+      "jsonSuccess": "Exportado como JSON",
+      "clipboardSuccess": "Copiado al portapapeles",
+      "exportError": "Error al exportar"
+    }
   }
 }

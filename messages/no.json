@@ -831,5 +831,22 @@
       "loadErrorGeneric": "Feil ved lasting av innstillinger",
       "saveError": "Det oppstod en feil under lagring"
     }
+  },
+  "Export": {
+    "formats": {
+      "csv": "Eksporter som CSV",
+      "excel": "Eksporter som Excel",
+      "pdf": "Eksporter som PDF",
+      "json": "Eksporter som JSON",
+      "clipboard": "Kopier til utklippstavle"
+    },
+    "toast": {
+      "csvSuccess": "Eksportert som CSV",
+      "excelSuccess": "Eksportert som Excel",
+      "pdfSuccess": "Eksportert som PDF",
+      "jsonSuccess": "Eksportert som JSON",
+      "clipboardSuccess": "Kopiert til utklippstavle",
+      "exportError": "Eksport mislyktes"
+    }
   }
 }

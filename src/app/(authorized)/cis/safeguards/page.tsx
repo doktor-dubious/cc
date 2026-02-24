@@ -20,6 +20,8 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+
 type IG = 'ig1' | 'ig2' | 'ig3';
 
 const IG_KEYS: IG[] = ['ig1', 'ig2', 'ig3'];
@@ -27,7 +29,11 @@ const IG_KEYS: IG[] = ['ig1', 'ig2', 'ig3'];
 const IG_LABELS: Record<IG, string> = { ig1: 'IG1', ig2: 'IG2', ig3: 'IG3' };
 const IG_FULL_LABELS: Record<IG, string> = { ig1: 'Implementation Group 1', ig2: 'Implementation Group 2', ig3: 'Implementation Group 3' };
 
-const TABLE_COLUMN_KEYS = ['asset', 'function', 'frequency', 'status', 'priority', 'likelihood', 'impact', 'owner'] as const;
+// const TABLE_COLUMN_KEYS = ['asset', 'function', 'frequency', 'status', 'priority', 'likelihood', 'impact', 'owner'] as const;
+const TABLE_COLUMN_KEYS = [ 'function', 
+                            'IG',
+                            'Task'
+                          ] as const;
 const TABLE_COLUMNS = TABLE_COLUMN_KEYS.map((k) => k.charAt(0).toUpperCase() + k.slice(1));
 
 export default function CISSafeguardsPage() {
@@ -144,7 +150,7 @@ export default function CISSafeguardsPage() {
       <Button
         variant="ghost"
         size="sm"
-        className="gap-2"
+        className="gap-2 select-none"
         onClick={() => router.push('/cis/controls')}
       >
         <ArrowLeft size={16} />
@@ -169,7 +175,7 @@ export default function CISSafeguardsPage() {
       </div>
 
       {/* IG buttons */}
-      <div className="flex gap-3">
+      <div className="flex gap-3 select-none">
         {(['ig1', 'ig2', 'ig3'] as IG[]).map((ig) => (
           <Button
             key={ig}
@@ -220,72 +226,113 @@ export default function CISSafeguardsPage() {
 
       {/* Detail section below table */}
       {selectedSafeguard && (
-        <div className="border rounded-lg p-6 bg-muted/30 space-y-4 max-w-3xl">
-          <div className="flex items-start justify-between">
+        <div className="border rounded-lg bg-muted/30 max-w-3xl md:max-w-4xl lg:max-w-5xl">
+          <div className="flex items-start justify-between p-6 pb-0">
             <h3 className="text-lg font-semibold">{selectedSafeguard.id} – {selectedSafeguard.title}</h3>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => { setTaskSearchText(""); setIsLinkTaskDialogOpen(true); }}
-            >
-              <Link2 className="w-4 h-4 mr-2" />
-              Link to Task
-            </Button>
           </div>
 
-          {/* Linked tasks */}
-          {linkedTaskIds.length > 0 && (
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Linked Tasks</p>
-              <div className="flex flex-wrap gap-2">
-                {linkedTaskIds.map((taskId) => {
-                  const task = availableTasks.find((t: any) => t.id === taskId);
-                  return (
-                    <Badge key={taskId} variant="secondary" className="cursor-pointer" onClick={() => router.push(`/task?id=${taskId}`)}>
-                      {task ? task.name : taskId}
-                    </Badge>
-                  );
-                })}
+          <Tabs defaultValue="information" className="w-full">
+            <TabsList className="bg-transparent border-b rounded-none px-6 h-auto">
+              <TabsTrigger
+                value="information"
+                className="bg-transparent! rounded-none border-b-2 border-transparent data-[state=active]:border-white data-[state=active]:bg-transparent px-4 py-2"
+              >
+                Information
+              </TabsTrigger>
+              <TabsTrigger
+                value="tasks"
+                className="bg-transparent! rounded-none border-b-2 border-transparent data-[state=active]:border-white data-[state=active]:bg-transparent px-4 py-2"
+              >
+                Tasks ({linkedTaskIds.length})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Information Tab */}
+            <TabsContent value="information" className="p-6 pt-4 space-y-4">
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Definition</p>
+                <p className="text-sm">{selectedSafeguard.definition}</p>
               </div>
-            </div>
-          )}
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Definition</p>
-            <p className="text-sm">{selectedSafeguard.definition}</p>
-          </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Purpose</p>
+                <p className="text-sm">{selectedSafeguard.purpose}</p>
+              </div>
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Purpose</p>
-            <p className="text-sm">{selectedSafeguard.purpose}</p>
-          </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Why</p>
+                <p className="text-sm">{selectedSafeguard.why}</p>
+              </div>
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Why</p>
-            <p className="text-sm">{selectedSafeguard.why}</p>
-          </div>
+              <hr />
 
-          <hr />
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Scope</p>
+                <p className="text-sm">{selectedSafeguard[activeIG].scope}</p>
+              </div>
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Scope</p>
-            <p className="text-sm">{selectedSafeguard[activeIG].scope}</p>
-          </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Approach</p>
+                <p className="text-sm">{selectedSafeguard[activeIG].approach}</p>
+              </div>
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Approach</p>
-            <p className="text-sm">{selectedSafeguard[activeIG].approach}</p>
-          </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Example</p>
+                <p className="text-sm">{selectedSafeguard[activeIG].example}</p>
+              </div>
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Example</p>
-            <p className="text-sm">{selectedSafeguard[activeIG].example}</p>
-          </div>
+              <div>
+                <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Resources</p>
+                <p className="text-sm">{selectedSafeguard[activeIG].resources}</p>
+              </div>
+            </TabsContent>
 
-          <div>
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">Resources</p>
-            <p className="text-sm">{selectedSafeguard[activeIG].resources}</p>
-          </div>
+            {/* Tasks Tab */}
+            <TabsContent value="tasks" className="p-6 pt-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Tasks linked to this safeguard.
+                </p>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => { setTaskSearchText(""); setIsLinkTaskDialogOpen(true); }}
+                >
+                  <Link2 className="w-4 h-4 mr-2" />
+                  Link to Task
+                </Button>
+              </div>
+
+              {linkedTaskIds.length === 0 ? (
+                <div className="text-center text-muted-foreground py-8 text-sm">
+                  No tasks linked to this safeguard.
+                </div>
+              ) : (
+                <div className="space-y-2">
+                  {linkedTaskIds.map((taskId) => {
+                    const task = availableTasks.find((t: any) => t.id === taskId);
+                    return (
+                      <div
+                        key={taskId}
+                        className="border rounded-lg p-3 flex items-center justify-between cursor-pointer hover:bg-muted/50 transition-colors"
+                        onClick={() => router.push(`/task?id=${taskId}`)}
+                      >
+                        <div className="min-w-0">
+                          <div className="font-medium text-sm truncate">{task ? task.name : taskId}</div>
+                          {task?.description && (
+                            <p className="text-xs text-muted-foreground mt-0.5 line-clamp-1">{task.description}</p>
+                          )}
+                        </div>
+                        {task && (
+                          <Badge variant="outline" className="ml-3 shrink-0 text-xs">{task.status}</Badge>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       )}
 

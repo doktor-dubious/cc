@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { ExportMenu } from '@/components/ui/export-menu';
+import type { ExportColumn } from '@/lib/export';
 
 import {
   Table,
@@ -216,6 +218,13 @@ export default function MessagePage()
     const endIndex = startIndex + perPage;
     const currentMessages = filteredMessages.slice(startIndex, endIndex);
 
+    const exportColumns: ExportColumn[] = [
+        { header: 'Message', accessor: 'content' },
+        { header: 'Task', accessor: (row: any) => row.task?.name || '' },
+        { header: 'Sender', accessor: (row: any) => row.sender?.name || 'System' },
+        { header: 'Date', accessor: (row: any) => new Date(row.createdAt).toLocaleString() },
+    ];
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // RENDER
 
@@ -290,13 +299,14 @@ export default function MessagePage()
 
       <div className="space-y-8 p-6">
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Input
             placeholder={t('placeholders.filter')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
           />
+          <ExportMenu data={filteredMessages} columns={exportColumns} filename="messages" />
         </div>
 
         <Table>

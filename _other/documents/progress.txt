@@ -1,121 +1,135 @@
 ── Partially Done ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  * Tech Stack (React, Nextjs, Tailwind, Prisma, Postgres, Git)
-      # Docker
+* Tech Stack (React, Nextjs, Tailwind, Prisma, Postgres, Git)
+    # Docker
 
-  * Overall Design decisions
+* Overall Design decisions
 
-  * Login
-      # Strengthen
-      # Two Factor
-      # Pen
+* Login
+    # Strengthen
+    # Two Factor
+    # Pen
 
-  * General Layout
-      -> SideBar
-      -> Organization Switcher
-      -> Top Menu
-      -> Action Icons
-          --> New Messages notification
-          --> Refresh
-      -> Theme (Light/Dark) Switcher.
+* General Layout
+    -> SideBar
+    -> Organization Switcher
+    -> Top Menu
+    -> Action Icons
+        --> New Messages notification
+        --> Refresh
+    -> Theme (Light/Dark) Switcher.
 
-  * PAGE: Organization Maintanence
-      -> New Organization PopUp (Name, Description) => Audit Event
-      -> Details : Name, Description (View / Edit => Audit Event)
-      -> Settings (View / Edit => Audit Event) :: Upload Directory, Download Directory, Asset Directory
-      -> Profiles
-          --> Add / Remove Profiles from Organization => Audit Event
-          --> Edit Profiles (Name, Description) => Audit Event
-      -> Tasks
-          --> Add / Remove Tasks from Organization => Audit Event
-          --> Edit Tasks (Name, Description) => Audit Event
-      -> Audit Trail (View)
-      -> Actions (Delete => Audit Event)
+* PAGE: Home / Dashboard
+    -> Shows information for all organizations (available for the user)
+    -> Messages (sorted by unread)
+    -> Tasks (sorted by urgency)
+    -> Incomming files (sorted by date)
 
-  * PAGE: Profile Maintanence
-      -> New Profile PopUp (Profile Name, Description + Login Information: Email, Password, Login Name, Nickename, Role) => Audit Event
-      -> Details : Name Description (View / Edit => Audit Event)
-      -> Login : Login Name, Email, Password, Nickname, Role (View / Edit => Audit Event)
-          --> Email: Checked for validity, availability
-          --> Password: Verified for strength
-      -> Tasks
-          --> Add / Remove Tasks from Profile => Audit Event
-          --> Edit Tasks (Name, Description) => Audit Event
-      -> Audit Trail (View)
-      -> Actions (Delete => Audit Event)
+* PAGE: Organization Maintanence
+    -> New Organization PopUp (Name, Description) => Audit Event
+    -> Details : Name, Description (View / Edit => Audit Event)
+    -> Settings (View / Edit => Audit Event) :: Upload Directory, Download Directory, Asset Directory
+    -> Profiles
+        --> Add / Remove Profiles from Organization => Audit Event
+        --> Edit Profiles (Name, Description) => Audit Event
+    -> Tasks
+        --> Add / Remove Tasks from Organization => Audit Event
+        --> Edit Tasks (Name, Description) => Audit Event
+    -> Audit Trail (View)
+    -> Actions (Delete => Audit Event)
 
-  * PAGE: Task Maintanence
-      -> New Task PopUp (Task Name, Description, Expected Evidence, Start Date, End Date, Status) => Audit Event
-      -> Messages
-          --> New Message
-          --> Edit message (own only)
-          --> Delete messages
-      -> Details (Task Name, Description, Expected Evidence, Start Date, End Date, Status) (View / Edit => Audit Event)
-      -> Profiles
-          --> Add / Remove Profiles from Task => Audit Event
-          --> Edit Profiles (Name, Description) => Audit Event
-      -> Artifacts (Assets)
-          --> Remove Artifact from Task => Audit Event
-          --> Edit Artifact (Name, Description) => Audit Event
-      -> Audit Trail (View)
-      -> Actions (Delete => Audit Event)
+* PAGE: Profile Maintanence
+    -> New Profile PopUp (Profile Name, Description + Login Information: Email, Password, Login Name, Nickename, Role) => Audit Event
+    -> Details : Name Description (View / Edit => Audit Event)
+    -> Login : Login Name, Email, Password, Nickname, Role (View / Edit => Audit Event)
+        --> Email: Checked for validity, availability
+        --> Password: Verified for strength
+    -> Tasks
+        --> Add / Remove Tasks from Profile => Audit Event
+        --> Edit Tasks (Name, Description) => Audit Event
+    -> Audit Trail (View)
+    -> Actions (Delete => Audit Event)
 
-      # Empty / Link New Task
-      # Direct to Incomming Files / Upload Files
-      # Attach Task to Safeguard(s)
+* PAGE: Task Maintanence
+    -> New Task PopUp (Task Name, Description, Expected Evidence, Start Date, End Date, Status) => Audit Event
+    -> Messages
+        --> New Message
+        --> Edit message (own only)
+        --> Delete messages
+    -> Details (Task Name, Description, Expected Evidence, Start Date, End Date, Status) (View / Edit => Audit Event)
+    -> Profiles
+        --> Add / Remove Profiles from Task => Audit Event
+        --> Edit Profiles (Name, Description) => Audit Event
+    -> Artifacts (Assets)
+        --> Remove Artifact from Task => Audit Event
+        --> Edit Artifact (Name, Description) => Audit Event
+    -> Audit Trail (View)
+    -> Actions (Delete => Audit Event)
 
-  * PAGE: Asset (Artifact) Maintanence
-      -> New Asset PopUp (Artifact Name, Description, Artifact Type) => Audit Event
-      -> Details (Artifact Name, Description, Artifact Type) (View / Edit => Audit Event)
-      -> MIME Type (View / Edit => Audit Event)
-      -> File Extension, File Size, Original File Name (View only)
-      -> Tasks
-          --> Add / Remove Tasks from Artifact => Audit Event
-          --> Edit Tasks (Name, Description) => Audit Event
-      -> Audit Trail (View)
-      -> Actions
-          --> Preview Asset
-              --> Images
-              # Excel
-              # ...
-          --> Download Asset
-          --> Delete => Audit Event
+    # Empty / Link New Task
+    # Direct to Incomming Files / Upload Files
+    # Attach Task to Safeguard(s)
 
-  * PAGE: Incomming Files -> Assets
-      # Preview
-      # S3
-      # MinIO
-      # Localstack
+* PAGE: Asset (Artifact) Maintanence
+    -> New Asset PopUp (Artifact Name, Description, Artifact Type) => Audit Event
+    -> Details (Artifact Name, Description, Artifact Type) (View / Edit => Audit Event)
+    -> MIME Type (View / Edit => Audit Event)
+    -> File Extension, File Size, Original File Name (View only)
+    -> Tasks
+        --> Add / Remove Tasks from Artifact => Audit Event
+        --> Edit Tasks (Name, Description) => Audit Event
+    -> Audit Trail (View)
+    -> Actions
+        --> Preview Asset
+            --> Images
+            # Excel
+            # ...
+        --> Download Asset
+        --> Delete => Audit Event
 
-  * PAGE: Messages
-      -> View +Delete Message
+* PAGE: Incomming Files -> Assets
+    # Preview
+    # S3
+    # MinIO
+    # Localstack
 
-  * PAGE: Audit Trail
+* PAGE: Messages
+    -> View +Delete Message
 
-  * PAGE: Control Wheel
-      # Set Controls as inactive
-      # Group Controls together
-      # Calculate Risc Score
+* PAGE: Audit Trail
 
-  * PAGE: Safeguards
-      # Assign Safeguard to Task
+* PAGE: Control Wheel
+    # Set Controls as inactive
+    # Group Controls together
+    # Calculate Risc Score
 
-  * Learn More
-      ** PAGE: About Compliance Circle
-        -> Initial Version. Conent need to be updated.
-      ** PAGE: Privacy Policy
-        -> Initial Version. Conent need to be updated.
-      ** PAGE: Terms of Service
-        -> Initial Version. Conent need to be updated.
+* PAGE: Safeguards
+    # Assign Safeguard to Task
 
-  * PAGE: Application Setup (SUPER ADMIN)
-      -> View Edit (Application Name, Home Directory, Polling Interval)
+* Learn More
+    ** PAGE: About Compliance Circle
+      -> Initial Version. Conent need to be updated.
+    ** PAGE: Privacy Policy
+      -> Initial Version. Conent need to be updated.
+    ** PAGE: Terms of Service
+      -> Initial Version. Conent need to be updated.
 
-  * PAGE: Profile Setup (partially)
-      # CC Setup (Super Admins)
-        ## Home Directory
-        ## FTP/SFTP Logins
-      # Profile Setup
+* PAGE: Application Setup (SUPER ADMIN)
+    -> View Edit (Application Name, Home Directory, Polling Interval)
+
+* PAGE: Profile Setup (partially)
+    # CC Setup (Super Admins)
+      ## Home Directory
+      ## FTP/SFTP Logins
+    # Profile Setup
+
+* Internatonalization (multiple languages)
+  -> Setup (118n)
+  -> English
+  -> Danish
+  -> Norweigian
+  # Ongoing..
+
 
 ── Small Fixes / Errors ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -131,10 +145,6 @@
 
 ── Not Started ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  * PAGE: Home / Dashboard
-      # Dashboard should show information for all Organizations available to the logged in user. Unlike all other pages which are Organization specific.
-      # Tasks
-      # Messages
   * PAGE: Upload Files (Drag & Drop)
   * PAGE: Reports
       -> Status Reports
@@ -152,9 +162,108 @@
 
 ────────────────────
 
+── Tuesday 24 Feb
+* Page Assets: New Tab: Action. Delete Asset moved from master table to Action tab.
+* Remember selected organization between refresh
+* Sort Organization drop down, so the ones having been used most recently comes ealier.
+* Page CIS 18 Controls (wheel): store if a control has been marked as active/inactive in the database (new table) (major)  
+* Page CIS 18 Controls: By default only display active controls + new selector to display also inactive ones.
+* Page CIS 18 Controls: all text on the page is made non-selectable (select-none).
+* Page CIS 18 Safeguard: "back to controls", "Ig1/IG2/IG3" buttons, make non-selectable. (minor)
+* General: Page title made non-selectable (minor)
+* Pages: Dashboard/Organization/Profile/Tasks/Assets/Incomming Files. Added functionality to export table (4) data to Excel, CSV, PDF, JSON, Clipboard. (very major)
+
+
+Some changes to the Sidebar collapse functionality. I want it to behave much the same way as on grok.com and claude.ai.
+1) In general the collapse/expanse should flow more smoothly.
+2) Clicking on the logo should redirect to home / not collapse sidebar.
+3) The logo should have same size, and be unchanged between collapse/expanse
+4) Hovering over a part of the sidemenu which has no content should show collapse/expand cursor. Clicking here should collapse/expand
+
+
+
+
+CIS 18 Controls. 1) Make database tables to store if a CIS18 Control is active/inactive for a given Organization. And store the active/inactive state there when the outermost donut is clicked.
+2) By default only acive controls should be displayed in the donouts. In the legend section, under Risk Score, there should be a selector where the user can chose to display also inactive controls.
+
+
+3) Page CIS 18 Controls: make all text on the page non-selectable (select-none).
+
+
 ── Monday 23 Feb
 💀 (27 Feb/5PM)
+💀 Max Plan
 * Task page: New tab: Safegaurds. To display the safeguards the task has been connected to,
+* Task page: Safegaurds tab: Add Safeguard to Task + Remove Safeguard. 
+* Safeguard page: Resized detail pane.
+* New Page: Home/Dashboard (v1)
+* Page Controls: when clicking on a pie-segment. Removed square selection box.
+* Page Safeguards: Two tabs on the detail pane. 1) Detail; 2) Tasks: Table + attach button.
+* Page Dashboard. Max length on tables + pagination + search/filter
+* Sidebar collapse functionality was a mess. 1) Fixed header/logo; 2) fixed organization logo/drop down; 3) fixed task menuss; 4) fixed bottom menu pop-up.
+* Dashboard Page: new table Audit Trail.
+
+---
+l 
+
+
+
+Jeg skrev en kommentar til hver link, for netop at beskrive hvad der dokumenteres.
+
+1+2) "Her fra USA: republikanske vælgere og regioner (stater, byer, counties, etc.) med republikansk flertal får flere børn end demokratiske vælgere og regioner med demokratisk flertal."
+
+& 3) "Generelt vægter republikanske vælgere bare familie (ægteskab, børn) meget højere end demokratiske vælgere. Så det er ganske naturligt det bliver afspejlet i flere børn."
+
+Det er i det hele taget trivielt at lave en opgørelse over hvor start lagde deres stemme og fødselsraten i starterne.
+
+Spørgsmålet er måske mere hvad der er den underliggende faktor der bestemmer dette udfald. Måske republikanere bare værdsætter familie og børn højere. Kan også være at demokrater er mere urbane, og byer har lavere fødselsrate end forstæder og landområder.
+
+
+Vi ved fra andre kilder at republikanske vælgere generelt er mere konservative og mere religiøse.
+
+
+Det er en selv-rapportering.
+
+Også en udvikling der ses i Europa:
+
+
+
+
+
+
+
+
+
+
+
+
+AI slop her og AI slop der. Som du kan se er det mest fra kilder som:
+
+Family Studies,
+CDC Wonder (officielle US statestikker), Bureau of Labor Statiscs, US Census, og andre officielle amerikansk statestikbanker.
+Center for Disease Control and Prevention
+National Center for Health Statistics
+Statista
+Financial Times
+National Survey of Family Growth
+
+- det er ikke svært at finde, hvis du gider bruge 2 sek. Hvilke du nok ikke gider, siden du ikke har posted en eneste kilde selv.
+
+
+[url=https://elementalenergy.substack.com/p/world-first-thorium-molten-salt-reactor]World First: Thorium Molten Salt Reactor in China confirmed[/url]
+
+Påstanden om Molten Salt Nuclear Reactor er fra Financial Times (How China wants to create a 'Polar Silk Road' through the Arctic). Det er kun rygter, af hvilke grund jeg skriver "angiveligt"
+
+
+https://zoom.us/j/91667468629?pwd=T2hGQVloWExQcDFBVEZYNEEvUjRWQT09
+
+Sydkorea (Korea Atomic Energy Research Institute (KAERI) og Samsung Heavy Industries) siger også (i 2025) de har et design på en 174,000m³ LNG drevet af en lille modular molten salt reactor. [url=https://www.imarine.cn/199460.html]The world's first nuclear-powered LNG carrier has received certification (Mandarin)[/url]. Omend det vil tage nogle år at få den færdig.
+
+Der er i øvrigt et dansk firma der arbejder på det: [url=https://www.copenhagenatomics.com/]Copenhagen Atomics[/url]. De har dog vist aldrig produceret noget.
+
+
+Du har et link til en pay site, som du sender uden kommentar. 
+
 
 ── Sunday 22 Feb
 💀 (12PM)

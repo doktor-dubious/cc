@@ -1,8 +1,10 @@
 'use client';
 
-import { useState }          from 'react';
-import { useRouter }         from 'next/navigation';
-import { useTranslations }   from 'next-intl';
+import { useState, useEffect, useMemo } from 'react';
+import { useRouter }                    from 'next/navigation';
+import { useTranslations }              from 'next-intl';
+import { useOrganization }              from '@/context/OrganizationContext';
+import { Switch }                       from '@/components/ui/switch';
 import { PieChart, Pie, Cell, Sector, ResponsiveContainer } from 'recharts';
 
 // ── CIS Controls v8 — 18 controls across 5 groups ──────────────────────────
@@ -45,66 +47,52 @@ const controls: Control[] = [
   { id: 18, short: 'Penetration Testing', title: 'Penetration Testing',                                    group: 'Governance and Training',  risk: 70 },
 ];
 
-// ── Derived data ────────────────────────────────────────────────────────────
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
-// Middle ring: one segment per control, coloured by group
-const middleData = controls.map((c) => ({
-  name:  c.short,
-  title: c.title,
-  value: 1,                       // equal-sized segments
-  fill:  GROUP_COLORS[c.group],
-  group: c.group,
-  id:    c.id,
-}));
-
-// Inner ring: one segment per control, coloured by risk score
 function riskColor(risk: number): string {
   if (risk <= 33) return '#22c55e';  // green
   if (risk <= 66) return '#eab308';  // yellow
   return '#ef4444';                   // red
 }
 
-const innerData = controls.map((c) => ({
-  name:  c.short,
-  title: c.title,
-  value: 1,
-  fill:  riskColor(c.risk),
-  risk:  c.risk,
-  id:    c.id,
-}));
-
-// Unique groups for legend
 const groups = Object.keys(GROUP_COLORS);
 
-// ── Helper to build outermost ring data with combined groups ──────────────
+// ── Build outermost ring data with combined groups ──────────────────────────
 
 function buildOutermostData(
+  controlsList: Control[],
   inactiveControls: Set<number>,
   combinedGroups: number[][]
 ): Array<{ name: string; title: string; value: number; fill: string; id: number; ids: number[]; active: boolean }> {
   const result: Array<{ name: string; title: string; value: number; fill: string; id: number; ids: number[]; active: boolean }> = [];
   const processed = new Set<number>();
+  const visibleIds = new Set(controlsList.map(c => c.id));
 
-  // Add combined groups first
   for (const group of combinedGroups) {
-    const firstControl = controls.find(c => c.id === group[0]);
-    if (!firstControl) continue;
+    const visibleGroup = group.filter(id => visibleIds.has(id));
+    if (visibleGroup.length === 0) continue;
 
-    const allActive = group.every(id => !inactiveControls.has(id));
+    const allActive = visibleGroup.every(id => !inactiveControls.has(id));
+    const label = visibleGroup.length > 1
+      ? `${visibleGroup.length} controls`
+      : controls.find(c => c.id === visibleGroup[0])?.short || '';
+    const title = visibleGroup.length > 1
+      ? `Combined: ${visibleGroup.map(id => controls.find(c => c.id === id)?.short).join(', ')}`
+      : controls.find(c => c.id === visibleGroup[0])?.title || '';
+
     result.push({
-      name: `${group.length} controls`,
-      title: `Combined: ${group.map(id => controls.find(c => c.id === id)?.short).join(', ')}`,
-      value: group.length,
+      name: label,
+      title,
+      value: visibleGroup.length,
       fill: allActive ? '#22c55e' : '#6b7280',
-      id: group[0],
-      ids: group,
+      id: visibleGroup[0],
+      ids: visibleGroup,
       active: allActive,
     });
-    group.forEach(id => processed.add(id));
+    visibleGroup.forEach(id => processed.add(id));
   }
 
-  // Add individual controls
-  for (const control of controls) {
+  for (const control of controlsList) {
     if (!processed.has(control.id)) {
       const active = !inactiveControls.has(control.id);
       result.push({
@@ -148,7 +136,7 @@ function wrapText(text: string): string[] {
 const renderActiveOuter = (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props;
   const titleLines = wrapText(payload.title);
-  const totalLines = titleLines.length + 1; // +1 for status subtitle
+  const totalLines = titleLines.length + 1;
   const lineHeight = 24;
   const startY = cy - ((totalLines - 1) * lineHeight) / 2;
 
@@ -164,7 +152,6 @@ const renderActiveOuter = (props: any) => {
         fill={fill}
         opacity={0.9}
       />
-      {/* Centre text on hover */}
       <text x={cx} textAnchor="middle" className="fill-foreground" style={{ fontSize: '18px', fontWeight: 500 }}>
         {titleLines.map((line, i) => (
           <tspan key={i} x={cx} y={startY + i * lineHeight}>{line}</tspan>
@@ -182,7 +169,7 @@ const renderActiveOuter = (props: any) => {
 const renderActiveMiddle = (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props;
   const titleLines = wrapText(payload.title);
-  const totalLines = titleLines.length + 1; // +1 for group subtitle
+  const totalLines = titleLines.length + 1;
   const lineHeight = 24;
   const startY = cy - ((totalLines - 1) * lineHeight) / 2;
 
@@ -198,7 +185,6 @@ const renderActiveMiddle = (props: any) => {
         fill={fill}
         opacity={0.9}
       />
-      {/* Centre text on hover */}
       <text x={cx} textAnchor="middle" className="fill-foreground" style={{ fontSize: '18px', fontWeight: 500 }}>
         {titleLines.map((line, i) => (
           <tspan key={i} x={cx} y={startY + i * lineHeight}>{line}</tspan>
@@ -216,7 +202,7 @@ const renderActiveMiddle = (props: any) => {
 const renderActiveInner = (riskScoreLabel: (risk: number) => string) => (props: any) => {
   const { cx, cy, innerRadius, outerRadius, startAngle, endAngle, fill, payload } = props;
   const titleLines = wrapText(payload.title);
-  const totalLines = titleLines.length + 1; // +1 for risk subtitle
+  const totalLines = titleLines.length + 1;
   const lineHeight = 24;
   const startY = cy - ((totalLines - 1) * lineHeight) / 2;
 
@@ -249,21 +235,72 @@ const renderActiveInner = (riskScoreLabel: (risk: number) => string) => (props: 
 export default function CISControlsPage() {
   const router = useRouter();
   const t = useTranslations('CISControls');
+  const { activeOrganization } = useOrganization();
+
   const [activeOuter, setActiveOuter] = useState<number | undefined>(undefined);
   const [activeMiddle, setActiveMiddle] = useState<number | undefined>(undefined);
   const [activeInner, setActiveInner] = useState<number | undefined>(undefined);
   const [highlightGroup, setHighlightGroup] = useState<string | null>(null);
-  const [highlightRisk, setHighlightRisk] = useState<string | null>(null); // 'low' | 'medium' | 'high'
+  const [highlightRisk, setHighlightRisk] = useState<string | null>(null);
 
   // Outermost ring configuration state
   const [inactiveControls, setInactiveControls] = useState<Set<number>>(new Set());
   const [combinedGroups, setCombinedGroups] = useState<number[][]>([]);
   const [selectedForCombine, setSelectedForCombine] = useState<Set<number>>(new Set());
 
-  // Build outermost data
-  const outermostData = buildOutermostData(inactiveControls, combinedGroups);
+  // Show/hide inactive controls toggle
+  const [showInactive, setShowInactive] = useState(false);
 
-  // Only one ring active at a time
+  // ── Fetch active/inactive state from DB ──────────────────────────────────
+  useEffect(() => {
+    if (!activeOrganization) return;
+
+    fetch(`/api/cis-control?organizationId=${activeOrganization.id}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success && data.data) {
+          const inactive = new Set<number>();
+          data.data.forEach((r: any) => { if (!r.active) inactive.add(r.controlId); });
+          setInactiveControls(inactive);
+        }
+      })
+      .catch(() => {});
+  }, [activeOrganization]);
+
+  // ── Visible controls (filtered unless showInactive is on) ────────────────
+  const visibleControls = useMemo(() =>
+    showInactive ? controls : controls.filter(c => !inactiveControls.has(c.id)),
+    [showInactive, inactiveControls]
+  );
+
+  // ── Derived ring data from visible controls ──────────────────────────────
+  const middleData = useMemo(() =>
+    visibleControls.map(c => ({
+      name:  c.short,
+      title: c.title,
+      value: 1,
+      fill:  GROUP_COLORS[c.group],
+      group: c.group,
+      id:    c.id,
+    })),
+    [visibleControls]
+  );
+
+  const innerData = useMemo(() =>
+    visibleControls.map(c => ({
+      name:  c.short,
+      title: c.title,
+      value: 1,
+      fill:  riskColor(c.risk),
+      risk:  c.risk,
+      id:    c.id,
+    })),
+    [visibleControls]
+  );
+
+  const outermostData = buildOutermostData(visibleControls, inactiveControls, combinedGroups);
+
+  // ── Hover handlers (only one ring active at a time) ──────────────────────
   const handleOuterEnter = (_: any, index: number) => {
     setActiveOuter(index);
     setActiveMiddle(undefined);
@@ -282,39 +319,45 @@ export default function CISControlsPage() {
     setActiveMiddle(undefined);
   };
 
-  // Click on segment → navigate to safeguards page (for inner and middle rings)
+  // ── Click inner/middle ring → navigate to safeguards ─────────────────────
   const handleSegmentClick = (_: any, index: number) => {
-    const controlId = controls[index].id;
+    const controlId = visibleControls[index].id;
     router.push(`/cis/safeguards?control=${controlId}`);
   };
 
-  // Click on outermost ring → toggle inactive or handle Ctrl+click for combining
+  // ── Click outer ring → toggle active/inactive (persisted to DB) ──────────
   const handleOuterClick = (e: any, index: number) => {
     const segment = outermostData[index];
 
     if (e.ctrlKey || e.metaKey) {
-      // Ctrl+click: toggle selection for combining
       setSelectedForCombine(prev => {
         const next = new Set(prev);
         segment.ids.forEach(id => {
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.add(id);
-          }
+          if (next.has(id)) next.delete(id);
+          else next.add(id);
         });
         return next;
       });
     } else {
-      // Normal click: toggle active/inactive
+      if (!activeOrganization) return;
+
       setInactiveControls(prev => {
         const next = new Set(prev);
         segment.ids.forEach(id => {
-          if (next.has(id)) {
-            next.delete(id);
-          } else {
-            next.add(id);
-          }
+          const willBeActive = next.has(id); // was inactive → becoming active
+          if (next.has(id)) next.delete(id);
+          else next.add(id);
+
+          // Persist to DB
+          fetch('/api/cis-control', {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              organizationId: activeOrganization.id,
+              controlId: id,
+              active: willBeActive,
+            }),
+          });
         });
         return next;
       });
@@ -329,12 +372,11 @@ export default function CISControlsPage() {
     setHighlightRisk(null);
   };
 
-  // Combine selected segments
+  // ── Combine / uncombine ──────────────────────────────────────────────────
   const handleCombineSelected = () => {
     const selected = Array.from(selectedForCombine).sort((a, b) => a - b);
     if (selected.length < 2) return;
 
-    // Remove any existing groups that contain selected controls
     const filteredGroups = combinedGroups.filter(group =>
       !group.some(id => selected.includes(id))
     );
@@ -343,20 +385,17 @@ export default function CISControlsPage() {
     setSelectedForCombine(new Set());
   };
 
-  // Uncombine a group
   const handleUncombine = (groupIndex: number) => {
     setCombinedGroups(prev => prev.filter((_, i) => i !== groupIndex));
   };
 
-  // Custom label for outermost ring — only show for highlighted segments (or all if no highlight)
+  // ── Outermost ring label ─────────────────────────────────────────────────
   const renderOutermostLabel = (props: any) => {
     const RADIAN = Math.PI / 180;
     const { cx, cy, midAngle, outerRadius, name, index } = props;
     const segment = outermostData[index];
 
-    // For combined segments or filtering, adjust label visibility
     if (highlightGroup || highlightRisk) {
-      // Check if any control in this segment matches the filter
       const matches = segment.ids.some(id => {
         const control = controls.find(c => c.id === id);
         if (!control) return false;
@@ -388,14 +427,13 @@ export default function CISControlsPage() {
     );
   };
 
-  // Determine opacity for outermost ring cells
+  // ── Opacity helpers ──────────────────────────────────────────────────────
   const outermostOpacity = (index: number) => {
     const segment = outermostData[index];
     const baseOpacity = segment.active ? 0.6 : 0.3;
 
     if (!highlightGroup && !highlightRisk) return baseOpacity;
 
-    // Check if any control in this segment matches the filter
     const matches = segment.ids.some(id => {
       const control = controls.find(c => c.id === id);
       if (!control) return false;
@@ -410,36 +448,37 @@ export default function CISControlsPage() {
     return matches ? baseOpacity : 0.15;
   };
 
-  // Determine opacity for middle ring cells
   const middleOpacity = (index: number) => {
+    const control = visibleControls[index];
+    if (!control) return 1;
     if (!highlightGroup && !highlightRisk) return 1;
-    if (highlightGroup) return controls[index].group === highlightGroup ? 1 : 0.15;
-    return 1; // risk highlight doesn't affect middle ring
+    if (highlightGroup) return control.group === highlightGroup ? 1 : 0.15;
+    return 1;
   };
 
-  // Determine opacity for inner ring cells
   const innerOpacity = (index: number) => {
+    const control = visibleControls[index];
+    if (!control) return 1;
     if (!highlightGroup && !highlightRisk) return 1;
-    if (highlightGroup) return controls[index].group === highlightGroup ? 1 : 0.15;
+    if (highlightGroup) return control.group === highlightGroup ? 1 : 0.15;
     if (highlightRisk) {
-      const r = controls[index].risk;
-      const band = r <= 33 ? 'low' : r <= 66 ? 'medium' : 'high';
+      const band = control.risk <= 33 ? 'low' : control.risk <= 66 ? 'medium' : 'high';
       return band === highlightRisk ? 1 : 0.15;
     }
     return 1;
   };
 
   return (
-    <div className="@container p-2 space-y-6">
+    <div className="@container p-2 space-y-6 select-none">
 
       {/* Chart + Legends */}
       <div className="flex flex-col @[900px]:flex-row @[900px]:items-center" onMouseLeave={handleMouseLeave}>
 
         {/* Chart */}
-        <div className="flex-1 min-w-0" style={{ height: 'calc(100vh - 100px)', minHeight: 500 }}>
+        <div className="flex-1 min-w-0 [&_path]:outline-none [&_g]:outline-none [&_.recharts-sector]:outline-none" style={{ height: 'calc(100vh - 100px)', minHeight: 500 }}>
           <ResponsiveContainer width="100%" height="100%" aspect={undefined}>
             <PieChart>
-              {/* Inner ring — risk scores (slim, flush against outer) */}
+              {/* Inner ring — risk scores */}
               <Pie
                 data={innerData}
                 dataKey="value"
@@ -576,6 +615,15 @@ export default function CISControlsPage() {
             >
               <div className="h-3 w-3 rounded-sm shrink-0" style={{ backgroundColor: '#ef4444' }} />
               <span className="text-sm text-muted-foreground">{t('legends.high')}</span>
+            </div>
+
+            {/* Show inactive controls toggle */}
+            <div className="flex items-center gap-2 pt-2 border-t border-border/50">
+              <Switch
+                checked={showInactive}
+                onCheckedChange={setShowInactive}
+              />
+              <span className="text-sm text-muted-foreground">{t('legends.showInactive')}</span>
             </div>
           </div>
 

@@ -34,6 +34,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { ExportMenu } from '@/components/ui/export-menu';
+import type { ExportColumn } from '@/lib/export';
 
 import { DatePicker } from "@/components/ui/date-picker"
 
@@ -1359,6 +1361,12 @@ useEffect(() => {
         return styles[taskStatus as keyof typeof styles] || '';
     };
 
+  const exportColumns: ExportColumn[] = [
+      { header: 'Name', accessor: 'name' },
+      { header: 'Description', accessor: (row: any) => row.description || '' },
+      { header: 'Status', accessor: 'status' },
+  ];
+
   if (!user) {
     return <div>{t('loading.loadingUser')}</div>;
   }
@@ -1964,13 +1972,14 @@ useEffect(() => {
           </Button>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Input
             placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
           />
+          <ExportMenu data={filteredTasks} columns={exportColumns} filename="tasks" />
         </div>
 
         <Table>
@@ -2062,7 +2071,7 @@ useEffect(() => {
 
               <Tabs defaultValue="messages" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
                 <div className="relative w-full max-w-300">
-                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-6">
+                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-7">
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="messages"
@@ -2097,6 +2106,12 @@ useEffect(() => {
                     </TabsTrigger>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
+                      value="safeguards"
+                    >
+                      Safeguards ({taskSafeguards.length})
+                    </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10 justify-center text-center px-4"
                       value="audit"
                     >
                       {t('tabs.auditTrail', { count: events.length })}
@@ -2111,12 +2126,13 @@ useEffect(() => {
                   <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
-                      width: '16.666%',
-                      left: activeTab === 'details' ? '16.666%' :
-                           activeTab === 'profiles' ? '33.333%' :
-                           activeTab === 'artifacts' ? '50%' :
-                           activeTab === 'audit' ? '66.666%' :
-                           activeTab === 'actions' ? '83.333%' : '0%'
+                      width: `${100/7}%`,
+                      left: activeTab === 'details' ? `${100/7}%` :
+                           activeTab === 'profiles' ? `${200/7}%` :
+                           activeTab === 'artifacts' ? `${300/7}%` :
+                           activeTab === 'safeguards' ? `${400/7}%` :
+                           activeTab === 'audit' ? `${500/7}%` :
+                           activeTab === 'actions' ? `${600/7}%` : '0%'
                     }}
                   />
                 </div>
@@ -2683,6 +2699,64 @@ useEffect(() => {
                 </TabsContent>
 
                 {/* ----------------------------------------------------------- */ }
+                {/* Safeguards Tab */ }
+                <TabsContent value="safeguards" className="mt-6">
+                  <div className="space-y-6 max-w-2xl">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold mb-1">CIS Control Safeguards</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Link this task to CIS Control Safeguards for compliance tracking.
+                        </p>
+                      </div>
+                      <Button
+                        variant="outline"
+                        onClick={() => { setSafeguardSearchText(""); setIsAssignSafeguardDialogOpen(true); }}
+                        className="shrink-0"
+                      >
+                        <Shield className="w-4 h-4 mr-2" />
+                        Assign Safeguard
+                      </Button>
+                    </div>
+
+                    {taskSafeguards.length === 0 ? (
+                      <div className="text-center text-muted-foreground py-8">
+                        No safeguards assigned to this task.
+                      </div>
+                    ) : (
+                      <div className="space-y-2">
+                        {taskSafeguards.map((sgId) => {
+                          const sg = allSafeguards.find(s => s.id === sgId);
+                          return (
+                            <div key={sgId} className="border rounded-lg p-4 flex items-start gap-4">
+                              <div className="flex-1 min-w-0">
+                                <div className="flex items-center gap-2 mb-1">
+                                  <Badge variant="outline" className="shrink-0 text-xs">{sgId}</Badge>
+                                  <span className="font-medium text-sm">{sg ? sg.title : sgId}</span>
+                                </div>
+                                {sg && (
+                                  <>
+                                    <p className="text-xs text-muted-foreground">Control {sg.controlId}: {sg.controlTitle}</p>
+                                    <p className="text-sm text-muted-foreground mt-2 line-clamp-2">{sg.definition}</p>
+                                  </>
+                                )}
+                              </div>
+                              <button
+                                onClick={() => setSafeguardToRemove(sgId)}
+                                className="shrink-0 p-1 hover:text-destructive rounded transition-colors"
+                                title="Remove safeguard"
+                              >
+                                <X className="w-4 h-4" />
+                              </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                </TabsContent>
+
+                {/* ----------------------------------------------------------- */ }
                 {/* Actions Tab */ }
                 <TabsContent value="actions" className="mt-6">
                   <div className="space-y-6 max-w-2xl">
@@ -2691,49 +2765,6 @@ useEffect(() => {
                       <p className="text-sm text-muted-foreground mb-6">
                         {t('sections.taskActionsDescription')}
                       </p>
-                    </div>
-
-                    {/* CIS Safeguard Assignment */}
-                    <div className="border rounded-lg p-4">
-                      <div className="flex items-start gap-4">
-                        <div className="flex-1">
-                          <h4 className="font-medium mb-1">CIS Control Safeguards</h4>
-                          <p className="text-sm text-muted-foreground">
-                            Link this task to CIS Control Safeguards for compliance tracking.
-                          </p>
-                        </div>
-                        <Button
-                          variant="outline"
-                          onClick={() => { setSafeguardSearchText(""); setIsAssignSafeguardDialogOpen(true); }}
-                          className="shrink-0"
-                        >
-                          <Shield className="w-4 h-4 mr-2" />
-                          Assign Safeguard
-                        </Button>
-                      </div>
-
-                      {/* Currently assigned safeguards */}
-                      {taskSafeguards.length > 0 && (
-                        <div className="mt-4 space-y-2">
-                          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Assigned Safeguards</p>
-                          <div className="flex flex-wrap gap-2">
-                            {taskSafeguards.map((sgId) => {
-                              const sg = allSafeguards.find(s => s.id === sgId);
-                              return (
-                                <Badge key={sgId} variant="secondary" className="gap-1 pr-1">
-                                  <span>{sgId}{sg ? ` – ${sg.title}` : ''}</span>
-                                  <button
-                                    onClick={() => setSafeguardToRemove(sgId)}
-                                    className="ml-1 hover:text-destructive rounded-full p-0.5"
-                                  >
-                                    <X className="w-3 h-3" />
-                                  </button>
-                                </Badge>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      )}
                     </div>
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">

@@ -163,11 +163,11 @@ const getPageTitle = () =>
 // ── Change Organization Drop Down ───────────────────────────────────────
 function OrganizationSwitcher()
 {
-    const { organizations, activeOrganization, setActiveOrganization } = useOrganization();
+    const { organizations, sortedOrganizations, activeOrganization, setActiveOrganization } = useOrganization();
 
     if (!activeOrganization) return null;
 
-    // Only one Organiszation → Badge.
+    // Only one Organization → Badge (icon only when collapsed).
     if (organizations.length === 1)
     {
         return (
@@ -177,11 +177,14 @@ function OrganizationSwitcher()
     my-3
     py-3
     bg-secondary
-    text-muted-foreground"
+    text-muted-foreground
+    group-data-[collapsible=icon]:justify-center
+    group-data-[collapsible=icon]:px-0"
 >
-  <Building2 className="pl-2 h-6 w-6" />
-  <Badge 
-    variant="secondary" 
+  <Building2 className="pl-2 h-6 w-6 group-data-[collapsible=icon]:pl-0 group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4" />
+  <Badge
+    variant="secondary"
+    className="group-data-[collapsible=icon]:hidden"
   >
     {activeOrganization.name}
   </Badge>
@@ -189,7 +192,7 @@ function OrganizationSwitcher()
         );
     }
 
-    // Multiple Organiszation → Dropdown.
+    // Multiple Organizations → Dropdown (icon only when collapsed, dropdown on click).
     return (
 <div className="
     flex
@@ -201,35 +204,38 @@ function OrganizationSwitcher()
   <DropdownMenu>
     <DropdownMenuTrigger asChild>
       <Button
-        variant="secondary" 
+        variant="secondary"
         className="
             w-full
-            h-7 
-            min-w-48 
-            gap-2 
-            px-3 
+            h-7
+            min-w-0
+            gap-2
+            px-3
             py-4
-            rounded-none 
+            rounded-none
             bg-secondary
-            text-muted-foreground 
-            text-xs 
-            flex 
-            items-center"
+            text-muted-foreground
+            text-xs
+            flex
+            items-center
+            group-data-[collapsible=icon]:justify-center
+            group-data-[collapsible=icon]:px-0
+            group-data-[collapsible=icon]:min-w-0"
       >
         <Building2 className="h-3! w-3! shrink-0" />
-        <span className="ml-2 flex-1 truncate text-left">
+        <span className="ml-2 flex-1 truncate text-left group-data-[collapsible=icon]:hidden">
           {activeOrganization.name}
         </span>
-        <ChevronDown className="h-31 w-3! ml-auto shrink-0" />
+        <ChevronDown className="h-31 w-3! ml-auto shrink-0 group-data-[collapsible=icon]:hidden" />
       </Button>
     </DropdownMenuTrigger>
 
     <DropdownMenuContent align="center" className="
-        rounded-none 
+        rounded-none
         w-(--sidebar-width)">
       <DropdownMenuLabel>{t('organizations')}</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      {organizations.map(org => (
+      {sortedOrganizations.map(org => (
         <DropdownMenuItem
           key={org.id}
           onClick={() => setActiveOrganization(org)}
@@ -246,47 +252,153 @@ function OrganizationSwitcher()
 
 function SidebarLogo()
 {
-    const { toggleSidebar } = useSidebar()
+    const { toggleSidebar, state } = useSidebar()
+    const router = useRouter()
+
+    const handleLogoClick = () => {
+      if (state === 'collapsed') {
+        toggleSidebar();
+      } else {
+        router.push('/home');
+      }
+    };
 
     return (
-      <>
-      <div className="bg-(--sidebar) w-full pr-4">
-<button
-    onClick={toggleSidebar}
-    className="
-        bg-(--sidebar)
-        cursor-pointer
-        flex items-center gap-2 w-full
-        transition-colors
-        group-data-[collapsible=icon]:justify-center
-        group-data-[collapsible=icon]:p-2
-    "
->
-<img
-    src="/compliance-circle-logo.png"
-    alt="Compliance Circle"
-    className="cursor-pointer h-6 w-6 group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4"
-/>
-<span
-    className="
-        font-thin 
-        text-sm
-        select-none 
-        group-data-[collapsible=icon]:hidden 
-        hover:tracking-widest
-        duration-800 ease-out
-    ">
-    Compliance Circle
-</span>
+      <div className="bg-(--sidebar) w-full pr-4 flex items-center group-data-[collapsible=icon]:pr-0 group-data-[collapsible=icon]:justify-center">
+        <button
+          onClick={handleLogoClick}
+          className="
+            bg-(--sidebar)
+            cursor-pointer
+            flex items-center gap-2 flex-1 min-w-0
+            transition-colors
+            group-data-[collapsible=icon]:justify-center
+            group-data-[collapsible=icon]:p-2
+          "
+        >
+          <img
+            src="/compliance-circle-logo.png"
+            alt="Compliance Circle"
+            className="cursor-pointer h-6 w-6 group-data-[collapsible=icon]:h-4 group-data-[collapsible=icon]:w-4"
+          />
+          <span
+            className="
+              font-thin
+              text-sm
+              select-none
+              group-data-[collapsible=icon]:hidden
+              hover:tracking-widest
+              duration-800 ease-out
+            ">
+            Compliance Circle
+          </span>
+        </button>
 
-  <PanelLeft
-    size={18}
-    strokeWidth={1.25}
-    className="ml-auto -mr-2 group-data-[collapsible=icon]:hidden" />
-</button>
-</div>
-</>
+        <button
+          onClick={toggleSidebar}
+          className="
+            cursor-pointer
+            p-1
+            hover:bg-muted/50
+            rounded
+            transition-colors
+            group-data-[collapsible=icon]:hidden
+          "
+        >
+          <PanelLeft
+            size={18}
+            strokeWidth={1.25}
+          />
+        </button>
+      </div>
   )
+}
+
+function TaskSidebarSections({
+  openSubmenu,
+  handleSubmenuToggle,
+  openTasks,
+  waitingTasks,
+  urgentTasks,
+  t,
+}: {
+  openSubmenu: string | null;
+  handleSubmenuToggle: (name: string) => void;
+  openTasks: any[];
+  waitingTasks: any[];
+  urgentTasks: any[];
+  t: (key: string) => string;
+}) {
+  const { state, setOpen } = useSidebar();
+
+  const handleSectionClick = (menuName: string) => {
+    if (state === 'collapsed') {
+      setOpen(true);
+      handleSubmenuToggle(menuName);
+    } else {
+      handleSubmenuToggle(menuName);
+    }
+  };
+
+  const sections = [
+    { key: 'tasks1', label: t('currentTasks'), tasks: openTasks },
+    { key: 'tasks2', label: t('waitingTasks'), tasks: waitingTasks },
+    { key: 'tasks3', label: t('urgentTasks'), tasks: urgentTasks },
+  ];
+
+  return (
+    <SidebarGroup>
+      {sections.map(({ key, label, tasks }) => (
+        <Collapsible
+          key={key}
+          open={openSubmenu === key}
+          onOpenChange={() => handleSectionClick(key)}
+          className="group/collapsible"
+        >
+          <SidebarMenuItem>
+            <CollapsibleTrigger asChild>
+              <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
+                <Target size={16} />
+                <span>{label}</span>
+                <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
+              </SidebarMenuButton>
+            </CollapsibleTrigger>
+          </SidebarMenuItem>
+
+          <CollapsibleContent
+            className="
+              overflow-hidden
+              transition-all
+              duration-400 ease-in-out
+              data-[state=closed]:animate-collapsible-up
+              data-[state=open]:animate-collapsible-down
+            ">
+              {tasks.map((task: any) => (
+              <SidebarMenuSub key={task.id}>
+                <SidebarMenuSubItem className="h-auto">
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
+                          <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
+                            <CheckSquare size={16} className="shrink-0 mt-0.5" />
+                            <div className="line-clamp-3">{task.name}</div>
+                          </Link>
+                        </SidebarMenuSubButton>
+                      </TooltipTrigger>
+                      <TooltipContent side="right">
+                        <p>{task.name}</p>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </SidebarMenuSubItem>
+              </SidebarMenuSub>
+              ))}
+          </CollapsibleContent>
+        </Collapsible>
+      ))}
+    </SidebarGroup>
+  );
 }
 
   const openTasks = tasks.filter(task => task.status === 'OPEN');
@@ -412,182 +524,40 @@ function SidebarLogo()
 
             <Button
               variant="ghost"
-              className="rounded-none mx-2 mt-2 pl-2"
+              className="rounded-none mx-2 mt-2 pl-2 group-data-[collapsible=icon]:hidden"
               onClick={() => router.push('/task?new=1')}
             >
               <div className="flex items-center gap-3 flex-1 min-w-0"><PlusSquare size={16} className="mr-1" />
                 {t('newTask')}
               </div>
             </Button>
-            <SidebarSeparator />
+            <SidebarSeparator className="group-data-[collapsible=icon]:hidden" />
 
-            <SidebarGroup>
-              {/* -------------------------------------------------------------------------------------------- */}
-              {/* Current Task Section */}
-              <Collapsible 
-                open={openSubmenu === 'tasks1'} 
-                onOpenChange={() => handleSubmenuToggle('tasks1')}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
-                      <Target size={16} />
-                      <span>{t('currentTasks')}</span>
-                      <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-
-                <CollapsibleContent 
-                  className="
-                    overflow-hidden 
-                    transition-all 
-                    duration-400 ease-in-out 
-                    data-[state=closed]:animate-collapsible-up 
-                    data-[state=open]:animate-collapsible-down
-                  ">
-                    {openTasks.map(task => (
-                    <SidebarMenuSub key={task.id}>
-                      <SidebarMenuSubItem className="h-auto">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
-                                <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
-                                  <CheckSquare size={16} className="shrink-0 mt-0.5" />
-                                  <div className="line-clamp-3">{task.name}</div>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                              <p>{task.name}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                    ))}
-                </CollapsibleContent>
-              </Collapsible>
-
-              {/* -------------------------------------------------------------------------------------------- */}
-              {/* Waiting Task Section */}
-              <Collapsible 
-                open={openSubmenu === 'tasks2'} 
-                onOpenChange={() => handleSubmenuToggle('tasks2')}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none rounded-none">
-                      <Target size={16} />
-                      <span>{t('waitingTasks')}</span>
-                      <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-                  
-                <CollapsibleContent 
-                  className="
-                    overflow-hidden 
-                    transition-all 
-                    duration-400 ease-in-out 
-                    data-[state=closed]:animate-collapsible-up 
-                    data-[state=open]:animate-collapsible-down
-                  ">
-                    {waitingTasks.map(task => (
-                    <SidebarMenuSub key={task.id}>
-                      <SidebarMenuSubItem className="h-auto">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
-                                <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
-                                  <CheckSquare size={16} className="shrink-0 mt-0.5" />
-                                  <div className="line-clamp-3">{task.name}</div>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                              <p>{task.name}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                    ))}
-
-                </CollapsibleContent>
-              </Collapsible>
-
-              {/* -------------------------------------------------------------------------------------------- */}
-              {/* Urgent Task Section */}
-              <Collapsible
-                open={openSubmenu === 'tasks3'}
-                onOpenChange={() => handleSubmenuToggle('tasks3')}
-                className="group/collapsible"
-              >
-                <SidebarMenuItem>
-                  <CollapsibleTrigger asChild>
-                    <SidebarMenuButton className="flex w-full items-center hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
-                      <Target size={16} />
-                      <span>{t('urgentTasks')}</span>
-                      <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
-                    </SidebarMenuButton>
-                  </CollapsibleTrigger>
-                </SidebarMenuItem>
-
-                <CollapsibleContent
-                  className="
-                    overflow-hidden
-                    transition-all
-                    duration-400 ease-in-out
-                    data-[state=closed]:animate-collapsible-up
-                    data-[state=open]:animate-collapsible-down
-                  ">
-                    {urgentTasks.map(task => (
-                    <SidebarMenuSub key={task.id}>
-                      <SidebarMenuSubItem className="h-auto">
-                        <TooltipProvider>
-                          <Tooltip>
-                            <TooltipTrigger asChild>
-                              <SidebarMenuSubButton asChild className="hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none h-auto py-2">
-                                <Link href={`/task?id=${task.id}`} title={task.name} className="flex items-start gap-2">
-                                  <CheckSquare size={16} className="shrink-0 mt-0.5" />
-                                  <div className="line-clamp-3">{task.name}</div>
-                                </Link>
-                              </SidebarMenuSubButton>
-                            </TooltipTrigger>
-                            <TooltipContent side="right">
-                              <p>{task.name}</p>
-                            </TooltipContent>
-                          </Tooltip>
-                        </TooltipProvider>
-                      </SidebarMenuSubItem>
-                    </SidebarMenuSub>
-                    ))}
-                </CollapsibleContent>
-              </Collapsible>
-            </SidebarGroup>
+            <TaskSidebarSections
+              openSubmenu={openSubmenu}
+              handleSubmenuToggle={handleSubmenuToggle}
+              openTasks={openTasks}
+              waitingTasks={waitingTasks}
+              urgentTasks={urgentTasks}
+              t={t}
+            />
           </SidebarContent>
 
-          <SidebarFooter className="bg-muted/50 p-0 group-data-[collapsible=icon]:hidden">
+          <SidebarFooter className="bg-muted/50 p-0">
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <Button 
-                  variant="ghost" 
-                  className="w-full justify-start h-auto p-3 rounded-none hover:bg-muted/80"
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start h-auto p-3 rounded-none hover:bg-muted/80 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:p-2"
                 >
-                  <div className="flex items-center gap-3 flex-1 min-w-0">
-                    <Avatar className="h-8 w-8">
+                  <div className="flex items-center gap-3 flex-1 min-w-0 group-data-[collapsible=icon]:flex-none group-data-[collapsible=icon]:gap-0">
+                    <Avatar className="h-8 w-8 group-data-[collapsible=icon]:h-6 group-data-[collapsible=icon]:w-6">
                       <AvatarFallback className="bg-muted-foreground/20">R</AvatarFallback>
                     </Avatar>
-                    <div className="flex flex-col items-start text-left flex-1 overflow-hidden">
+                    <div className="flex flex-col items-start text-left flex-1 overflow-hidden group-data-[collapsible=icon]:hidden">
                       <span className="text-xs font-medium truncate block max-w-full">{user.name}</span>
-                      { /* <span className="text-xs font-medium">Skardhamar</span> */ }
                     </div>
-                    <ChevronUp className="h-4 w-4 text-muted-foreground" />
+                    <ChevronUp className="h-4 w-4 text-muted-foreground group-data-[collapsible=icon]:hidden" />
                   </div>
                 </Button>
               </DropdownMenuTrigger>
@@ -815,7 +785,7 @@ function SidebarLogo()
         <SidebarInset className="flex-1">
           <header className="flex items-center justify-left h-10">
             <div className="ml-8 w-80">
-              <h1 className="text-base font-semibold text-[rgb(245,245,245)] h-[21px] leading-[21px] tracking-[-0.05px]">
+              <h1 className="text-base font-semibold text-[rgb(245,245,245)] h-[21px] leading-[21px] tracking-[-0.05px] select-none">
                 {getPageTitle()}
               </h1>
             </div>

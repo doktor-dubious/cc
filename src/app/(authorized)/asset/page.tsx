@@ -31,6 +31,8 @@ import {
 import { Textarea } from "@/components/ui/textarea"
 import { Input } from "@/components/ui/input"
 import { toast } from "sonner"
+import { ExportMenu } from '@/components/ui/export-menu';
+import type { ExportColumn } from '@/lib/export';
 
 import {
   Select,
@@ -612,6 +614,12 @@ export default function ArtifactPage()
         return styles[taskStatus as keyof typeof styles] || '';
     };
 
+  const exportColumns: ExportColumn[] = [
+      { header: 'Name', accessor: 'name' },
+      { header: 'Description', accessor: (row: any) => row.description || '' },
+      { header: 'Type', accessor: 'type' },
+  ];
+
   return (
 <>
 { /* Delete Task Alert */ }
@@ -810,13 +818,14 @@ export default function ArtifactPage()
           </Button>
         </div>
 
-        <div className="flex justify-end">
+        <div className="flex justify-end gap-2">
           <Input
             placeholder={t('placeholders.filterByNameOrId')}
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
             className="max-w-sm"
           />
+          <ExportMenu data={filteredArtifacts} columns={exportColumns} filename="assets" />
         </div>
 
         <Table>
@@ -825,13 +834,12 @@ export default function ArtifactPage()
               <TableHead>{tc('table.name')}</TableHead>
               <TableHead>{tc('table.description')}</TableHead>
               <TableHead className="w-40">{tc('table.type')}</TableHead>
-              <TableHead className="text-right"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentArtifacts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell colSpan={3} className="text-center text-muted-foreground">
                   {filterText ? t('empty.noArtifactsMatch') : t('empty.noArtifactsFound')}
                 </TableCell>
               </TableRow>
@@ -851,28 +859,6 @@ export default function ArtifactPage()
                     <Badge variant="secondary" className={`${getTypeBadge(artifact.type)} px-2 py-1 text-xs asset-type-badge`}>
                       {artifact.type.replace('_', ' ')}
                     </Badge>
-                  </TableCell>
-                  <TableCell className="w-20 text-right">
-                    <div onClick={(e) => e.stopPropagation()} className="flex justify-end gap-2">
-                      <button
-                        className="hover:text-primary p-1"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setSelectedArtifact(artifact);
-                        }}
-                      >
-                        <SquarePen size={16} className="cursor-pointer" />
-                      </button>
-                      <button
-                        className="hover:text-destructive"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setArtifactToDelete(artifact.id);
-                        }}
-                      >
-                        <Trash2 size={16} className="cursor-pointer" />
-                      </button>
-                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -931,7 +917,7 @@ export default function ArtifactPage()
 
               <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
                 <div className="relative w-full max-w-225">
-                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-3">
+                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-4">
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
@@ -950,12 +936,18 @@ export default function ArtifactPage()
                     >
                       {t('tabs.tasks', { count: selectedArtifact.taskArtifacts?.length || 0 })}
                     </TabsTrigger>
+                    <TabsTrigger
+                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                      value="actions"
+                    >
+                      {t('tabs.actions')}
+                    </TabsTrigger>
                   </TabsList>
                   <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
-                      width: '33.333%',
-                      left: activeTab === 'details' ? '0%' : activeTab === 'file-details' ? '33.333%' : '66.666%'
+                      width: '25%',
+                      left: activeTab === 'details' ? '0%' : activeTab === 'file-details' ? '25%' : activeTab === 'tasks' ? '50%' : '75%'
                     }}
                   />
                 </div>
@@ -1095,6 +1087,37 @@ export default function ArtifactPage()
                       )}
                     </TableBody>
                   </Table>
+                </TabsContent>
+
+                {/* Actions Tab */}
+                <TabsContent value="actions" className="mt-6">
+                  <div className="space-y-6 max-w-2xl">
+                    <div>
+                      <h3 className="text-lg font-semibold mb-4">{t('sections.assetActions')}</h3>
+                      <p className="text-sm text-muted-foreground mb-6">
+                        {t('sections.assetActionsDescription')}
+                      </p>
+                    </div>
+
+                    <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
+                      <div className="flex items-start gap-4">
+                        <div className="flex-1">
+                          <h4 className="font-medium text-destructive mb-1">{t('buttons.deleteAsset')}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {t('sections.deleteAssetDescription')}
+                          </p>
+                        </div>
+                        <Button
+                          variant="destructive"
+                          onClick={() => setArtifactToDelete(selectedArtifact.id)}
+                          className="shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" />
+                          {t('buttons.deleteAsset')}
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
                 </TabsContent>
               </Tabs>
             </div>

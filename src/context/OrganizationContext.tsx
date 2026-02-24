@@ -1,6 +1,6 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useContext, useEffect, useMemo, useState, ReactNode } from 'react';
 
 export interface Organization
 {
@@ -12,6 +12,7 @@ export interface Organization
 interface OrganizationContextValue
 {
     organizations           : Organization[];
+    sortedOrganizations     : Organization[];
     activeOrganization      : Organization | null;
     setActiveOrganization   : (org: Organization) => void;
 }
@@ -24,36 +25,66 @@ export function OrganizationProvider({children, organizations,}: {
 })
 {
     const [activeOrganization, setActiveOrganizationState] = useState<Organization | null>(null);
+    const [selectionHistory, setSelectionHistory] = useState<Record<string, number>>({});
 
-    // Restore persisted org
+    // Read selection history from localStorage
+    const getSelectionHistory = (): Record<string, number> =>
+    {
+        try
+        {
+            const raw = localStorage.getItem('orgSelectionHistory');
+            return raw ? JSON.parse(raw) : {};
+        }
+        catch { return {}; }
+    };
+
+    // Restore persisted org or default to first
     useEffect(() =>
     {
+        if (organizations.length === 0) return;
+
+        const history = getSelectionHistory();
+        setSelectionHistory(history);
+
         const stored = localStorage.getItem('activeOrganizationId');
         if (stored)
         {
             const match = organizations.find(o => o.id === stored);
-            if (match) setActiveOrganizationState(match);
+            if (match)
+            {
+                setActiveOrganizationState(match);
+                return;
+            }
         }
+
+        setActiveOrganizationState(organizations[0]);
     }, [organizations]);
 
-    // Default selection
-    useEffect(() =>
+    // Organizations sorted by most recently selected
+    const sortedOrganizations = useMemo(() =>
     {
-        if (!activeOrganization && organizations.length > 0)
+        return [...organizations].sort((a, b) =>
         {
-            setActiveOrganizationState(organizations[0]);
-        }
-    }, [activeOrganization, organizations]);
+            const tsA = selectionHistory[a.id] || 0;
+            const tsB = selectionHistory[b.id] || 0;
+            return tsB - tsA;
+        });
+    }, [organizations, selectionHistory]);
 
     const setActiveOrganization = (org: Organization) =>
     {
         localStorage.setItem('activeOrganizationId', org.id);
+
+        const updated = { ...selectionHistory, [org.id]: Date.now() };
+        localStorage.setItem('orgSelectionHistory', JSON.stringify(updated));
+        setSelectionHistory(updated);
+
         setActiveOrganizationState(org);
     };
 
     return (
 <OrganizationContext.Provider
-    value={{ organizations, activeOrganization, setActiveOrganization }}
+    value={{ organizations, sortedOrganizations, activeOrganization, setActiveOrganization }}
 >
     {children}
 </OrganizationContext.Provider>

@@ -833,5 +833,22 @@
       "loadErrorGeneric": "Fejl ved indlæsning af indstillinger",
       "saveError": "Der opstod en fejl under gemning"
     }
+  },
+  "Export": {
+    "formats": {
+      "csv": "Eksporter som CSV",
+      "excel": "Eksporter som Excel",
+      "pdf": "Eksporter som PDF",
+      "json": "Eksporter som JSON",
+      "clipboard": "Kopier til udklipsholder"
+    },
+    "toast": {
+      "csvSuccess": "Eksporteret som CSV",
+      "excelSuccess": "Eksporteret som Excel",
+      "pdfSuccess": "Eksporteret som PDF",
+      "jsonSuccess": "Eksporteret som JSON",
+      "clipboardSuccess": "Kopieret til udklipsholder",
+      "exportError": "Eksport mislykkedes"
+    }
   }
 }
