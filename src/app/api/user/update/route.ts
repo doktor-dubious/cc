@@ -1,29 +1,22 @@
 import { log }                          from '@/lib/log';
 import { NextRequest, NextResponse }    from 'next/server';
-import { jwtVerify }                    from 'jose';
+import { getServerSession }             from '@/lib/auth';
 import { userRepository }               from '@/lib/database/user';
-import { COOKIE_NAME }                  from '@/constants';
-import { redirect }                     from 'next/navigation';
 
 export async function PATCH(request: NextRequest)
 {
     try
     {
-        // Get JWT from cookie
-        const token = request.cookies.get(COOKIE_NAME)?.value;
+        // Verify session
+        const session = await getServerSession();
 
-        if (!token)
+        if (!session)
         {
-            log.info('No token found - redirecting to login');
-            redirect('/login');
+            return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        // Verify JWT.
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-        const { payload } = await jwtVerify(token, secret);
-
-        // Get user ID from JWT.
-        const userId = payload.userId;
+        // Get user ID from session.
+        const userId = session.user.id;
 
         // Parse request body.
         const body = await request.json();

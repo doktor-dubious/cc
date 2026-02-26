@@ -144,7 +144,11 @@
     "messages": "Messages",
     "auditTrail": "Audit Trail",
     "reports": "Reports",
-    "statusReports": "Status Reports",
+    "statusReport": "Rapport de Statut",
+    "progressReport": "Rapport de Progrès",
+    "exploratoryGap": "Exploratory GAP",
+    "gap": "GAP",
+    "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -220,13 +224,102 @@
       "userDeleted": "Login deleted successfully",
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account"
+      "cannotDeleteSelf": "Cannot delete your own account",
+      "passwordTooWeak": "Password is too weak. Please make it stronger."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
       "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
+    }
+  },
+  "LoginPage": {
+    "title": "Compliance Circle",
+    "description": "Connectez-vous à Compliance Circle",
+    "loginWith": "Se connecter avec",
+    "emailPlaceholder": "Entrez votre email",
+    "password": "Mot de passe",
+    "passwordPlaceholder": "Entrez votre mot de passe",
+    "loginButton": "Connexion",
+    "loggingIn": "Connexion en cours...",
+    "orContinueWith": "ou continuez avec",
+    "google": "Google",
+    "microsoft": "Microsoft",
+    "termsNotice": "En continuant, vous acceptez nos",
+    "termsOfService": "Conditions d'utilisation",
+    "and": "et",
+    "privacyPolicy": "Politique de confidentialité"
+  },
+  "SettingsProfile": {
+    "twoFactor": {
+      "title": "Authentification à deux facteurs",
+      "description": "Ajoutez une couche de sécurité supplémentaire à votre compte en exigeant un code de vérification de votre application d'authentification lors de la connexion.",
+      "enabled": "Activée",
+      "setupDescription": "Protégez votre compte avec l'authentification à deux facteurs basée sur TOTP. Vous aurez besoin d'une application d'authentification telle que Google Authenticator, Authy ou 1Password.",
+      "enableButton": "Activer l'authentification à deux facteurs",
+      "disableButton": "Désactiver l'authentification à deux facteurs",
+      "enterPassword": "Entrez votre mot de passe pour continuer.",
+      "passwordPlaceholder": "Entrez votre mot de passe actuel",
+      "loading": "Chargement...",
+      "continue": "Continuer",
+      "cancel": "Annuler",
+      "scanQrCode": "Scannez ce code QR avec votre application d'authentification",
+      "saveBackupCodes": "Enregistrez vos codes de secours. Conservez-les dans un endroit sûr — chaque code ne peut être utilisé qu'une seule fois.",
+      "copyBackupCodes": "Copier les codes",
+      "enterVerificationCode": "Entrez le code à 6 chiffres de votre application d'authentification pour confirmer la configuration.",
+      "codePlaceholder": "000000",
+      "verify": "Vérifier et activer",
+      "regenerateDescription": "Si vous avez perdu vos codes de secours, vous pouvez en régénérer de nouveaux.",
+      "regenerateBackupCodes": "Régénérer les codes de secours",
+      "newBackupCodes": "Vos nouveaux codes de secours — enregistrez-les maintenant :",
+      "done": "Terminé",
+      "disableWarning": "Êtes-vous sûr de vouloir désactiver l'authentification à deux facteurs ? Cela rendra votre compte moins sécurisé.",
+      "confirmDisable": "Confirmer la désactivation",
+      "toast": {
+        "enabled": "Authentification à deux facteurs activée",
+        "disabled": "Authentification à deux facteurs désactivée",
+        "backupCodesRegenerated": "Codes de secours régénérés",
+        "backupCodesCopied": "Codes de secours copiés dans le presse-papiers"
+      },
+      "errors": {
+        "enableFailed": "Échec de l'activation de l'authentification à deux facteurs",
+        "invalidCode": "Code de vérification invalide",
+        "verifyFailed": "La vérification a échoué. Veuillez réessayer.",
+        "disableFailed": "Échec de la désactivation de l'authentification à deux facteurs",
+        "regenerateFailed": "Échec de la régénération des codes de secours"
+      }
+    }
+  },
+  "TwoFactorPage": {
+    "title": "Authentification à deux facteurs",
+    "description": "Entrez le code à 6 chiffres de votre application d'authentification",
+    "backupCodeDescription": "Entrez l'un de vos codes de secours",
+    "codePlaceholder": "000000",
+    "backupCodePlaceholder": "Entrez le code de secours",
+    "verifyButton": "Vérifier",
+    "verifying": "Vérification...",
+    "trustDevice": "Faire confiance à cet appareil pendant 30 jours",
+    "useBackupCode": "Utiliser un code de secours",
+    "useAuthenticator": "Utiliser l'application d'authentification",
+    "errors": {
+      "invalidCode": "Code de vérification invalide. Veuillez réessayer.",
+      "invalidBackupCode": "Code de secours invalide. Veuillez réessayer.",
+      "verificationFailed": "La vérification a échoué. Veuillez réessayer."
     }
   }
 }

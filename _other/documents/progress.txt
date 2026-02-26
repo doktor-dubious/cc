@@ -25,6 +25,8 @@
     -> Tasks (sorted by urgency)
     -> Incomming files (sorted by date)
 
+* PAGE: Login Maintancence (Super Admin) create, delete, edit.
+
 * PAGE: Organization Maintanence
     -> New Organization PopUp (Name, Description) => Audit Event
     -> Details : Name, Description (View / Edit => Audit Event)
@@ -38,7 +40,7 @@
     -> Audit Trail (View)
     -> Actions (Delete => Audit Event)
 
-* PAGE: Profile Maintanence
+* PAGE: Profile Maintanence (Profiles do not necessary have login to CC)
     -> New Profile PopUp (Profile Name, Description + Login Information: Email, Password, Login Name, Nickename, Role) => Audit Event
     -> Details : Name Description (View / Edit => Audit Event)
     -> Login : Login Name, Email, Password, Nickname, Role (View / Edit => Audit Event)
@@ -145,7 +147,6 @@
 
 ── Not Started ───────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
-  * PAGE: manage logins (super admin) create, delete, edit
   * PAGE: Upload Files (Drag & Drop)
   * PAGE: Reports
       -> Status Reports
@@ -163,14 +164,294 @@
 
 ────────────────────
 
-ToDo:
-* Rethink users/profile pages. DO we need two? There is already login handling on the profile page. Perhaps remove from there?
-* Page CIS18/Controls
-    * Some space between Risk Score legends and Show Inactive 
-    * Can only combine into one group. Must be able to have multiple groups.
-    * Groups should be able to be labeled. Labels & combination/uncombintion buttons to be displayed on the legends side.
-    * Segments in same group given colours in the outer ring. Inactive supersedes groups.
-    * A quick confirm modal to accept rendering a segment inactive
+── Thursday 26 Feb
+
+* CIS Control -> Safeguards page: 
+    1) renamed button to "Link to Existing Task"
+    2) New button to create a new task based on the Safeguard. But with prefilled Name = Sageguard Name; Description = Sageguard Definition + Purpose + Why; Start Date = Today.
+* Task Page:
+    1) Master table: new column: Time Left. If not started=infinity sign, otherwise colour code for urgency
+    2) Master table: new column: Star.
+    3) Master table: rightclick on column / clicking on the star => stars row.
+    4) Master table: new column: Checkbox to select.
+    5) Master table: Header row for checkbox: checkbox to select all, dropdown menu to select various selections (starred, open, etc.)
+    6) Master table: added sorting functionality for columns (name, time left, status, star) + sort asc/desc + sort icon
+    7) Save starred rows in the database.
+    8) Master table: added new information/action row, displayed when one or more tasks have been selected.
+      8A) Add profiles to selected tasks => Popup
+      8B) Add start/end dates to selected tasks => Popup
+      8C) Change status of selected tasks => Popup
+      8D) Delete selected tasks. Double confirmation.
+      8E) Changed colour and icon size.
+    9) Added All Overdue & All Urgent to dropdown select menu.
+    10) Removed IDs from Add profile popup dialogs.
+* CIS Control page:
+  1) "Show inactive" selector moved to below the Combined Group section.
+* CIS Control -> Safeguards page:
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars
+    3) Task column filled out with Yes/No according to if it has been attached to a task (if multiple tasks, numbers in parantesis).    
+    4) Header row over new ckeckbox column: select/deselect all + dropdown menu: A) select all, B) select tasked (safeguards connected to a task), C) select untasked (safeguards not connected to a task), D) select starred
+    5) Selected task action bar
+      -> "Selected 2 of 28 Safeguards" 
+      -> Action icons: Create new Tasks for selected Safeguards, prefilled with Name = Sageguard Name; Description = Sageguard Definition + Purpose + Why; Start Date = Today
+    6) The IG Column filled with IG1,2,3 according to if the Safeguard belongs to all three IGs (IG1), only to IG2+3 (IG2) or only to IG3 (IG3)
+* Profile page:
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars
+    3) Email column removed
+    4) New column: login. Yes if the user has a login (a row in the login table), no otherwise.
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to a) select all, b) Select users, c) select admins, d) select starred
+    5) Selected Profile action bar:
+      -> "Selected 2 of 28 Profiles"
+      -> Action icons: Delete => confirm modal: check box + write "delete" (in selected langguage) to delete.
+* Task page:
+  1) Changed buld delete, from two modal confirmation to write "delete" confirmation.
+* Asset page:
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars
+    3) Email column removed
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to a) select all, b) select starred
+    5) Selected Profile action bar:
+      -> "Selected 2 of 28 Assets"
+      -> Action icons: Delete => confirm modal: check box + write "delete" (in selected langguage) to delete.
+* Database:
+  New column in the organization table: ig. Numeric. Possible values 1,2,3. Default: 1
+* Organization page:
+  1) New field in the detail pane to display the ig: "Target Implementation Group (IG)". Selections are three badges: IG1, IG2, IG3. With same colours as before.
+* CIS Control -> Safeguards page, 
+  1) Default IG i the one selected for the Oganization target IG. This selection can be overridden on individual Controls. Override saved in database.
+  2) Change the colors of the three IG buttons.
+* Database:
+  Created a number of classifications, that may help CC to create a template CIS-to-Task profile.
+    -> Company Size (Official EU classification 2003/361/EC):
+      ** Micro enterprise: 0–9 employees (turnover or balance sheet ≤ €2 million)
+      ** Small enterprise: 10–49 employees (turnover or balance sheet ≤ €10 million)
+      ** Medium enterprise: 50–249 employees (turnover or balance sheet ≤ €50 million)
+      ** Large enterprise: 250+ employees (above medium thresholds)
+    -> Category (Eurostat NACE (Nomenclature statistique des Activités économiques dans la Communauté Européenne)):
+      ** A-U codes
+    -> Legal Form
+      ** 8 types
+    -> Revenue / Turnover Range
+      ** 6 ranges
+    -> Age / Maturity
+        ** 4
+    -> Ownership Type
+        ** 7
+    -> Geographic Scope
+        ** 5
+    -> B2B vs B2C Orientation
+        ** 4
+    -> Digital Maturity
+        ** 4
+    -> Sustainability / ESG Classification
+        ** 3
+    -> Role in Supply Chain
+        ** 5
+    -> Risk or Credit Profile
+        ** 3
+    -> EU Taxonomy Alignment
+        ** 2
+    -> ++10 more
+* Organization page:
+  -> New Tab: Taxonomy
+      ** The new categories
+  -> New Tab: Classification
+      ** The extra 10 new ones
+* Sidemenu
+  -> Fixed Submenu (to "Status Report" and "Progress Report"), and added three more items: 1) Exploratory GAP; 2) GAP; 3) CONQ
+* CIS Control -> Safeguards page:
+  -> New column: Exclude. With a button to set a Safeguard to be inactive. The status is saved in the database, connected to the organization.
+  -> New Switch: Show inactive.
+* Create Control & Safeguard GAP recommendation engine based on the organization information available in Taxonomy & Classification & based on the official documentation. (mega major task!)
+
+
+
+
+
+
+
+
+
+This whole application, Compliance Circle, is an application which is meant to aid specialists help companies fulfill the requirements of CIS18 (https://www.cisecurity.org/controls/cis-controls-list). Spefically, at which Implementation Group (IG1-3) they should target, and which controls and safeguards may be wholly or partially irrelevant for an organization of their size, of their type, etc.
+
+All the Organization Taxonomy & Classification are meant to be input to create a first suggestion of which controls and safeguards to include and which to set as "inactive". On the page "Exploratory GAP" there should be a button: "Generate Exploratory GAP" which generates this suggestion.
+
+Can you generate a suggestion on which Controls and Safeguard to include and which to set as "inactive" based on the information given in the Organization Taxonomy & Classification and based on the CIS18 documents. If there are more relevant questions to include in Taxonomy & Classification, then go ahead and add them. Also if your research finds any other suggestions (such as combining controls or safeguards, renaming, etc.) go ahead and implement these also.
+
+The suggestion should be displayed in the Exploratory GAP page, with the possibility for the user to adjust them (add/remove controls & safeguards). And finally a button to implement the suggestion. At which time, the Controls and Safeguards in the CIS Control/Safeguards page is updated.
+
+This is a big task. Task as long as you require. You have permission to do everything without stopping to ask.
+--- 
+
+
+
+Can you make the starred Profiles and starred Assets permanent, like on the Task page.
+
+
+
+
+
+
+Organization page:
+  Some changes that resemble those we just did on the Profile, Task & Safeguard pages.
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars. Make the starred permanent, like on the Profile, Task, pages,
+    3) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to select all, select starred
+    4) If one or more organizations have been selected, show action bar below table:
+      Display something like: "Selected 2 of 28 Organizations" And action icons: 
+      Icon (lucide-react: Trash2) delete all selected organizations => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
+
+Database:
+  New column in the organization table: ig. Should be numeric, possible values 1,2,3. Default: 1
+Organization page:
+  1) Add field in the detail pane to display the ig: "Target Implementation Group (IG)". The selections should between three badges: IG1, IG2, IG3
+Having the same colours as before:
+#5D664D;
+#335c8c;
+#ad423f;
+
+
+
+
+
+Deleting select tasks on the task page makes you go through two confirm modals. Can we change it so it follows how it works on the profile page: Only one confirm modal, have to check a checkbox and write "delete" in the selected language.
+
+
+
+
+ig1 : #5D664D;
+ig2 : #335c8c;
+ig3 : #ad423f;
+
+
+The selection drop down should be like on the Task page. Clicking on the checkbox selects all, clicking on the down caret opens the dropdown select options. And the "deselect all" should be removed.
+
+
+
+
+
+
+Some Safeguards are in all three Implementation Groups (IG1, IG2, IG3), but some are only in IG2+IG3 or only in IG3.
+If they're in all, then the IG column should show IG1 in a badge
+If they're only in IG2+IG3, the IG column should show IG2 in a badge
+If they're only in IG3, the IG column should show IG3 in a badge
+
+
+
+On the CIS Control page, move the "Show inactive" selector to below the Combined Group section
+
+Profile page:
+  Some changes that resemble those we just did on the Task & Safeguard pages.
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars
+    3) Remove email column and add a new column there instead: login. Yes if the user has a login (a row in the login table), no otherweise. Make the yes/no into badges.
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to select all, Select users, select admins, select starred
+    5) If one or more profiles have been selected, show action bar below table:
+      Display something like: "Selected 2 of 28 Profiles" And action icons: 
+      Icon (lucide-react: Trash2) delete all selected profiles => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
+
+
+      to create tasks from selected Safeguards => Modal to confirm action. The create tasks prefilled with Name = Sageguard Name; Description = Sageguard Definition + Purpose + Why; Start Date = Today
+
+
+    New column The Task column should show a badge with Yes/No, if it has a task. If Yes, and if there are multiple tasks, show the number in parantesis.
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to select all, select tasked (safeguards connected to a task), select untasked (safeguards not connected to a task), select starred
+    5) If one or more tasks has been selected, show action bar below table:
+      Display something like: "Selected 2 of 28 Safeguards" And action icons: Icon (lucide-react: ClipboardList) to create tasks from selected Safeguards => Modal to confirm action. The create tasks prefilled with Name = Sageguard Name; Description = Sageguard Definition + Purpose + Why; Start Date = Today
+
+
+
+
+
+
+
+
+5)      aster table: Header row for checkbox: checkbox to select all, dropdown menu to select various selections (starred, open, etc.)
+
+    New coloumns (much like t)
+
+
+   1) Master table: new column: Time Left. If not started=infinity sign, otherwise colour code for urgency
+    2) Master table: new column: Star.
+    3) Master table: rightclick on column / clicking on the star => stars row.
+    4) Master table: new column: Checkbox to select.
+    5) Master table: Header row for checkbox: checkbox to select all, dropdown menu to select various selections (starred, open, etc.)
+    6) Master table: added sorting functionality for columns (name, time left, status, star) + sort asc/desc + sort icon
+    7) Save starred rows in the database.
+    8) Master table: added new information/action row, displayed when one or more tasks have been selected.
+      8A) Add profiles to selected tasks => Popup
+      8B) Add start/end dates to selected tasks => Popup
+      8C) Change status of selected tasks => Popup
+      8D) Delete selected tasks. Double confirmation.
+      8E) Changed colour and icon size.
+ 
+
+
+
+    Add button to create Tasks of all Safeguards of the selected IG
+
+
+
+
+── Wednesday 25 Feb
+* Login Page (continued)
+  -> Redo to use the "Better Auth" library (major) (continued)
+  -> Use Social Media login. Microsoft Azure & Google. (continued)
+      -> Google: cc@predictioninstitute.com / Zx81sjdsy!!
+      -> Microsoft (portal.azure.com/auth/login/) : 
+  -> Language Localization added.
+  -> Restyle to follow general style.
+* Business Flow
+    1) Adviser receives new Organization to onboard.
+    2) First the Advisor must do a little preliminary research on Organization: business type, number of employees, etc.
+       CC could perhaps assist with this (0% done).
+    3) The Organization data is entered into CC's Organization Profile (100% done)
+    4) The next step for the Advisor is to tweak the CIS Controls & Safeguards. Remove those which are irrelevant (100% done), combine others (100% done), rename some (0% done).
+       To help with this task, CC can generate an initial starting point, by using the Organization Profile (0% done). Clicking on a button would apply the CC CIS template (0% done).
+    5) The next step for the Advisor is to meet the customer (Organization) in a face-to-face meeting. The purpose of this meeting is to gather information for the GAP analysis.
+       To aid the Advisor with this task, CC can generate a preliminary GAP aanalyse checklist (25% done). This is a printout (must be pretty & readable) or online (iPad) version of the active CIS Controls & Safeguards, with space for comments, etc.
+    6) Having talked to the customer and gathered information for the GAP analysis, the Advisor can now refine the CIS Controls & Safeguards (100% done)
+    7) Using this and other information CC can now generate a GAP analysis, during an interactive session with the Advisor (0% done)
+    8) The next step is to activate the customer to get the compliance process going. For this purpose, first the Advisor creates a number of Profiles (100% done) for those responsible on the customer side. These Profiles do not have login access to CC.
+    9) The Advisor can now generate Tasts individually on each CIS Safeguard (80% done), as well as Tasks not related to CIS (100%). The Advisor can also generate all Tasks related to a whole CIS Control (that is all the Safeguards) (0% done), or to all active Controls in one go (0% done).
+    9) These Tasks can be connected to the Profiles (100% done), at which time Profile gets notified (0% done) that he has been assigned a Task.
+    10) The rest is an ongoing process. The Profiles can upload Assets (25% done) to document Task completion status. The Advisor can verify the Asset, and if found relevant assosiate them with a Task (100% done) The Advisor can also upload his own Assets (in case the customer communicated through email, etc.) (25% done)
+    11) The Advisor can then change the status of a Task (Open, Done, Closed, etc.) (100% done)
+    12) The Advisor can communicate with other Advisors (if there are multiple Advisors for one Organization) (100% done - for v1, needs more bells for v2) and with Customers (0% done) with messages assosiated with a Task.
+    13) The Advisor can generate status and progress reports based on the Tasks and CIS profile (0% done), as well as CONQ reports (0% done).
+    14) There is an immutable Audit Trail, which documents all changes. Task created, deleted, changes status, etc. (100% done)
+    15) The Advisor can get an overview of the statsus of all his Organizations from the Dashboard view (25% done)
+* User Page: 
+    1) The role select should have same width as other components
+    2) Copy email verification (valid, unique) and password verification (strength) from the Profile Page to here.
+    3) Changed Tab underline colour from purple to "foreground"
+    4) When creating a Login, automatically also create a Profile. 
+* Profile Page:
+    1) Only show Login Tab pane on Profiles which are connected to a login
+* Sidemenu : All menuitems + submenu items now have cursor=pointer on hover.
+* Marked for deletion: 
+    src/app/actions/authorization.ts
+    src/lib/authorization.ts
+    src/app/api/user/logout/route.ts
+* Sidemenu : Language submenu: Greyscale flag icons, show in colour when on hover.
+* Sidemenu : Show collapse/expand cursor in empty space of header (right of logo)
+* General: Tried new font, Roboto vers Geist. Not sure which is best.
+* Sidemenu : Added some animated icons to the Sidemenu / Dropdown (Logout, Blog)
+* Sidemenu : Change theme not just on the sun/moon icon. Also the Theme menu text.
+* Sidemenu : Profile Settings / Account : "Enable Two-Factor Authentication" -> <Button variant="defaut" + button text non selectable.
+
+
+
+
+Do the same with the icon under Learn More -> Blog. Use this icon (https://animate-ui.com/docs/icons?search=link&icon=square-arrow-out-up-right) I already installed it with npx shadcn@latest add @animate-ui/icons-square-arrow-out-up-right
+
+
+General Sidemenu is black, rest is dark grey. This is not the same as grok, www.better-auth.com
+But dark grey is the color used by claude
+
+
 
 ── Tuesday 24 Feb
 * Page Assets: New Tab: Action. Delete Asset moved from master table to Action tab.
@@ -215,16 +496,23 @@ ToDo:
     -> Functionality to name groups with custom name (to replace default "group 1..")
     -> Store groups in database.
     -> Fix error where groups could be grouped. 
+* Login Page
+  -> Redo to use the "Better Auth" library (major) 
+  -> Use Social Media login. Microsoft Azure & Google.
+  -> Added 2FA functionality. Optional, per user.
 
 
 
-1) The combine button should be a <Button variant="default"
-2) Under the group name, is a list of the controls in the group. This line is too long, perhaps break up so only one control per line.
-3) Clicking on the group should popup a dialog where the group can be given a name, to replace the default name "group 1", "group 2".
-4) There is an error: after a group has been created, you can select the group and it'll let you click the combine button again.
-5) The groups should be stored in the database. Create new tables or columns in existing tables if required.
+Find products made in Cambodia or Laos, for a website selling products made locally in Cambodia and Laos. I'll the products, and contact information to the company making them.
 
-when you select a group and combine it with a
+It could be Kampot Pebber or Mondulkiri Coffee, silk, etc.
+
+
+
+products made locally in Cambodia and Laos
+
+, producers, sellers.
+
 
 
 

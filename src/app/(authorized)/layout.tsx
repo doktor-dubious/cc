@@ -1,60 +1,51 @@
 import { log } from '@/lib/log';
-import { cookies } from 'next/headers';
-import jwt from 'jsonwebtoken';
+import { headers } from 'next/headers';
 import { redirect } from 'next/navigation';
 
+import { auth } from '@/lib/auth';
 import { userRepository } from '@/lib/database/user';
 import { taskRepository } from '@/lib/database/task';
 import { organizationRepository } from '@/lib/database/organization';
 
 import AuthorizedLayoutClient from '@/app/components/AuthorizedLayoutClient';
-import { COOKIE_NAME } from '@/constants';
 
 async function getUserData() {
-  const cookieStore = await cookies();
-  const token = cookieStore.get(COOKIE_NAME)?.value;
-
-  if (!token) {
-    log.info('No token found - redirecting to login');
-    redirect('/login');
-  }
-
-  const JWT_SECRET = process.env.JWT_SECRET;
-  if (!JWT_SECRET) {
-    throw new Error('JWT_SECRET not configured');
-  }
-
   try {
-    const decoded = jwt.verify(token, JWT_SECRET) as {
-      userId: string;
-      email: string;
-    };
+    const session = await auth.api.getSession({ headers: await headers() });
 
-    const user = await userRepository.findById(decoded.userId);
+    if (!session) {
+      log.info('No session found - redirecting to login');
+      redirect('/login');
+    }
+
+    // Look up the full user from DB (includes role, nickname, workFunction etc.)
+    const user = await userRepository.findById(session.user.id);
 
     if (!user) {
       redirect('/login');
     }
 
     return user;
-  } catch (err) {
-    log.error(err, 'JWT verification failed');
+  } catch (err: any) {
+    // redirect() throws a special error — re-throw it
+    if (err?.digest?.startsWith('NEXT_REDIRECT')) throw err;
+    log.error(err, 'Session verification failed');
     redirect('/login');
   }
 }
 
-async function getOrganizationData(user: { id: string; role: string }) 
+async function getOrganizationData(user: { id: string; role: string })
 {
-    try 
+    try
     {
-        if (user.role === 'SUPER_ADMIN') 
+        if (user.role === 'SUPER_ADMIN')
         {
             return await organizationRepository.findAll();
         }
 
         return await organizationRepository.findAllByUserId(user.id);
-    } 
-    catch (err) 
+    }
+    catch (err)
     {
         log.error(err, 'Error loading organizations');
         return [];
@@ -66,8 +57,8 @@ async function getTasksData()
     try
     {
         return await taskRepository.findAll();
-    } 
-    catch (err) 
+    }
+    catch (err)
     {
         log.error(err, 'Error loading tasks');
         return [];
@@ -85,9 +76,35 @@ export default async function AuthorizedLayout({children,}:
 
     const organizations = organizationsDb.map(org => (
     {
-        id          : org.id,
-        name        : org.name,
-        description : org.description,
+        id                       : org.id,
+        name                     : org.name,
+        description              : org.description,
+        ig                       : org.ig,
+        size                     : org.size,
+        naceSection              : org.naceSection,
+        legalForm                : org.legalForm,
+        revenueRange             : org.revenueRange,
+        maturity                 : org.maturity,
+        ownershipType            : org.ownershipType,
+        geographicScope          : org.geographicScope,
+        businessOrientation      : org.businessOrientation,
+        digitalMaturity          : org.digitalMaturity,
+        esgStatus                : org.esgStatus,
+        supplyChainRole          : org.supplyChainRole,
+        riskProfile              : org.riskProfile,
+        euTaxonomyAligned        : org.euTaxonomyAligned,
+        itSecurityStaff          : org.itSecurityStaff,
+        securityMaturity         : org.securityMaturity,
+        dataSensitivity          : org.dataSensitivity,
+        regulatoryObligations    : org.regulatoryObligations,
+        itEndpointRange          : org.itEndpointRange,
+        infrastructureTypes      : org.infrastructureTypes,
+        softwareDevelopment      : org.softwareDevelopment,
+        publicFacingServices     : org.publicFacingServices,
+        targetedAttackLikelihood : org.targetedAttackLikelihood,
+        downtimeTolerance        : org.downtimeTolerance,
+        supplyChainPosition      : org.supplyChainPosition,
+        securityBudgetRange      : org.securityBudgetRange,
     }));
 
     return (

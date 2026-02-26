@@ -4,11 +4,12 @@ import { createContext, useContext, ReactNode } from 'react';
 import type { UserRole } from '@prisma/client';
 
 interface User {
-  name          : string;
-  email         : string;
-  role          : UserRole;
-  nickname      : string;
-  workFunction? : string;
+  name              : string;
+  email             : string;
+  role              : UserRole;
+  nickname          : string;
+  workFunction?     : string;
+  twoFactorEnabled? : boolean;
 }
 
 const UserContext = createContext<User | null>(null);

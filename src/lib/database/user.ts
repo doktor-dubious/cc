@@ -21,22 +21,24 @@ import type { User, UserRole, WorkFunction } from '@prisma/client';
 
 type SafeUser =
 {
-    id              : string;
-    email           : string;
-    name            : string;
-    nickname        : string;
-    role            : UserRole;
-    workFunction    : WorkFunction;
+    id               : string;
+    email            : string;
+    name             : string;
+    nickname         : string;
+    role             : UserRole;
+    workFunction     : WorkFunction;
+    twoFactorEnabled : boolean;
 };
 
 const selectFields =
 {
-    id              : true,
-    email           : true,
-    name            : true,
-    nickname        : true,
-    role            : true,
-    workFunction    : true,
+    id               : true,
+    email            : true,
+    name             : true,
+    nickname         : true,
+    role             : true,
+    workFunction     : true,
+    twoFactorEnabled : true,
 } as const;
 
 export const userRepository =

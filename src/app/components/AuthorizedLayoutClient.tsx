@@ -51,7 +51,6 @@ import {
   Home, 
   FileText, 
   User, 
-  LogOut,
   PanelLeft,
   ChevronUp,
 
@@ -78,7 +77,6 @@ import {
   Lightbulb,
 
   Cog,
-  ExternalLink,
   PlusSquare
 } from "lucide-react"
 
@@ -105,6 +103,8 @@ import { BlocksIcon } from "@/components/animate-ui/icons/blocks"
 import { SunIcon } from "@/components/animate-ui/icons/sun"
 import { MoonIcon } from "@/components/animate-ui/icons/moon"
 import { AnimateIcon } from "@/components/animate-ui/icons/icon"
+import { LogOutIcon } from "@/components/animate-ui/icons/log-out"
+import { SquareArrowOutUpRightIcon } from "@/components/animate-ui/icons/square-arrow-out-up-right"
 
 import { UserProvider }         from '@/context/UserContext';
 import { TaskProvider }         from '@/context/TaskContext';
@@ -121,11 +121,12 @@ import { useOrganization } from '@/context/OrganizationContext';
 
 interface User
 {
-    name          : string;
-    email         : string;
-    role          : UserRole;
-    nickname      : string;
-    workFunction? : string;
+    name              : string;
+    email             : string;
+    role              : UserRole;
+    nickname          : string;
+    workFunction?     : string;
+    twoFactorEnabled? : boolean;
 }
 
 export default function AuthorizedLayout({children, user, organizations, tasks}: 
@@ -262,11 +263,14 @@ function OrganizationSwitcher()
 
 function SidebarLogo()
 {
-    const { toggleSidebar } = useSidebar()
+    const { toggleSidebar, state } = useSidebar()
     const router = useRouter()
 
     return (
-      <div className="w-full flex items-center px-2 cursor-pointer" onClick={toggleSidebar}>
+      <div
+        className={`w-full flex items-center px-2 ${state === 'collapsed' ? 'cursor-e-resize' : 'cursor-w-resize'}`}
+        onClick={toggleSidebar}
+      >
         <a
           onClick={(e) => { e.stopPropagation(); router.push('/home'); }}
           className="cursor-pointer p-1 shrink-0"
@@ -722,11 +726,14 @@ function TaskSidebarSections({
                   </DropdownMenuItem>
 
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>{t('reports')}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger className="cursor-pointer">{t('reports')}</DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
-                        <DropdownMenuItem>{t('statusReports')}</DropdownMenuItem>
-                        <DropdownMenuItem>{t('statusReports')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/status')}>{t('statusReport')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/progress')}>{t('progressReport')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/exploratory-gap')}>{t('exploratoryGap')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/gap')}>{t('gap')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/conq')}>{t('conq')}</DropdownMenuItem>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
@@ -757,23 +764,25 @@ function TaskSidebarSections({
                     {t('cis')}
                     <DropdownMenuShortcut><Cog /></DropdownMenuShortcut>
                   </DropdownMenuItem>
-                  <DropdownMenuItem>{t('academy')}</DropdownMenuItem>
-                  <DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">{t('academy')}</DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
                     {t('ai')}
                     <DropdownMenuShortcut><Bot /></DropdownMenuShortcut>
                   </DropdownMenuItem>
 
                   <DropdownMenuSub>
-                    <DropdownMenuSubTrigger>{t('learnMore')}</DropdownMenuSubTrigger>
+                    <DropdownMenuSubTrigger className="cursor-pointer">{t('learnMore')}</DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
-                        <DropdownMenuItem>{t('aboutComplianceCircle')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">{t('aboutComplianceCircle')}</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>{t('privacyPolicy')}</DropdownMenuItem>
-                        <DropdownMenuItem>{t('termsOfService')}</DropdownMenuItem>
-                        <DropdownMenuItem>{t('blog')}
-                          <DropdownMenuShortcut><ExternalLink /></DropdownMenuShortcut>
-                        </DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">{t('privacyPolicy')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer">{t('termsOfService')}</DropdownMenuItem>
+                        <AnimateIcon animateOnHover asChild>
+                          <DropdownMenuItem className="cursor-pointer">{t('blog')}
+                            <DropdownMenuShortcut><SquareArrowOutUpRightIcon size={16} /></DropdownMenuShortcut>
+                          </DropdownMenuItem>
+                        </AnimateIcon>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>
@@ -782,32 +791,31 @@ function TaskSidebarSections({
                   {/* Settings Section */}
                   <DropdownMenuGroup>
                     {/* Theme Toggle Button */}
-                    <DropdownMenuLabel className="flex text-muted-foreground font-normal">{t('theme')}
                     <AnimateIcon animateOnHover asChild>
-                      <span
-                        className="ml-auto cursor-pointer"
-                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
-                      >
+                    <DropdownMenuLabel
+                      className="flex text-muted-foreground font-normal cursor-pointer"
+                      onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    >{t('theme')}
+                      <span className="ml-auto">
                         {theme === "dark" ? (
                           <SunIcon className="h-4 w-4" />
                         ) : (
                           <MoonIcon className="h-4 w-4" />
                         )}
                       </span>
+                    </DropdownMenuLabel>
                     </AnimateIcon>
 
-                    </DropdownMenuLabel>
-
-                    <DropdownMenuItem onClick={() => router.push('/settings/profile')}>
+                    <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/profile')}>
                       {t('profileSettings')}
                     </DropdownMenuItem>
                     {user.role === 'SUPER_ADMIN' && (
-                      <DropdownMenuItem onClick={() => router.push('/settings/application')}>
+                      <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/application')}>
                         {t('applicationSettings')}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSub>
-                      <DropdownMenuSubTrigger>{t('language')}</DropdownMenuSubTrigger>
+                      <DropdownMenuSubTrigger className="cursor-pointer">{t('language')}</DropdownMenuSubTrigger>
                       <DropdownMenuPortal>
                         <DropdownMenuSubContent className="text-muted-foreground font-normal">
                           {locales.map((code) => {
@@ -815,10 +823,10 @@ function TaskSidebarSections({
                             return (
                               <DropdownMenuItem
                                 key={code}
-                                className={`cursor-pointer ${locale === code ? 'font-bold' : ''}`}
+                                className={`cursor-pointer group/lang ${locale === code ? 'font-bold' : ''}`}
                                 onClick={async () => { await setLocale(code); router.refresh(); }}
                               >
-                                <Flag className="w-4 h-3" />{label}
+                                <Flag className="w-4 h-3 grayscale transition-[filter] duration-200 group-hover/lang:grayscale-0" />{label}
                               </DropdownMenuItem>
                             );
                           })}
@@ -829,13 +837,16 @@ function TaskSidebarSections({
 
                   <DropdownMenuSeparator />
 
-                  <DropdownMenuItem onClick={async () => {
-                      await fetch('/api/user/logout', { method: 'POST' });
+                  <AnimateIcon animateOnHover asChild>
+                    <DropdownMenuItem className="cursor-pointer" onClick={async () => {
+                      const { authClient } = await import('@/lib/auth-client');
+                      await authClient.signOut();
                       router.push('/login');
                     }}>
                     {t('logOut')}
-                    <DropdownMenuShortcut><LogOut /></DropdownMenuShortcut>
+                    <DropdownMenuShortcut><LogOutIcon size={16} /></DropdownMenuShortcut>
                   </DropdownMenuItem>
+                  </AnimateIcon>
                   </DropdownMenuGroup>
               </DropdownMenuContent>
             </DropdownMenu>

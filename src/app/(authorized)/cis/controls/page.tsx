@@ -793,17 +793,6 @@ export default function CISControlsPage() {
             </div>
           </div>
 
-          {/* Show inactive toggle — separated */}
-          <div className="space-y-3">
-            <div className="flex items-center gap-2">
-              <Switch
-                checked={showInactive}
-                onCheckedChange={setShowInactive}
-              />
-              <span className="text-sm text-muted-foreground">{t('legends.showInactive')}</span>
-            </div>
-          </div>
-
           {/* Combined groups section */}
           <div className="space-y-3">
             <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('segments.combinedGroups')}</p>
@@ -868,6 +857,17 @@ export default function CISControlsPage() {
             ) : (
               <p className="text-xs text-muted-foreground/60">{t('segments.noGroups')}</p>
             )}
+          </div>
+
+          {/* Show inactive toggle */}
+          <div className="space-y-3">
+            <div className="flex items-center gap-2">
+              <Switch
+                checked={showInactive}
+                onCheckedChange={setShowInactive}
+              />
+              <span className="text-sm text-muted-foreground">{t('legends.showInactive')}</span>
+            </div>
           </div>
 
         </div>

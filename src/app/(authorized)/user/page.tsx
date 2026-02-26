@@ -2,7 +2,8 @@
 
 import { useUser }              from '@/context/UserContext';
 import { useRouter }            from 'next/navigation';
-import { useEffect, useState }  from 'react';
+import { useRef, useEffect, useState }  from 'react';
+import { zxcvbn }                         from '@/lib/zxcvbn';
 import { Trash2 }               from 'lucide-react';
 import { Button }               from "@/components/ui/button";
 import { useTranslations }      from 'next-intl';
@@ -106,6 +107,27 @@ export default function UserPage()
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
 
+    // Email validation (edit form)
+    const [emailValid, setEmailValid]             = useState<number | null>(null);
+    const [isCheckingEmail, setIsCheckingEmail]   = useState(false);
+    const emailCheckTimeout                       = useRef<NodeJS.Timeout | null>(null);
+
+    // Password strength (edit form)
+    const [passwordTouched, setPasswordTouched]   = useState(false);
+    const [passwordStrength, setPasswordStrength] = useState<number | null>(null);
+    const [passwordFeedback, setPasswordFeedback] = useState<string>("");
+    const passwordTimeout                         = useRef<NodeJS.Timeout | null>(null);
+
+    // Email validation (create dialog)
+    const [newEmailValid, setNewEmailValid]             = useState<number | null>(null);
+    const [isCheckingNewEmail, setIsCheckingNewEmail]   = useState(false);
+    const newEmailCheckTimeout                         = useRef<NodeJS.Timeout | null>(null);
+
+    // Password strength (create dialog)
+    const [newPasswordStrength, setNewPasswordStrength] = useState<number | null>(null);
+    const [newPasswordFeedback, setNewPasswordFeedback] = useState<string>("");
+    const newPasswordTimeout                           = useRef<NodeJS.Timeout | null>(null);
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FETCH USERS
     const fetchUsers = async () =>
@@ -166,6 +188,10 @@ export default function UserPage()
             setEmail(selectedUser.email || "");
             setRole(selectedUser.role || "USER");
             setPassword(""); // Always clear password
+            setEmailValid(0); // Existing email is valid
+            setPasswordStrength(null);
+            setPasswordFeedback("");
+            setPasswordTouched(false);
         }
         else
         {
@@ -174,6 +200,10 @@ export default function UserPage()
             setEmail("");
             setRole("USER");
             setPassword("");
+            setEmailValid(null);
+            setPasswordStrength(null);
+            setPasswordFeedback("");
+            setPasswordTouched(false);
         }
     }, [selectedUser]);
 
@@ -204,6 +234,197 @@ export default function UserPage()
     }, [filterText]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // CLEANUP TIMEOUTS
+    useEffect(() =>
+    {
+        return () =>
+        {
+            if (emailCheckTimeout.current) clearTimeout(emailCheckTimeout.current);
+            if (passwordTimeout.current) clearTimeout(passwordTimeout.current);
+            if (newEmailCheckTimeout.current) clearTimeout(newEmailCheckTimeout.current);
+            if (newPasswordTimeout.current) clearTimeout(newPasswordTimeout.current);
+        };
+    }, []);
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // CHECK EMAIL AVAILABILITY
+    const checkEmailAvailability = async (
+        emailToCheck : string,
+        currentEmail : string | null,
+        setValid     : (v: number | null) => void,
+        setChecking  : (v: boolean) => void,
+    ) =>
+    {
+        if (!emailToCheck.trim())
+        {
+            setValid(null);
+            return;
+        }
+
+        if (currentEmail && emailToCheck === currentEmail)
+        {
+            setValid(0);
+            setChecking(false);
+            return;
+        }
+
+        setChecking(true);
+
+        try
+        {
+            const res = await fetch(`/api/user/check-email?email=${encodeURIComponent(emailToCheck)}`);
+            const data = await res.json();
+            if (data.success)
+            {
+                setValid(data.available ? 0 : 2);
+            }
+        }
+        catch (error)
+        {
+            console.error('Error checking email:', error);
+        }
+        finally
+        {
+            setChecking(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // EMAIL CHANGE (edit form)
+    const handleEmailChange = (newEmail: string) =>
+    {
+        setEmail(newEmail);
+
+        if (emailCheckTimeout.current)
+        {
+            clearTimeout(emailCheckTimeout.current);
+            emailCheckTimeout.current = null;
+        }
+
+        emailCheckTimeout.current = setTimeout(() =>
+        {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(newEmail))
+            {
+                setEmailValid(1);
+                return;
+            }
+            checkEmailAvailability(newEmail, selectedUser?.email || null, setEmailValid, setIsCheckingEmail);
+        }, 500);
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // EMAIL CHANGE (create dialog)
+    const handleNewEmailChange = (emailValue: string) =>
+    {
+        setNewEmail(emailValue);
+
+        if (newEmailCheckTimeout.current)
+        {
+            clearTimeout(newEmailCheckTimeout.current);
+            newEmailCheckTimeout.current = null;
+        }
+
+        newEmailCheckTimeout.current = setTimeout(() =>
+        {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(emailValue))
+            {
+                setNewEmailValid(1);
+                return;
+            }
+            checkEmailAvailability(emailValue, null, setNewEmailValid, setIsCheckingNewEmail);
+        }, 500);
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // PASSWORD CHANGE (edit form)
+    const handlePasswordChange = (value: string) =>
+    {
+        setPassword(value);
+        setPasswordTouched(true);
+
+        if (passwordTimeout.current) clearTimeout(passwordTimeout.current);
+
+        passwordTimeout.current = setTimeout(() =>
+        {
+            if (!value)
+            {
+                setPasswordStrength(null);
+                setPasswordFeedback('');
+                return;
+            }
+
+            const result = zxcvbn(value, [
+                name.trim() || "",
+                email.split("@")[0] || "",
+                nickname.trim() || "",
+            ]);
+
+            setPasswordStrength(result.score);
+
+            let message = "";
+            if (result.feedback.warning)
+            {
+                message = result.feedback.warning;
+            }
+            else if (result.feedback.suggestions.length > 0)
+            {
+                message = result.feedback.suggestions[0];
+            }
+            else if (result.score >= 3)
+            {
+                message = "Looks good!";
+            }
+
+            setPasswordFeedback(message);
+        }, 400);
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // PASSWORD CHANGE (create dialog)
+    const handleNewPasswordChange = (value: string) =>
+    {
+        setNewPassword(value);
+
+        if (newPasswordTimeout.current) clearTimeout(newPasswordTimeout.current);
+
+        newPasswordTimeout.current = setTimeout(() =>
+        {
+            if (!value)
+            {
+                setNewPasswordStrength(null);
+                setNewPasswordFeedback('');
+                return;
+            }
+
+            const result = zxcvbn(value, [
+                newName.trim() || "",
+                newEmail.split("@")[0] || "",
+                newNickname.trim() || "",
+            ]);
+
+            setNewPasswordStrength(result.score);
+
+            let message = "";
+            if (result.feedback.warning)
+            {
+                message = result.feedback.warning;
+            }
+            else if (result.feedback.suggestions.length > 0)
+            {
+                message = result.feedback.suggestions[0];
+            }
+            else if (result.score >= 3)
+            {
+                message = "Looks good!";
+            }
+
+            setNewPasswordFeedback(message);
+        }, 400);
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // ROW CLICK
     const handleRowClick = (u: any) =>
     {
@@ -221,6 +442,9 @@ export default function UserPage()
         setNewEmail("");
         setNewPassword("");
         setNewRole("USER");
+        setNewEmailValid(null);
+        setNewPasswordStrength(null);
+        setNewPasswordFeedback("");
         setIsNewDialogOpen(true);
     };
 
@@ -229,6 +453,14 @@ export default function UserPage()
     const handleCreate = async () =>
     {
         if (!newName.trim() || !newEmail.trim() || !newPassword.trim()) return;
+
+        // Require strong password
+        const result = zxcvbn(newPassword, [newName, newEmail, newNickname]);
+        if (result.score < 3)
+        {
+            toast.error(t('toast.passwordTooWeak'));
+            return;
+        }
 
         setIsSaving(true);
 
@@ -282,6 +514,17 @@ export default function UserPage()
     const handleSave = async () =>
     {
         if (!selectedUser || !name.trim()) return;
+
+        // If password is being changed, require strong password
+        if (password.length > 0)
+        {
+            const result = zxcvbn(password, [name, email, nickname]);
+            if (result.score < 3)
+            {
+                toast.error(t('toast.passwordTooWeak'));
+                return;
+            }
+        }
 
         setIsSaving(true);
 
@@ -498,27 +741,74 @@ export default function UserPage()
         <input
           type="email"
           value={newEmail}
-          onChange={(e) => setNewEmail(e.target.value)}
+          onChange={(e) => handleNewEmailChange(e.target.value)}
           placeholder={t('placeholders.enterEmail')}
-          className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
+          className={`w-full bg-neutral-800 border rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:border-transparent
+            ${newEmailValid ? 'border-red-500 focus:ring-red-500' : ''}
+            ${!newEmailValid && newEmail ? 'border-green-500 focus:ring-green-500' : ''}
+            ${!newEmailValid && !newEmail ? 'border-neutral-700 focus:ring-neutral-600' : ''}
+          `}
         />
+        {newEmailValid === 1 && (
+          <p className="text-xs text-red-500">{t('emailValidation.invalidFormat')}</p>
+        )}
+        {newEmailValid === 2 && (
+          <p className="text-xs text-red-500">{t('emailValidation.alreadyTaken')}</p>
+        )}
+        {!newEmailValid && newEmail && (
+          <p className="text-xs text-green-500">{t('emailValidation.available')}</p>
+        )}
       </div>
 
-      <div className="grid gap-2">
+      <div className="grid gap-2 relative">
         <label className="block text-sm">{t('labels.password')}</label>
         <input
           type="password"
+          name="new-password"
+          autoComplete="new-password"
           value={newPassword}
-          onChange={(e) => setNewPassword(e.target.value)}
+          onChange={(e) => handleNewPasswordChange(e.target.value)}
           placeholder={t('placeholders.enterPassword')}
-          className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
+          className={`w-full bg-neutral-800 border rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:border-transparent
+            ${newPasswordStrength === 0 ? 'border-red-600 focus:ring-red-600' : ''}
+            ${newPasswordStrength === 1 ? 'border-orange-600 focus:ring-orange-600' : ''}
+            ${newPasswordStrength === 2 ? 'border-yellow-600 focus:ring-yellow-600' : ''}
+            ${newPasswordStrength === 3 ? 'border-green-600 focus:ring-green-600' : ''}
+            ${newPasswordStrength === 4 ? 'border-emerald-600 focus:ring-emerald-600' : ''}
+            ${newPasswordStrength === null ? 'border-neutral-700 focus:ring-neutral-600' : ''}
+          `}
         />
+        <div className="mt-2 space-y-1.5">
+          <div className="h-1.5 w-full bg-neutral-700 rounded-full overflow-hidden">
+            <div
+              className={`
+                h-full transition-all duration-300 ease-out
+                ${newPasswordStrength === null ? "w-0" : ""}
+                ${newPasswordStrength === 0 ? "w-1/5 bg-red-600" : ""}
+                ${newPasswordStrength === 1 ? "w-2/5 bg-orange-600" : ""}
+                ${newPasswordStrength === 2 ? "w-3/5 bg-yellow-500" : ""}
+                ${newPasswordStrength === 3 ? "w-4/5 bg-green-600" : ""}
+                ${newPasswordStrength === 4 ? "w-full bg-emerald-600" : ""}
+              `}
+            />
+          </div>
+          {!newPassword && (
+            <p className="text-xs text-neutral-500">{t('password.minLength')}</p>
+          )}
+        </div>
+        <div className="mt-1 text-xs">
+          {newPasswordStrength === 0 && <p className="text-red-600">{t('password.veryWeak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({newPasswordFeedback})</span></p>}
+          {newPasswordStrength === 1 && <p className="text-orange-600">{t('password.weak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({newPasswordFeedback})</span></p>}
+          {newPasswordStrength === 2 && <p className="text-yellow-600">{t('password.okay')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({newPasswordFeedback})</span></p>}
+          {newPasswordStrength === 3 && <p className="text-green-600">{t('password.strong')}</p>}
+          {newPasswordStrength === 4 && <p className="text-emerald-600">{t('password.veryStrong')}</p>}
+        </div>
       </div>
 
       <div className="grid gap-2">
         <label className="block text-sm">{t('labels.role')}</label>
         <Select value={newRole} onValueChange={setNewRole}>
-          <SelectTrigger className="bg-neutral-800 border border-neutral-700 rounded-none">
+          <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5">
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
@@ -540,7 +830,14 @@ export default function UserPage()
       </Button>
       <Button
         onClick={handleCreate}
-        disabled={!newName.trim() || !newEmail.trim() || !newPassword.trim() || isSaving}
+        disabled={
+          isSaving ||
+          !newName.trim() ||
+          !newEmail.trim() ||
+          !newPassword.trim() ||
+          newEmailValid !== 0 ||
+          newPasswordStrength === null || newPasswordStrength < 3
+        }
       >
         {isSaving ? t('buttons.creating') : t('buttons.createUser')}
       </Button>
@@ -663,7 +960,7 @@ export default function UserPage()
         <hr className="my-8" />
 
         <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
-            <div className="relative w-full">
+            <div className="relative w-full max-w-300">
                 <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-2">
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
@@ -681,7 +978,7 @@ export default function UserPage()
 
                 {/* Sliding tab indicator */}
                 <div
-                    className="absolute bottom-0 h-0.5 bg-primary transition-all duration-200 ease-in-out"
+                    className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
                         width: '50%',
                         left: activeTab === 'details' ? '0%' : '50%'
@@ -720,30 +1017,79 @@ export default function UserPage()
                             className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
                         />
                     </div>
-                    <div>
+                    <div className="grid gap-2">
                         <label className="block text-sm mb-2">{t('labels.email')}</label>
                         <input
                             type="email"
                             value={email}
-                            onChange={(e) => setEmail(e.target.value)}
+                            onChange={(e) => handleEmailChange(e.target.value)}
                             placeholder={t('placeholders.enterEmail')}
-                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
+                            className={`w-full bg-neutral-800 border rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:border-transparent
+                                ${emailValid ? 'border-red-500 focus:ring-red-500' : ''}
+                                ${!emailValid && email ? 'border-green-500 focus:ring-green-500' : ''}
+                                ${!emailValid && !email ? 'border-neutral-700 focus:ring-neutral-600' : ''}
+                            `}
                         />
+                        {email && (
+                          <>
+                            {emailValid === 1 && (
+                              <p className="text-xs text-red-500">{t('emailValidation.invalidFormat')}</p>
+                            )}
+                            {emailValid === 2 && email !== selectedUser?.email && (
+                              <p className="text-xs text-red-500">{t('emailValidation.alreadyTaken')}</p>
+                            )}
+                            {!emailValid && email !== selectedUser?.email && (
+                              <p className="text-xs text-green-500">{t('emailValidation.available')}</p>
+                            )}
+                          </>
+                        )}
                     </div>
-                    <div>
+                    <div className="grid gap-2 relative">
                         <label className="block text-sm mb-2">{t('labels.newPassword')}</label>
                         <input
                             type="password"
+                            name="new-password"
+                            autoComplete="new-password"
                             value={password}
-                            onChange={(e) => setPassword(e.target.value)}
+                            onChange={(e) => handlePasswordChange(e.target.value)}
                             placeholder={t('placeholders.enterNewPassword')}
-                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
+                            className={`w-full bg-neutral-800 border rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:border-transparent
+                                ${passwordStrength === 0 ? 'border-red-600 focus:ring-red-600' : ''}
+                                ${passwordStrength === 1 ? 'border-orange-600 focus:ring-orange-600' : ''}
+                                ${passwordStrength === 2 ? 'border-yellow-600 focus:ring-yellow-600' : ''}
+                                ${passwordStrength === 3 ? 'border-green-600 focus:ring-green-600' : ''}
+                                ${passwordStrength === 4 ? 'border-emerald-600 focus:ring-emerald-600' : ''}
+                                ${passwordStrength === null ? 'border-neutral-700 focus:ring-neutral-600' : ''}
+                            `}
                         />
+                        <div className="h-1.5 w-full bg-neutral-700 rounded-full overflow-hidden">
+                          <div
+                            className={`
+                              h-full transition-all duration-300 ease-out
+                              ${passwordStrength === null ? "w-0" : ""}
+                              ${passwordStrength === 0 ? "w-1/5 bg-red-600" : ""}
+                              ${passwordStrength === 1 ? "w-2/5 bg-orange-600" : ""}
+                              ${passwordStrength === 2 ? "w-3/5 bg-yellow-500" : ""}
+                              ${passwordStrength === 3 ? "w-4/5 bg-green-600" : ""}
+                              ${passwordStrength === 4 ? "w-full bg-emerald-600" : ""}
+                            `}
+                          />
+                        </div>
+                        <div className="mt-1 text-xs">
+                          {passwordStrength === 0 && <p className="text-red-600">{t('password.veryWeak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                          {passwordStrength === 1 && <p className="text-orange-600">{t('password.weak')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                          {passwordStrength === 2 && <p className="text-yellow-600">{t('password.okay')}&nbsp;&nbsp;&nbsp;<span className="text-muted-foreground mt-1">({passwordFeedback})</span></p>}
+                          {passwordStrength === 3 && <p className="text-green-600">{t('password.strong')}</p>}
+                          {passwordStrength === 4 && <p className="text-emerald-600">{t('password.veryStrong')}</p>}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {t('password.onlyEnterToChange')}
+                        </p>
                     </div>
                     <div>
                         <label className="block text-sm mb-2">{t('labels.role')}</label>
                         <Select value={role} onValueChange={setRole}>
-                          <SelectTrigger className="bg-neutral-800 border border-neutral-700 rounded-none">
+                          <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
@@ -810,6 +1156,10 @@ export default function UserPage()
         setRole(selectedUser.role || "USER");
         setPassword("");
         setHasChanges(false);
+        setEmailValid(0);
+        setPasswordStrength(null);
+        setPasswordFeedback("");
+        setPasswordTouched(false);
       }}
       disabled={isSaving}
       className="rounded-none"
@@ -820,7 +1170,12 @@ export default function UserPage()
     <Button
       variant="default"
       onClick={handleSave}
-      disabled={isSaving || !hasChanges}
+      disabled={
+        isSaving
+        || !hasChanges
+        || emailValid !== 0
+        || (!!password && (passwordStrength === null || passwordStrength < 3))
+      }
     >
       {isSaving ? tc('buttons.saving') : tc('buttons.saveChanges')}
     </Button>

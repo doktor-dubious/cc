@@ -23,22 +23,87 @@ model Settings {
 }
 
 model User {
-  id           String       @id(map: "user_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq          Int          @default(autoincrement())
-  email        String       @unique(map: "user_email_key") @db.VarChar(255)
-  role         UserRole     @default(USER)
-  name         String       @db.VarChar(100)
-  nickname     String       @db.VarChar(50)
-  workFunction WorkFunction @map("work_function")
-  passwordHash String       @map("password_hash") @db.VarChar(255)
-  active       Boolean      @default(true)
-  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  events       Event[]
-  messages     Message[]
-  profile      Profile?
+  id            String       @id(map: "user_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq           Int          @default(autoincrement())
+  email         String       @unique(map: "user_email_key") @db.VarChar(255)
+  emailVerified Boolean      @default(false) @map("email_verified")
+  role          UserRole     @default(USER)
+  name          String       @db.VarChar(100)
+  nickname      String       @default("") @db.VarChar(50)
+  workFunction  WorkFunction @default(OTHER) @map("work_function")
+  passwordHash  String       @default("") @map("password_hash") @db.VarChar(255)
+  image            String?
+  active           Boolean      @default(true)
+  twoFactorEnabled Boolean      @default(false) @map("two_factor_enabled")
+  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events           Event[]
+  messages         Message[]
+  profile          Profile?
+  sessions         Session[]
+  accounts         Account[]
+  twoFactors       TwoFactor[]
 
   @@map("login")
+}
+
+/// Better Auth session table — database-backed sessions
+model Session {
+  id        String   @id
+  expiresAt DateTime @map("expires_at") @db.Timestamptz(3)
+  token     String   @unique
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+/// Better Auth account table — stores credentials (password hash) and OAuth tokens
+model Account {
+  id                    String    @id
+  accountId             String    @map("account_id")
+  providerId            String    @map("provider_id")
+  userId                String    @map("user_id") @db.Uuid
+  accessToken           String?   @map("access_token")
+  refreshToken          String?   @map("refresh_token")
+  idToken               String?   @map("id_token")
+  accessTokenExpiresAt  DateTime? @map("access_token_expires_at") @db.Timestamptz(3)
+  refreshTokenExpiresAt DateTime? @map("refresh_token_expires_at") @db.Timestamptz(3)
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("account")
+}
+
+/// Better Auth verification table — email verification tokens
+model Verification {
+  id         String    @id
+  identifier String
+  value      String
+  expiresAt  DateTime  @map("expires_at") @db.Timestamptz(3)
+  createdAt  DateTime? @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime? @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@map("verification")
+}
+
+/// Better Auth two-factor secrets and backup codes
+model TwoFactor {
+  id          String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  secret      String
+  backupCodes String @map("backup_codes")
+  userId      String @map("user_id") @db.Uuid
+  user        User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@map("two_factor")
 }
 
 model Organization {
@@ -46,18 +111,62 @@ model Organization {
   seq         Int                   @default(autoincrement())
   name        String
   description String?
+  ig          Int                   @default(1)
+  size        OrgSize               @default(MICRO)
+
+  /// Classification fields
+  naceSection         NaceSection?         @map("nace_section")
+  legalForm           LegalForm?           @map("legal_form")
+  revenueRange        RevenueRange?        @map("revenue_range")
+  maturity            OrgMaturity?
+  ownershipType       OwnershipType?       @map("ownership_type")
+  geographicScope     GeographicScope?     @map("geographic_scope")
+  businessOrientation BusinessOrientation? @map("business_orientation")
+  digitalMaturity     DigitalMaturity?     @map("digital_maturity")
+  esgStatus           EsgStatus?           @map("esg_status")
+  supplyChainRole     SupplyChainRole?     @map("supply_chain_role")
+  riskProfile         RiskProfile?         @map("risk_profile")
+  euTaxonomyAligned   Boolean?             @map("eu_taxonomy_aligned")
+
+  /// IT & Security Classification fields
+  itSecurityStaff          ItSecurityStaff?          @map("it_security_staff")
+  securityMaturity         SecurityMaturity?         @map("security_maturity")
+  dataSensitivity          DataSensitivity[]         @map("data_sensitivity")
+  regulatoryObligations    RegulatoryObligation[]    @map("regulatory_obligations")
+  itEndpointRange          ItEndpointRange?          @map("it_endpoint_range")
+  infrastructureTypes      InfrastructureType[]      @map("infrastructure_types")
+  softwareDevelopment      SoftwareDevelopment?      @map("software_development")
+  publicFacingServices     PublicFacingServices?     @map("public_facing_services")
+  targetedAttackLikelihood TargetedAttackLikelihood? @map("targeted_attack_likelihood")
+  downtimeTolerance        DowntimeTolerance?        @map("downtime_tolerance")
+  supplyChainPosition      SupplyChainPosition?      @map("supply_chain_position")
+  securityBudgetRange      SecurityBudgetRange?      @map("security_budget_range")
+
   active      Boolean               @default(true)
   createdAt   DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
   artifacts   Artifact[]
-  cisControls      OrganizationCisControl[]
-  cisControlGroups CisControlGroup[]
-  events           Event[]
-  settings    OrganisationSettings?
-  profiles    Profile[]
-  tasks       Task[]
+  cisControls          OrganizationCisControl[]
+  cisControlGroups     CisControlGroup[]
+  inactiveSafeguards   OrganizationInactiveSafeguard[]
+  events               Event[]
+  settings             OrganisationSettings?
+  profiles             Profile[]
+  tasks                Task[]
+  organizationStar     OrganizationStar?
 
   @@map("organization")
+}
+
+/// Starred organizations - visible to all users
+model OrganizationStar {
+  organizationId String       @map("organization_id") @db.Uuid
+  createdAt      DateTime     @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId])
+  @@index([organizationId])
+  @@map("organization_star")
 }
 
 model OrganisationSettings {
@@ -95,6 +204,7 @@ model Profile {
   organization          Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskProfiles          TaskProfile[]
+  profileStar           ProfileStar?
 
   @@index([organizationId])
   @@index([userId])
@@ -121,6 +231,7 @@ model Artifact {
   organization   Organization   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   events         Event[]
   taskArtifacts  TaskArtifact[]
+  artifactStar   ArtifactStar?
 
   @@index([organizationId])
   @@map("artifact")
@@ -146,6 +257,7 @@ model Task {
   taskArtifacts    TaskArtifact[]
   taskProfiles     TaskProfile[]
   taskSafeguards   TaskSafeguard[]
+  taskStar         TaskStar?
 
   @@index([organizationId])
   @@index([startAt])
@@ -232,6 +344,94 @@ model TaskSafeguard {
   @@index([taskId])
   @@index([safeguardId])
   @@map("task_safeguard")
+}
+
+/// Per-organization IG override for CIS Safeguards. Allows orgs to set a specific IG (1-3) for individual safeguards.
+model OrganizationSafeguardIg {
+  organizationId String   @map("organization_id") @db.Uuid
+  safeguardId    String   @map("safeguard_id") @db.VarChar(10)
+  ig             Int      @default(1)
+  createdAt      DateTime @default(now()) @map("created_at")
+  updatedAt      DateTime @updatedAt @map("updated_at")
+
+  @@id([organizationId, safeguardId])
+  @@index([organizationId])
+  @@index([safeguardId])
+  @@map("organization_safeguard_ig")
+}
+
+/// Per-organization inactive safeguards. Allows orgs to exclude specific safeguards from their compliance scope.
+model OrganizationInactiveSafeguard {
+  organizationId String       @map("organization_id") @db.Uuid
+  safeguardId    String       @map("safeguard_id") @db.VarChar(10)
+  createdAt      DateTime     @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, safeguardId])
+  @@index([organizationId])
+  @@index([safeguardId])
+  @@map("organization_inactive_safeguard")
+}
+
+/// Exploratory GAP Analysis - Stores generated recommendations for an organization
+model ExploratoryGap {
+  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq               Int      @default(autoincrement())
+  organizationId    String   @map("organization_id") @db.Uuid
+  /// Recommended Implementation Group (1, 2, or 3)
+  recommendedIg     Int      @map("recommended_ig")
+  /// JSON array of rationale strings
+  igRationale       Json     @map("ig_rationale")
+  /// JSON array of factor objects { factor, value, impact, weight }
+  igFactors         Json     @map("ig_factors")
+  /// JSON array of control recommendations
+  controlRecs       Json     @map("control_recs")
+  /// JSON array of safeguard recommendations
+  safeguardRecs     Json     @map("safeguard_recs")
+  /// Summary statistics JSON
+  summary           Json
+  /// Whether this GAP has been implemented (applied to controls/safeguards)
+  implemented       Boolean  @default(false)
+  implementedAt     DateTime? @map("implemented_at") @db.Timestamptz(3)
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  @@index([organizationId])
+  @@index([createdAt])
+  @@map("exploratory_gap")
+}
+
+/// Starred tasks - organization-wide, visible to all users in the organization
+model TaskStar {
+  taskId    String   @map("task_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  task      Task     @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@id([taskId])
+  @@index([taskId])
+  @@map("task_star")
+}
+
+/// Starred profiles - organization-wide, visible to all users in the organization
+model ProfileStar {
+  profileId String   @map("profile_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  profile   Profile  @relation(fields: [profileId], references: [id], onDelete: Cascade)
+
+  @@id([profileId])
+  @@index([profileId])
+  @@map("profile_star")
+}
+
+/// Starred artifacts - organization-wide, visible to all users in the organization
+model ArtifactStar {
+  artifactId String   @map("artifact_id") @db.Uuid
+  createdAt  DateTime @default(now()) @map("created_at")
+  artifact   Artifact @relation(fields: [artifactId], references: [id], onDelete: Cascade)
+
+  @@id([artifactId])
+  @@index([artifactId])
+  @@map("artifact_star")
 }
 
 /// Messages tied to Tasks - can be system-generated or from users
@@ -358,4 +558,237 @@ enum EventImportance {
   LOW
   MIDDLE
   HIGH
+}
+
+/// EU SME Classification (Commission Recommendation 2003/361/EC)
+enum OrgSize {
+  /// Micro enterprise: 0-9 employees
+  MICRO
+  /// Small enterprise: 10-49 employees
+  SMALL
+  /// Medium enterprise: 50-249 employees
+  MEDIUM
+  /// Large enterprise: 250-999 employees
+  LARGE
+  /// Very large enterprise: 1000+ employees
+  ENTERPRISE
+}
+
+/// NACE Section - EU standard business activity classification
+enum NaceSection {
+  A  /// Agriculture, forestry and fishing
+  B  /// Mining and quarrying
+  C  /// Manufacturing
+  D  /// Electricity, gas, steam and air conditioning supply
+  E  /// Water supply, sewerage, waste management
+  F  /// Construction
+  G  /// Wholesale and retail trade
+  H  /// Transportation and storage
+  I  /// Accommodation and food service
+  J  /// Information and communication
+  K  /// Financial and insurance activities
+  L  /// Real estate activities
+  M  /// Professional, scientific and technical activities
+  N  /// Administrative and support service activities
+  O  /// Public administration and defence
+  P  /// Education
+  Q  /// Human health and social work
+  R  /// Arts, entertainment and recreation
+  S  /// Other service activities
+  OTHER /// Not classified / Other
+}
+
+/// Legal Form - EU generic legal structure types
+enum LegalForm {
+  SOLE_PROPRIETOR
+  PARTNERSHIP
+  PRIVATE_LIMITED
+  PUBLIC_LIMITED
+  COOPERATIVE
+  FOUNDATION
+  BRANCH_FOREIGN
+  PUBLIC_BODY
+  OTHER
+}
+
+/// Revenue Range - EU SME-aligned turnover ranges
+enum RevenueRange {
+  UNDER_2M      /// < €2 million
+  FROM_2M_10M   /// €2–10 million
+  FROM_10M_50M  /// €10–50 million
+  FROM_50M_250M /// €50–250 million
+  FROM_250M_1B  /// €250 million – €1 billion
+  OVER_1B       /// > €1 billion
+}
+
+/// Organization Age / Maturity
+enum OrgMaturity {
+  STARTUP      /// 0-3 years
+  GROWTH       /// 3-7 years
+  ESTABLISHED  /// 7-20 years
+  MATURE       /// 20+ years
+}
+
+/// Ownership Type
+enum OwnershipType {
+  PRIVATE
+  PUBLIC_LISTED
+  STATE_OWNED
+  FAMILY_OWNED
+  PE_VC_BACKED
+  COOPERATIVE
+  NON_PROFIT
+}
+
+/// Geographic Scope
+enum GeographicScope {
+  LOCAL
+  REGIONAL
+  NATIONAL
+  EUROPEAN
+  GLOBAL
+}
+
+/// Business Orientation (B2B / B2C)
+enum BusinessOrientation {
+  B2B
+  B2C
+  B2G
+  MIXED
+}
+
+/// Digital Maturity
+enum DigitalMaturity {
+  TRADITIONAL
+  DEVELOPING
+  MATURE
+  DIGITAL_NATIVE
+}
+
+/// ESG Reporting Status
+enum EsgStatus {
+  REPORTING
+  NOT_REQUIRED
+  EXEMPT
+}
+
+/// Supply Chain Role
+enum SupplyChainRole {
+  MANUFACTURER
+  DISTRIBUTOR
+  RETAILER
+  SERVICE_PROVIDER
+  PLATFORM
+}
+
+/// Risk Profile
+enum RiskProfile {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+/// IT & Security Staffing Level
+enum ItSecurityStaff {
+  NO_DEDICATED_IT         /// No dedicated IT staff (outsourced or part-time)
+  IT_NO_SECURITY          /// IT staff but no dedicated security personnel
+  DEDICATED_SECURITY      /// Dedicated security team
+  SPECIALIZED_SECURITY    /// Specialized security team with advanced capabilities (SOC, red team, etc.)
+}
+
+/// Security Program Maturity Level
+enum SecurityMaturity {
+  NO_PROGRAM              /// No formal security program
+  BASIC                   /// Basic / ad-hoc security practices
+  DEFINED                 /// Defined security policies and processes
+  MANAGED                 /// Managed and measured security program
+  OPTIMIZING              /// Continuously optimizing
+}
+
+/// Data Sensitivity Types (for array field)
+enum DataSensitivity {
+  BASIC_BUSINESS          /// Basic business data (financial records, employee info)
+  CUSTOMER_PII            /// Customer personal data (PII under GDPR)
+  SPECIAL_CATEGORY        /// Special category data (health, biometric, political, religious)
+  PAYMENT_CARD            /// Payment card data (PCI DSS scope)
+  INTELLECTUAL_PROPERTY   /// Intellectual property / trade secrets
+  CLASSIFIED_GOVERNMENT   /// Classified or government data
+  CRITICAL_INFRASTRUCTURE /// Critical infrastructure operational data (OT/SCADA)
+}
+
+/// Regulatory & Compliance Obligations (for array field)
+enum RegulatoryObligation {
+  GDPR
+  NIS2
+  DORA
+  EU_AI_ACT
+  PCI_DSS
+  INDUSTRY_SPECIFIC       /// Industry-specific regulation (medical devices, pharma, energy, etc.)
+  CYBER_INSURANCE
+  NONE_NOT_SURE
+}
+
+/// IT Environment - Number of Endpoints
+enum ItEndpointRange {
+  UNDER_25                /// < 25
+  FROM_25_100             /// 25–100
+  FROM_100_500            /// 100–500
+  FROM_500_5000           /// 500–5,000
+  OVER_5000               /// 5,000+
+}
+
+/// Infrastructure Type (for array field)
+enum InfrastructureType {
+  ON_PREMISES             /// On-premises only
+  CLOUD_ONLY              /// Cloud only (SaaS-heavy)
+  HYBRID                  /// Hybrid (on-prem + cloud)
+  MULTI_CLOUD             /// Multi-cloud
+  OPERATIONAL_TECHNOLOGY  /// Operational Technology (OT/ICS/SCADA)
+}
+
+/// In-house Software Development Level
+enum SoftwareDevelopment {
+  NONE                    /// None
+  SOME_INTERNAL           /// Some (internal tools, websites)
+  CORE_BUSINESS           /// Core business depends on custom software
+  SOFTWARE_IS_PRODUCT     /// Software is the product (SaaS/ISV)
+}
+
+/// Public-facing Services Level
+enum PublicFacingServices {
+  NONE                    /// No internet-facing services
+  BASIC_WEB               /// Basic web presence (website, email)
+  ECOMMERCE_PORTALS       /// E-commerce / customer portals
+  CRITICAL_SERVICES       /// Critical public-facing services (banking, healthcare, government)
+}
+
+/// Targeted Attack Likelihood
+enum TargetedAttackLikelihood {
+  LOW                     /// Small, non-strategic, no valuable data to attackers
+  MEDIUM                  /// Some value to attackers, sector sometimes targeted
+  HIGH                    /// Known brand, critical infrastructure, high-value IP, politically exposed
+}
+
+/// Downtime Tolerance
+enum DowntimeTolerance {
+  DAYS                    /// Can tolerate days of downtime
+  HOURS                   /// Can tolerate hours of downtime
+  NEAR_ZERO               /// Near-zero downtime tolerance (24/7 operations)
+}
+
+/// Supply Chain Position (more detailed than SupplyChainRole)
+enum SupplyChainPosition {
+  END_CONSUMER            /// End consumer of IT services
+  B2B_PROVIDER            /// Provides services/products to other businesses
+  CRITICAL_SUPPLIER       /// Part of a critical supply chain (e.g., supplier to essential entities under NIS2)
+  MSP_CLOUD_PROVIDER      /// Service provider handling client data/systems (MSP, cloud provider, etc.)
+}
+
+/// Annual IT/Security Budget Range
+enum SecurityBudgetRange {
+  MINIMAL                 /// Minimal / no dedicated budget
+  UNDER_50K               /// < €50K
+  FROM_50K_250K           /// €50K–€250K
+  FROM_250K_1M            /// €250K–€1M
+  OVER_1M                 /// > €1M
 }

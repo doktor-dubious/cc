@@ -2,21 +2,17 @@
 import { log }                          from '@/lib/log';
 import { NextRequest, NextResponse }    from 'next/server';
 import { prisma }                       from '@/lib/prisma';
-import { jwtVerify }                    from 'jose';
-import { COOKIE_NAME }                  from '@/constants';
+import { getServerSession }             from '@/lib/auth';
 import { eventRepository }              from '@/lib/database/events';
 
 export async function GET(request: NextRequest) {
   log.debug('API: task-safeguard GET');
 
   try {
-    const token = request.cookies.get(COOKIE_NAME)?.value;
-    if (!token) {
+    const session = await getServerSession();
+    if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
-
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    await jwtVerify(token, secret);
 
     const { searchParams } = new URL(request.url);
     const taskId = searchParams.get('taskId');
@@ -69,15 +65,12 @@ export async function POST(request: NextRequest) {
   log.debug('API: task-safeguard POST');
 
   try {
-    const token = request.cookies.get(COOKIE_NAME)?.value;
-    if (!token) {
+    const session = await getServerSession();
+    if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    const { payload } = await jwtVerify(token, secret);
-
-    if (payload.role !== 'SUPER_ADMIN') {
+    if (session.user.role !== 'SUPER_ADMIN') {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
@@ -128,7 +121,7 @@ export async function POST(request: NextRequest) {
     await eventRepository.create({
       message: 'Safeguard added to task',
       importance: 'HIGH',
-      userId: payload.sub as string,
+      userId: session.user.id,
       taskId: taskId,
       organizationId: task?.organizationId || undefined,
     });
@@ -148,15 +141,12 @@ export async function DELETE(request: NextRequest) {
   log.debug('API: task-safeguard DELETE');
 
   try {
-    const token = request.cookies.get(COOKIE_NAME)?.value;
-    if (!token) {
+    const session = await getServerSession();
+    if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    const { payload } = await jwtVerify(token, secret);
-
-    if (payload.role !== 'SUPER_ADMIN') {
+    if (session.user.role !== 'SUPER_ADMIN') {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
@@ -191,7 +181,7 @@ export async function DELETE(request: NextRequest) {
     await eventRepository.create({
       message: 'Safeguard removed from task',
       importance: 'HIGH',
-      userId: payload.sub as string,
+      userId: session.user.id,
       taskId: taskId,
       organizationId: task?.organizationId || undefined,
     });

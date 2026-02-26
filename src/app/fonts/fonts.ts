@@ -53,6 +53,30 @@ export const geograph = localFont({
   display: 'swap',
 });
 
+export const geistSans = localFont({
+  src: [
+    {
+      path: './geist/GeistSans-Variable.woff2',
+      weight: '100 900',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-geist-sans',
+  display: 'swap',
+});
+
+export const geistMono = localFont({
+  src: [
+    {
+      path: './geist/GeistMono-Variable.woff2',
+      weight: '100 900',
+      style: 'normal',
+    },
+  ],
+  variable: '--font-geist-mono',
+  display: 'swap',
+});
+
 export const playfair = localFont({
   src: [
     {

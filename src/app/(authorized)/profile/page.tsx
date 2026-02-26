@@ -6,8 +6,17 @@ import { useUser }                        from '@/context/UserContext';
 import { useOrganization }                from '@/context/OrganizationContext';
 import { useRouter }                      from 'next/navigation';
 import { useTranslations }                from 'next-intl';
-import { Trash2 }                         from 'lucide-react';
+import { Trash2, Star, ChevronDown }      from 'lucide-react';
 import { Button }                         from "@/components/ui/button";
+import { Checkbox }                       from "@/components/ui/checkbox";
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import {
   Table,
@@ -102,6 +111,16 @@ export default function ProfilePage()
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
 
+    // Selection and starring state
+    const [selectedProfileIds, setSelectedProfileIds] = useState<Set<string>>(new Set());
+    const [starredProfileIds, setStarredProfileIds] = useState<Set<string>>(new Set());
+
+    // Bulk delete state
+    const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+    const [bulkDeleteConfirmChecked, setBulkDeleteConfirmChecked] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
     // Detele Task ────────────────────────────────────────
     const [taskToRemove, setTaskToRemove] = useState<string | null>(null);
 
@@ -152,7 +171,7 @@ export default function ProfilePage()
             const data = await res.json();
             if (!data.success)
             {
-                console.error('Failed tNewo fetch profiles:', data.error);
+                console.error('Failed to fetch profiles:', data.error);
                 return;
             }
             setProfiles(data.data);
@@ -164,6 +183,63 @@ export default function ProfilePage()
         finally
         {
             setLoading(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH STARRED PROFILES
+    const fetchStarredProfiles = async () =>
+    {
+        if (!activeOrganization) return;
+
+        try
+        {
+            const res = await fetch(`/api/profile-star?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch starred profiles:', data.message);
+                return;
+            }
+            setStarredProfileIds(new Set(data.data || []));
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch starred profiles:', error);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (API call)
+    const toggleStarApi = async (profileId: string) =>
+    {
+        try
+        {
+            const res = await fetch('/api/profile-star', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ profileId }),
+            });
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to toggle star:', data.message);
+                return;
+            }
+            // Update local state based on response
+            setStarredProfileIds(prev => {
+                const newSet = new Set(prev);
+                if (data.starred) {
+                    newSet.add(profileId);
+                } else {
+                    newSet.delete(profileId);
+                }
+                return newSet;
+            });
+        }
+        catch (error)
+        {
+            console.error('Failed to toggle star:', error);
         }
     };
 
@@ -226,11 +302,13 @@ export default function ProfilePage()
         if (!activeOrganization) return;
 
         fetchProfiles();
+        fetchStarredProfiles();
 
         // Listen for refresh event
         const handleRefresh = () =>
         {
             fetchProfiles();
+            fetchStarredProfiles();
         };
 
         window.addEventListener('refreshPage', handleRefresh);
@@ -583,6 +661,9 @@ export default function ProfilePage()
         setTaskHasChanges(false);
     };
 
+    // ── Derived: does the selected profile have a connected login? ────────────
+    const hasLogin = !!selectedProfile?.user;
+
     // ── Selected Profile changed ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     useEffect(() =>
     {
@@ -600,6 +681,12 @@ export default function ProfilePage()
             setNickname(selectedProfile.user?.nickname || "");
             setWorkFunction(selectedProfile.user?.workFunction || "DEVELOPER");
             setRole(selectedProfile.user?.role || "USER");
+
+            // If profile has no login and we're on the login tab, switch to details
+            if (!selectedProfile.user && activeTab === 'login')
+            {
+                setActiveTab('details');
+            }
 
             // Fetch events for this profile
             fetchEvents(selectedProfile.id);
@@ -964,6 +1051,102 @@ export default function ProfilePage()
       profile.id.toString().includes(filterText)
     );
 
+    // Selection helpers
+    const toggleProfileSelection = (profileId: string) => {
+        setSelectedProfileIds(prev => {
+            const next = new Set(prev);
+            if (next.has(profileId)) {
+                next.delete(profileId);
+            } else {
+                next.add(profileId);
+            }
+            return next;
+        });
+    };
+
+    const toggleProfileStar = (profileId: string) => {
+        toggleStarApi(profileId);
+    };
+
+    const selectAllProfiles = () => {
+        setSelectedProfileIds(new Set(currentProfiles.map(p => p.id)));
+    };
+
+    const deselectAllProfiles = () => {
+        setSelectedProfileIds(new Set());
+    };
+
+    const selectUserProfiles = () => {
+        setSelectedProfileIds(new Set(
+            currentProfiles.filter(p => p.user?.role === 'USER').map(p => p.id)
+        ));
+    };
+
+    const selectAdminProfiles = () => {
+        setSelectedProfileIds(new Set(
+            currentProfiles.filter(p => p.user?.role === 'ADMIN' || p.user?.role === 'SUPER_ADMIN').map(p => p.id)
+        ));
+    };
+
+    const selectStarredProfiles = () => {
+        setSelectedProfileIds(new Set(
+            currentProfiles.filter(p => starredProfileIds.has(p.id)).map(p => p.id)
+        ));
+    };
+
+    // Get localized "delete" word based on user's language
+    const getDeleteWord = () => {
+        // Use translations if available, fallback to common translations
+        return tc('words.delete') || 'delete';
+    };
+
+    // Bulk delete profiles
+    const handleBulkDelete = async () => {
+        if (!bulkDeleteConfirmChecked) return;
+        if (bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
+
+        setIsBulkDeleting(true);
+        const profileIds = Array.from(selectedProfileIds);
+        let success = 0;
+        let failed = 0;
+
+        for (const profileId of profileIds) {
+            try {
+                const res = await fetch(`/api/profile/${profileId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+
+                if (res.ok) {
+                    success++;
+                } else {
+                    failed++;
+                }
+            } catch (error) {
+                console.error('Failed to delete profile:', profileId, error);
+                failed++;
+            }
+        }
+
+        setIsBulkDeleting(false);
+        setIsBulkDeleteDialogOpen(false);
+        setBulkDeleteConfirmChecked(false);
+        setBulkDeleteConfirmText("");
+
+        if (success > 0) {
+            // Remove deleted profiles from state
+            setProfiles(prev => prev.filter(p => !selectedProfileIds.has(p.id)));
+            if (selectedProfile && selectedProfileIds.has(selectedProfile.id)) {
+                setSelectedProfile(null);
+            }
+            setSelectedProfileIds(new Set());
+            toast.success(t('toast.profilesDeleted', { count: success }));
+        }
+        if (failed > 0) {
+            toast.error(t('toast.profilesDeleteFailed', { count: failed }));
+        }
+    };
+
     const totalPages = Math.ceil(filteredProfiles.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -1082,6 +1265,60 @@ export default function ProfilePage()
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      { /* Bulk Delete Profiles Dialog */ }
+      <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('dialogs.bulkDeleteTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('dialogs.bulkDeleteDescription', { count: selectedProfileIds.size })}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+              <Checkbox
+                id="bulk-delete-confirm"
+                checked={bulkDeleteConfirmChecked}
+                onCheckedChange={(checked) => setBulkDeleteConfirmChecked(!!checked)}
+              />
+              <label htmlFor="bulk-delete-confirm" className="text-sm cursor-pointer">
+                {t('dialogs.bulkDeleteConfirmCheckbox')}
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm">
+                {t('dialogs.bulkDeleteTypeWord', { word: getDeleteWord() })}
+              </label>
+              <Input
+                value={bulkDeleteConfirmText}
+                onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+                placeholder={getDeleteWord()}
+                className={bulkDeleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setIsBulkDeleteDialogOpen(false)} disabled={isBulkDeleting}>
+              {tc('buttons.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={
+                isBulkDeleting ||
+                !bulkDeleteConfirmChecked ||
+                bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+              }
+            >
+              {isBulkDeleting ? tc('buttons.deleting') : t('buttons.deleteProfiles', { count: selectedProfileIds.size })}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       { /* New Profile Pop-Up */ }
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
@@ -1362,44 +1599,107 @@ export default function ProfilePage()
         <Table>
           <TableHeader>
             <TableRow>
+              {/* Checkbox header with dropdown */}
+              <TableHead className="w-10">
+                <div className="flex items-center gap-1">
+                  <Checkbox
+                    checked={selectedProfileIds.size === currentProfiles.length && currentProfiles.length > 0}
+                    onCheckedChange={(checked) => {
+                      if (checked) selectAllProfiles();
+                      else deselectAllProfiles();
+                    }}
+                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1 hover:bg-muted rounded">
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={selectAllProfiles}>{tc('selection.selectAll')}</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={selectUserProfiles}>{tc('selection.selectUsers')}</DropdownMenuItem>
+                      <DropdownMenuItem onClick={selectAdminProfiles}>{tc('selection.selectAdmins')}</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={selectStarredProfiles}>{tc('selection.starred')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableHead>
               <TableHead>{tc('table.name')}</TableHead>
-              <TableHead>{tc('table.email')}</TableHead>
+              <TableHead>{tc('table.login')}</TableHead>
               <TableHead>{tc('table.role')}</TableHead>
               <TableHead className="w-28 text-right">{tc('table.tasks')}</TableHead>
+              <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentProfiles.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   {filterText ? t('empty.noProfilesMatch') : t('empty.noProfilesFound')}
                 </TableCell>
               </TableRow>
             ) : (
-              currentProfiles.map((profile) => (
-                <TableRow
-                  key={profile.id}
-                  className={`
-                    cursor-pointer transition-colors
-                    ${selectedProfile?.id === profile.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
-                  `}
-                  onClick={() => handleRowClick(profile)}
-                >
-                  <TableCell>{profile.name}</TableCell>
-                  <TableCell>{profile.user?.email || '-'}</TableCell>
-                  <TableCell>
-                    <Badge
-                        variant="secondary"
-                        className={`${getRoleBadgeStyle(profile.user?.role || 'USER')} text-xs user-role-badge`}
-                    >
-                        {profile.user?.role || 'USER'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="w-28 text-right tabular-nums">
-                    {profile.taskProfiles?.length || 0}
-                  </TableCell>
-                </TableRow>
-              ))
+              currentProfiles.map((profile) => {
+                const hasUserLogin = !!profile.user;
+                const isSelected = selectedProfileIds.has(profile.id);
+                const isStarred = starredProfileIds.has(profile.id);
+
+                return (
+                  <TableRow
+                    key={profile.id}
+                    className={`
+                      cursor-pointer transition-colors
+                      ${selectedProfile?.id === profile.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
+                    `}
+                    onClick={() => handleRowClick(profile)}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      toggleProfileStar(profile.id);
+                    }}
+                  >
+                    {/* Checkbox cell */}
+                    <TableCell className="w-10" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => toggleProfileSelection(profile.id)}
+                      />
+                    </TableCell>
+                    <TableCell>{profile.name}</TableCell>
+                    {/* Login column with badge */}
+                    <TableCell>
+                      {hasUserLogin ? (
+                        <Badge variant="default" className="text-xs">
+                          {tc('words.yes')}
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline" className="text-xs text-muted-foreground">
+                          {tc('words.no')}
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                          variant="secondary"
+                          className={`${getRoleBadgeStyle(profile.user?.role || 'USER')} text-xs user-role-badge`}
+                      >
+                          {profile.user?.role || 'USER'}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="w-28 text-right tabular-nums">
+                      {profile.taskProfiles?.length || 0}
+                    </TableCell>
+                    {/* Star cell */}
+                    <TableCell className="w-10" onClick={(e) => e.stopPropagation()}>
+                      <Star
+                        className={`w-4 h-4 cursor-pointer ${isStarred ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`}
+                        onClick={() => toggleProfileStar(profile.id)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -1448,6 +1748,28 @@ export default function ProfilePage()
           </div>
         )}
 
+        {/* Bulk Action Bar */}
+        {selectedProfileIds.size > 0 && (
+          <div className="border rounded-lg bg-muted/30 p-4 flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">
+              {t('selection.selectedOf', { selected: selectedProfileIds.size, total: currentProfiles.length })}
+            </span>
+            <div className="flex items-center gap-4">
+              <span
+                title={t('buttons.deleteSelected')}
+                onClick={() => {
+                  setBulkDeleteConfirmChecked(false);
+                  setBulkDeleteConfirmText("");
+                  setIsBulkDeleteDialogOpen(true);
+                }}
+                className="cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
+              </span>
+            </div>
+          </div>
+        )}
+
         {selectedProfile && (
           <>
             <div>
@@ -1455,19 +1777,21 @@ export default function ProfilePage()
 
               <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
                 <div className="relative w-full max-w-300">
-                  <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-6">
+                  <TabsList className={`w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid ${hasLogin ? 'grid-cols-6' : 'grid-cols-5'}`}>
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="details"
                     >
                       {t('tabs.details')}
                     </TabsTrigger>
-                    <TabsTrigger
-                      className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
-                      value="login"
-                    >
-                      {t('tabs.login')}
-                    </TabsTrigger>
+                    {hasLogin && (
+                      <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                        value="login"
+                      >
+                        {t('tabs.login')}
+                      </TabsTrigger>
+                    )}
                     <TabsTrigger
                       className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                       value="tasks"
@@ -1489,12 +1813,17 @@ export default function ProfilePage()
                   </TabsList>
                   <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
-                    style={{
+                    style={hasLogin ? {
                       width: '16.666%',
                       left: activeTab === 'login' ? '16.666%' :
                            activeTab === 'tasks' ? '33.333%' :
                            activeTab === 'audit' ? '50%' :
                            activeTab === 'actions' ? '66.666%' : '0%'
+                    } : {
+                      width: '20%',
+                      left: activeTab === 'tasks' ? '20%' :
+                           activeTab === 'audit' ? '40%' :
+                           activeTab === 'actions' ? '60%' : '0%'
                     }}
                   />
                 </div>
@@ -1531,8 +1860,8 @@ export default function ProfilePage()
                   </div>
                 </TabsContent>
 
-                {/* Login Tab */}
-                <TabsContent value="login" className="space-y-6 max-w-2xl mt-6">
+                {/* Login Tab (only for profiles with a connected login) */}
+                {hasLogin && <TabsContent value="login" className="space-y-6 max-w-2xl mt-6">
                   <div className="space-y-6">
 
                     {/* -- Login Name */}
@@ -1666,7 +1995,7 @@ export default function ProfilePage()
                         </Select>
                     </div>
                   </div>
-                </TabsContent>
+                </TabsContent>}
 
                 {/* Tasks Tab */}
                 <TabsContent value="tasks" className="mt-6">

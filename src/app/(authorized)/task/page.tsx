@@ -9,7 +9,7 @@ import { TaskStatus }                           from '@prisma/client';
 import { format }                               from "date-fns";
 import { useTranslations }                      from 'next-intl';
 
-import { Trash2, Shield, X } from 'lucide-react';
+import { Trash2, Shield, X, Star, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, UserRoundPlus, CalendarDays, Waypoints } from 'lucide-react';
 import { CIS_CONTROLS } from '@/lib/constants/cis-controls';
 import { Button } from "@/components/ui/button";
 
@@ -68,6 +68,14 @@ import {
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
+import { Checkbox } from "@/components/ui/checkbox"
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 export default function TaskPage()
 {
@@ -148,6 +156,26 @@ export default function TaskPage()
     const [safeguardSearchText, setSafeguardSearchText] = useState("");
     const [safeguardToRemove, setSafeguardToRemove] = useState<string | null>(null);
 
+    // For task table features: starring, selection, sorting
+    const [starredTaskIds, setStarredTaskIds] = useState<Set<string>>(new Set());
+    const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
+
+    // Bulk action dialogs
+    const [isBulkAddProfileDialogOpen, setIsBulkAddProfileDialogOpen] = useState(false);
+    const [isBulkSetDatesDialogOpen, setIsBulkSetDatesDialogOpen] = useState(false);
+    const [isBulkSetStatusDialogOpen, setIsBulkSetStatusDialogOpen] = useState(false);
+    const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+    const [bulkDeleteConfirmChecked, setBulkDeleteConfirmChecked] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [bulkStartAt, setBulkStartAt] = useState("");
+    const [bulkEndAt, setBulkEndAt] = useState("");
+    const [bulkStatus, setBulkStatus] = useState<TaskStatus>("NOT_STARTED");
+    const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+    const [bulkAvailableProfiles, setBulkAvailableProfiles] = useState<any[]>([]);
+    const [bulkSearchProfileText, setBulkSearchProfileText] = useState("");
+    const [bulkSelectedProfileId, setBulkSelectedProfileId] = useState<string | null>(null);
+
     // For viewing full message in modal
     const [selectedMessage, setSelectedMessage] = useState<any | null>(null);
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
@@ -189,6 +217,63 @@ export default function TaskPage()
         finally
         {
             setLoading(false);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH STARRED TASKS
+    const fetchStarredTasks = async () =>
+    {
+        if (!activeOrganization) return;
+
+        try
+        {
+            const res = await fetch(`/api/task-star?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+              console.error('Failed to fetch starred tasks:', data.message);
+              return;
+            }
+            setStarredTaskIds(new Set(data.data || []));
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch starred tasks:', error);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (API call)
+    const toggleStarApi = async (taskId: string) =>
+    {
+        try
+        {
+            const res = await fetch('/api/task-star', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ taskId }),
+            });
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to toggle star:', data.message);
+                return;
+            }
+            // Update local state based on response
+            setStarredTaskIds(prev => {
+                const newSet = new Set(prev);
+                if (data.starred) {
+                    newSet.add(taskId);
+                } else {
+                    newSet.delete(taskId);
+                }
+                return newSet;
+            });
+        }
+        catch (error)
+        {
+            console.error('Failed to toggle star:', error);
         }
     };
 
@@ -575,18 +660,210 @@ export default function TaskPage()
         }
     };
 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // BULK ACTIONS
+
+    // Fetch profiles for bulk add (all profiles in org, minus those shared by ALL selected tasks)
+    const fetchBulkAvailableProfiles = async () => {
+        if (!activeOrganization) return;
+        try {
+            const res = await fetch(`/api/profile?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (data.success) {
+                setBulkAvailableProfiles(data.data || []);
+            }
+        } catch (error) {
+            console.error('Error fetching profiles for bulk action:', error);
+        }
+    };
+
+    // Bulk add profile to selected tasks
+    const handleBulkAddProfile = async () => {
+        if (!bulkSelectedProfileId || selectedTaskIds.size === 0) return;
+
+        setIsBulkProcessing(true);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const taskId of selectedTaskIds) {
+            try {
+                const res = await fetch('/api/task-profile', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ taskId, profileId: bulkSelectedProfileId }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch {
+                errorCount++;
+            }
+        }
+
+        setIsBulkProcessing(false);
+        setIsBulkAddProfileDialogOpen(false);
+        setBulkSelectedProfileId(null);
+        setBulkSearchProfileText("");
+
+        if (successCount > 0) {
+            toast.success(`Profile added to ${successCount} task(s)`);
+            fetchTasks();
+        }
+        if (errorCount > 0) {
+            toast.error(`Failed to add profile to ${errorCount} task(s)`);
+        }
+    };
+
+    // Bulk set dates for selected tasks
+    const handleBulkSetDates = async () => {
+        if (selectedTaskIds.size === 0) return;
+
+        setIsBulkProcessing(true);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const taskId of selectedTaskIds) {
+            try {
+                const res = await fetch(`/api/task/${taskId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        startAt: bulkStartAt || undefined,
+                        endAt: bulkEndAt || undefined,
+                    }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch {
+                errorCount++;
+            }
+        }
+
+        setIsBulkProcessing(false);
+        setIsBulkSetDatesDialogOpen(false);
+        setBulkStartAt("");
+        setBulkEndAt("");
+
+        if (successCount > 0) {
+            toast.success(`Updated dates for ${successCount} task(s)`);
+            fetchTasks();
+        }
+        if (errorCount > 0) {
+            toast.error(`Failed to update ${errorCount} task(s)`);
+        }
+    };
+
+    // Bulk set status for selected tasks
+    const handleBulkSetStatus = async () => {
+        if (selectedTaskIds.size === 0) return;
+
+        setIsBulkProcessing(true);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const taskId of selectedTaskIds) {
+            try {
+                const res = await fetch(`/api/task/${taskId}`, {
+                    method: 'PATCH',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        status: bulkStatus,
+                    }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch {
+                errorCount++;
+            }
+        }
+
+        setIsBulkProcessing(false);
+        setIsBulkSetStatusDialogOpen(false);
+
+        if (successCount > 0) {
+            toast.success(`Updated status for ${successCount} task(s)`);
+            fetchTasks();
+        }
+        if (errorCount > 0) {
+            toast.error(`Failed to update ${errorCount} task(s)`);
+        }
+    };
+
+    // Get localized "delete" word based on user's language
+    const getDeleteWord = () => {
+        return tc('words.delete') || 'delete';
+    };
+
+    // Bulk delete selected tasks
+    const handleBulkDelete = async () => {
+        if (selectedTaskIds.size === 0) return;
+        if (!bulkDeleteConfirmChecked) return;
+        if (bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
+
+        setIsBulkProcessing(true);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const taskId of selectedTaskIds) {
+            try {
+                const res = await fetch(`/api/task/${taskId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch {
+                errorCount++;
+            }
+        }
+
+        setIsBulkProcessing(false);
+        setIsBulkDeleteDialogOpen(false);
+        setBulkDeleteConfirmChecked(false);
+        setBulkDeleteConfirmText("");
+        setSelectedTaskIds(new Set());
+
+        if (successCount > 0) {
+            toast.success(`Deleted ${successCount} task(s)`);
+            fetchTasks();
+            if (selectedTask && selectedTaskIds.has(selectedTask.id)) {
+                setSelectedTask(null);
+            }
+        }
+        if (errorCount > 0) {
+            toast.error(`Failed to delete ${errorCount} task(s)`);
+        }
+    };
+
     // ── Change organization + Initial Load + Refresh ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    useEffect(() => 
+    useEffect(() =>
     {
         if (!user) return;
         if (!activeOrganization) return;
 
         fetchTasks();
+        fetchStarredTasks();
 
         // Listen for refresh event
         const handleRefresh = () =>
         {
             fetchTasks();
+            fetchStarredTasks();
             // Also refresh messages and events if a task is selected
             if (selectedTask) {
                 fetchMessages(selectedTask.id);
@@ -1326,19 +1603,191 @@ useEffect(() => {
         fetchAvailableProfiles();
     }, [isAddProfileDialogOpen, selectedTask, activeOrganization]);
 
-  const filteredTasks = tasks.filter(task =>
-    task.name.toLowerCase().includes(filterText.toLowerCase()) ||
-    task.id.toString().includes(filterText)
-  );
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH PROFILES FOR BULK ADD DIALOG
+    useEffect(() => {
+        if (isBulkAddProfileDialogOpen && activeOrganization) {
+            fetchBulkAvailableProfiles();
+        }
+    }, [isBulkAddProfileDialogOpen, activeOrganization]);
+
+  // Calculate time left for a task (in days)
+  const calculateTimeLeft = (task: any): number | null => {
+    if (!task.endAt) return null; // No end date
+    if (task.status === 'NOT_STARTED') return null; // Not started = infinity
+    const endDate = new Date(task.endAt);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    endDate.setHours(0, 0, 0, 0);
+    const diffTime = endDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    return diffDays;
+  };
+
+  // Format time left for display
+  const formatTimeLeft = (task: any): string => {
+    if (task.status === 'NOT_STARTED') return '∞';
+    const daysLeft = calculateTimeLeft(task);
+    if (daysLeft === null) return '∞';
+    if (daysLeft < 0) return `${Math.abs(daysLeft)}d overdue`;
+    if (daysLeft === 0) return 'Today';
+    if (daysLeft === 1) return '1 day';
+    return `${daysLeft} days`;
+  };
+
+  // Toggle star for a task (calls API)
+  const toggleStar = (taskId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    toggleStarApi(taskId);
+  };
+
+  // Toggle checkbox selection for a task
+  const toggleTaskSelection = (taskId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
+  };
+
+  // Handle sort
+  const handleSort = (key: string) => {
+    setSortConfig(prev => {
+      if (prev?.key === key) {
+        return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+      }
+      return { key, direction: 'asc' };
+    });
+  };
+
+  // Get sort icon for a column
+  const getSortIcon = (key: string) => {
+    if (sortConfig?.key !== key) {
+      return <ArrowUpDown className="ml-1 h-3 w-3 inline opacity-50" />;
+    }
+    return sortConfig.direction === 'asc'
+      ? <ArrowUp className="ml-1 h-3 w-3 inline" />
+      : <ArrowDown className="ml-1 h-3 w-3 inline" />;
+  };
+
+  // Filter and sort tasks
+  const filteredTasks = tasks
+    .filter(task =>
+      task.name.toLowerCase().includes(filterText.toLowerCase()) ||
+      task.id.toString().includes(filterText)
+    )
+    .sort((a, b) => {
+      if (!sortConfig) return 0;
+
+      const { key, direction } = sortConfig;
+      const multiplier = direction === 'asc' ? 1 : -1;
+
+      if (key === 'name') {
+        return multiplier * a.name.localeCompare(b.name);
+      }
+      if (key === 'status') {
+        const statusOrder = ['NOT_STARTED', 'OPEN', 'COMPLETED', 'CLOSED'];
+        return multiplier * (statusOrder.indexOf(a.status) - statusOrder.indexOf(b.status));
+      }
+      if (key === 'timeLeft') {
+        const aTime = calculateTimeLeft(a);
+        const bTime = calculateTimeLeft(b);
+        // null (infinity) should be at the end when ascending, at the start when descending
+        if (aTime === null && bTime === null) return 0;
+        if (aTime === null) return multiplier;
+        if (bTime === null) return -multiplier;
+        return multiplier * (aTime - bTime);
+      }
+      if (key === 'star') {
+        const aStarred = starredTaskIds.has(a.id) ? 1 : 0;
+        const bStarred = starredTaskIds.has(b.id) ? 1 : 0;
+        return multiplier * (bStarred - aStarred); // Starred first when ascending
+      }
+      return 0;
+    });
 
   const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;
   const currentTasks = filteredTasks.slice(startIndex, endIndex);
 
+  // Selection helpers
+  const allCurrentSelected = currentTasks.length > 0 && currentTasks.every(t => selectedTaskIds.has(t.id));
+  const someCurrentSelected = currentTasks.some(t => selectedTaskIds.has(t.id)) && !allCurrentSelected;
+
+  const selectAllCurrent = () => {
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      currentTasks.forEach(t => newSet.add(t.id));
+      return newSet;
+    });
+  };
+
+  const deselectAllCurrent = () => {
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      currentTasks.forEach(t => newSet.delete(t.id));
+      return newSet;
+    });
+  };
+
+  const selectByStatus = (status: string) => {
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      filteredTasks.filter(t => t.status === status).forEach(t => newSet.add(t.id));
+      return newSet;
+    });
+  };
+
+  const selectStarred = () => {
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      filteredTasks.filter(t => starredTaskIds.has(t.id)).forEach(t => newSet.add(t.id));
+      return newSet;
+    });
+  };
+
+  // Select urgent tasks (yellow in Time Left column: due within 3 days, not overdue, not NOT_STARTED)
+  const selectUrgent = () => {
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      filteredTasks.filter(t => {
+        // Match exact same logic as yellow color in table
+        if (t.status === 'NOT_STARTED') return false;
+        const daysLeft = calculateTimeLeft(t);
+        return daysLeft !== null && daysLeft >= 0 && daysLeft <= 3;
+      }).forEach(t => newSet.add(t.id));
+      return newSet;
+    });
+  };
+
+  // Select overdue tasks (red in Time Left column: past end date, not NOT_STARTED)
+  const selectOverdue = () => {
+    setSelectedTaskIds(prev => {
+      const newSet = new Set(prev);
+      filteredTasks.filter(t => {
+        // Match exact same logic as red color in table
+        if (t.status === 'NOT_STARTED') return false;
+        const daysLeft = calculateTimeLeft(t);
+        return daysLeft !== null && daysLeft < 0;
+      }).forEach(t => newSet.add(t.id));
+      return newSet;
+    });
+  };
+
     const getStatusBadge = (taskStatus: string) =>
     {
-        const styles = 
+        const styles =
         {
             NOT_STARTED : 'bg-[var(--color-status-not-started)]',
             OPEN        : 'bg-[var(--color-status-open)]',
@@ -1364,7 +1813,9 @@ useEffect(() => {
   const exportColumns: ExportColumn[] = [
       { header: 'Name', accessor: 'name' },
       { header: 'Description', accessor: (row: any) => row.description || '' },
+      { header: 'Time Left', accessor: (row: any) => formatTimeLeft(row) },
       { header: 'Status', accessor: 'status' },
+      { header: 'Starred', accessor: (row: any) => starredTaskIds.has(row.id) ? 'Yes' : 'No' },
   ];
 
   if (!user) {
@@ -1851,7 +2302,7 @@ useEffect(() => {
               `}
               onClick={() => setSelectedProfileToAdd(profile.id)}
             >
-              <div className="font-medium">#{profile.id} - {profile.name}</div>
+              <div className="font-medium">{profile.name}</div>
               {profile.description && (
                 <div className="text-sm text-muted-foreground truncate">
                   {profile.description}
@@ -1961,6 +2412,249 @@ useEffect(() => {
   </AlertDialogContent>
 </AlertDialog>
 
+{/* Bulk Add Profile Dialog */}
+<Dialog open={isBulkAddProfileDialogOpen} onOpenChange={setIsBulkAddProfileDialogOpen}>
+  <DialogContent className="sm:max-w-125">
+    <DialogHeader>
+      <DialogTitle>Add Profile to {selectedTaskIds.size} Task(s)</DialogTitle>
+      <DialogDescription>
+        Select a profile to add to all selected tasks.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="py-4">
+      <Input
+        placeholder="Search profiles..."
+        value={bulkSearchProfileText}
+        onChange={(e) => setBulkSearchProfileText(e.target.value)}
+        className="mb-4"
+      />
+
+      <div className="border rounded-lg max-h-80 overflow-y-auto">
+        {bulkAvailableProfiles
+          .filter(profile =>
+            profile.name.toLowerCase().includes(bulkSearchProfileText.toLowerCase()) ||
+            profile.id.toString().includes(bulkSearchProfileText)
+          )
+          .map((profile) => (
+            <div
+              key={profile.id}
+              className={`
+                p-3 border-b last:border-b-0 cursor-pointer transition-colors
+                ${bulkSelectedProfileId === profile.id ? 'bg-muted' : 'hover:bg-muted/50'}
+              `}
+              onClick={() => setBulkSelectedProfileId(profile.id)}
+            >
+              <div className="font-medium">{profile.name}</div>
+              {profile.description && (
+                <div className="text-sm text-muted-foreground truncate">
+                  {profile.description}
+                </div>
+              )}
+            </div>
+          ))}
+        {bulkAvailableProfiles.length === 0 && (
+          <div className="p-4 text-center text-muted-foreground">
+            No profiles available
+          </div>
+        )}
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setIsBulkAddProfileDialogOpen(false);
+          setBulkSelectedProfileId(null);
+          setBulkSearchProfileText("");
+        }}
+        disabled={isBulkProcessing}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleBulkAddProfile}
+        disabled={!bulkSelectedProfileId || isBulkProcessing}
+      >
+        {isBulkProcessing ? 'Adding...' : 'Add Profile'}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
+{/* Bulk Set Dates Dialog */}
+<Dialog open={isBulkSetDatesDialogOpen} onOpenChange={setIsBulkSetDatesDialogOpen}>
+  <DialogContent className="sm:max-w-100">
+    <DialogHeader>
+      <DialogTitle>Set Dates for {selectedTaskIds.size} Task(s)</DialogTitle>
+      <DialogDescription>
+        Set start and/or end dates for all selected tasks. Leave empty to keep existing values.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="grid gap-6 py-4">
+      <div
+        className="grid gap-2 relative"
+        onPointerDown={(e) => e.stopPropagation()}
+        onPointerDownCapture={(e) => e.preventDefault()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <label className="block text-sm">Start Date</label>
+        <DatePicker
+          value={bulkStartAt}
+          onChange={(date) => {
+            setBulkStartAt(date ? format(date, "yyyy-MM-dd") : "");
+          }}
+          placeholder="Select start date"
+        />
+      </div>
+
+      <div
+        className="grid gap-2 relative"
+        onPointerDown={(e) => e.stopPropagation()}
+        onPointerDownCapture={(e) => e.preventDefault()}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <label className="block text-sm">End Date</label>
+        <DatePicker
+          value={bulkEndAt}
+          onChange={(date) => {
+            setBulkEndAt(date ? format(date, "yyyy-MM-dd") : "");
+          }}
+          placeholder="Select end date"
+          disabled={(date) =>
+            (bulkStartAt && date < new Date(bulkStartAt)) ||
+            date > new Date("2030-12-31")
+          }
+        />
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button
+        variant="outline"
+        onClick={() => {
+          setIsBulkSetDatesDialogOpen(false);
+          setBulkStartAt("");
+          setBulkEndAt("");
+        }}
+        disabled={isBulkProcessing}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleBulkSetDates}
+        disabled={(!bulkStartAt && !bulkEndAt) || isBulkProcessing}
+      >
+        {isBulkProcessing ? 'Updating...' : 'Set Dates'}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
+{/* Bulk Set Status Dialog */}
+<Dialog open={isBulkSetStatusDialogOpen} onOpenChange={setIsBulkSetStatusDialogOpen}>
+  <DialogContent className="sm:max-w-80">
+    <DialogHeader>
+      <DialogTitle>Set Status for {selectedTaskIds.size} Task(s)</DialogTitle>
+      <DialogDescription>
+        Select a status to apply to all selected tasks.
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="grid gap-4 py-4">
+      <Select value={bulkStatus} onValueChange={(v) => setBulkStatus(v as TaskStatus)}>
+        <SelectTrigger className="w-full">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent
+          position="popper"
+          side="bottom"
+          sideOffset={4}
+          className="max-h-75 overflow-y-auto"
+        >
+          {TASK_STATUSES.map((status) => (
+            <SelectItem key={status} value={status}>
+              {TASK_STATUS_LABELS[status]}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button
+        variant="outline"
+        onClick={() => setIsBulkSetStatusDialogOpen(false)}
+        disabled={isBulkProcessing}
+      >
+        Cancel
+      </Button>
+      <Button
+        onClick={handleBulkSetStatus}
+        disabled={isBulkProcessing}
+      >
+        {isBulkProcessing ? 'Updating...' : 'Set Status'}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
+{/* Bulk Delete Dialog */}
+<Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="text-destructive">{t('dialogs.bulkDeleteTitle')}</DialogTitle>
+      <DialogDescription>
+        {t('dialogs.bulkDeleteDescription', { count: selectedTaskIds.size })}
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="space-y-4 py-4">
+      <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+        <Checkbox
+          id="bulk-delete-confirm"
+          checked={bulkDeleteConfirmChecked}
+          onCheckedChange={(checked) => setBulkDeleteConfirmChecked(!!checked)}
+        />
+        <label htmlFor="bulk-delete-confirm" className="text-sm cursor-pointer">
+          {t('dialogs.bulkDeleteConfirmCheckbox')}
+        </label>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm">
+          {t('dialogs.bulkDeleteTypeWord', { word: getDeleteWord() })}
+        </label>
+        <Input
+          value={bulkDeleteConfirmText}
+          onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+          placeholder={getDeleteWord()}
+          className={bulkDeleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+        />
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button variant="outline" onClick={() => setIsBulkDeleteDialogOpen(false)} disabled={isBulkProcessing}>
+        {tc('buttons.cancel')}
+      </Button>
+      <Button
+        variant="destructive"
+        onClick={handleBulkDelete}
+        disabled={
+          isBulkProcessing ||
+          !bulkDeleteConfirmChecked ||
+          bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+        }
+      >
+        {isBulkProcessing ? tc('buttons.deleting') : t('buttons.deleteTasks', { count: selectedTaskIds.size })}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
+
       <div className="space-y-8 p-6">
         <div className="flex justify-center">
           <Button
@@ -1985,15 +2679,93 @@ useEffect(() => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead>{tc('table.name')}</TableHead>
+              {/* Checkbox column with dropdown */}
+              <TableHead className="w-12">
+                <div className="flex items-center gap-0.5">
+                  <Checkbox
+                    checked={allCurrentSelected ? true : someCurrentSelected ? "indeterminate" : false}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        selectAllCurrent();
+                      } else {
+                        deselectAllCurrent();
+                      }
+                    }}
+                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1 hover:bg-muted rounded">
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={selectAllCurrent}>
+                        Select All
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => selectByStatus('NOT_STARTED')}>
+                        All Not Started
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => selectByStatus('OPEN')}>
+                        All Open
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => selectByStatus('COMPLETED')}>
+                        All Completed
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={selectUrgent}>
+                        All Urgent
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={selectOverdue}>
+                        All Overdue
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={selectStarred}>
+                        <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                        Starred
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableHead>
+              {/* Name column - sortable */}
+              <TableHead
+                className="cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('name')}
+              >
+                {tc('table.name')}
+                {getSortIcon('name')}
+              </TableHead>
+              {/* Description column */}
               <TableHead>{tc('table.description')}</TableHead>
-              <TableHead className="w-32">{tc('table.status')}</TableHead>
+              {/* Time Left column - sortable */}
+              <TableHead
+                className="w-28 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('timeLeft')}
+              >
+                Time Left
+                {getSortIcon('timeLeft')}
+              </TableHead>
+              {/* Status column - sortable */}
+              <TableHead
+                className="w-32 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('status')}
+              >
+                {tc('table.status')}
+                {getSortIcon('status')}
+              </TableHead>
+              {/* Star column - sortable */}
+              <TableHead
+                className="w-12 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('star')}
+              >
+                {getSortIcon('star')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentTasks.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foregroundX">
+                <TableCell colSpan={6} className="text-center text-muted-foregroundX">
                   {filterText ? t('empty.noTasksMatch') : t('empty.noTasksFound')}
                 </TableCell>
               </TableRow>
@@ -2006,13 +2778,53 @@ useEffect(() => {
                     ${selectedTask?.id === task.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
                   `}
                   onClick={() => handleRowClick(task)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    toggleStar(task.id);
+                  }}
                 >
+                  {/* Checkbox cell */}
+                  <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedTaskIds.has(task.id)}
+                      onCheckedChange={() => toggleTaskSelection(task.id)}
+                    />
+                  </TableCell>
+                  {/* Name cell */}
                   <TableCell>{task.name}</TableCell>
+                  {/* Description cell */}
                   <TableCell className="max-w-md truncate">{task.description || '-'}</TableCell>
+                  {/* Time Left cell */}
+                  <TableCell className="w-28 text-sm">
+                    <span className={
+                      task.status === 'NOT_STARTED' ? 'text-muted-foreground' :
+                      calculateTimeLeft(task) !== null && calculateTimeLeft(task)! < 0 ? 'text-red-500' :
+                      calculateTimeLeft(task) !== null && calculateTimeLeft(task)! <= 3 ? 'text-yellow-500' :
+                      'text-muted-foreground'
+                    }>
+                      {formatTimeLeft(task)}
+                    </span>
+                  </TableCell>
+                  {/* Status cell */}
                   <TableCell className="w-32">
                     <Badge variant="secondary" className={`${getStatusBadge(task.status)} px-2 py-1 text-xs status-badge`}>
                       {task.status.replace('_', ' ')}
                     </Badge>
+                  </TableCell>
+                  {/* Star cell */}
+                  <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={(e) => toggleStar(task.id, e)}
+                      className="p-1 hover:bg-muted rounded transition-colors"
+                    >
+                      <Star
+                        className={`h-4 w-4 ${
+                          starredTaskIds.has(task.id)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-muted-foreground hover:text-yellow-400'
+                        }`}
+                      />
+                    </button>
                   </TableCell>
                 </TableRow>
               ))
@@ -2060,6 +2872,45 @@ useEffect(() => {
                   </div>
                 </PaginationContent>
               </Pagination>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk Action Bar */}
+        {selectedTaskIds.size > 0 && (
+          <div className="flex items-center gap-4 mt-4 p-3 bg-muted/50 rounded-lg border">
+            <span className="text-sm text-muted-foreground">
+              Selected {selectedTaskIds.size} of {filteredTasks.length} tasks
+            </span>
+            <div className="flex items-center gap-1 ml-auto">
+              <button
+                onClick={() => setIsBulkAddProfileDialogOpen(true)}
+                className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
+                title="Add Profile to Selected Tasks"
+              >
+                <UserRoundPlus className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setIsBulkSetDatesDialogOpen(true)}
+                className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
+                title="Set Dates for Selected Tasks"
+              >
+                <CalendarDays className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => setIsBulkSetStatusDialogOpen(true)}
+                className="p-1.5 hover:bg-muted rounded transition-colors text-muted-foreground hover:text-foreground cursor-pointer"
+                title="Set Status for Selected Tasks"
+              >
+                <Waypoints className="h-4 w-4" />
+              </button>
+              <button
+                onClick={() => { setBulkDeleteConfirmChecked(false); setBulkDeleteConfirmText(""); setIsBulkDeleteDialogOpen(true); }}
+                className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"
+                title="Delete Selected Tasks"
+              >
+                <Trash2 className="h-4 w-4" />
+              </button>
             </div>
           </div>
         )}

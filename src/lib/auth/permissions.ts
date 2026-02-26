@@ -31,29 +31,31 @@ export function canUpdateProfiles(role: UserRole | string): boolean
 // ADMINs can access Organizations they are connected to.
 export async function validateAdminOrganizationAccess(
     role            : UserRole | string,
-    profileId       : string,
+    profileId       : string | undefined,
     organizationId  : string
-): Promise<boolean> 
+): Promise<boolean>
 {
     if (role === 'SUPER_ADMIN') return true;
-    
-    if (role === 'ADMIN') 
+    if (!profileId) return false;
+
+    if (role === 'ADMIN')
     {
         return await profileRepository.existsWithOrganizationId(profileId, organizationId);
     }
-    
+
     return false;
 }
 
 // ADMINs & USERs can access Organizations they are connected to.
 export async function validateUserOrganizationAccess(
     role            : UserRole | string,
-    profileId       : string,
+    profileId       : string | undefined,
     organizationId  : string
-): Promise<boolean> 
+): Promise<boolean>
 {
     if (role === 'SUPER_ADMIN') return true;
-    
+    if (!profileId) return false;
+
     return await profileRepository.existsWithOrganizationId(profileId, organizationId);
 }
 
@@ -86,17 +88,18 @@ export function canDeleteTasks(role: UserRole | string): boolean
 
 export async function validateAdminTaskAccess(
     role            : UserRole | string,
-    profileId       : string,
+    profileId       : string | undefined,
     taskId          : string
-): Promise<boolean> 
+): Promise<boolean>
 {
     if (role === 'SUPER_ADMIN') return true;
-    
-    if (role === 'ADMIN') 
+    if (!profileId) return false;
+
+    if (role === 'ADMIN')
     {
         return await taskRepository.validateAdminTaskAccess(taskId, profileId);
     }
-    
+
     return false;
 }
 

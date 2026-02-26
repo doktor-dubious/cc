@@ -68,15 +68,23 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
 
         // ── Parse & validate body ───────────────────────────────────────
         const body = await request.json();
-        const { name, description } = body;
+        const {
+            name, description, ig, size,
+            naceSection, legalForm, revenueRange, maturity,
+            ownershipType, geographicScope, businessOrientation, digitalMaturity,
+            esgStatus, supplyChainRole, riskProfile, euTaxonomyAligned,
+            itSecurityStaff, securityMaturity, dataSensitivity, regulatoryObligations,
+            itEndpointRange, infrastructureTypes, softwareDevelopment, publicFacingServices,
+            targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange
+        } = body;
 
         // -- Name
         if (!name || typeof name !== 'string' || name.trim() === '')
         {
             return NextResponse.json<ApiResponse>(
-                { 
-                    success: false, 
-                    error  : 'Name is required' 
+                {
+                    success: false,
+                    error  : 'Name is required'
                 },
                 { status: 400 }
             );
@@ -87,18 +95,44 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
         if (!org)
         {
             return NextResponse.json<ApiResponse>(
-                { 
+                {
                     success: false,
-                    error  : 'Organization not found' 
-                }, 
+                    error  : 'Organization not found'
+                },
                 { status: 404 });
         }
 
         // ── Database/Prisma ───────────────────────────────────────
         const updatedOrganization = await organizationRepository.updateOrganization(organizationId,
             {
-                name        : name.trim(),
-                description : description?.trim() ?? null
+                name                     : name.trim(),
+                description              : description?.trim() ?? null,
+                ig                       : ig !== undefined ? ig : org.ig,
+                size                     : size !== undefined ? size : org.size,
+                naceSection              : naceSection !== undefined ? naceSection : org.naceSection,
+                legalForm                : legalForm !== undefined ? legalForm : org.legalForm,
+                revenueRange             : revenueRange !== undefined ? revenueRange : org.revenueRange,
+                maturity                 : maturity !== undefined ? maturity : org.maturity,
+                ownershipType            : ownershipType !== undefined ? ownershipType : org.ownershipType,
+                geographicScope          : geographicScope !== undefined ? geographicScope : org.geographicScope,
+                businessOrientation      : businessOrientation !== undefined ? businessOrientation : org.businessOrientation,
+                digitalMaturity          : digitalMaturity !== undefined ? digitalMaturity : org.digitalMaturity,
+                esgStatus                : esgStatus !== undefined ? esgStatus : org.esgStatus,
+                supplyChainRole          : supplyChainRole !== undefined ? supplyChainRole : org.supplyChainRole,
+                riskProfile              : riskProfile !== undefined ? riskProfile : org.riskProfile,
+                euTaxonomyAligned        : euTaxonomyAligned !== undefined ? euTaxonomyAligned : org.euTaxonomyAligned,
+                itSecurityStaff          : itSecurityStaff !== undefined ? itSecurityStaff : org.itSecurityStaff,
+                securityMaturity         : securityMaturity !== undefined ? securityMaturity : org.securityMaturity,
+                dataSensitivity          : dataSensitivity !== undefined ? dataSensitivity : org.dataSensitivity,
+                regulatoryObligations    : regulatoryObligations !== undefined ? regulatoryObligations : org.regulatoryObligations,
+                itEndpointRange          : itEndpointRange !== undefined ? itEndpointRange : org.itEndpointRange,
+                infrastructureTypes      : infrastructureTypes !== undefined ? infrastructureTypes : org.infrastructureTypes,
+                softwareDevelopment      : softwareDevelopment !== undefined ? softwareDevelopment : org.softwareDevelopment,
+                publicFacingServices     : publicFacingServices !== undefined ? publicFacingServices : org.publicFacingServices,
+                targetedAttackLikelihood : targetedAttackLikelihood !== undefined ? targetedAttackLikelihood : org.targetedAttackLikelihood,
+                downtimeTolerance        : downtimeTolerance !== undefined ? downtimeTolerance : org.downtimeTolerance,
+                supplyChainPosition      : supplyChainPosition !== undefined ? supplyChainPosition : org.supplyChainPosition,
+                securityBudgetRange      : securityBudgetRange !== undefined ? securityBudgetRange : org.securityBudgetRange,
             }
         );
 

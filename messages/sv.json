@@ -144,7 +144,11 @@
     "messages": "Messages",
     "auditTrail": "Audit Trail",
     "reports": "Reports",
-    "statusReports": "Status Reports",
+    "statusReport": "Statusrapport",
+    "progressReport": "Framstegsrapport",
+    "exploratoryGap": "Exploratory GAP",
+    "gap": "GAP",
+    "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -220,13 +224,102 @@
       "userDeleted": "Login deleted successfully",
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account"
+      "cannotDeleteSelf": "Cannot delete your own account",
+      "passwordTooWeak": "Password is too weak. Please make it stronger."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
       "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
+    }
+  },
+  "LoginPage": {
+    "title": "Compliance Circle",
+    "description": "Logga in på Compliance Circle",
+    "loginWith": "Logga in med",
+    "emailPlaceholder": "Ange din e-post",
+    "password": "Lösenord",
+    "passwordPlaceholder": "Ange ditt lösenord",
+    "loginButton": "Logga in",
+    "loggingIn": "Loggar in...",
+    "orContinueWith": "eller fortsätt med",
+    "google": "Google",
+    "microsoft": "Microsoft",
+    "termsNotice": "Genom att fortsätta godkänner du våra",
+    "termsOfService": "Användarvillkor",
+    "and": "och",
+    "privacyPolicy": "Integritetspolicy"
+  },
+  "SettingsProfile": {
+    "twoFactor": {
+      "title": "Tvåfaktorsautentisering",
+      "description": "Lägg till ett extra lager av säkerhet till ditt konto genom att kräva en verifieringskod från din autentiseringsapp vid inloggning.",
+      "enabled": "Aktiverad",
+      "setupDescription": "Skydda ditt konto med TOTP-baserad tvåfaktorsautentisering. Du behöver en autentiseringsapp som Google Authenticator, Authy eller 1Password.",
+      "enableButton": "Aktivera tvåfaktorsautentisering",
+      "disableButton": "Inaktivera tvåfaktorsautentisering",
+      "enterPassword": "Ange ditt lösenord för att fortsätta.",
+      "passwordPlaceholder": "Ange ditt nuvarande lösenord",
+      "loading": "Laddar...",
+      "continue": "Fortsätt",
+      "cancel": "Avbryt",
+      "scanQrCode": "Skanna denna QR-kod med din autentiseringsapp",
+      "saveBackupCodes": "Spara dina reservkoder. Förvara dem på en säker plats — varje kod kan bara användas en gång.",
+      "copyBackupCodes": "Kopiera koder",
+      "enterVerificationCode": "Ange den 6-siffriga koden från din autentiseringsapp för att bekräfta konfigurationen.",
+      "codePlaceholder": "000000",
+      "verify": "Verifiera och aktivera",
+      "regenerateDescription": "Om du har förlorat dina reservkoder kan du generera nya.",
+      "regenerateBackupCodes": "Generera nya reservkoder",
+      "newBackupCodes": "Dina nya reservkoder — spara dem nu:",
+      "done": "Klar",
+      "disableWarning": "Är du säker på att du vill inaktivera tvåfaktorsautentisering? Detta gör ditt konto mindre säkert.",
+      "confirmDisable": "Bekräfta inaktivering",
+      "toast": {
+        "enabled": "Tvåfaktorsautentisering aktiverad",
+        "disabled": "Tvåfaktorsautentisering inaktiverad",
+        "backupCodesRegenerated": "Reservkoder återskapade",
+        "backupCodesCopied": "Reservkoder kopierade till urklipp"
+      },
+      "errors": {
+        "enableFailed": "Kunde inte aktivera tvåfaktorsautentisering",
+        "invalidCode": "Ogiltig verifieringskod",
+        "verifyFailed": "Verifieringen misslyckades. Försök igen.",
+        "disableFailed": "Kunde inte inaktivera tvåfaktorsautentisering",
+        "regenerateFailed": "Kunde inte återskapa reservkoder"
+      }
+    }
+  },
+  "TwoFactorPage": {
+    "title": "Tvåfaktorsautentisering",
+    "description": "Ange den 6-siffriga koden från din autentiseringsapp",
+    "backupCodeDescription": "Ange en av dina reservkoder",
+    "codePlaceholder": "000000",
+    "backupCodePlaceholder": "Ange reservkod",
+    "verifyButton": "Verifiera",
+    "verifying": "Verifierar...",
+    "trustDevice": "Lita på denna enhet i 30 dagar",
+    "useBackupCode": "Använd en reservkod istället",
+    "useAuthenticator": "Använd autentiseringsapp",
+    "errors": {
+      "invalidCode": "Ogiltig verifieringskod. Försök igen.",
+      "invalidBackupCode": "Ogiltig reservkod. Försök igen.",
+      "verificationFailed": "Verifieringen misslyckades. Försök igen."
     }
   }
 }

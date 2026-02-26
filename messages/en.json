@@ -23,11 +23,24 @@
       "importance": "Importance",
       "message": "Message",
       "email": "Email",
+      "login": "Login",
       "role": "Role",
       "tasks": "Tasks",
       "profiles": "Profiles",
       "sender": "Sender",
       "task": "Task"
+    },
+    "words": {
+      "yes": "Yes",
+      "no": "No",
+      "delete": "delete"
+    },
+    "selection": {
+      "selectAll": "Select All",
+      "deselectAll": "Deselect All",
+      "selectUsers": "Select Users",
+      "selectAdmins": "Select Admins",
+      "starred": "Starred"
     },
     "loading": {
       "loadingUser": "Loading user...",
@@ -55,7 +68,11 @@
     "messages": "Messages",
     "auditTrail": "Audit Trail",
     "reports": "Reports",
-    "statusReports": "Status Reports",
+    "statusReport": "Status Report",
+    "progressReport": "Progress Report",
+    "exploratoryGap": "Exploratory GAP",
+    "gap": "GAP",
+    "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -91,6 +108,8 @@
       "downloadAsset": "Download Asset",
       "deleteThisArtifact": "Delete this artifact",
       "deleteAsset": "Delete Asset",
+      "deleteSelected": "Delete selected assets",
+      "deleteAssets": "Delete {count} asset(s)",
       "creating": "Creating...",
       "saving": "Saving...",
       "deleting": "Deleting...",
@@ -108,7 +127,14 @@
       "removeTaskDescription": "This will unlink the task from the current artifact (delete the link in TaskArtifact). The task itself remains in the system and can still be assigned to other artifacts or profiles. This action cannot be undone.",
       "deleteTitle": "Are you absolutely sure?",
       "deleteDescription": "This action cannot be undone. This will permanently delete the artifact \"{name}\" and remove it from the system.",
-      "alsoDeleteFile": "Also delete file from filesystem"
+      "alsoDeleteFile": "Also delete file from filesystem",
+      "bulkDeleteTitle": "Delete Multiple Assets",
+      "bulkDeleteDescription": "You are about to delete {count} assets. This action cannot be undone.",
+      "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these assets and all associated data",
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
+    },
+    "selection": {
+      "selectedOf": "Selected {selected} of {total} Assets"
     },
     "labels": {
       "artifactName": "Artifact name",
@@ -183,7 +209,9 @@
       "updateTaskError": "Could not update task",
       "addTaskError": "Could not add task",
       "saveError": "Could not save artifact",
-      "deleteError": "Could not delete artifact"
+      "deleteError": "Could not delete artifact",
+      "assetsDeleted": "Deleted {count} asset(s) successfully",
+      "assetsDeleteFailed": "Failed to delete {count} asset(s)"
     },
     "loading": {
       "loadingUser": "Loading user...",
@@ -228,6 +256,7 @@
       "cancel": "Cancel",
       "delete": "Delete",
       "deleteTask": "Delete Task",
+      "deleteTasks": "Delete {count} task(s)",
       "addProfile": "Add Profile",
       "addArtifact": "Add Artifact",
       "newMessage": "New Message",
@@ -263,7 +292,11 @@
       "removeProfileTitle": "Remove profile from task?",
       "removeProfileDescription": "This will unlink the profile from the current task (delete the link in TaskProfile). The profile itself remains in the system and can still be assigned to other tasks. This action cannot be undone.",
       "messageFrom": "Message from {name}",
-      "taskLabel": "Task: {name}"
+      "taskLabel": "Task: {name}",
+      "bulkDeleteTitle": "Delete Multiple Tasks",
+      "bulkDeleteDescription": "You are about to delete {count} tasks. This action cannot be undone.",
+      "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these tasks and all associated data",
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
     },
     "labels": {
       "taskName": "Task name",
@@ -395,7 +428,7 @@
       "enterNickname": "Enter nickname",
       "enterEmail": "Enter email address",
       "enterPassword": "Enter password",
-      "enterNewPassword": "Leave empty to keep current password",
+      "enterNewPassword": "Leave blank to keep current password",
       "filterByNameOrEmail": "Filter by name or email..."
     },
     "tabs": {
@@ -421,13 +454,28 @@
       "userDeleted": "Login deleted successfully",
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account"
+      "cannotDeleteSelf": "Cannot delete your own account",
+      "passwordTooWeak": "Password is too weak. Please make it stronger."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
       "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
     }
   },
   "Profile": {
@@ -438,6 +486,8 @@
       "cancel": "Cancel",
       "delete": "Delete",
       "deleteProfile": "Delete Profile",
+      "deleteSelected": "Delete selected profiles",
+      "deleteProfiles": "Delete {count} profile(s)",
       "removeTask": "Remove task",
       "creating": "Creating...",
       "saving": "Saving...",
@@ -452,7 +502,14 @@
       "removeTaskTitle": "Remove task from profile?",
       "removeTaskDescription": "This will remove the task assignment from this profile (delete the link in TaskProfile). The task itself remains in the system and can be assigned to other profiles or organizations. This action cannot be undone.",
       "deleteTitle": "Are you absolutely sure?",
-      "deleteDescription": "This action cannot be undone. This will permanently delete the profile \"{name}\" and remove it from the system."
+      "deleteDescription": "This action cannot be undone. This will permanently delete the profile \"{name}\" and remove it from the system.",
+      "bulkDeleteTitle": "Delete Multiple Profiles",
+      "bulkDeleteDescription": "You are about to delete {count} profiles. This action cannot be undone.",
+      "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these profiles and all associated data",
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
+    },
+    "selection": {
+      "selectedOf": "Selected {selected} of {total} Profiles"
     },
     "labels": {
       "profileName": "Profile name",
@@ -514,7 +571,9 @@
       "taskUpdated": "Task updated successfully",
       "updateTaskError": "Could not update task",
       "profileDeleted": "Profile deleted successfully",
-      "deleteError": "Could not delete profile"
+      "deleteError": "Could not delete profile",
+      "profilesDeleted": "Deleted {count} profile(s) successfully",
+      "profilesDeleteFailed": "Failed to delete {count} profile(s)"
     },
     "loading": {
       "loadingUser": "Loading user...",
@@ -559,7 +618,9 @@
       "saving": "Saving...",
       "deleting": "Deleting...",
       "removing": "Removing...",
-      "adding": "Adding..."
+      "adding": "Adding...",
+      "deleteOrganizations": "Delete {count} organizations",
+      "deleteSelected": "Delete selected"
     },
     "dialogs": {
       "createTitle": "Create New Organisation",
@@ -577,7 +638,14 @@
       "removeProfileTitle": "Remove profile from organization?",
       "removeProfileDescription": "This will unlink the profile from the current organization (set organizationId to null). The profile record itself will remain in the system. This action cannot be undone.",
       "deleteTitle": "Are you absolutely sure?",
-      "deleteDescription": "This action cannot be undone. This will permanently delete the organization \"{name}\" and remove it from the system."
+      "deleteDescription": "This action cannot be undone. This will permanently delete the organization \"{name}\" and remove it from the system.",
+      "bulkDeleteTitle": "Delete Organizations",
+      "bulkDeleteDescription": "You are about to delete {count} organizations. This action cannot be undone.",
+      "bulkDeleteConfirmCheckbox": "I understand that this will permanently delete the selected organizations and all associated data.",
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
+    },
+    "selection": {
+      "selectedOf": "Selected {selected} of {total} organizations"
     },
     "labels": {
       "organisationName": "Organisation name",
@@ -586,7 +654,41 @@
       "taskName": "Task name",
       "uploadDirectory": "Upload Directory",
       "downloadDirectory": "Download Directory",
-      "artifactDirectory": "Artifact Directory"
+      "artifactDirectory": "Artifact Directory",
+      "targetIg": "Target Implementation Group (IG)",
+      "organizationSize": "Organization Size",
+      "naceSection": "Industry Sector (NACE)",
+      "legalForm": "Legal Form",
+      "revenueRange": "Annual Revenue",
+      "maturity": "Organization Maturity",
+      "ownershipType": "Ownership Type",
+      "geographicScope": "Geographic Scope",
+      "businessOrientation": "Business Orientation",
+      "digitalMaturity": "Digital Maturity",
+      "esgStatus": "ESG Reporting Status",
+      "supplyChainRole": "Supply Chain Role",
+      "riskProfile": "Risk Profile",
+      "euTaxonomyAligned": "EU Taxonomy Alignment",
+      "itSecuritySection": "IT & Security Classification",
+      "itSecurityStaff": "IT & Security Staffing",
+      "securityMaturity": "Security Maturity Level",
+      "dataSensitivity": "Data Sensitivity Profile",
+      "regulatoryObligations": "Regulatory Obligations",
+      "itEndpointRange": "IT Endpoints",
+      "infrastructureTypes": "Infrastructure Types",
+      "softwareDevelopment": "Software Development",
+      "publicFacingServices": "Public-Facing Services",
+      "targetedAttackLikelihood": "Targeted Attack Likelihood",
+      "downtimeTolerance": "Downtime Tolerance",
+      "supplyChainPosition": "Supply Chain Position",
+      "securityBudgetRange": "Security Budget"
+    },
+    "sizes": {
+      "micro": "Micro (0-9 employees)",
+      "small": "Small (10-49 employees)",
+      "medium": "Medium (50-249 employees)",
+      "large": "Large (250-999 employees)",
+      "enterprise": "Enterprise (1000+ employees)"
     },
     "placeholders": {
       "enterOrganizationName": "Enter organization name",
@@ -600,10 +702,34 @@
       "filterByNameOrId": "Filter by name or ID...",
       "enterUploadDirectory": "Enter upload directory path (e.g., /var/uploads)",
       "enterDownloadDirectory": "Enter download directory path (e.g., /var/downloads)",
-      "enterArtifactDirectory": "Enter artifact directory path (e.g., /var/artifacts)"
+      "enterArtifactDirectory": "Enter artifact directory path (e.g., /var/artifacts)",
+      "selectSize": "Select organization size",
+      "selectNaceSection": "Select industry sector",
+      "selectLegalForm": "Select legal form",
+      "selectRevenueRange": "Select revenue range",
+      "selectMaturity": "Select organization maturity",
+      "selectOwnershipType": "Select ownership type",
+      "selectGeographicScope": "Select geographic scope",
+      "selectBusinessOrientation": "Select business orientation",
+      "selectDigitalMaturity": "Select digital maturity",
+      "selectEsgStatus": "Select ESG status",
+      "selectSupplyChainRole": "Select supply chain role",
+      "selectRiskProfile": "Select risk profile",
+      "selectEuTaxonomyAligned": "Select EU taxonomy alignment",
+      "selectItSecurityStaff": "Select IT & security staffing level",
+      "selectSecurityMaturity": "Select security maturity level",
+      "selectItEndpointRange": "Select number of IT endpoints",
+      "selectSoftwareDevelopment": "Select software development scope",
+      "selectPublicFacingServices": "Select public-facing services level",
+      "selectTargetedAttackLikelihood": "Select targeted attack likelihood",
+      "selectDowntimeTolerance": "Select downtime tolerance",
+      "selectSupplyChainPosition": "Select supply chain position",
+      "selectSecurityBudgetRange": "Select security budget range"
     },
     "tabs": {
       "details": "Details",
+      "taxonomy": "Taxonomy",
+      "classification": "Classification",
       "settings": "Settings",
       "profiles": "Profiles ({count})",
       "tasks": "Tasks ({count})",
@@ -650,7 +776,9 @@
       "removeProfileError": "Could not remove profile",
       "taskNameRequired": "Task name is required",
       "taskUpdated": "Task updated",
-      "updateTaskError": "Could not update task"
+      "updateTaskError": "Could not update task",
+      "organizationsDeleted": "{count} organizations deleted successfully",
+      "organizationsDeleteFailed": "Failed to delete {count} organizations"
     },
     "loading": {
       "loadingUser": "Loading user...",
@@ -666,7 +794,206 @@
     "helpers": {
       "uploadDirectoryHelp": "Directory where uploaded files are temporarily stored",
       "downloadDirectoryHelp": "Directory where files are prepared for download",
-      "artifactDirectoryHelp": "Directory where artifact files are permanently stored"
+      "artifactDirectoryHelp": "Directory where artifact files are permanently stored",
+      "organizationSizeHelp": "EU SME classification based on employee count",
+      "naceSectionHelp": "NACE classification used across EU for statistics and regulations",
+      "euTaxonomyHelp": "Whether activities align with the EU Taxonomy for sustainable activities",
+      "itSecurityStaffHelp": "Level of dedicated IT and security staffing in your organization",
+      "securityMaturityHelp": "Current maturity level of your security program and practices",
+      "dataSensitivityHelp": "Types of sensitive data your organization processes (select all that apply)",
+      "regulatoryObligationsHelp": "Applicable regulatory and compliance frameworks (select all that apply)",
+      "itEndpointRangeHelp": "Total number of managed IT endpoints (workstations, servers, mobile devices)",
+      "infrastructureTypesHelp": "Types of IT infrastructure your organization operates (select all that apply)",
+      "softwareDevelopmentHelp": "Scope of in-house software development activities",
+      "publicFacingServicesHelp": "Level of internet-exposed services and applications",
+      "targetedAttackLikelihoodHelp": "Likelihood of being specifically targeted by threat actors",
+      "downtimeToleranceHelp": "Business impact tolerance for system unavailability",
+      "supplyChainPositionHelp": "Your position in the supply chain relative to end customers",
+      "securityBudgetRangeHelp": "Approximate annual budget allocated to security"
+    },
+    "nace": {
+      "A": "A - Agriculture, forestry and fishing",
+      "B": "B - Mining and quarrying",
+      "C": "C - Manufacturing",
+      "D": "D - Electricity, gas, steam and air conditioning",
+      "E": "E - Water supply, sewerage, waste management",
+      "F": "F - Construction",
+      "G": "G - Wholesale and retail trade",
+      "H": "H - Transportation and storage",
+      "I": "I - Accommodation and food service",
+      "J": "J - Information and communication",
+      "K": "K - Financial and insurance activities",
+      "L": "L - Real estate activities",
+      "M": "M - Professional, scientific and technical activities",
+      "N": "N - Administrative and support service activities",
+      "O": "O - Public administration and defence",
+      "P": "P - Education",
+      "Q": "Q - Human health and social work",
+      "R": "R - Arts, entertainment and recreation",
+      "S": "S - Other service activities",
+      "OTHER": "Not classified / Other"
+    },
+    "legalForms": {
+      "soleProprietor": "Sole proprietorship",
+      "partnership": "Partnership",
+      "privateLimited": "Private limited company",
+      "publicLimited": "Public limited company",
+      "cooperative": "Cooperative",
+      "foundation": "Foundation / Association",
+      "branchForeign": "Branch of foreign company",
+      "publicBody": "Public body / Government entity",
+      "other": "Other"
+    },
+    "revenueRanges": {
+      "under2m": "< €2 million",
+      "from2mTo10m": "€2–10 million",
+      "from10mTo50m": "€10–50 million",
+      "from50mTo250m": "€50–250 million",
+      "from250mTo1b": "€250 million – €1 billion",
+      "over1b": "> €1 billion"
+    },
+    "maturities": {
+      "startup": "Startup (0-3 years)",
+      "growth": "Growth stage (3-7 years)",
+      "established": "Established (7-20 years)",
+      "mature": "Mature (20+ years)"
+    },
+    "ownershipTypes": {
+      "private": "Privately held",
+      "publicListed": "Publicly listed",
+      "stateOwned": "State-owned / Government",
+      "familyOwned": "Family-owned",
+      "peVcBacked": "Private equity / Venture capital backed",
+      "cooperative": "Cooperative / Member-owned",
+      "nonProfit": "Non-profit / NGO"
+    },
+    "geographicScopes": {
+      "local": "Local / Municipal",
+      "regional": "Regional",
+      "national": "National",
+      "european": "EU / European",
+      "global": "International / Global"
+    },
+    "businessOrientations": {
+      "b2b": "B2B (Business-to-business)",
+      "b2c": "B2C (Business-to-consumer)",
+      "b2g": "B2G (Business-to-government)",
+      "mixed": "Mixed"
+    },
+    "digitalMaturities": {
+      "traditional": "Traditional / Minimal digital",
+      "developing": "Digitally developing",
+      "mature": "Digitally mature",
+      "digitalNative": "Digital-native / Tech company"
+    },
+    "esgStatuses": {
+      "reporting": "Reporting",
+      "notRequired": "Not yet required",
+      "exempt": "Exempt"
+    },
+    "supplyChainRoles": {
+      "manufacturer": "Manufacturer / Producer",
+      "distributor": "Distributor / Wholesaler",
+      "retailer": "Retailer",
+      "serviceProvider": "Service provider",
+      "platform": "Platform / Marketplace"
+    },
+    "riskProfiles": {
+      "low": "Low risk",
+      "medium": "Medium risk",
+      "high": "High risk"
+    },
+    "euTaxonomy": {
+      "yes": "Yes - Aligned",
+      "no": "No - Not aligned"
+    },
+    "itSecurityStaff": {
+      "noDedicatedIt": "No dedicated IT staff",
+      "itNoSecurity": "IT staff without dedicated security",
+      "dedicatedSecurity": "Dedicated security role/team",
+      "specializedSecurity": "Specialized security team (SOC, etc.)"
+    },
+    "securityMaturity": {
+      "noProgram": "No formal security program",
+      "basic": "Basic security measures",
+      "defined": "Defined security program",
+      "managed": "Managed and measured",
+      "optimizing": "Optimizing and improving"
+    },
+    "dataSensitivity": {
+      "basicBusiness": "Basic business data",
+      "customerPii": "Customer PII",
+      "specialCategory": "Special category data (health, biometric)",
+      "paymentCard": "Payment card data (PCI)",
+      "intellectualProperty": "Intellectual property / trade secrets",
+      "classifiedGovernment": "Classified / government data",
+      "criticalInfrastructure": "Critical infrastructure data"
+    },
+    "regulatoryObligations": {
+      "gdpr": "GDPR",
+      "nis2": "NIS2",
+      "dora": "DORA",
+      "pciDss": "PCI DSS",
+      "hipaa": "HIPAA",
+      "sox": "SOX",
+      "iso27001": "ISO 27001",
+      "criticalInfrastructure": "Critical infrastructure regulations",
+      "sectorSpecific": "Sector-specific regulations",
+      "noneIdentified": "None identified"
+    },
+    "itEndpointRange": {
+      "under10": "< 10 endpoints",
+      "from10to50": "10-50 endpoints",
+      "from50to250": "50-250 endpoints",
+      "from250to1000": "250-1,000 endpoints",
+      "from1000to5000": "1,000-5,000 endpoints",
+      "over5000": "> 5,000 endpoints"
+    },
+    "infrastructureTypes": {
+      "onPremises": "On-premises data center",
+      "privateCloud": "Private cloud",
+      "publicCloud": "Public cloud (AWS, Azure, GCP)",
+      "hybrid": "Hybrid infrastructure",
+      "saasOnly": "SaaS-only (no own infrastructure)",
+      "otIcs": "OT/ICS systems"
+    },
+    "softwareDevelopment": {
+      "none": "No in-house development",
+      "internalTools": "Internal tools only",
+      "customerFacing": "Customer-facing applications",
+      "commercialProducts": "Commercial software products"
+    },
+    "publicFacingServices": {
+      "minimal": "Minimal (email, basic website)",
+      "standardWeb": "Standard web presence",
+      "ecommerce": "E-commerce / customer portals",
+      "criticalServices": "Critical online services"
+    },
+    "targetedAttackLikelihood": {
+      "low": "Low - Opportunistic threats only",
+      "medium": "Medium - Some targeted interest",
+      "high": "High - Known target",
+      "critical": "Critical - Active threat actor interest"
+    },
+    "downtimeTolerance": {
+      "highTolerance": "High tolerance (days acceptable)",
+      "moderate": "Moderate (hours acceptable)",
+      "lowTolerance": "Low tolerance (< 4 hours)",
+      "zeroTolerance": "Zero tolerance (24/7 required)"
+    },
+    "supplyChainPosition": {
+      "endConsumer": "End consumer organization",
+      "downstream": "Downstream (closer to consumers)",
+      "midstream": "Midstream",
+      "upstream": "Upstream (closer to raw materials)",
+      "criticalSupplier": "Critical supplier to essential services"
+    },
+    "securityBudgetRange": {
+      "minimal": "Minimal (< €10K/year)",
+      "limited": "Limited (€10K-50K/year)",
+      "moderate": "Moderate (€50K-250K/year)",
+      "substantial": "Substantial (€250K-1M/year)",
+      "enterprise": "Enterprise (> €1M/year)"
     },
     "status": {
       "currentlyIn": "Currently in: {name}",
@@ -796,7 +1123,9 @@
   },
   "CISSafeguards": {
     "buttons": {
-      "backToControls": "Back to Controls"
+      "backToControls": "Back to Controls",
+      "setInactive": "Set as inactive",
+      "setActive": "Set as active"
     },
     "headings": {
       "control": "Control {id}: {title}",
@@ -822,7 +1151,8 @@
       "priority": "Priority",
       "likelihood": "Likelihood",
       "impact": "Impact",
-      "owner": "Owner"
+      "owner": "Owner",
+      "exclude": "Exclude"
     },
     "expandedLabels": {
       "definition": "Definition",
@@ -832,6 +1162,9 @@
       "approach": "Approach",
       "example": "Example",
       "resources": "Resources"
+    },
+    "legends": {
+      "showInactive": "Show Inactive"
     },
     "empty": {
       "controlNotFound": "Control not found.",
@@ -872,6 +1205,44 @@
       "accountUpdated": "Account updated",
       "updateError": "Failed to update profile",
       "saveError": "An error occurred while saving"
+    },
+    "twoFactor": {
+      "title": "Two-Factor Authentication",
+      "description": "Add an extra layer of security to your account by requiring a verification code from your authenticator app when signing in.",
+      "enabled": "Enabled",
+      "setupDescription": "Protect your account with TOTP-based two-factor authentication. You will need an authenticator app such as Google Authenticator, Authy, or 1Password.",
+      "enableButton": "Enable Two-Factor Authentication",
+      "disableButton": "Disable Two-Factor Authentication",
+      "enterPassword": "Enter your password to continue.",
+      "passwordPlaceholder": "Enter your current password",
+      "loading": "Loading...",
+      "continue": "Continue",
+      "cancel": "Cancel",
+      "scanQrCode": "Scan this QR code with your authenticator app",
+      "saveBackupCodes": "Save your backup codes. Store them in a safe place — each code can only be used once.",
+      "copyBackupCodes": "Copy codes",
+      "enterVerificationCode": "Enter the 6-digit code from your authenticator app to confirm setup.",
+      "codePlaceholder": "000000",
+      "verify": "Verify & Enable",
+      "regenerateDescription": "If you have lost your backup codes, you can regenerate new ones.",
+      "regenerateBackupCodes": "Regenerate Backup Codes",
+      "newBackupCodes": "Your new backup codes — save them now:",
+      "done": "Done",
+      "disableWarning": "Are you sure you want to disable two-factor authentication? This will make your account less secure.",
+      "confirmDisable": "Confirm Disable",
+      "toast": {
+        "enabled": "Two-factor authentication enabled",
+        "disabled": "Two-factor authentication disabled",
+        "backupCodesRegenerated": "Backup codes regenerated",
+        "backupCodesCopied": "Backup codes copied to clipboard"
+      },
+      "errors": {
+        "enableFailed": "Failed to enable two-factor authentication",
+        "invalidCode": "Invalid verification code",
+        "verifyFailed": "Verification failed. Please try again.",
+        "disableFailed": "Failed to disable two-factor authentication",
+        "regenerateFailed": "Failed to regenerate backup codes"
+      }
     }
   },
   "SettingsApplication": {
@@ -931,6 +1302,95 @@
       "jsonSuccess": "Exported as JSON",
       "clipboardSuccess": "Copied to clipboard",
       "exportError": "Export failed"
+    }
+  },
+  "LoginPage": {
+    "title": "Compliance Circle",
+    "description": "Login to access Compliance Circle",
+    "loginWith": "Login with",
+    "emailPlaceholder": "Enter your email",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "loginButton": "Login",
+    "loggingIn": "Logging in...",
+    "orContinueWith": "or continue with",
+    "google": "Google",
+    "microsoft": "Microsoft",
+    "termsNotice": "By continuing, you agree to our",
+    "termsOfService": "Terms of Service",
+    "and": "and",
+    "privacyPolicy": "Privacy Policy"
+  },
+  "TwoFactorPage": {
+    "title": "Two-Factor Authentication",
+    "description": "Enter the 6-digit code from your authenticator app",
+    "backupCodeDescription": "Enter one of your backup codes",
+    "codePlaceholder": "000000",
+    "backupCodePlaceholder": "Enter backup code",
+    "verifyButton": "Verify",
+    "verifying": "Verifying...",
+    "trustDevice": "Trust this device for 30 days",
+    "useBackupCode": "Use a backup code instead",
+    "useAuthenticator": "Use authenticator app",
+    "errors": {
+      "invalidCode": "Invalid verification code. Please try again.",
+      "invalidBackupCode": "Invalid backup code. Please try again.",
+      "verificationFailed": "Verification failed. Please try again."
+    }
+  },
+  "ExploratoryGap": {
+    "title": "Exploratory GAP Analysis",
+    "description": "Generate a tailored CIS Controls recommendation based on your organization's profile, taxonomy, and classification.",
+    "buttons": {
+      "generate": "Generate Exploratory GAP",
+      "generating": "Generating...",
+      "implement": "Implement Recommendations",
+      "implementing": "Implementing...",
+      "confirm": "Confirm & Implement",
+      "cancel": "Cancel"
+    },
+    "labels": {
+      "currentOrganization": "Current Organization",
+      "noOrganization": "No organization selected",
+      "recommendedIg": "Recommended Implementation Group",
+      "basedOn": "Based on {name}'s profile and classification",
+      "analysisFactors": "Analysis Factors",
+      "activeControls": "Active Controls",
+      "inactiveControls": "Inactive Controls",
+      "activeSafeguards": "Active Safeguards",
+      "inactiveSafeguards": "Inactive Safeguards",
+      "relevance": "Relevance",
+      "safeguardsActive": "{active}/{total} safeguards active",
+      "analysis": "Analysis",
+      "active": "Active",
+      "inactive": "Inactive"
+    },
+    "headings": {
+      "controlsRecommendations": "Controls & Safeguards Recommendations",
+      "controlsDescription": "Click on a control to expand and see individual safeguards. Toggle to adjust."
+    },
+    "dialog": {
+      "title": "Implement Recommendations?",
+      "description": "This will apply the following changes to {name}:",
+      "targetIg": "Target Implementation Group",
+      "controlsInactive": "Controls to set as inactive",
+      "safeguardsInactive": "Safeguards to set as inactive"
+    },
+    "empty": {
+      "noOrganization": "No Organization Selected",
+      "noOrganizationDescription": "Please select an organization from the sidebar to generate a gap analysis."
+    },
+    "toast": {
+      "generateSuccess": "Recommendation generated",
+      "generateError": "Failed to generate recommendation",
+      "implementSuccess": "Recommendations implemented successfully",
+      "implementError": "Failed to implement recommendations",
+      "selectOrganization": "Please select an organization first"
+    },
+    "ig": {
+      "ig1": "IG1 - Essential Cyber Hygiene",
+      "ig2": "IG2 - Intermediate Controls",
+      "ig3": "IG3 - Advanced / Comprehensive"
     }
   }
 }

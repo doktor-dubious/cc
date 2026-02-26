@@ -3,6 +3,8 @@ import { roboto }                                   from './fonts/fonts';
 import { inter }                                    from './fonts/fonts';
 import { geograph }                                 from './fonts/fonts';
 import { playfair }                                 from './fonts/fonts';
+import { geistSans }                                from './fonts/fonts';
+import { geistMono }                                from './fonts/fonts';
 import { ThemeProvider }                            from "@/components/theme-provider"
 import { NextIntlClientProvider }                   from 'next-intl';
 import { getLocale, getMessages }                   from 'next-intl/server';
@@ -24,7 +26,7 @@ export default async function RootLayout({
 
   return (
         <>
-    <html lang={locale} className={`${roboto.variable} ${geograph.variable} ${playfair.variable}`} suppressHydrationWarning>
+    <html lang={locale} className={`${roboto.variable} ${geograph.variable} ${playfair.variable} ${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <head />
       <body className={`bg-background ${roboto.variable} antialiased font-sans`}>
         <NextIntlClientProvider locale={locale} messages={messages}>

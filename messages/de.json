@@ -144,7 +144,11 @@
     "messages": "Messages",
     "auditTrail": "Audit Trail",
     "reports": "Reports",
-    "statusReports": "Status Reports",
+    "statusReport": "Statusbericht",
+    "progressReport": "Fortschrittsbericht",
+    "exploratoryGap": "Exploratory GAP",
+    "gap": "GAP",
+    "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -220,13 +224,102 @@
       "userDeleted": "Login deleted successfully",
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account"
+      "cannotDeleteSelf": "Cannot delete your own account",
+      "passwordTooWeak": "Password is too weak. Please make it stronger."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
       "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
+    }
+  },
+  "LoginPage": {
+    "title": "Compliance Circle",
+    "description": "Melden Sie sich bei Compliance Circle an",
+    "loginWith": "Anmelden mit",
+    "emailPlaceholder": "E-Mail eingeben",
+    "password": "Passwort",
+    "passwordPlaceholder": "Passwort eingeben",
+    "loginButton": "Anmelden",
+    "loggingIn": "Anmeldung...",
+    "orContinueWith": "oder weiter mit",
+    "google": "Google",
+    "microsoft": "Microsoft",
+    "termsNotice": "Durch Fortfahren stimmen Sie unseren",
+    "termsOfService": "Nutzungsbedingungen",
+    "and": "und",
+    "privacyPolicy": "Datenschutzrichtlinie"
+  },
+  "SettingsProfile": {
+    "twoFactor": {
+      "title": "Zwei-Faktor-Authentifizierung",
+      "description": "Fügen Sie Ihrem Konto eine zusätzliche Sicherheitsebene hinzu, indem Sie bei der Anmeldung einen Bestätigungscode aus Ihrer Authentifizierungs-App verlangen.",
+      "enabled": "Aktiviert",
+      "setupDescription": "Schützen Sie Ihr Konto mit TOTP-basierter Zwei-Faktor-Authentifizierung. Sie benötigen eine Authentifizierungs-App wie Google Authenticator, Authy oder 1Password.",
+      "enableButton": "Zwei-Faktor-Authentifizierung aktivieren",
+      "disableButton": "Zwei-Faktor-Authentifizierung deaktivieren",
+      "enterPassword": "Geben Sie Ihr Passwort ein, um fortzufahren.",
+      "passwordPlaceholder": "Aktuelles Passwort eingeben",
+      "loading": "Wird geladen...",
+      "continue": "Weiter",
+      "cancel": "Abbrechen",
+      "scanQrCode": "Scannen Sie diesen QR-Code mit Ihrer Authentifizierungs-App",
+      "saveBackupCodes": "Speichern Sie Ihre Sicherungscodes. Bewahren Sie sie an einem sicheren Ort auf — jeder Code kann nur einmal verwendet werden.",
+      "copyBackupCodes": "Codes kopieren",
+      "enterVerificationCode": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein, um die Einrichtung zu bestätigen.",
+      "codePlaceholder": "000000",
+      "verify": "Verifizieren und aktivieren",
+      "regenerateDescription": "Wenn Sie Ihre Sicherungscodes verloren haben, können Sie neue generieren.",
+      "regenerateBackupCodes": "Sicherungscodes neu generieren",
+      "newBackupCodes": "Ihre neuen Sicherungscodes — speichern Sie sie jetzt:",
+      "done": "Fertig",
+      "disableWarning": "Sind Sie sicher, dass Sie die Zwei-Faktor-Authentifizierung deaktivieren möchten? Dadurch wird Ihr Konto weniger sicher.",
+      "confirmDisable": "Deaktivierung bestätigen",
+      "toast": {
+        "enabled": "Zwei-Faktor-Authentifizierung aktiviert",
+        "disabled": "Zwei-Faktor-Authentifizierung deaktiviert",
+        "backupCodesRegenerated": "Sicherungscodes neu generiert",
+        "backupCodesCopied": "Sicherungscodes in die Zwischenablage kopiert"
+      },
+      "errors": {
+        "enableFailed": "Zwei-Faktor-Authentifizierung konnte nicht aktiviert werden",
+        "invalidCode": "Ungültiger Bestätigungscode",
+        "verifyFailed": "Verifizierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+        "disableFailed": "Zwei-Faktor-Authentifizierung konnte nicht deaktiviert werden",
+        "regenerateFailed": "Sicherungscodes konnten nicht neu generiert werden"
+      }
+    }
+  },
+  "TwoFactorPage": {
+    "title": "Zwei-Faktor-Authentifizierung",
+    "description": "Geben Sie den 6-stelligen Code aus Ihrer Authentifizierungs-App ein",
+    "backupCodeDescription": "Geben Sie einen Ihrer Sicherungscodes ein",
+    "codePlaceholder": "000000",
+    "backupCodePlaceholder": "Sicherungscode eingeben",
+    "verifyButton": "Bestätigen",
+    "verifying": "Wird bestätigt...",
+    "trustDevice": "Diesem Gerät 30 Tage vertrauen",
+    "useBackupCode": "Sicherungscode verwenden",
+    "useAuthenticator": "Authentifizierungs-App verwenden",
+    "errors": {
+      "invalidCode": "Ungültiger Bestätigungscode. Bitte versuchen Sie es erneut.",
+      "invalidBackupCode": "Ungültiger Sicherungscode. Bitte versuchen Sie es erneut.",
+      "verificationFailed": "Bestätigung fehlgeschlagen. Bitte versuchen Sie es erneut."
     }
   }
 }

@@ -23,11 +23,24 @@
       "importance": "Viktighet",
       "message": "Melding",
       "email": "E-post",
+      "login": "Innlogging",
       "role": "Rolle",
       "tasks": "Oppgaver",
       "profiles": "Profiler",
       "sender": "Avsender",
       "task": "Oppgave"
+    },
+    "words": {
+      "yes": "Ja",
+      "no": "Nei",
+      "delete": "slett"
+    },
+    "selection": {
+      "selectAll": "Velg alle",
+      "deselectAll": "Fjern alle valgte",
+      "selectUsers": "Velg brukere",
+      "selectAdmins": "Velg administratorer",
+      "starred": "Stjernemerkede"
     },
     "loading": {
       "loadingUser": "Laster bruker...",
@@ -54,7 +67,11 @@
     "messages": "Meldinger",
     "auditTrail": "Revisjonslogg",
     "reports": "Rapporter",
-    "statusReports": "Statusrapporter",
+    "statusReport": "Statusrapport",
+    "progressReport": "Fremdriftsrapport",
+    "exploratoryGap": "Exploratory GAP",
+    "gap": "GAP",
+    "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Akademi",
@@ -89,6 +106,9 @@
       "previewAsset": "Forhåndsvis ressurs",
       "downloadAsset": "Last ned ressurs",
       "deleteThisArtifact": "Slett denne ressursen",
+      "deleteAsset": "Slett ressurs",
+      "deleteSelected": "Slett valgte ressurser",
+      "deleteAssets": "Slett {count} ressurs(er)",
       "creating": "Oppretter...",
       "saving": "Lagrer...",
       "deleting": "Sletter...",
@@ -106,7 +126,14 @@
       "removeTaskDescription": "Dette fjerner koblingen mellom oppgaven og den gjeldende ressursen (sletter lenken i TaskArtifact). Oppgaven beholdes i systemet og kan fortsatt tildeles andre ressurser eller profiler. Handlingen kan ikke angres.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette ressursen \"{name}\" og fjerne den fra systemet.",
-      "alsoDeleteFile": "Slett også filen fra filsystemet"
+      "alsoDeleteFile": "Slett også filen fra filsystemet",
+      "bulkDeleteTitle": "Slett flere ressurser",
+      "bulkDeleteDescription": "Du er i ferd med å slette {count} ressurser. Denne handlingen kan ikke angres.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette vil permanent slette disse ressursene og alle tilknyttede data",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for å bekrefte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} av {total} ressurser"
     },
     "labels": {
       "artifactName": "Ressursnavn",
@@ -178,7 +205,9 @@
       "updateTaskError": "Kunne ikke oppdatere oppgave",
       "addTaskError": "Kunne ikke legge til oppgave",
       "saveError": "Kunne ikke lagre ressurs",
-      "deleteError": "Kunne ikke slette ressurs"
+      "deleteError": "Kunne ikke slette ressurs",
+      "assetsDeleted": "Slettet {count} ressurs(er)",
+      "assetsDeleteFailed": "Kunne ikke slette {count} ressurs(er)"
     },
     "loading": {
       "loadingUser": "Laster bruker...",
@@ -223,6 +252,7 @@
       "cancel": "Avbryt",
       "delete": "Slett",
       "deleteTask": "Slett oppgave",
+      "deleteTasks": "Slett {count} oppgave(r)",
       "addProfile": "Legg til profil",
       "addArtifact": "Legg til ressurs",
       "newMessage": "Ny melding",
@@ -258,7 +288,11 @@
       "removeProfileTitle": "Fjern profil fra oppgave?",
       "removeProfileDescription": "Dette fjerner koblingen mellom profilen og den gjeldende oppgaven (sletter lenken i TaskProfile). Profilen beholdes i systemet. Handlingen kan ikke angres.",
       "messageFrom": "Melding fra {name}",
-      "taskLabel": "Oppgave: {name}"
+      "taskLabel": "Oppgave: {name}",
+      "bulkDeleteTitle": "Slett flere oppgaver",
+      "bulkDeleteDescription": "Du er i ferd med å slette {count} oppgaver. Denne handlingen kan ikke angres.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette vil permanent slette disse oppgavene og alle tilknyttede data",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for å bekrefte"
     },
     "labels": {
       "taskName": "Oppgavenavn",
@@ -417,13 +451,28 @@
       "userDeleted": "Login deleted successfully",
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account"
+      "cannotDeleteSelf": "Cannot delete your own account",
+      "passwordTooWeak": "Password is too weak. Please make it stronger."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
       "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
     }
   },
 
@@ -435,6 +484,8 @@
       "cancel": "Avbryt",
       "delete": "Slett",
       "deleteProfile": "Slett profil",
+      "deleteSelected": "Slett valgte profiler",
+      "deleteProfiles": "Slett {count} profil(er)",
       "removeTask": "Fjern oppgave",
       "creating": "Oppretter...",
       "saving": "Lagrer...",
@@ -449,7 +500,14 @@
       "removeTaskTitle": "Fjern oppgave fra profil?",
       "removeTaskDescription": "Dette fjerner oppgavetildelingen fra denne profilen (sletter lenken i TaskProfile). Oppgaven beholdes i systemet. Handlingen kan ikke angres.",
       "deleteTitle": "Er du helt sikker?",
-      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet."
+      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet.",
+      "bulkDeleteTitle": "Slett flere profiler",
+      "bulkDeleteDescription": "Du er i ferd med å slette {count} profiler. Denne handlingen kan ikke angres.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette vil permanent slette disse profilene og alle tilknyttede data",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for å bekrefte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} av {total} profiler"
     },
     "labels": {
       "profileName": "Profilnavn",
@@ -511,7 +569,9 @@
       "taskUpdated": "Oppgave oppdatert",
       "updateTaskError": "Kunne ikke oppdatere oppgave",
       "profileDeleted": "Profil slettet",
-      "deleteError": "Kunne ikke slette profil"
+      "deleteError": "Kunne ikke slette profil",
+      "profilesDeleted": "Slettet {count} profil(er)",
+      "profilesDeleteFailed": "Kunne ikke slette {count} profil(er)"
     },
     "loading": {
       "loadingUser": "Laster bruker...",
@@ -557,7 +617,9 @@
       "saving": "Lagrer...",
       "deleting": "Sletter...",
       "removing": "Fjerner...",
-      "adding": "Legger til..."
+      "adding": "Legger til...",
+      "deleteOrganizations": "Slett {count} organisasjoner",
+      "deleteSelected": "Slett valgte"
     },
     "dialogs": {
       "createTitle": "Opprett ny organisasjon",
@@ -575,7 +637,14 @@
       "removeProfileTitle": "Fjern profil fra organisasjon?",
       "removeProfileDescription": "Dette fjerner koblingen mellom profilen og den gjeldende organisasjonen (setter organizationId til null). Profilen beholdes i systemet. Handlingen kan ikke angres.",
       "deleteTitle": "Er du helt sikker?",
-      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette organisasjonen \"{name}\" og fjerne den fra systemet."
+      "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette organisasjonen \"{name}\" og fjerne den fra systemet.",
+      "bulkDeleteTitle": "Slett organisasjoner",
+      "bulkDeleteDescription": "Du er i ferd med å slette {count} organisasjoner. Denne handlingen kan ikke angres.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette de valgte organisasjonene og alle tilknyttede data.",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for å bekrefte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} av {total} organisasjoner"
     },
     "labels": {
       "organisationName": "Organisasjonsnavn",
@@ -584,7 +653,41 @@
       "taskName": "Oppgavenavn",
       "uploadDirectory": "Opplastingsmappe",
       "downloadDirectory": "Nedlastingsmappe",
-      "artifactDirectory": "Ressursmappe"
+      "artifactDirectory": "Ressursmappe",
+      "targetIg": "Mål Implementeringsgruppe (IG)",
+      "organizationSize": "Organisasjonsstørrelse",
+      "naceSection": "Bransje (NACE)",
+      "legalForm": "Juridisk form",
+      "revenueRange": "Årlig omsetning",
+      "maturity": "Organisasjonsmodenhet",
+      "ownershipType": "Eierskapstype",
+      "geographicScope": "Geografisk rekkevidde",
+      "businessOrientation": "Forretningsorientering",
+      "digitalMaturity": "Digital modenhet",
+      "esgStatus": "ESG-rapporteringsstatus",
+      "supplyChainRole": "Rolle i forsyningskjeden",
+      "riskProfile": "Risikoprofil",
+      "euTaxonomyAligned": "EU-taksonomi tilpasning",
+      "itSecuritySection": "IT & Sikkerhetsklassifisering",
+      "itSecurityStaff": "IT & Sikkerhetspersonell",
+      "securityMaturity": "Sikkerhetsmodenhetsnivå",
+      "dataSensitivity": "Datafølsomhetsprofil",
+      "regulatoryObligations": "Regulatoriske forpliktelser",
+      "itEndpointRange": "IT-endepunkter",
+      "infrastructureTypes": "Infrastrukturtyper",
+      "softwareDevelopment": "Programvareutvikling",
+      "publicFacingServices": "Offentlig tilgjengelige tjenester",
+      "targetedAttackLikelihood": "Sannsynlighet for målrettet angrep",
+      "downtimeTolerance": "Nedetidstoleranse",
+      "supplyChainPosition": "Posisjon i forsyningskjeden",
+      "securityBudgetRange": "Sikkerhetsbudsjett"
+    },
+    "sizes": {
+      "micro": "Mikro (0-9 ansatte)",
+      "small": "Liten (10-49 ansatte)",
+      "medium": "Mellomstor (50-249 ansatte)",
+      "large": "Stor (250-999 ansatte)",
+      "enterprise": "Storforetak (1000+ ansatte)"
     },
     "placeholders": {
       "enterOrganizationName": "Skriv inn organisasjonsnavn",
@@ -598,10 +701,34 @@
       "filterByNameOrId": "Filtrer etter navn eller ID...",
       "enterUploadDirectory": "Skriv inn sti til opplastingsmappe (f.eks. /var/uploads)",
       "enterDownloadDirectory": "Skriv inn sti til nedlastingsmappe (f.eks. /var/downloads)",
-      "enterArtifactDirectory": "Skriv inn sti til ressursmappe (f.eks. /var/artifacts)"
+      "enterArtifactDirectory": "Skriv inn sti til ressursmappe (f.eks. /var/artifacts)",
+      "selectSize": "Velg organisasjonsstørrelse",
+      "selectNaceSection": "Velg bransje",
+      "selectLegalForm": "Velg juridisk form",
+      "selectRevenueRange": "Velg omsetningsintervall",
+      "selectMaturity": "Velg organisasjonsmodenhet",
+      "selectOwnershipType": "Velg eierskapstype",
+      "selectGeographicScope": "Velg geografisk rekkevidde",
+      "selectBusinessOrientation": "Velg forretningsorientering",
+      "selectDigitalMaturity": "Velg digital modenhet",
+      "selectEsgStatus": "Velg ESG-status",
+      "selectSupplyChainRole": "Velg rolle i forsyningskjeden",
+      "selectRiskProfile": "Velg risikoprofil",
+      "selectEuTaxonomyAligned": "Velg EU-taksonomi tilpasning",
+      "selectItSecurityStaff": "Velg IT & sikkerhetspersonellnivå",
+      "selectSecurityMaturity": "Velg sikkerhetsmodenhetsnivå",
+      "selectItEndpointRange": "Velg antall IT-endepunkter",
+      "selectSoftwareDevelopment": "Velg programvareutviklingsomfang",
+      "selectPublicFacingServices": "Velg nivå for offentlige tjenester",
+      "selectTargetedAttackLikelihood": "Velg sannsynlighet for målrettet angrep",
+      "selectDowntimeTolerance": "Velg nedetidstoleranse",
+      "selectSupplyChainPosition": "Velg posisjon i forsyningskjeden",
+      "selectSecurityBudgetRange": "Velg sikkerhetsbudsjettintervall"
     },
     "tabs": {
       "details": "Detaljer",
+      "taxonomy": "Taksonomi",
+      "classification": "Klassifisering",
       "settings": "Innstillinger",
       "profiles": "Profiler ({count})",
       "tasks": "Oppgaver ({count})",
@@ -648,7 +775,9 @@
       "removeProfileError": "Kunne ikke fjerne profil",
       "taskNameRequired": "Oppgavenavn er påkrevd",
       "taskUpdated": "Oppgave oppdatert",
-      "updateTaskError": "Kunne ikke oppdatere oppgave"
+      "updateTaskError": "Kunne ikke oppdatere oppgave",
+      "organizationsDeleted": "{count} organisasjoner slettet",
+      "organizationsDeleteFailed": "Kunne ikke slette {count} organisasjoner"
     },
     "loading": {
       "loadingUser": "Laster bruker...",
@@ -664,7 +793,206 @@
     "helpers": {
       "uploadDirectoryHelp": "Mappe der opplastede filer midlertidig lagres",
       "downloadDirectoryHelp": "Mappe der filer klargjøres for nedlasting",
-      "artifactDirectoryHelp": "Mappe der ressursfiler permanent lagres"
+      "artifactDirectoryHelp": "Mappe der ressursfiler permanent lagres",
+      "organizationSizeHelp": "EU SMB-klassifisering basert på antall ansatte",
+      "naceSectionHelp": "NACE-klassifisering brukt i hele EU for statistikk og regulering",
+      "euTaxonomyHelp": "Om aktiviteter er tilpasset EU-taksonomien for bærekraftige aktiviteter",
+      "itSecurityStaffHelp": "Nivå av dedikert IT- og sikkerhetspersonell i din organisasjon",
+      "securityMaturityHelp": "Nåværende modenhetsnivå for ditt sikkerhetsprogram og praksis",
+      "dataSensitivityHelp": "Typer av sensitive data din organisasjon behandler (velg alle relevante)",
+      "regulatoryObligationsHelp": "Gjeldende regulatoriske og compliance-rammeverk (velg alle relevante)",
+      "itEndpointRangeHelp": "Totalt antall administrerte IT-endepunkter (arbeidsstasjoner, servere, mobile enheter)",
+      "infrastructureTypesHelp": "Typer av IT-infrastruktur din organisasjon driver (velg alle relevante)",
+      "softwareDevelopmentHelp": "Omfang av intern programvareutvikling",
+      "publicFacingServicesHelp": "Nivå av internett-eksponerte tjenester og applikasjoner",
+      "targetedAttackLikelihoodHelp": "Sannsynlighet for å bli spesifikt målrettet av trusselaktører",
+      "downtimeToleranceHelp": "Forretningsmessig toleranse for systemnedetid",
+      "supplyChainPositionHelp": "Din posisjon i forsyningskjeden i forhold til sluttkunder",
+      "securityBudgetRangeHelp": "Omtrentlig årlig budsjett allokert til sikkerhet"
+    },
+    "nace": {
+      "A": "A - Jordbruk, skogbruk og fiske",
+      "B": "B - Bergverksdrift og utvinning",
+      "C": "C - Industri",
+      "D": "D - Elektrisitets-, gass- og dampforsyning",
+      "E": "E - Vannforsyning og renovasjon",
+      "F": "F - Bygge- og anleggsvirksomhet",
+      "G": "G - Varehandel",
+      "H": "H - Transport og lagring",
+      "I": "I - Overnattings- og serveringsvirksomhet",
+      "J": "J - Informasjon og kommunikasjon",
+      "K": "K - Finansierings- og forsikringsvirksomhet",
+      "L": "L - Omsetning og drift av fast eiendom",
+      "M": "M - Faglig, vitenskapelig og teknisk tjenesteyting",
+      "N": "N - Forretningsmessig tjenesteyting",
+      "O": "O - Offentlig administrasjon og forsvar",
+      "P": "P - Undervisning",
+      "Q": "Q - Helse- og sosialtjenester",
+      "R": "R - Kulturell virksomhet, underholdning og fritidsaktiviteter",
+      "S": "S - Annen tjenesteyting",
+      "OTHER": "Ikke klassifisert / Annet"
+    },
+    "legalForms": {
+      "soleProprietor": "Enkeltpersonforetak",
+      "partnership": "Ansvarlig selskap",
+      "privateLimited": "Aksjeselskap (AS)",
+      "publicLimited": "Allmennaksjeselskap (ASA)",
+      "cooperative": "Samvirkeforetak",
+      "foundation": "Stiftelse / Forening",
+      "branchForeign": "Filial av utenlandsk selskap",
+      "publicBody": "Offentlig organ",
+      "other": "Annet"
+    },
+    "revenueRanges": {
+      "under2m": "< €2 millioner",
+      "from2mTo10m": "€2–10 millioner",
+      "from10mTo50m": "€10–50 millioner",
+      "from50mTo250m": "€50–250 millioner",
+      "from250mTo1b": "€250 millioner – €1 milliard",
+      "over1b": "> €1 milliard"
+    },
+    "maturities": {
+      "startup": "Oppstartsbedrift (0-3 år)",
+      "growth": "Vekstfase (3-7 år)",
+      "established": "Etablert (7-20 år)",
+      "mature": "Moden (20+ år)"
+    },
+    "ownershipTypes": {
+      "private": "Privateid",
+      "publicListed": "Børsnotert",
+      "stateOwned": "Statseid",
+      "familyOwned": "Familieeid",
+      "peVcBacked": "Kapitalfondeid",
+      "cooperative": "Samvirke",
+      "nonProfit": "Non-profit / Ideell"
+    },
+    "geographicScopes": {
+      "local": "Lokal / Kommunal",
+      "regional": "Regional",
+      "national": "Nasjonal",
+      "european": "EU / Europeisk",
+      "global": "Internasjonal / Global"
+    },
+    "businessOrientations": {
+      "b2b": "B2B (Bedrift-til-bedrift)",
+      "b2c": "B2C (Bedrift-til-forbruker)",
+      "b2g": "B2G (Bedrift-til-offentlig)",
+      "mixed": "Blandet"
+    },
+    "digitalMaturities": {
+      "traditional": "Tradisjonell / Minimal digital",
+      "developing": "Under digital utvikling",
+      "mature": "Digitalt moden",
+      "digitalNative": "Digital-native / Tech-selskap"
+    },
+    "esgStatuses": {
+      "reporting": "Rapporterer",
+      "notRequired": "Ikke påkrevd ennå",
+      "exempt": "Unntatt"
+    },
+    "supplyChainRoles": {
+      "manufacturer": "Produsent",
+      "distributor": "Distributør / Grossist",
+      "retailer": "Detaljhandler",
+      "serviceProvider": "Tjenesteleverandør",
+      "platform": "Plattform / Markedsplass"
+    },
+    "riskProfiles": {
+      "low": "Lav risiko",
+      "medium": "Medium risiko",
+      "high": "Høy risiko"
+    },
+    "euTaxonomy": {
+      "yes": "Ja - Tilpasset",
+      "no": "Nei - Ikke tilpasset"
+    },
+    "itSecurityStaff": {
+      "noDedicatedIt": "Ingen dedikert IT-personell",
+      "itNoSecurity": "IT-personell uten dedikert sikkerhet",
+      "dedicatedSecurity": "Dedikert sikkerhetsrolle/-team",
+      "specializedSecurity": "Spesialisert sikkerhetsteam (SOC, etc.)"
+    },
+    "securityMaturity": {
+      "noProgram": "Intet formelt sikkerhetsprogram",
+      "basic": "Grunnleggende sikkerhetstiltak",
+      "defined": "Definert sikkerhetsprogram",
+      "managed": "Styrt og målt",
+      "optimizing": "Optimalisering og forbedring"
+    },
+    "dataSensitivity": {
+      "basicBusiness": "Grunnleggende forretningsdata",
+      "customerPii": "Kunde-personopplysninger",
+      "specialCategory": "Særlige kategorier (helse, biometrisk)",
+      "paymentCard": "Betalingskortdata (PCI)",
+      "intellectualProperty": "Intellektuell eiendom / forretningshemmeligheter",
+      "classifiedGovernment": "Klassifiserte / myndighetsdata",
+      "criticalInfrastructure": "Kritisk infrastrukturdata"
+    },
+    "regulatoryObligations": {
+      "gdpr": "GDPR",
+      "nis2": "NIS2",
+      "dora": "DORA",
+      "pciDss": "PCI DSS",
+      "hipaa": "HIPAA",
+      "sox": "SOX",
+      "iso27001": "ISO 27001",
+      "criticalInfrastructure": "Kritisk infrastruktur-regulering",
+      "sectorSpecific": "Sektorspesifikke regler",
+      "noneIdentified": "Ingen identifisert"
+    },
+    "itEndpointRange": {
+      "under10": "< 10 endepunkter",
+      "from10to50": "10-50 endepunkter",
+      "from50to250": "50-250 endepunkter",
+      "from250to1000": "250-1.000 endepunkter",
+      "from1000to5000": "1.000-5.000 endepunkter",
+      "over5000": "> 5.000 endepunkter"
+    },
+    "infrastructureTypes": {
+      "onPremises": "On-premises datasenter",
+      "privateCloud": "Privat sky",
+      "publicCloud": "Offentlig sky (AWS, Azure, GCP)",
+      "hybrid": "Hybrid infrastruktur",
+      "saasOnly": "Kun SaaS (ingen egen infrastruktur)",
+      "otIcs": "OT/ICS-systemer"
+    },
+    "softwareDevelopment": {
+      "none": "Ingen intern utvikling",
+      "internalTools": "Kun interne verktøy",
+      "customerFacing": "Kundevendte applikasjoner",
+      "commercialProducts": "Kommersielle programvareprodukter"
+    },
+    "publicFacingServices": {
+      "minimal": "Minimal (e-post, enkel nettside)",
+      "standardWeb": "Standard web-tilstedeværelse",
+      "ecommerce": "E-handel / kundeportaler",
+      "criticalServices": "Kritiske nettjenester"
+    },
+    "targetedAttackLikelihood": {
+      "low": "Lav - Kun opportunistiske trusler",
+      "medium": "Medium - Noe målrettet interesse",
+      "high": "Høy - Kjent mål",
+      "critical": "Kritisk - Aktiv trusselaktør-interesse"
+    },
+    "downtimeTolerance": {
+      "highTolerance": "Høy toleranse (dager akseptabelt)",
+      "moderate": "Moderat (timer akseptabelt)",
+      "lowTolerance": "Lav toleranse (< 4 timer)",
+      "zeroTolerance": "Null toleranse (24/7 påkrevd)"
+    },
+    "supplyChainPosition": {
+      "endConsumer": "Sluttbrukerorganisasjon",
+      "downstream": "Nedstrøms (nærmere forbrukere)",
+      "midstream": "Midtstrøms",
+      "upstream": "Oppstrøms (nærmere råmaterialer)",
+      "criticalSupplier": "Kritisk leverandør til essensielle tjenester"
+    },
+    "securityBudgetRange": {
+      "minimal": "Minimal (< €10K/år)",
+      "limited": "Begrenset (€10K-50K/år)",
+      "moderate": "Moderat (€50K-250K/år)",
+      "substantial": "Betydelig (€250K-1M/år)",
+      "enterprise": "Storforetak (> €1M/år)"
     },
     "status": {
       "currentlyIn": "For tiden i: {name}",
@@ -798,7 +1126,12 @@
 
   "CISSafeguards": {
     "buttons": {
-      "backToControls": "Tilbake til kontroller"
+      "backToControls": "Tilbake til kontroller",
+      "setInactive": "Sett som inaktiv",
+      "setActive": "Sett som aktiv"
+    },
+    "legends": {
+      "showInactive": "Vis inaktive"
     },
     "headings": {
       "control": "Kontrol {id}: {title}",
@@ -824,7 +1157,8 @@
       "priority": "Prioritet",
       "likelihood": "Sannsynlighet",
       "impact": "Konsekvens",
-      "owner": "Eier"
+      "owner": "Eier",
+      "exclude": "Utelukk"
     },
     "expandedLabels": {
       "definition": "Definisjon",
@@ -875,6 +1209,44 @@
       "accountUpdated": "Konto oppdatert",
       "updateError": "Kunne ikke oppdatere profil",
       "saveError": "Det oppstod en feil under lagring"
+    },
+    "twoFactor": {
+      "title": "Tofaktorautentisering",
+      "description": "Legg til et ekstra lag med sikkerhet til kontoen din ved å kreve en bekreftelseskode fra godkjenningsappen din ved innlogging.",
+      "enabled": "Aktivert",
+      "setupDescription": "Beskytt kontoen din med TOTP-basert tofaktorautentisering. Du trenger en godkjenningsapp som Google Authenticator, Authy eller 1Password.",
+      "enableButton": "Aktiver tofaktorautentisering",
+      "disableButton": "Deaktiver tofaktorautentisering",
+      "enterPassword": "Skriv inn passordet ditt for å fortsette.",
+      "passwordPlaceholder": "Skriv inn ditt nåværende passord",
+      "loading": "Laster...",
+      "continue": "Fortsett",
+      "cancel": "Avbryt",
+      "scanQrCode": "Skann denne QR-koden med godkjenningsappen din",
+      "saveBackupCodes": "Lagre sikkerhetskodene dine. Oppbevar dem på et sikkert sted — hver kode kan bare brukes én gang.",
+      "copyBackupCodes": "Kopier koder",
+      "enterVerificationCode": "Skriv inn den 6-sifrede koden fra godkjenningsappen din for å bekrefte oppsettet.",
+      "codePlaceholder": "000000",
+      "verify": "Bekreft og aktiver",
+      "regenerateDescription": "Hvis du har mistet sikkerhetskodene dine, kan du generere nye.",
+      "regenerateBackupCodes": "Generer nye sikkerhetskoder",
+      "newBackupCodes": "Dine nye sikkerhetskoder — lagre dem nå:",
+      "done": "Ferdig",
+      "disableWarning": "Er du sikker på at du vil deaktivere tofaktorautentisering? Dette vil gjøre kontoen din mindre sikker.",
+      "confirmDisable": "Bekreft deaktivering",
+      "toast": {
+        "enabled": "Tofaktorautentisering aktivert",
+        "disabled": "Tofaktorautentisering deaktivert",
+        "backupCodesRegenerated": "Sikkerhetskoder gjenskapt",
+        "backupCodesCopied": "Sikkerhetskoder kopiert til utklippstavle"
+      },
+      "errors": {
+        "enableFailed": "Kunne ikke aktivere tofaktorautentisering",
+        "invalidCode": "Ugyldig bekreftelseskode",
+        "verifyFailed": "Bekreftelse mislyktes. Vennligst prøv igjen.",
+        "disableFailed": "Kunne ikke deaktivere tofaktorautentisering",
+        "regenerateFailed": "Kunne ikke gjenskape sikkerhetskoder"
+      }
     }
   },
 
@@ -935,6 +1307,40 @@
       "jsonSuccess": "Eksportert som JSON",
       "clipboardSuccess": "Kopiert til utklippstavle",
       "exportError": "Eksport mislyktes"
+    }
+  },
+  "LoginPage": {
+    "title": "Compliance Circle",
+    "description": "Logg inn på Compliance Circle",
+    "loginWith": "Logg inn med",
+    "emailPlaceholder": "Skriv inn din e-post",
+    "password": "Passord",
+    "passwordPlaceholder": "Skriv inn ditt passord",
+    "loginButton": "Logg inn",
+    "loggingIn": "Logger inn...",
+    "orContinueWith": "eller fortsett med",
+    "google": "Google",
+    "microsoft": "Microsoft",
+    "termsNotice": "Ved å fortsette godtar du våre",
+    "termsOfService": "Tjenestevilkår",
+    "and": "og",
+    "privacyPolicy": "Personvernregler"
+  },
+  "TwoFactorPage": {
+    "title": "Tofaktorautentisering",
+    "description": "Skriv inn den 6-sifrede koden fra godkjenningsappen din",
+    "backupCodeDescription": "Skriv inn en av sikkerhetskodene dine",
+    "codePlaceholder": "000000",
+    "backupCodePlaceholder": "Skriv inn sikkerhetskode",
+    "verifyButton": "Bekreft",
+    "verifying": "Bekrefter...",
+    "trustDevice": "Stol på denne enheten i 30 dager",
+    "useBackupCode": "Bruk en sikkerhetskode i stedet",
+    "useAuthenticator": "Bruk godkjenningsapp",
+    "errors": {
+      "invalidCode": "Ugyldig bekreftelseskode. Prøv igjen.",
+      "invalidBackupCode": "Ugyldig sikkerhetskode. Prøv igjen.",
+      "verificationFailed": "Bekreftelse mislyktes. Prøv igjen."
     }
   }
 }

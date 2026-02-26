@@ -1,8 +1,7 @@
 // app/api/task-artifact/route.ts
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
-import { jwtVerify } from 'jose';
-import { COOKIE_NAME } from '@/constants';
+import { getServerSession } from '@/lib/auth';
 import { log } from '@/lib/log';
 import { eventRepository } from '@/lib/database/events';
 
@@ -10,15 +9,12 @@ export async function POST(request: NextRequest) {
   log.debug('API: task-artifact POST');
 
   try {
-    const token = request.cookies.get(COOKIE_NAME)?.value;
-    if (!token) {
+    const session = await getServerSession();
+    if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    const { payload } = await jwtVerify(token, secret);
-
-    if (!['SUPER_ADMIN', 'ADMIN'].includes(payload.role as string)) {
+    if (!['SUPER_ADMIN', 'ADMIN'].includes(session.user.role)) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
@@ -78,7 +74,7 @@ export async function POST(request: NextRequest) {
     await eventRepository.create({
       message: 'Artifact added to task',
       importance: 'MIDDLE',
-      userId: String(payload.sub),
+      userId: session.user.id,
       taskId: String(taskId),
       organizationId: task?.organizationId || undefined,
     });
@@ -98,15 +94,12 @@ export async function DELETE(request: NextRequest) {
   log.debug('API: task-artifact DELETE');
 
   try {
-    const token = request.cookies.get(COOKIE_NAME)?.value;
-    if (!token) {
+    const session = await getServerSession();
+    if (!session) {
       return NextResponse.json({ success: false, error: 'Unauthorized' }, { status: 401 });
     }
 
-    const secret = new TextEncoder().encode(process.env.JWT_SECRET!);
-    const { payload } = await jwtVerify(token, secret);
-
-    if (!['SUPER_ADMIN', 'ADMIN'].includes(payload.role as string)) {
+    if (!['SUPER_ADMIN', 'ADMIN'].includes(session.user.role)) {
       return NextResponse.json({ success: false, error: 'Forbidden' }, { status: 403 });
     }
 
@@ -141,7 +134,7 @@ export async function DELETE(request: NextRequest) {
     await eventRepository.create({
       message: 'Artifact removed from task',
       importance: 'MIDDLE',
-      userId: String(payload.sub),
+      userId: session.user.id,
       taskId: String(taskId),
       organizationId: task?.organizationId || undefined,
     });

@@ -6,6 +6,7 @@ import { userRepository }                           from '@/lib/database/user';
 import { canFetchUsers, canCreateUsers }            from '@/lib/auth/permissions';
 import type { ApiResponse }                         from '@/lib/types/api';
 import bcrypt                                       from 'bcryptjs';
+import { prisma }                                   from '@/lib/prisma';
 
 // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 // GET — List all users (SUPER_ADMIN only)
@@ -112,19 +113,42 @@ export async function POST(request: Request)
                 { status: 400 });
         }
 
-        // ── Hash password & create ──────────────────────────────────────
+        // ── Hash password & create user + profile in a transaction ──────
         const passwordHash = await bcrypt.hash(password, 10);
 
-        const newUser = await userRepository.createWithRole({
-            email        : email.trim().toLowerCase(),
-            passwordHash,
-            name         : name.trim(),
-            nickname     : (nickname || '').trim(),
-            workFunction : workFunction || 'OTHER',
-            role         : createRole || 'USER',
+        const { user: newUser } = await prisma.$transaction(async (tx) =>
+        {
+            const user = await tx.user.create({
+                data: {
+                    email        : email.trim().toLowerCase(),
+                    passwordHash,
+                    name         : name.trim(),
+                    nickname     : (nickname || '').trim(),
+                    workFunction : workFunction || 'OTHER',
+                    role         : createRole || 'USER',
+                },
+                select: {
+                    id           : true,
+                    email        : true,
+                    name         : true,
+                    nickname     : true,
+                    role         : true,
+                    workFunction : true,
+                },
+            });
+
+            // Every login gets a profile automatically
+            await tx.profile.create({
+                data: {
+                    userId : user.id,
+                    name   : user.name,
+                },
+            });
+
+            return { user };
         });
 
-        log.info({ userId: newUser.id }, 'User created successfully');
+        log.info({ userId: newUser.id }, 'User and profile created successfully');
 
         return NextResponse.json<ApiResponse>(
             { success: true, message: 'User created successfully', data: newUser },

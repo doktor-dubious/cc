@@ -4,8 +4,7 @@
 
 import { log }                       from '@/lib/log';
 import { NextResponse, NextRequest } from 'next/server';
-import { jwtVerify }                 from 'jose';
-import { COOKIE_NAME }               from '@/constants';
+import { getServerSession }          from '@/lib/auth';
 import { settingsRepository }        from '@/lib/database/settings';
 
 /**
@@ -17,9 +16,9 @@ export async function GET(request: NextRequest)
 
     try 
     {
-        // Get JWT from cookie
-        const token = request.cookies.get(COOKIE_NAME)?.value;
-        if (!token) 
+        // Verify session
+        const session = await getServerSession();
+        if (!session)
         {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
@@ -27,30 +26,14 @@ export async function GET(request: NextRequest)
             );
         }
 
-        // Verify JWT
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
-        if (!process.env.JWT_SECRET) 
-        {
-            log.error('JWT_SECRET is not set');
-            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-        }
-
-        const { payload } = await jwtVerify(token, secret);
-
-        if (!payload.userId) 
-        {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-        }
-
         // Check if requesting all settings (SUPER_ADMIN only)
         const { searchParams } = new URL(request.url);
         const all = searchParams.get('all') === 'true';
 
-        if (all) 
+        if (all)
         {
             // Only SUPER_ADMIN can view all settings
-            if (payload.role !== 'SUPER_ADMIN') 
+            if (session.user.role !== 'SUPER_ADMIN')
             {
                 return NextResponse.json(
                     { error: 'You do not have permission to view all settings' },
@@ -104,29 +87,15 @@ export async function POST(request: NextRequest)
 
     try 
     {
-        // Get JWT from cookie
-        const token = request.cookies.get(COOKIE_NAME)?.value;
-        if (!token) 
+        // Verify session
+        const session = await getServerSession();
+        if (!session)
         {
             return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        // Verify JWT
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-        if (!process.env.JWT_SECRET) 
-        {
-            log.error('JWT_SECRET is not set');
-            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-        }
-
-        const { payload } = await jwtVerify(token, secret);
-        if (!payload.userId) 
-        {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-        }
-
         // Only SUPER_ADMIN can create settings
-        if (payload.role !== 'SUPER_ADMIN') 
+        if (session.user.role !== 'SUPER_ADMIN')
         {
             return NextResponse.json(
                 { error: 'You do not have permission to create settings' },
@@ -201,10 +170,10 @@ export async function PATCH(request: NextRequest)
 
     try 
     {
-        // Get JWT from cookie
-        const token = request.cookies.get(COOKIE_NAME)?.value;
+        // Verify session
+        const session = await getServerSession();
 
-        if (!token) 
+        if (!session)
         {
             return NextResponse.json(
                 { success: false, error: 'Unauthorized' },
@@ -212,24 +181,8 @@ export async function PATCH(request: NextRequest)
             );
         }
 
-        // Verify JWT
-        const secret = new TextEncoder().encode(process.env.JWT_SECRET);
-
-        if (!process.env.JWT_SECRET) 
-        {
-            log.error('JWT_SECRET is not set');
-            return NextResponse.json({ error: 'Server configuration error' }, { status: 500 });
-        }
-
-        const { payload } = await jwtVerify(token, secret);
-
-        if (!payload.userId) 
-        {
-            return NextResponse.json({ error: 'Invalid token' }, { status: 401 });
-        }
-
         // Only SUPER_ADMIN can update settings
-        if (payload.role !== 'SUPER_ADMIN') 
+        if (session.user.role !== 'SUPER_ADMIN')
         {
             return NextResponse.json(
                 { error: 'You do not have permission to update settings' },

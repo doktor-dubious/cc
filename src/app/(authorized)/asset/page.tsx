@@ -4,11 +4,20 @@ import { useUser }                              from '@/context/UserContext';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { useRouter }                            from 'next/navigation';
 import { useEffect, useState }                  from 'react';
-import { SquarePen, Trash2 }                    from 'lucide-react';
+import { SquarePen, Trash2, Star, ChevronDown } from 'lucide-react';
 import { Button }                               from "@/components/ui/button";
+import { Checkbox }                             from "@/components/ui/checkbox";
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
 import { ArtifactType }                         from '@prisma/client';
 import { useTranslations }                      from 'next-intl';
+
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 import {
   Table,
@@ -102,6 +111,16 @@ export default function ArtifactPage()
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
 
+    // Selection and starring state
+    const [selectedAssetIds, setSelectedAssetIds] = useState<Set<number>>(new Set());
+    const [starredAssetIds, setStarredAssetIds] = useState<Set<number>>(new Set());
+
+    // Bulk delete state
+    const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+    const [bulkDeleteConfirmChecked, setBulkDeleteConfirmChecked] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
     // Remove Task.
     const [taskToRemove, setTaskToRemove] = useState<number | null>(null);
 
@@ -140,6 +159,61 @@ export default function ArtifactPage()
         }
     };
 
+    // ── Fetch Starred Assets ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    const fetchStarredAssets = async () =>
+    {
+        if (!activeOrganization) return;
+
+        try
+        {
+            const res = await fetch(`/api/artifact-star?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch starred assets:', data.message);
+                return;
+            }
+            setStarredAssetIds(new Set(data.data || []));
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch starred assets:', error);
+        }
+    };
+
+    // ── Toggle Star (API call) ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    const toggleStarApi = async (artifactId: number) =>
+    {
+        try
+        {
+            const res = await fetch('/api/artifact-star', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ artifactId }),
+            });
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to toggle star:', data.message);
+                return;
+            }
+            // Update local state based on response
+            setStarredAssetIds(prev => {
+                const newSet = new Set(prev);
+                if (data.starred) {
+                    newSet.add(artifactId);
+                } else {
+                    newSet.delete(artifactId);
+                }
+                return newSet;
+            });
+        }
+        catch (error)
+        {
+            console.error('Failed to toggle star:', error);
+        }
+    };
+
     // ── Change organization + Initial Load + Refresh ──────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     useEffect(() =>
     {
@@ -147,11 +221,13 @@ export default function ArtifactPage()
         if (!activeOrganization) return;
 
         fetchArtifacts();
+        fetchStarredAssets();
 
         // Listen for refresh event
         const handleRefresh = () =>
         {
             fetchArtifacts();
+            fetchStarredAssets();
         };
 
         window.addEventListener('refreshPage', handleRefresh);
@@ -544,6 +620,90 @@ export default function ArtifactPage()
       artifact.id.toString().includes(filterText)
     );
 
+    // Selection helpers
+    const toggleAssetSelection = (assetId: number) => {
+        setSelectedAssetIds(prev => {
+            const next = new Set(prev);
+            if (next.has(assetId)) {
+                next.delete(assetId);
+            } else {
+                next.add(assetId);
+            }
+            return next;
+        });
+    };
+
+    const toggleAssetStar = (assetId: number) => {
+        toggleStarApi(assetId);
+    };
+
+    const selectAllAssets = () => {
+        setSelectedAssetIds(new Set(currentArtifacts.map(a => a.id)));
+    };
+
+    const deselectAllAssets = () => {
+        setSelectedAssetIds(new Set());
+    };
+
+    const selectStarredAssets = () => {
+        setSelectedAssetIds(new Set(
+            currentArtifacts.filter(a => starredAssetIds.has(a.id)).map(a => a.id)
+        ));
+    };
+
+    // Get localized "delete" word based on user's language
+    const getDeleteWord = () => {
+        return tc('words.delete') || 'delete';
+    };
+
+    // Bulk delete assets
+    const handleBulkDelete = async () => {
+        if (!bulkDeleteConfirmChecked) return;
+        if (bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
+
+        setIsBulkDeleting(true);
+        const assetIds = Array.from(selectedAssetIds);
+        let success = 0;
+        let failed = 0;
+
+        for (const assetId of assetIds) {
+            try {
+                const res = await fetch(`/api/artifact/${assetId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ deleteFile: false }),
+                });
+
+                if (res.ok) {
+                    success++;
+                } else {
+                    failed++;
+                }
+            } catch (error) {
+                console.error('Failed to delete asset:', assetId, error);
+                failed++;
+            }
+        }
+
+        setIsBulkDeleting(false);
+        setIsBulkDeleteDialogOpen(false);
+        setBulkDeleteConfirmChecked(false);
+        setBulkDeleteConfirmText("");
+
+        if (success > 0) {
+            // Remove deleted assets from state
+            setArtifacts(prev => prev.filter(a => !selectedAssetIds.has(a.id)));
+            if (selectedArtifact && selectedAssetIds.has(selectedArtifact.id)) {
+                setSelectedArtifact(null);
+            }
+            setSelectedAssetIds(new Set());
+            toast.success(t('toast.assetsDeleted', { count: success }));
+        }
+        if (failed > 0) {
+            toast.error(t('toast.assetsDeleteFailed', { count: failed }));
+        }
+    };
+
     const totalPages = Math.ceil(filteredArtifacts.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -648,6 +808,60 @@ export default function ArtifactPage()
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>
+
+    { /* Bulk Delete Assets Dialog */ }
+    <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+      <DialogContent className="sm:max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-destructive">{t('dialogs.bulkDeleteTitle')}</DialogTitle>
+          <DialogDescription>
+            {t('dialogs.bulkDeleteDescription', { count: selectedAssetIds.size })}
+          </DialogDescription>
+        </DialogHeader>
+
+        <div className="space-y-4 py-4">
+          <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+            <Checkbox
+              id="bulk-delete-confirm"
+              checked={bulkDeleteConfirmChecked}
+              onCheckedChange={(checked) => setBulkDeleteConfirmChecked(!!checked)}
+            />
+            <label htmlFor="bulk-delete-confirm" className="text-sm cursor-pointer">
+              {t('dialogs.bulkDeleteConfirmCheckbox')}
+            </label>
+          </div>
+
+          <div className="space-y-2">
+            <label className="block text-sm">
+              {t('dialogs.bulkDeleteTypeWord', { word: getDeleteWord() })}
+            </label>
+            <Input
+              value={bulkDeleteConfirmText}
+              onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+              placeholder={getDeleteWord()}
+              className={bulkDeleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+            />
+          </div>
+        </div>
+
+        <div className="flex justify-end gap-3">
+          <Button variant="outline" onClick={() => setIsBulkDeleteDialogOpen(false)} disabled={isBulkDeleting}>
+            {tc('buttons.cancel')}
+          </Button>
+          <Button
+            variant="destructive"
+            onClick={handleBulkDelete}
+            disabled={
+              isBulkDeleting ||
+              !bulkDeleteConfirmChecked ||
+              bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+            }
+          >
+            {isBulkDeleting ? tc('buttons.deleting') : t('buttons.deleteAssets', { count: selectedAssetIds.size })}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
 
     { /* Delete Artifact Alert */ }
 <AlertDialog
@@ -831,37 +1045,85 @@ export default function ArtifactPage()
         <Table>
           <TableHeader>
             <TableRow>
+              {/* Checkbox header with dropdown */}
+              <TableHead className="w-10">
+                <div className="flex items-center gap-1">
+                  <Checkbox
+                    checked={selectedAssetIds.size === currentArtifacts.length && currentArtifacts.length > 0}
+                    onCheckedChange={(checked) => {
+                      if (checked) selectAllAssets();
+                      else deselectAllAssets();
+                    }}
+                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1 hover:bg-muted rounded">
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={selectAllAssets}>{tc('selection.selectAll')}</DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={selectStarredAssets}>{tc('selection.starred')}</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableHead>
               <TableHead>{tc('table.name')}</TableHead>
               <TableHead>{tc('table.description')}</TableHead>
               <TableHead className="w-40">{tc('table.type')}</TableHead>
+              <TableHead className="w-10"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentArtifacts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={3} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                   {filterText ? t('empty.noArtifactsMatch') : t('empty.noArtifactsFound')}
                 </TableCell>
               </TableRow>
             ) : (
-              currentArtifacts.map((artifact) => (
-                <TableRow
-                  key={artifact.id}
-                  className={`
-                    cursor-pointer transition-colors
-                    ${selectedArtifact?.id === artifact.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
-                  `}
-                  onClick={() => handleRowClick(artifact)}
-                >
-                  <TableCell>{artifact.name}</TableCell>
-                  <TableCell className="max-w-md truncate">{artifact.description || '-'}</TableCell>
-                  <TableCell className="w-40">
-                    <Badge variant="secondary" className={`${getTypeBadge(artifact.type)} px-2 py-1 text-xs asset-type-badge`}>
-                      {artifact.type.replace('_', ' ')}
-                    </Badge>
-                  </TableCell>
-                </TableRow>
-              ))
+              currentArtifacts.map((artifact) => {
+                const isSelected = selectedAssetIds.has(artifact.id);
+                const isStarred = starredAssetIds.has(artifact.id);
+
+                return (
+                  <TableRow
+                    key={artifact.id}
+                    className={`
+                      cursor-pointer transition-colors
+                      ${selectedArtifact?.id === artifact.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
+                    `}
+                    onClick={() => handleRowClick(artifact)}
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      toggleAssetStar(artifact.id);
+                    }}
+                  >
+                    {/* Checkbox cell */}
+                    <TableCell className="w-10" onClick={(e) => e.stopPropagation()}>
+                      <Checkbox
+                        checked={isSelected}
+                        onCheckedChange={() => toggleAssetSelection(artifact.id)}
+                      />
+                    </TableCell>
+                    <TableCell>{artifact.name}</TableCell>
+                    <TableCell className="max-w-md truncate">{artifact.description || '-'}</TableCell>
+                    <TableCell className="w-40">
+                      <Badge variant="secondary" className={`${getTypeBadge(artifact.type)} px-2 py-1 text-xs asset-type-badge`}>
+                        {artifact.type.replace('_', ' ')}
+                      </Badge>
+                    </TableCell>
+                    {/* Star cell */}
+                    <TableCell className="w-10" onClick={(e) => e.stopPropagation()}>
+                      <Star
+                        className={`w-4 h-4 cursor-pointer ${isStarred ? 'fill-yellow-400 text-yellow-400' : 'text-muted-foreground'}`}
+                        onClick={() => toggleAssetStar(artifact.id)}
+                      />
+                    </TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>
@@ -906,6 +1168,28 @@ export default function ArtifactPage()
                   </div>
                 </PaginationContent>
               </Pagination>
+            </div>
+          </div>
+        )}
+
+        {/* Bulk Action Bar */}
+        {selectedAssetIds.size > 0 && (
+          <div className="border rounded-lg bg-muted/30 p-4 flex items-center justify-between">
+            <span className="text-sm text-muted-foreground">
+              {t('selection.selectedOf', { selected: selectedAssetIds.size, total: currentArtifacts.length })}
+            </span>
+            <div className="flex items-center gap-4">
+              <span
+                title={t('buttons.deleteSelected')}
+                onClick={() => {
+                  setBulkDeleteConfirmChecked(false);
+                  setBulkDeleteConfirmText("");
+                  setIsBulkDeleteDialogOpen(true);
+                }}
+                className="cursor-pointer"
+              >
+                <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
+              </span>
             </div>
           </div>
         )}

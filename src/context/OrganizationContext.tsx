@@ -4,9 +4,35 @@ import { createContext, useContext, useEffect, useMemo, useState, ReactNode } fr
 
 export interface Organization
 {
-    id      : string;
-    name    : string;
-    description: string | null;
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
 }
 
 interface OrganizationContextValue

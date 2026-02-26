@@ -60,34 +60,138 @@ type TaskData =
 
 type OrganizationWithProfiles =
 {
-    id               : string;
-    name             : string;
-    description      : string | null;
-    profiles         : ProfileData[];
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
+    profiles                 : ProfileData[];
 };
 
 type OrganizationWithTasks =
 {
-    id               : string;
-    name             : string;
-    description      : string | null;
-    tasks            : TaskData[];
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
+    tasks                    : TaskData[];
 };
 
 type OrganizationWithProfilesAndTasks =
 {
-    id               : string;
-    name             : string;
-    description      : string | null;
-    profiles         : ProfileData[];
-    tasks            : TaskData[];
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
+    profiles                 : ProfileData[];
+    tasks                    : TaskData[];
 };
 
 export type organizationData =
 {
-    id              : string;
-    name            : string;
-    description     : string | null;
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
 };
 
 export type OrganisationSettingsData =
@@ -101,20 +205,72 @@ export type OrganisationSettingsData =
 
 type OrganizationWithSettings =
 {
-    id              : string;
-    name            : string;
-    description     : string | null;
-    settings        : OrganisationSettingsData | null;
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
+    settings                 : OrganisationSettingsData | null;
 };
 
 export type OrganizationWithAll =
 {
-    id              : string;
-    name            : string;
-    description     : string | null;
-    profiles        : ProfileData[];
-    tasks           : TaskData[];
-    settings        : OrganisationSettingsData | null;
+    id                       : string;
+    name                     : string;
+    description              : string | null;
+    ig                       : number;
+    size                     : string;
+    naceSection              : string | null;
+    legalForm                : string | null;
+    revenueRange             : string | null;
+    maturity                 : string | null;
+    ownershipType            : string | null;
+    geographicScope          : string | null;
+    businessOrientation      : string | null;
+    digitalMaturity          : string | null;
+    esgStatus                : string | null;
+    supplyChainRole          : string | null;
+    riskProfile              : string | null;
+    euTaxonomyAligned        : boolean | null;
+    itSecurityStaff          : string | null;
+    securityMaturity         : string | null;
+    dataSensitivity          : string[];
+    regulatoryObligations    : string[];
+    itEndpointRange          : string | null;
+    infrastructureTypes      : string[];
+    softwareDevelopment      : string | null;
+    publicFacingServices     : string | null;
+    targetedAttackLikelihood : string | null;
+    downtimeTolerance        : string | null;
+    supplyChainPosition      : string | null;
+    securityBudgetRange      : string | null;
+    profiles                 : ProfileData[];
+    tasks                    : TaskData[];
+    settings                 : OrganisationSettingsData | null;
 };
 
 type insertData =
@@ -138,16 +294,68 @@ const selectSettings =
 
 const selectFields =
 {
-    id              : true,
-    name            : true,
-    description     : true,
+    id                       : true,
+    name                     : true,
+    description              : true,
+    ig                       : true,
+    size                     : true,
+    naceSection              : true,
+    legalForm                : true,
+    revenueRange             : true,
+    maturity                 : true,
+    ownershipType            : true,
+    geographicScope          : true,
+    businessOrientation      : true,
+    digitalMaturity          : true,
+    esgStatus                : true,
+    supplyChainRole          : true,
+    riskProfile              : true,
+    euTaxonomyAligned        : true,
+    itSecurityStaff          : true,
+    securityMaturity         : true,
+    dataSensitivity          : true,
+    regulatoryObligations    : true,
+    itEndpointRange          : true,
+    infrastructureTypes      : true,
+    softwareDevelopment      : true,
+    publicFacingServices     : true,
+    targetedAttackLikelihood : true,
+    downtimeTolerance        : true,
+    supplyChainPosition      : true,
+    securityBudgetRange      : true,
 } as const;
 
 const selectFieldsWithProfiles =
 {
-    id              : true,
-    name            : true,
-    description     : true,
+    id                       : true,
+    name                     : true,
+    description              : true,
+    ig                       : true,
+    size                     : true,
+    naceSection              : true,
+    legalForm                : true,
+    revenueRange             : true,
+    maturity                 : true,
+    ownershipType            : true,
+    geographicScope          : true,
+    businessOrientation      : true,
+    digitalMaturity          : true,
+    esgStatus                : true,
+    supplyChainRole          : true,
+    riskProfile              : true,
+    euTaxonomyAligned        : true,
+    itSecurityStaff          : true,
+    securityMaturity         : true,
+    dataSensitivity          : true,
+    regulatoryObligations    : true,
+    itEndpointRange          : true,
+    infrastructureTypes      : true,
+    softwareDevelopment      : true,
+    publicFacingServices     : true,
+    targetedAttackLikelihood : true,
+    downtimeTolerance        : true,
+    supplyChainPosition      : true,
+    securityBudgetRange      : true,
     profiles        : {
         where: { active: true },
         select: {
@@ -161,9 +369,35 @@ const selectFieldsWithProfiles =
 
 const selectFieldsWithTasks =
 {
-    id              : true,
-    name            : true,
-    description     : true,
+    id                       : true,
+    name                     : true,
+    description              : true,
+    ig                       : true,
+    size                     : true,
+    naceSection              : true,
+    legalForm                : true,
+    revenueRange             : true,
+    maturity                 : true,
+    ownershipType            : true,
+    geographicScope          : true,
+    businessOrientation      : true,
+    digitalMaturity          : true,
+    esgStatus                : true,
+    supplyChainRole          : true,
+    riskProfile              : true,
+    euTaxonomyAligned        : true,
+    itSecurityStaff          : true,
+    securityMaturity         : true,
+    dataSensitivity          : true,
+    regulatoryObligations    : true,
+    itEndpointRange          : true,
+    infrastructureTypes      : true,
+    softwareDevelopment      : true,
+    publicFacingServices     : true,
+    targetedAttackLikelihood : true,
+    downtimeTolerance        : true,
+    supplyChainPosition      : true,
+    securityBudgetRange      : true,
     tasks           : {
         where: { active: true },
         select: {
@@ -181,9 +415,35 @@ const selectFieldsWithTasks =
 
 const selectFieldsWithProfilesAndTasks =
 {
-    id              : true,
-    name            : true,
-    description     : true,
+    id                       : true,
+    name                     : true,
+    description              : true,
+    ig                       : true,
+    size                     : true,
+    naceSection              : true,
+    legalForm                : true,
+    revenueRange             : true,
+    maturity                 : true,
+    ownershipType            : true,
+    geographicScope          : true,
+    businessOrientation      : true,
+    digitalMaturity          : true,
+    esgStatus                : true,
+    supplyChainRole          : true,
+    riskProfile              : true,
+    euTaxonomyAligned        : true,
+    itSecurityStaff          : true,
+    securityMaturity         : true,
+    dataSensitivity          : true,
+    regulatoryObligations    : true,
+    itEndpointRange          : true,
+    infrastructureTypes      : true,
+    softwareDevelopment      : true,
+    publicFacingServices     : true,
+    targetedAttackLikelihood : true,
+    downtimeTolerance        : true,
+    supplyChainPosition      : true,
+    securityBudgetRange      : true,
     profiles        : {
         where: { active: true },
         select: {
@@ -210,19 +470,71 @@ const selectFieldsWithProfilesAndTasks =
 
 const selectFieldsWithSettings =
 {
-    id          : true,
-    name        : true,
-    description : true,
-    settings    : selectSettings,
+    id                       : true,
+    name                     : true,
+    description              : true,
+    ig                       : true,
+    size                     : true,
+    naceSection              : true,
+    legalForm                : true,
+    revenueRange             : true,
+    maturity                 : true,
+    ownershipType            : true,
+    geographicScope          : true,
+    businessOrientation      : true,
+    digitalMaturity          : true,
+    esgStatus                : true,
+    supplyChainRole          : true,
+    riskProfile              : true,
+    euTaxonomyAligned        : true,
+    itSecurityStaff          : true,
+    securityMaturity         : true,
+    dataSensitivity          : true,
+    regulatoryObligations    : true,
+    itEndpointRange          : true,
+    infrastructureTypes      : true,
+    softwareDevelopment      : true,
+    publicFacingServices     : true,
+    targetedAttackLikelihood : true,
+    downtimeTolerance        : true,
+    supplyChainPosition      : true,
+    securityBudgetRange      : true,
+    settings                 : selectSettings,
 } as const;
 
 const selectFieldsWithProfilesTasksAndSettings =
 {
-    id          : true,
-    name        : true,
-    description : true,
-    settings    : selectSettings,
-    profiles    : 
+    id                       : true,
+    name                     : true,
+    description              : true,
+    ig                       : true,
+    size                     : true,
+    naceSection              : true,
+    legalForm                : true,
+    revenueRange             : true,
+    maturity                 : true,
+    ownershipType            : true,
+    geographicScope          : true,
+    businessOrientation      : true,
+    digitalMaturity          : true,
+    esgStatus                : true,
+    supplyChainRole          : true,
+    riskProfile              : true,
+    euTaxonomyAligned        : true,
+    itSecurityStaff          : true,
+    securityMaturity         : true,
+    dataSensitivity          : true,
+    regulatoryObligations    : true,
+    itEndpointRange          : true,
+    infrastructureTypes      : true,
+    softwareDevelopment      : true,
+    publicFacingServices     : true,
+    targetedAttackLikelihood : true,
+    downtimeTolerance        : true,
+    supplyChainPosition      : true,
+    securityBudgetRange      : true,
+    settings                 : selectSettings,
+    profiles    :
     {
         where: { active: true },
         select:
@@ -233,7 +545,7 @@ const selectFieldsWithProfilesTasksAndSettings =
             organizationId  : true,
         }
     },
-    tasks       : 
+    tasks       :
     {
         where: { active: true },
         select:
@@ -370,14 +682,44 @@ export const organizationRepository =
         });
     },
 
-    async updateOrganization(id: string, data: { name: string; description: string | null }): Promise<organizationData>
+    async updateOrganization(id: string, data: {
+        name: string;
+        description: string | null;
+        ig?: number;
+        size?: string;
+        naceSection?: string | null;
+        legalForm?: string | null;
+        revenueRange?: string | null;
+        maturity?: string | null;
+        ownershipType?: string | null;
+        geographicScope?: string | null;
+        businessOrientation?: string | null;
+        digitalMaturity?: string | null;
+        esgStatus?: string | null;
+        supplyChainRole?: string | null;
+        riskProfile?: string | null;
+        euTaxonomyAligned?: boolean | null;
+        itSecurityStaff?: string | null;
+        securityMaturity?: string | null;
+        dataSensitivity?: string[];
+        regulatoryObligations?: string[];
+        itEndpointRange?: string | null;
+        infrastructureTypes?: string[];
+        softwareDevelopment?: string | null;
+        publicFacingServices?: string | null;
+        targetedAttackLikelihood?: string | null;
+        downtimeTolerance?: string | null;
+        supplyChainPosition?: string | null;
+        securityBudgetRange?: string | null;
+    }): Promise<organizationData>
     {
         log.info({ ID: id, name: data.name }, 'SQL - organization: update');
 
+        // Cast to any to handle enum type conversion from string values
         return prisma.organization.update(
         {
             where: { id },
-            data,
+            data: data as any,
             select: selectFieldsWithProfilesTasksAndSettings
         });
     },

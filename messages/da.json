@@ -23,11 +23,24 @@
       "importance": "Vigtighed",
       "message": "Besked",
       "email": "E-mail",
+      "login": "Login",
       "role": "Rolle",
       "tasks": "Opgaver",
       "profiles": "Profiler",
       "sender": "Afsender",
       "task": "Opgave"
+    },
+    "words": {
+      "yes": "Ja",
+      "no": "Nej",
+      "delete": "slet"
+    },
+    "selection": {
+      "selectAll": "Vælg alle",
+      "deselectAll": "Fravælg alle",
+      "selectUsers": "Vælg brugere",
+      "selectAdmins": "Vælg administratorer",
+      "starred": "Stjernemarkerede"
     },
     "loading": {
       "loadingUser": "Indlæser bruger...",
@@ -54,7 +67,11 @@
     "messages": "Beskeder",
     "auditTrail": "Revisionsspor",
     "reports": "Rapporter",
-    "statusReports": "Statusrapporter",
+    "statusReport": "Statusrapport",
+    "progressReport": "Fremdriftsrapport",
+    "exploratoryGap": "Exploratory GAP",
+    "gap": "GAP",
+    "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Akademi",
@@ -89,6 +106,9 @@
       "previewAsset": "Forhåndsvis aktiv",
       "downloadAsset": "Download aktiv",
       "deleteThisArtifact": "Slet dette aktiv",
+      "deleteAsset": "Slet aktiv",
+      "deleteSelected": "Slet valgte aktiver",
+      "deleteAssets": "Slet {count} aktiv(er)",
       "creating": "Opretter...",
       "saving": "Gemmer...",
       "deleting": "Sletter...",
@@ -106,7 +126,14 @@
       "removeTaskDescription": "Dette fjerner forbindelsen mellem opgaven og det aktuelle aktiv (sletter linket i TaskArtifact). Opgaven forbliver i systemet og kan stadig tildeles andre aktiver eller profiler. Handlingen kan ikke fortrydes.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette aktivet \"{name}\" og fjerne det fra systemet.",
-      "alsoDeleteFile": "Slet også filen fra filsystemet"
+      "alsoDeleteFile": "Slet også filen fra filsystemet",
+      "bulkDeleteTitle": "Slet flere aktiver",
+      "bulkDeleteDescription": "Du er ved at slette {count} aktiver. Denne handling kan ikke fortrydes.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse aktiver og alle tilknyttede data",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for at bekræfte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} af {total} aktiver"
     },
     "labels": {
       "artifactName": "Aktivnavn",
@@ -178,7 +205,9 @@
       "updateTaskError": "Kunne ikke opdatere opgave",
       "addTaskError": "Kunne ikke tilføje opgave",
       "saveError": "Kunne ikke gemme aktiv",
-      "deleteError": "Kunne ikke slette aktiv"
+      "deleteError": "Kunne ikke slette aktiv",
+      "assetsDeleted": "Slettede {count} aktiv(er)",
+      "assetsDeleteFailed": "Kunne ikke slette {count} aktiv(er)"
     },
     "loading": {
       "loadingUser": "Indlæser bruger...",
@@ -225,6 +254,7 @@
       "cancel": "Annuller",
       "delete": "Slet",
       "deleteTask": "Slet opgave",
+      "deleteTasks": "Slet {count} opgave(r)",
       "addProfile": "Tilføj profil",
       "addArtifact": "Tilføj aktiv",
       "newMessage": "Ny besked",
@@ -260,7 +290,11 @@
       "removeProfileTitle": "Fjern profil fra opgave?",
       "removeProfileDescription": "Dette fjerner forbindelsen mellem profilen og den aktuelle opgave (sletter linket i TaskProfile). Profilen forbliver i systemet. Handlingen kan ikke fortrydes.",
       "messageFrom": "Besked fra {name}",
-      "taskLabel": "Opgave: {name}"
+      "taskLabel": "Opgave: {name}",
+      "bulkDeleteTitle": "Slet flere opgaver",
+      "bulkDeleteDescription": "Du er ved at slette {count} opgaver. Denne handling kan ikke fortrydes.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse opgaver og alle tilknyttede data",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for at bekræfte"
     },
     "labels": {
       "taskName": "Opgavenavn",
@@ -419,13 +453,28 @@
       "userDeleted": "Login deleted successfully",
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account"
+      "cannotDeleteSelf": "Cannot delete your own account",
+      "passwordTooWeak": "Password is too weak. Please make it stronger."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
       "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+    },
+    "password": {
+      "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
+      "veryWeak": "Very weak – easily guessable",
+      "weak": "Weak",
+      "okay": "Okay – could be stronger",
+      "strong": "Strong",
+      "veryStrong": "Very strong",
+      "onlyEnterToChange": "Only enter a password if you want to change it"
+    },
+    "emailValidation": {
+      "invalidFormat": "Invalid email format",
+      "alreadyTaken": "This email is already taken",
+      "available": "Email is available"
     }
   },
 
@@ -437,6 +486,8 @@
       "cancel": "Annuller",
       "delete": "Slet",
       "deleteProfile": "Slet profil",
+      "deleteSelected": "Slet valgte profiler",
+      "deleteProfiles": "Slet {count} profil(er)",
       "removeTask": "Fjern opgave",
       "creating": "Opretter...",
       "saving": "Gemmer...",
@@ -451,7 +502,14 @@
       "removeTaskTitle": "Fjern opgave fra profil?",
       "removeTaskDescription": "Dette fjerner opgavetildelingen fra denne profil (sletter linket i TaskProfile). Opgaven forbliver i systemet. Handlingen kan ikke fortrydes.",
       "deleteTitle": "Er du helt sikker?",
-      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet."
+      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet.",
+      "bulkDeleteTitle": "Slet flere profiler",
+      "bulkDeleteDescription": "Du er ved at slette {count} profiler. Denne handling kan ikke fortrydes.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse profiler og alle tilknyttede data",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for at bekræfte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} af {total} profiler"
     },
     "labels": {
       "profileName": "Profilnavn",
@@ -513,7 +571,9 @@
       "taskUpdated": "Opgave opdateret",
       "updateTaskError": "Kunne ikke opdatere opgave",
       "profileDeleted": "Profil slettet",
-      "deleteError": "Kunne ikke slette profil"
+      "deleteError": "Kunne ikke slette profil",
+      "profilesDeleted": "Slettede {count} profil(er)",
+      "profilesDeleteFailed": "Kunne ikke slette {count} profil(er)"
     },
     "loading": {
       "loadingUser": "Indlæser bruger...",
@@ -559,7 +619,9 @@
       "saving": "Gemmer...",
       "deleting": "Sletter...",
       "removing": "Fjerner...",
-      "adding": "Tilføjer..."
+      "adding": "Tilføjer...",
+      "deleteOrganizations": "Slet {count} organisationer",
+      "deleteSelected": "Slet valgte"
     },
     "dialogs": {
       "createTitle": "Opret ny organisation",
@@ -577,7 +639,14 @@
       "removeProfileTitle": "Fjern profil fra organisation?",
       "removeProfileDescription": "Dette fjerner forbindelsen mellem profilen og den aktuelle organisation (sætter organizationId til null). Profilen forbliver i systemet. Handlingen kan ikke fortrydes.",
       "deleteTitle": "Er du helt sikker?",
-      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette organisationen \"{name}\" og fjerne den fra systemet."
+      "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette organisationen \"{name}\" og fjerne den fra systemet.",
+      "bulkDeleteTitle": "Slet organisationer",
+      "bulkDeleteDescription": "Du er ved at slette {count} organisationer. Denne handling kan ikke fortrydes.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette de valgte organisationer og alle tilknyttede data.",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for at bekræfte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} af {total} organisationer"
     },
     "labels": {
       "organisationName": "Organisationsnavn",
@@ -586,7 +655,41 @@
       "taskName": "Opgavenavn",
       "uploadDirectory": "Upload-mappe",
       "downloadDirectory": "Download-mappe",
-      "artifactDirectory": "Aktiv-mappe"
+      "artifactDirectory": "Aktiv-mappe",
+      "targetIg": "Mål Implementeringsgruppe (IG)",
+      "organizationSize": "Organisationsstørrelse",
+      "naceSection": "Branche (NACE)",
+      "legalForm": "Juridisk form",
+      "revenueRange": "Årlig omsætning",
+      "maturity": "Organisationsmodenhed",
+      "ownershipType": "Ejerskabstype",
+      "geographicScope": "Geografisk rækkevidde",
+      "businessOrientation": "Forretningsorientering",
+      "digitalMaturity": "Digital modenhed",
+      "esgStatus": "ESG-rapporteringsstatus",
+      "supplyChainRole": "Rolle i forsyningskæden",
+      "riskProfile": "Risikoprofil",
+      "euTaxonomyAligned": "EU-taksonomi tilpasning",
+      "itSecuritySection": "IT & Sikkerhedsklassifikation",
+      "itSecurityStaff": "IT & Sikkerhedspersonale",
+      "securityMaturity": "Sikkerhedsmodenhedsniveau",
+      "dataSensitivity": "Datafølsomhedsprofil",
+      "regulatoryObligations": "Regulatoriske forpligtelser",
+      "itEndpointRange": "IT-slutpunkter",
+      "infrastructureTypes": "Infrastrukturtyper",
+      "softwareDevelopment": "Softwareudvikling",
+      "publicFacingServices": "Offentligt tilgængelige tjenester",
+      "targetedAttackLikelihood": "Sandsynlighed for målrettet angreb",
+      "downtimeTolerance": "Nedetidstolerance",
+      "supplyChainPosition": "Position i forsyningskæden",
+      "securityBudgetRange": "Sikkerhedsbudget"
+    },
+    "sizes": {
+      "micro": "Mikro (0-9 ansatte)",
+      "small": "Lille (10-49 ansatte)",
+      "medium": "Mellemstor (50-249 ansatte)",
+      "large": "Stor (250-999 ansatte)",
+      "enterprise": "Virksomhed (1000+ ansatte)"
     },
     "placeholders": {
       "enterOrganizationName": "Indtast organisationsnavn",
@@ -600,10 +703,34 @@
       "filterByNameOrId": "Filtrer efter navn eller ID...",
       "enterUploadDirectory": "Indtast sti til upload-mappe (f.eks. /var/uploads)",
       "enterDownloadDirectory": "Indtast sti til download-mappe (f.eks. /var/downloads)",
-      "enterArtifactDirectory": "Indtast sti til aktiv-mappe (f.eks. /var/artifacts)"
+      "enterArtifactDirectory": "Indtast sti til aktiv-mappe (f.eks. /var/artifacts)",
+      "selectSize": "Vælg organisationsstørrelse",
+      "selectNaceSection": "Vælg branche",
+      "selectLegalForm": "Vælg juridisk form",
+      "selectRevenueRange": "Vælg omsætningsinterval",
+      "selectMaturity": "Vælg organisationsmodenhed",
+      "selectOwnershipType": "Vælg ejerskabstype",
+      "selectGeographicScope": "Vælg geografisk rækkevidde",
+      "selectBusinessOrientation": "Vælg forretningsorientering",
+      "selectDigitalMaturity": "Vælg digital modenhed",
+      "selectEsgStatus": "Vælg ESG-status",
+      "selectSupplyChainRole": "Vælg rolle i forsyningskæden",
+      "selectRiskProfile": "Vælg risikoprofil",
+      "selectEuTaxonomyAligned": "Vælg EU-taksonomi tilpasning",
+      "selectItSecurityStaff": "Vælg IT & sikkerhedspersonaleniveau",
+      "selectSecurityMaturity": "Vælg sikkerhedsmodenhedsniveau",
+      "selectItEndpointRange": "Vælg antal IT-slutpunkter",
+      "selectSoftwareDevelopment": "Vælg softwareudviklingsomfang",
+      "selectPublicFacingServices": "Vælg niveau for offentlige tjenester",
+      "selectTargetedAttackLikelihood": "Vælg sandsynlighed for målrettet angreb",
+      "selectDowntimeTolerance": "Vælg nedetidstolerance",
+      "selectSupplyChainPosition": "Vælg position i forsyningskæden",
+      "selectSecurityBudgetRange": "Vælg sikkerhedsbudgetinterval"
     },
     "tabs": {
       "details": "Detaljer",
+      "taxonomy": "Taksonomi",
+      "classification": "Klassifikation",
       "settings": "Indstillinger",
       "profiles": "Profiler ({count})",
       "tasks": "Opgaver ({count})",
@@ -650,7 +777,9 @@
       "removeProfileError": "Kunne ikke fjerne profil",
       "taskNameRequired": "Opgavenavn er påkrævet",
       "taskUpdated": "Opgave opdateret",
-      "updateTaskError": "Kunne ikke opdatere opgave"
+      "updateTaskError": "Kunne ikke opdatere opgave",
+      "organizationsDeleted": "{count} organisationer slettet",
+      "organizationsDeleteFailed": "Kunne ikke slette {count} organisationer"
     },
     "loading": {
       "loadingUser": "Indlæser bruger...",
@@ -666,7 +795,206 @@
     "helpers": {
       "uploadDirectoryHelp": "Mappe hvor uploadede filer midlertidigt gemmes",
       "downloadDirectoryHelp": "Mappe hvor filer klargøres til download",
-      "artifactDirectoryHelp": "Mappe hvor aktivfiler permanent gemmes"
+      "artifactDirectoryHelp": "Mappe hvor aktivfiler permanent gemmes",
+      "organizationSizeHelp": "EU SMV-klassifikation baseret på antal ansatte",
+      "naceSectionHelp": "NACE-klassifikation anvendt i hele EU til statistik og regulering",
+      "euTaxonomyHelp": "Om aktiviteter er tilpasset EU-taksonomien for bæredygtige aktiviteter",
+      "itSecurityStaffHelp": "Niveau af dedikeret IT- og sikkerhedspersonale i din organisation",
+      "securityMaturityHelp": "Nuværende modenhedsniveau for dit sikkerhedsprogram og praksis",
+      "dataSensitivityHelp": "Typer af følsomme data din organisation behandler (vælg alle relevante)",
+      "regulatoryObligationsHelp": "Gældende regulatoriske og compliance-rammer (vælg alle relevante)",
+      "itEndpointRangeHelp": "Samlet antal administrerede IT-slutpunkter (arbejdsstationer, servere, mobile enheder)",
+      "infrastructureTypesHelp": "Typer af IT-infrastruktur din organisation driver (vælg alle relevante)",
+      "softwareDevelopmentHelp": "Omfang af intern softwareudvikling",
+      "publicFacingServicesHelp": "Niveau af internet-eksponerede tjenester og applikationer",
+      "targetedAttackLikelihoodHelp": "Sandsynlighed for at blive specifikt målrettet af trusselsaktører",
+      "downtimeToleranceHelp": "Forretningsmæssig tolerence for systemnedetid",
+      "supplyChainPositionHelp": "Din position i forsyningskæden i forhold til slutkunder",
+      "securityBudgetRangeHelp": "Omtrentligt årligt budget allokeret til sikkerhed"
+    },
+    "nace": {
+      "A": "A - Landbrug, skovbrug og fiskeri",
+      "B": "B - Råstofindvinding",
+      "C": "C - Industri",
+      "D": "D - El-, gas- og varmeforsyning",
+      "E": "E - Vandforsyning og renovation",
+      "F": "F - Bygge og anlæg",
+      "G": "G - Handel",
+      "H": "H - Transport",
+      "I": "I - Hoteller og restauranter",
+      "J": "J - Information og kommunikation",
+      "K": "K - Finansiering og forsikring",
+      "L": "L - Ejendomshandel og udlejning",
+      "M": "M - Vidensservice",
+      "N": "N - Operationel service",
+      "O": "O - Offentlig administration og forsvar",
+      "P": "P - Undervisning",
+      "Q": "Q - Sundhed og socialvæsen",
+      "R": "R - Kultur og fritid",
+      "S": "S - Andre serviceydelser",
+      "OTHER": "Ikke klassificeret / Andet"
+    },
+    "legalForms": {
+      "soleProprietor": "Enkeltmandsvirksomhed",
+      "partnership": "Interessentskab",
+      "privateLimited": "Anpartsselskab (ApS)",
+      "publicLimited": "Aktieselskab (A/S)",
+      "cooperative": "Andelsselskab",
+      "foundation": "Fond / Forening",
+      "branchForeign": "Filial af udenlandsk selskab",
+      "publicBody": "Offentlig myndighed",
+      "other": "Andet"
+    },
+    "revenueRanges": {
+      "under2m": "< €2 millioner",
+      "from2mTo10m": "€2–10 millioner",
+      "from10mTo50m": "€10–50 millioner",
+      "from50mTo250m": "€50–250 millioner",
+      "from250mTo1b": "€250 millioner – €1 milliard",
+      "over1b": "> €1 milliard"
+    },
+    "maturities": {
+      "startup": "Startup (0-3 år)",
+      "growth": "Vækstfase (3-7 år)",
+      "established": "Etableret (7-20 år)",
+      "mature": "Moden (20+ år)"
+    },
+    "ownershipTypes": {
+      "private": "Privatejet",
+      "publicListed": "Børsnoteret",
+      "stateOwned": "Statsejet",
+      "familyOwned": "Familieejet",
+      "peVcBacked": "Kapitalfondsejet",
+      "cooperative": "Andelsselskab",
+      "nonProfit": "Non-profit / NGO"
+    },
+    "geographicScopes": {
+      "local": "Lokal / Kommunal",
+      "regional": "Regional",
+      "national": "National",
+      "european": "EU / Europæisk",
+      "global": "International / Global"
+    },
+    "businessOrientations": {
+      "b2b": "B2B (Erhverv-til-erhverv)",
+      "b2c": "B2C (Erhverv-til-forbruger)",
+      "b2g": "B2G (Erhverv-til-offentlig)",
+      "mixed": "Blandet"
+    },
+    "digitalMaturities": {
+      "traditional": "Traditionel / Minimal digital",
+      "developing": "Under digital udvikling",
+      "mature": "Digitalt moden",
+      "digitalNative": "Digital-native / Tech-virksomhed"
+    },
+    "esgStatuses": {
+      "reporting": "Rapporterer",
+      "notRequired": "Ikke påkrævet endnu",
+      "exempt": "Undtaget"
+    },
+    "supplyChainRoles": {
+      "manufacturer": "Producent",
+      "distributor": "Distributør / Grossist",
+      "retailer": "Detailhandler",
+      "serviceProvider": "Serviceudbyder",
+      "platform": "Platform / Markedsplads"
+    },
+    "riskProfiles": {
+      "low": "Lav risiko",
+      "medium": "Medium risiko",
+      "high": "Høj risiko"
+    },
+    "euTaxonomy": {
+      "yes": "Ja - Tilpasset",
+      "no": "Nej - Ikke tilpasset"
+    },
+    "itSecurityStaff": {
+      "noDedicatedIt": "Ingen dedikeret IT-personale",
+      "itNoSecurity": "IT-personale uden dedikeret sikkerhed",
+      "dedicatedSecurity": "Dedikeret sikkerhedsrolle/-team",
+      "specializedSecurity": "Specialiseret sikkerhedsteam (SOC, etc.)"
+    },
+    "securityMaturity": {
+      "noProgram": "Intet formelt sikkerhedsprogram",
+      "basic": "Grundlæggende sikkerhedsforanstaltninger",
+      "defined": "Defineret sikkerhedsprogram",
+      "managed": "Styret og målt",
+      "optimizing": "Optimering og forbedring"
+    },
+    "dataSensitivity": {
+      "basicBusiness": "Grundlæggende forretningsdata",
+      "customerPii": "Kunde-personoplysninger",
+      "specialCategory": "Særlige kategorier (sundhed, biometrisk)",
+      "paymentCard": "Betalingskortdata (PCI)",
+      "intellectualProperty": "Intellektuel ejendom / forretningshemmeligheder",
+      "classifiedGovernment": "Klassificerede / myndighedsdata",
+      "criticalInfrastructure": "Kritisk infrastrukturdata"
+    },
+    "regulatoryObligations": {
+      "gdpr": "GDPR",
+      "nis2": "NIS2",
+      "dora": "DORA",
+      "pciDss": "PCI DSS",
+      "hipaa": "HIPAA",
+      "sox": "SOX",
+      "iso27001": "ISO 27001",
+      "criticalInfrastructure": "Kritisk infrastruktur-regulering",
+      "sectorSpecific": "Sektorspecifikke regler",
+      "noneIdentified": "Ingen identificeret"
+    },
+    "itEndpointRange": {
+      "under10": "< 10 slutpunkter",
+      "from10to50": "10-50 slutpunkter",
+      "from50to250": "50-250 slutpunkter",
+      "from250to1000": "250-1.000 slutpunkter",
+      "from1000to5000": "1.000-5.000 slutpunkter",
+      "over5000": "> 5.000 slutpunkter"
+    },
+    "infrastructureTypes": {
+      "onPremises": "On-premises datacenter",
+      "privateCloud": "Privat cloud",
+      "publicCloud": "Public cloud (AWS, Azure, GCP)",
+      "hybrid": "Hybrid infrastruktur",
+      "saasOnly": "Kun SaaS (ingen egen infrastruktur)",
+      "otIcs": "OT/ICS-systemer"
+    },
+    "softwareDevelopment": {
+      "none": "Ingen intern udvikling",
+      "internalTools": "Kun interne værktøjer",
+      "customerFacing": "Kundevendte applikationer",
+      "commercialProducts": "Kommercielle softwareprodukter"
+    },
+    "publicFacingServices": {
+      "minimal": "Minimal (e-mail, simpel hjemmeside)",
+      "standardWeb": "Standard web-tilstedeværelse",
+      "ecommerce": "E-handel / kundeportaler",
+      "criticalServices": "Kritiske onlinetjenester"
+    },
+    "targetedAttackLikelihood": {
+      "low": "Lav - Kun opportunistiske trusler",
+      "medium": "Medium - Nogen målrettet interesse",
+      "high": "Høj - Kendt mål",
+      "critical": "Kritisk - Aktiv trusselsaktør-interesse"
+    },
+    "downtimeTolerance": {
+      "highTolerance": "Høj tolerance (dage acceptabelt)",
+      "moderate": "Moderat (timer acceptabelt)",
+      "lowTolerance": "Lav tolerance (< 4 timer)",
+      "zeroTolerance": "Nul tolerance (24/7 påkrævet)"
+    },
+    "supplyChainPosition": {
+      "endConsumer": "Slutbrugerorganisation",
+      "downstream": "Downstream (tættere på forbrugere)",
+      "midstream": "Midstream",
+      "upstream": "Upstream (tættere på råmaterialer)",
+      "criticalSupplier": "Kritisk leverandør til essentielle tjenester"
+    },
+    "securityBudgetRange": {
+      "minimal": "Minimal (< €10K/år)",
+      "limited": "Begrænset (€10K-50K/år)",
+      "moderate": "Moderat (€50K-250K/år)",
+      "substantial": "Betydeligt (€250K-1M/år)",
+      "enterprise": "Enterprise (> €1M/år)"
     },
     "status": {
       "currentlyIn": "Aktuelt i: {name}",
@@ -800,7 +1128,9 @@
 
   "CISSafeguards": {
     "buttons": {
-      "backToControls": "Tilbage til kontroller"
+      "backToControls": "Tilbage til kontroller",
+      "setInactive": "Sæt som inaktiv",
+      "setActive": "Sæt som aktiv"
     },
     "headings": {
       "control": "Kontrol {id}: {title}",
@@ -826,7 +1156,8 @@
       "priority": "Prioritet",
       "likelihood": "Sandsynlighed",
       "impact": "Konsekvens",
-      "owner": "Ejer"
+      "owner": "Ejer",
+      "exclude": "Udeluk"
     },
     "expandedLabels": {
       "definition": "Definition",
@@ -836,6 +1167,9 @@
       "approach": "Tilgang",
       "example": "Eksempel",
       "resources": "Ressourcer"
+    },
+    "legends": {
+      "showInactive": "Vis inaktive"
     },
     "empty": {
       "controlNotFound": "Kontrol ikke fundet.",
@@ -877,6 +1211,44 @@
       "accountUpdated": "Konto opdateret",
       "updateError": "Kunne ikke opdatere profil",
       "saveError": "Der opstod en fejl under gemning"
+    },
+    "twoFactor": {
+      "title": "To-faktor-godkendelse",
+      "description": "Tilføj et ekstra lag sikkerhed til din konto ved at kræve en bekræftelseskode fra din godkendelsesapp ved login.",
+      "enabled": "Aktiveret",
+      "setupDescription": "Beskyt din konto med TOTP-baseret to-faktor-godkendelse. Du skal bruge en godkendelsesapp som Google Authenticator, Authy eller 1Password.",
+      "enableButton": "Aktiver to-faktor-godkendelse",
+      "disableButton": "Deaktiver to-faktor-godkendelse",
+      "enterPassword": "Indtast din adgangskode for at fortsætte.",
+      "passwordPlaceholder": "Indtast din nuværende adgangskode",
+      "loading": "Indlæser...",
+      "continue": "Fortsæt",
+      "cancel": "Annuller",
+      "scanQrCode": "Scan denne QR-kode med din godkendelsesapp",
+      "saveBackupCodes": "Gem dine sikkerhedskoder. Opbevar dem et sikkert sted — hver kode kan kun bruges én gang.",
+      "copyBackupCodes": "Kopier koder",
+      "enterVerificationCode": "Indtast den 6-cifrede kode fra din godkendelsesapp for at bekræfte opsætningen.",
+      "codePlaceholder": "000000",
+      "verify": "Bekræft og aktiver",
+      "regenerateDescription": "Hvis du har mistet dine sikkerhedskoder, kan du generere nye.",
+      "regenerateBackupCodes": "Generer nye sikkerhedskoder",
+      "newBackupCodes": "Dine nye sikkerhedskoder — gem dem nu:",
+      "done": "Færdig",
+      "disableWarning": "Er du sikker på, at du vil deaktivere to-faktor-godkendelse? Dette vil gøre din konto mindre sikker.",
+      "confirmDisable": "Bekræft deaktivering",
+      "toast": {
+        "enabled": "To-faktor-godkendelse aktiveret",
+        "disabled": "To-faktor-godkendelse deaktiveret",
+        "backupCodesRegenerated": "Sikkerhedskoder gendannet",
+        "backupCodesCopied": "Sikkerhedskoder kopieret til udklipsholder"
+      },
+      "errors": {
+        "enableFailed": "Kunne ikke aktivere to-faktor-godkendelse",
+        "invalidCode": "Ugyldig bekræftelseskode",
+        "verifyFailed": "Bekræftelse mislykkedes. Prøv venligst igen.",
+        "disableFailed": "Kunne ikke deaktivere to-faktor-godkendelse",
+        "regenerateFailed": "Kunne ikke gendanne sikkerhedskoder"
+      }
     }
   },
 
@@ -937,6 +1309,40 @@
       "jsonSuccess": "Eksporteret som JSON",
       "clipboardSuccess": "Kopieret til udklipsholder",
       "exportError": "Eksport mislykkedes"
+    }
+  },
+  "LoginPage": {
+    "title": "Compliance Circle",
+    "description": "Log ind på Compliance Circle",
+    "loginWith": "Log ind med",
+    "emailPlaceholder": "Indtast din email",
+    "password": "Adgangskode",
+    "passwordPlaceholder": "Indtast din adgangskode",
+    "loginButton": "Log ind",
+    "loggingIn": "Logger ind...",
+    "orContinueWith": "eller fortsæt med",
+    "google": "Google",
+    "microsoft": "Microsoft",
+    "termsNotice": "Ved at fortsætte accepterer du vores",
+    "termsOfService": "Servicevilkår",
+    "and": "og",
+    "privacyPolicy": "Privatlivspolitik"
+  },
+  "TwoFactorPage": {
+    "title": "To-faktor-godkendelse",
+    "description": "Indtast den 6-cifrede kode fra din godkendelsesapp",
+    "backupCodeDescription": "Indtast en af dine sikkerhedskoder",
+    "codePlaceholder": "000000",
+    "backupCodePlaceholder": "Indtast sikkerhedskode",
+    "verifyButton": "Bekræft",
+    "verifying": "Bekræfter...",
+    "trustDevice": "Husk denne enhed i 30 dage",
+    "useBackupCode": "Brug en sikkerhedskode i stedet",
+    "useAuthenticator": "Brug godkendelsesapp",
+    "errors": {
+      "invalidCode": "Ugyldig bekræftelseskode. Prøv igen.",
+      "invalidBackupCode": "Ugyldig sikkerhedskode. Prøv igen.",
+      "verificationFailed": "Bekræftelse mislykkedes. Prøv igen."
     }
   }
 }
