@@ -1342,5 +1342,60 @@
       "invalidBackupCode": "Ugyldig sikkerhetskode. Prøv igjen.",
       "verificationFailed": "Bekreftelse mislyktes. Prøv igjen."
     }
+  },
+  "ExploratoryGap": {
+    "title": "Utforskende GAP-analyse",
+    "description": "Generer en skreddersydd CIS Controls-anbefaling basert på organisasjonens profil, taksonomi og klassifisering.",
+    "buttons": {
+      "generate": "Generer Utforskende GAP",
+      "generating": "Genererer...",
+      "implement": "Implementer anbefalinger",
+      "implementing": "Implementerer...",
+      "confirm": "Bekreft og implementer",
+      "cancel": "Avbryt"
+    },
+    "labels": {
+      "currentOrganization": "Nåværende organisasjon",
+      "noOrganization": "Ingen organisasjon valgt",
+      "recommendedIg": "Anbefalt implementeringsgruppe",
+      "basedOn": "Basert på {name}s profil og klassifisering",
+      "analysisFactors": "Analysefaktorer",
+      "activeControls": "Aktive kontroller",
+      "inactiveControls": "Inaktive kontroller",
+      "activeSafeguards": "Aktive sikkerhetstiltak",
+      "inactiveSafeguards": "Inaktive sikkerhetstiltak",
+      "relevance": "Relevans",
+      "safeguardsActive": "{active}/{total} sikkerhetstiltak aktive",
+      "analysis": "Analyse",
+      "active": "Aktiv",
+      "inactive": "Inaktiv"
+    },
+    "headings": {
+      "controlsRecommendations": "Kontroll- og sikkerhetstiltaksanbefalinger",
+      "controlsDescription": "Klikk på en kontroll for å utvide og se individuelle sikkerhetstiltak. Bytt for å justere."
+    },
+    "dialog": {
+      "title": "Implementer anbefalinger?",
+      "description": "Dette vil anvende følgende endringer på {name}:",
+      "targetIg": "Mål implementeringsgruppe",
+      "controlsInactive": "Kontroller som settes som inaktive",
+      "safeguardsInactive": "Sikkerhetstiltak som settes som inaktive"
+    },
+    "empty": {
+      "noOrganization": "Ingen organisasjon valgt",
+      "noOrganizationDescription": "Velg en organisasjon fra sidemenyen for å generere en GAP-analyse."
+    },
+    "toast": {
+      "generateSuccess": "Anbefaling generert",
+      "generateError": "Kunne ikke generere anbefaling",
+      "implementSuccess": "Anbefalinger implementert",
+      "implementError": "Kunne ikke implementere anbefalinger",
+      "selectOrganization": "Velg en organisasjon først"
+    },
+    "ig": {
+      "ig1": "IG1 - Grunnleggende cyberhygiene",
+      "ig2": "IG2 - Mellomliggende kontroller",
+      "ig3": "IG3 - Avansert / Omfattende"
+    }
   }
 }

@@ -5,11 +5,12 @@
 import { useState, useEffect }                  from 'react';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
-import { File, Check, X, Trash2 }               from 'lucide-react';
+import { File, Trash2, Star, ChevronDown }      from 'lucide-react';
 import { useTranslations }                      from 'next-intl';
 import { Button }                               from '@/components/ui/button';
 import { Input }                                from '@/components/ui/input';
 import { Textarea }                             from '@/components/ui/textarea';
+import { Checkbox }                             from '@/components/ui/checkbox';
 import {
   Select,
   SelectContent,
@@ -17,8 +18,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-
-import { Dialog, DialogContent, DialogHeader, DialogDescription, DialogTitle, DialogTrigger }  from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from '@/components/ui/pagination';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Dialog, DialogContent, DialogHeader, DialogDescription, DialogTitle }  from '@/components/ui/dialog';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -57,6 +80,23 @@ export default function ArtifactFilesPage()
     // Delete file state
     const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Pagination
+    const [currentPage, setCurrentPage] = useState(1);
+    const itemsPerPage = 8;
+
+    // Filter
+    const [filterText, setFilterText] = useState("");
+
+    // Selection and starring
+    const [selectedFilePaths, setSelectedFilePaths] = useState<Set<string>>(new Set());
+    const [starredFilePaths, setStarredFilePaths] = useState<Set<string>>(new Set());
+
+    // Bulk delete
+    const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+    const [bulkDeleteConfirmChecked, setBulkDeleteConfirmChecked] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [isBulkProcessing, setIsBulkProcessing] = useState(false);
 
     const fetchFiles = async () => 
     {
@@ -107,28 +147,192 @@ export default function ArtifactFilesPage()
         }
     };
 
-    // Initial load + Change Organization + Refresh event
-    useEffect(() => 
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH STARRED FILES
+    const fetchStarredFiles = async () =>
     {
-        if (!activeOrganization) return; 
+        if (!activeOrganization?.id) return;
+        try
+        {
+            const res = await fetch(`/api/file-star?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch starred files:', data.message);
+                return;
+            }
+            setStarredFilePaths(new Set(data.data || []));
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch starred files:', error);
+        }
+    };
 
-        fetchFiles(); // Initial load
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (API call)
+    const toggleStarApi = async (filePath: string) =>
+    {
+        if (!activeOrganization?.id) return;
+        try
+        {
+            const res = await fetch('/api/file-star', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ organizationId: activeOrganization.id, filePath }),
+            });
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to toggle star:', data.message);
+                toast.error(data.message || t('toast.starError'));
+                return;
+            }
+            setStarredFilePaths(prev => {
+                const newSet = new Set(prev);
+                if (data.starred) {
+                    newSet.add(filePath);
+                } else {
+                    newSet.delete(filePath);
+                }
+                return newSet;
+            });
+        }
+        catch (error)
+        {
+            console.error('Failed to toggle star:', error);
+            toast.error(t('toast.starError'));
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (UI wrapper with event handling)
+    const toggleStar = (filePath: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        toggleStarApi(filePath);
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // SELECTION HELPERS
+    const toggleFileSelection = (filePath: string) => {
+        setSelectedFilePaths(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(filePath)) {
+                newSet.delete(filePath);
+            } else {
+                newSet.add(filePath);
+            }
+            return newSet;
+        });
+    };
+
+    const selectAllCurrent = () => {
+        setSelectedFilePaths(prev => {
+            const newSet = new Set(prev);
+            currentFiles.forEach(f => newSet.add(f.relativePath));
+            return newSet;
+        });
+    };
+
+    const deselectAllCurrent = () => {
+        setSelectedFilePaths(prev => {
+            const newSet = new Set(prev);
+            currentFiles.forEach(f => newSet.delete(f.relativePath));
+            return newSet;
+        });
+    };
+
+    const selectStarred = () => {
+        setSelectedFilePaths(prev => {
+            const newSet = new Set(prev);
+            filteredFiles.filter(f => starredFilePaths.has(f.relativePath)).forEach(f => newSet.add(f.relativePath));
+            return newSet;
+        });
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // GET LOCALIZED DELETE WORD
+    const getDeleteWord = () => {
+        return tc('words.delete') || 'delete';
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // BULK DELETE
+    const handleBulkDelete = async () => {
+        if (selectedFilePaths.size === 0) return;
+        if (!bulkDeleteConfirmChecked) return;
+        if (bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
+
+        setIsBulkProcessing(true);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const filePath of selectedFilePaths) {
+            try {
+                const res = await fetch('/api/files/upload-dir', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        organizationId: activeOrganization?.id,
+                        filename: filePath,
+                    }),
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch {
+                errorCount++;
+            }
+        }
+
+        setIsBulkProcessing(false);
+        setIsBulkDeleteDialogOpen(false);
+        setBulkDeleteConfirmChecked(false);
+        setBulkDeleteConfirmText("");
+        setSelectedFilePaths(new Set());
+
+        if (successCount > 0) {
+            toast.success(t('toast.filesDeleted', { count: successCount }));
+            fetchFiles();
+        }
+        if (errorCount > 0) {
+            toast.error(t('toast.filesDeleteFailed', { count: errorCount }));
+        }
+    };
+
+    // Initial load + Change Organization + Refresh event
+    useEffect(() =>
+    {
+        if (!activeOrganization) return;
+
+        fetchFiles();
+        fetchStarredFiles();
 
         // Listen for refresh event
-        const handleRefresh = () => 
+        const handleRefresh = () =>
         {
             fetchFiles();
+            fetchStarredFiles();
         };
 
         window.addEventListener('refreshPage', handleRefresh);
-        // console.log("Event listener added for refreshPage");
 
-        return () => 
+        return () =>
         {
-            // console.log("Cleaning up event listener");
             window.removeEventListener('refreshPage', handleRefresh);
         };
     }, [activeOrganization?.id]);
+
+    // Reset page when filter changes
+    useEffect(() => {
+        setCurrentPage(1);
+    }, [filterText]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // Assign file as artifact
@@ -219,11 +423,27 @@ export default function ArtifactFilesPage()
             console.error('Delete error:', err);
             toast.error(err.message || 'Could not delete file');
         } 
-        finally 
+        finally
         {
             setIsDeleting(false);
         }
     };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FILTER & PAGINATION
+    const filteredFiles = files.filter(f =>
+        f.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        f.relativePath.toLowerCase().includes(filterText.toLowerCase())
+    );
+
+    const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
+    const startIndex = (currentPage - 1) * itemsPerPage;
+    const endIndex = startIndex + itemsPerPage;
+    const currentFiles = filteredFiles.slice(startIndex, endIndex);
+
+    // Selection helpers for checkbox state
+    const allCurrentSelected = currentFiles.length > 0 && currentFiles.every(f => selectedFilePaths.has(f.relativePath));
+    const someCurrentSelected = currentFiles.some(f => selectedFilePaths.has(f.relativePath)) && !allCurrentSelected;
 
   return (
     <>
@@ -236,27 +456,89 @@ export default function ArtifactFilesPage()
       >
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete File?</AlertDialogTitle>
+            <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to delete <strong>{fileToDelete?.name}</strong>?
-              <br />
-              This action cannot be undone.
+              {t('dialogs.deleteDescription', { name: fileToDelete?.name || '' })}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>Cancel</AlertDialogCancel>
+            <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleDeleteFile}
               disabled={isDeleting}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
-              {isDeleting ? 'Deleting...' : 'Delete'}
+              {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
+      {/* Bulk Delete Dialog */}
+      <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">{t('dialogs.bulkDeleteTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('dialogs.bulkDeleteDescription', { count: selectedFilePaths.size })}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+              <Checkbox
+                id="bulk-delete-confirm"
+                checked={bulkDeleteConfirmChecked}
+                onCheckedChange={(checked) => setBulkDeleteConfirmChecked(!!checked)}
+              />
+              <label htmlFor="bulk-delete-confirm" className="text-sm cursor-pointer">
+                {t('dialogs.bulkDeleteConfirmCheckbox')}
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm">
+                {t('dialogs.bulkDeleteTypeWord', { word: getDeleteWord() })}
+              </label>
+              <Input
+                value={bulkDeleteConfirmText}
+                onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+                placeholder={getDeleteWord()}
+                className={bulkDeleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setIsBulkDeleteDialogOpen(false)} disabled={isBulkProcessing}>
+              {tc('buttons.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
+              onClick={handleBulkDelete}
+              disabled={
+                isBulkProcessing ||
+                !bulkDeleteConfirmChecked ||
+                bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+              }
+            >
+              {isBulkProcessing ? tc('buttons.deleting') : t('buttons.deleteFiles', { count: selectedFilePaths.size })}
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
       <div className="p-6 space-y-6">
+
+        {/* Filter Input */}
+        <div className="flex justify-end">
+          <Input
+            placeholder={t('placeholders.filterByName')}
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+            className="max-w-sm"
+          />
+        </div>
 
         {loading ? (
           <div className="space-y-3">
@@ -265,33 +547,87 @@ export default function ArtifactFilesPage()
           </div>
         ) : files.length === 0 ? (
           <div className="text-center py-12 text-muted-foreground">
-            No files found in the upload directory
+            {t('empty.noFiles')}
+          </div>
+        ) : filteredFiles.length === 0 ? (
+          <div className="text-center py-12 text-muted-foreground">
+            {t('empty.noFilesMatch')}
           </div>
         ) : (
-          <div className="border rounded-lg overflow-hidden">
-            <table className="w-full">
-              <thead className="bg-muted/50">
-                <tr>
-                  <th className="text-left p-3">Filename</th>
-                  <th className="text-right p-3 w-32">Size</th>
-                  <th className="text-right p-3 w-40">Modified</th>
-                  <th className="text-right p-3 w-48">Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                {files.map((file) => (
-                  <tr key={file.relativePath} className="border-t hover:bg-muted/50">
-                    <td className="p-3 flex items-center gap-2">
-                      <File size={16} className="text-muted-foreground" />
-                      {file.name}
-                    </td>
-                    <td className="text-right p-3 tabular-nums">
+          <>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  {/* Checkbox column with dropdown */}
+                  <TableHead className="w-12">
+                    <div className="flex items-center gap-0.5">
+                      <Checkbox
+                        checked={allCurrentSelected ? true : someCurrentSelected ? "indeterminate" : false}
+                        onCheckedChange={(checked) => {
+                          if (checked) {
+                            selectAllCurrent();
+                          } else {
+                            deselectAllCurrent();
+                          }
+                        }}
+                      />
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <button className="p-1 hover:bg-muted rounded">
+                            <ChevronDown className="h-3 w-3" />
+                          </button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="start">
+                          <DropdownMenuItem onClick={selectAllCurrent}>
+                            {tc('selection.selectAll')}
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={selectStarred}>
+                            <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                            {tc('selection.starred')}
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </TableHead>
+                  <TableHead>{t('table.filename')}</TableHead>
+                  <TableHead className="w-32 text-right">{t('table.size')}</TableHead>
+                  <TableHead className="w-40 text-right">{t('table.modified')}</TableHead>
+                  <TableHead className="w-48 text-right">{t('table.actions')}</TableHead>
+                  {/* Star column */}
+                  <TableHead className="w-12"></TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {currentFiles.map((file) => (
+                  <TableRow
+                    key={file.relativePath}
+                    className="hover:bg-muted/50"
+                    onContextMenu={(e) => {
+                      e.preventDefault();
+                      toggleStar(file.relativePath);
+                    }}
+                  >
+                    {/* Checkbox cell */}
+                    <TableCell className="w-12">
+                      <Checkbox
+                        checked={selectedFilePaths.has(file.relativePath)}
+                        onCheckedChange={() => toggleFileSelection(file.relativePath)}
+                      />
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <File size={16} className="text-muted-foreground" />
+                        {file.name}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right tabular-nums">
                       {(file.size / 1024).toFixed(1)} KB
-                    </td>
-                    <td className="text-right p-3 text-muted-foreground">
+                    </TableCell>
+                    <TableCell className="text-right text-muted-foreground">
                       {new Date(file.modified).toLocaleString()}
-                    </td>
-                    <td className="text-right p-3">
+                    </TableCell>
+                    <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
                         <Button
                           variant="outline"
@@ -304,7 +640,7 @@ export default function ArtifactFilesPage()
                             setAssignDialogOpen(true);
                           }}
                         >
-                          Assign as Artifact
+                          {t('buttons.assignAsArtifact')}
                         </Button>
                         <Button
                           variant="outline"
@@ -315,12 +651,90 @@ export default function ArtifactFilesPage()
                           <Trash2 size={16} />
                         </Button>
                       </div>
-                    </td>
-                  </tr>
+                    </TableCell>
+                    {/* Star cell */}
+                    <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                      <button
+                        onClick={(e) => toggleStar(file.relativePath, e)}
+                        className="p-1 hover:bg-muted rounded transition-colors"
+                      >
+                        <Star
+                          className={`h-4 w-4 ${
+                            starredFilePaths.has(file.relativePath)
+                              ? 'fill-yellow-400 text-yellow-400'
+                              : 'text-muted-foreground hover:text-yellow-400'
+                          }`}
+                        />
+                      </button>
+                    </TableCell>
+                  </TableRow>
                 ))}
-              </tbody>
-            </table>
-          </div>
+              </TableBody>
+            </Table>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-between mt-4">
+                <div className="text-sm text-muted-foreground">
+                  {t('pagination.showing', { start: startIndex + 1, end: Math.min(endIndex, filteredFiles.length), total: filteredFiles.length })}
+                </div>
+
+                <div className="flex justify-end">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
+                          className={currentPage === 1 ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                        />
+                      </PaginationItem>
+
+                      <div className="flex items-center gap-2">
+                        <div className="flex gap-1">
+                          {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                            <PaginationItem key={page}>
+                              <PaginationLink
+                                onClick={() => setCurrentPage(page)}
+                                isActive={currentPage === page}
+                                className="cursor-pointer"
+                              >
+                                {page}
+                              </PaginationLink>
+                            </PaginationItem>
+                          ))}
+                        </div>
+
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
+                            className={currentPage === totalPages ? 'pointer-events-none opacity-50' : 'cursor-pointer'}
+                          />
+                        </PaginationItem>
+                      </div>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              </div>
+            )}
+
+            {/* Bulk Action Bar */}
+            {selectedFilePaths.size > 0 && (
+              <div className="flex items-center gap-4 mt-4 p-3 bg-muted/50 rounded-lg border">
+                <span className="text-sm text-muted-foreground">
+                  {t('selection.selectedOf', { selected: selectedFilePaths.size, total: filteredFiles.length })}
+                </span>
+                <div className="flex items-center gap-1 ml-auto">
+                  <button
+                    onClick={() => { setBulkDeleteConfirmChecked(false); setBulkDeleteConfirmText(""); setIsBulkDeleteDialogOpen(true); }}
+                    className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"
+                    title={t('buttons.deleteSelected')}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Assign Dialog */}

@@ -404,6 +404,8 @@
       "cancel": "Cancel",
       "delete": "Delete",
       "deleteUser": "Delete Login",
+      "deleteUsers": "Delete {count} login(s)",
+      "deleteSelected": "Delete selected logins",
       "creating": "Creating...",
       "saving": "Saving...",
       "deleting": "Deleting..."
@@ -412,7 +414,14 @@
       "createTitle": "Create New Login",
       "createDescription": "Enter the details for the new login.",
       "deleteTitle": "Are you absolutely sure?",
-      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system."
+      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system.",
+      "bulkDeleteTitle": "Delete Multiple Logins",
+      "bulkDeleteDescription": "You are about to delete {count} logins. This action cannot be undone.",
+      "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these logins",
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
+    },
+    "selection": {
+      "selectedOf": "Selected {selected} of {total} logins"
     },
     "labels": {
       "name": "Name",
@@ -455,7 +464,9 @@
       "deleteError": "Could not delete login",
       "emailTaken": "A user with this email already exists",
       "cannotDeleteSelf": "Cannot delete your own account",
-      "passwordTooWeak": "Password is too weak. Please make it stronger."
+      "passwordTooWeak": "Password is too weak. Please make it stronger.",
+      "usersDeleted": "Deleted {count} login(s) successfully",
+      "usersDeleteFailed": "Failed to delete {count} login(s)"
     },
     "sections": {
       "userActions": "Login Actions",
@@ -1009,13 +1020,19 @@
       "createArtifactAndMove": "Create Artifact & Move File",
       "cancel": "Cancel",
       "delete": "Delete",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "deleteFiles": "Delete {count} file(s)",
+      "deleteSelected": "Delete selected files"
     },
     "dialogs": {
       "deleteTitle": "Delete File?",
-      "deleteDescription": "Are you sure you want to delete <strong>{name}</strong>? This action cannot be undone.",
+      "deleteDescription": "Are you sure you want to delete {name}? This action cannot be undone.",
       "assignTitle": "Assign File as Artifact",
-      "assignFileLabel": "File: {name}"
+      "assignFileLabel": "File: {name}",
+      "bulkDeleteTitle": "Delete Multiple Files",
+      "bulkDeleteDescription": "You are about to delete {count} files. This action cannot be undone.",
+      "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these files",
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
     },
     "labels": {
       "artifactName": "Artifact Name",
@@ -1025,7 +1042,11 @@
     "placeholders": {
       "enterArtifactName": "Enter artifact name",
       "enterDescription": "Optional description",
-      "selectType": "Select type"
+      "selectType": "Select type",
+      "filterByName": "Filter by filename..."
+    },
+    "selection": {
+      "selectedOf": "Selected {selected} of {total} files"
     },
     "table": {
       "filename": "Filename",
@@ -1034,7 +1055,8 @@
       "actions": "Actions"
     },
     "empty": {
-      "noFiles": "No files found in the upload directory"
+      "noFiles": "No files found in the upload directory",
+      "noFilesMatch": "No files match your filter"
     },
     "pagination": {
       "showing": "Showing {start} to {end} of {total} files"
@@ -1045,7 +1067,9 @@
       "assignError": "Could not assign file",
       "fileDeleted": "File deleted successfully",
       "deleteError": "Could not delete file",
-      "loadError": "Could not load files from upload directory"
+      "loadError": "Could not load files from upload directory",
+      "filesDeleted": "Deleted {count} file(s) successfully",
+      "filesDeleteFailed": "Failed to delete {count} file(s)"
     }
   },
   "Message": {
@@ -1363,7 +1387,15 @@
       "safeguardsActive": "{active}/{total} safeguards active",
       "analysis": "Analysis",
       "active": "Active",
-      "inactive": "Inactive"
+      "inactive": "Inactive",
+      "factorWeights": "Factor Weights",
+      "parameter": "Parameter",
+      "value": "Value",
+      "impact": "Impact",
+      "explanation": "Explanation",
+      "finalScore": "Final Score",
+      "explainScoring": "Explain scoring...",
+      "hideExplanation": "Hide explanation"
     },
     "headings": {
       "controlsRecommendations": "Controls & Safeguards Recommendations",

@@ -28,6 +28,13 @@ import {
   DialogFooter,
 } from "@/components/ui/dialog";
 
+type FactorImpact = {
+  parameter: string;
+  value: string | null;
+  impact: string;
+  explanation: string;
+};
+
 type SafeguardRecommendation = {
   safeguardId: string;
   controlId: number;
@@ -36,6 +43,7 @@ type SafeguardRecommendation = {
   shouldBeInactive: boolean;
   reasons: string[];
   relevanceScore: number;
+  factors: FactorImpact[];
 };
 
 type ControlRecommendation = {
@@ -45,6 +53,7 @@ type ControlRecommendation = {
   reasons: string[];
   relevanceScore: number;
   safeguards: SafeguardRecommendation[];
+  factors: FactorImpact[];
 };
 
 type GapRecommendation = {
@@ -85,6 +94,7 @@ export default function ExploratoryGapPage() {
   // UI state
   const [expandedControls, setExpandedControls] = useState<Set<number>>(new Set());
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [expandedExplanations, setExpandedExplanations] = useState<Set<string>>(new Set()); // "control-{id}" or "safeguard-{id}"
 
   // Generate recommendation
   const generateRecommendation = async () => {
@@ -176,6 +186,19 @@ export default function ExploratoryGapPage() {
         next.delete(controlId);
       } else {
         next.add(controlId);
+      }
+      return next;
+    });
+  };
+
+  // Toggle explanation expansion
+  const toggleExplanation = (key: string) => {
+    setExpandedExplanations(prev => {
+      const next = new Set(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.add(key);
       }
       return next;
     });
@@ -419,56 +442,154 @@ export default function ExploratoryGapPage() {
                     {/* Expanded Safeguards */}
                     {isExpanded && (
                       <div className="bg-muted/20 border-t">
-                        {/* Control reasons */}
-                        {control.reasons.length > 0 && (
-                          <div className="px-4 py-3 border-b bg-muted/30">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide mb-1">
-                              {t('labels.analysis')}
-                            </p>
-                            <ul className="text-sm text-muted-foreground space-y-0.5">
-                              {control.reasons.map((reason, idx) => (
-                                <li key={idx} className="flex items-start gap-2">
-                                  <span className="text-muted-foreground">•</span>
-                                  <span>{reason}</span>
-                                </li>
-                              ))}
-                            </ul>
-                          </div>
-                        )}
+                        {/* Control explanation toggle */}
+                        <div className="px-4 py-2 border-b bg-muted/30">
+                          <button
+                            className="text-xs text-blue-500 hover:text-blue-400 hover:underline cursor-pointer"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleExplanation(`control-${control.controlId}`);
+                            }}
+                          >
+                            {expandedExplanations.has(`control-${control.controlId}`) ? '▼ Hide explanation' : '▶ Explain scoring...'}
+                          </button>
+
+                          {/* Expanded control explanation */}
+                          {expandedExplanations.has(`control-${control.controlId}`) && control.factors && (
+                            <div className="mt-3 space-y-2">
+                              <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+                                {t('labels.analysis')} — Factor Weights
+                              </p>
+                              <div className="rounded border bg-background/50 overflow-hidden">
+                                <table className="w-full text-xs">
+                                  <thead className="bg-muted/50">
+                                    <tr>
+                                      <th className="text-left px-3 py-1.5 font-medium">Parameter</th>
+                                      <th className="text-left px-3 py-1.5 font-medium">Value</th>
+                                      <th className="text-left px-3 py-1.5 font-medium">Impact</th>
+                                      <th className="text-left px-3 py-1.5 font-medium">Explanation</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody className="divide-y">
+                                    {control.factors.map((factor, idx) => (
+                                      <tr key={idx} className="hover:bg-muted/30">
+                                        <td className="px-3 py-1.5 font-medium">{factor.parameter}</td>
+                                        <td className="px-3 py-1.5 text-muted-foreground font-mono">
+                                          {factor.value || '—'}
+                                        </td>
+                                        <td className="px-3 py-1.5">
+                                          <span className={
+                                            factor.impact.includes('+') ? 'text-green-500' :
+                                            factor.impact.includes('-') ? 'text-red-500' :
+                                            factor.impact.includes('INACTIVE') ? 'text-red-500 font-medium' :
+                                            'text-muted-foreground'
+                                          }>
+                                            {factor.impact}
+                                          </span>
+                                        </td>
+                                        <td className="px-3 py-1.5 text-muted-foreground">{factor.explanation}</td>
+                                      </tr>
+                                    ))}
+                                  </tbody>
+                                </table>
+                              </div>
+                              <p className="text-xs text-muted-foreground">
+                                Final Score: <span className={`font-medium ${getRelevanceColor(control.relevanceScore)}`}>{control.relevanceScore}%</span>
+                                {control.shouldBeInactive && <span className="text-red-500 ml-2">(Marked Inactive)</span>}
+                              </p>
+                            </div>
+                          )}
+                        </div>
 
                         {/* Safeguards list */}
                         <div className="divide-y">
                           {control.safeguards.map(sf => {
                             const isSfInactive = inactiveSafeguards.has(sf.safeguardId);
+                            const sfExplainKey = `safeguard-${sf.safeguardId}`;
                             return (
-                              <div
-                                key={sf.safeguardId}
-                                className={`flex items-center gap-4 px-4 py-3 pl-12 ${isSfInactive ? 'opacity-50' : ''}`}
-                              >
-                                <div className="flex-grow min-w-0">
-                                  <div className="flex items-center gap-2">
-                                    <span className="font-mono text-sm text-muted-foreground">
-                                      {sf.safeguardId}
-                                    </span>
-                                    <span className="truncate text-sm">{sf.title}</span>
+                              <div key={sf.safeguardId}>
+                                <div
+                                  className={`flex items-center gap-4 px-4 py-3 pl-12 ${isSfInactive ? 'opacity-50' : ''}`}
+                                >
+                                  <div className="flex-grow min-w-0">
+                                    <div className="flex items-center gap-2">
+                                      <span className="font-mono text-sm text-muted-foreground">
+                                        {sf.safeguardId}
+                                      </span>
+                                      <span className="truncate text-sm">{sf.title}</span>
+                                    </div>
+                                    <div className="flex items-center gap-3 mt-0.5">
+                                      {sf.reasons.length > 0 && (
+                                        <p className="text-xs text-muted-foreground truncate">
+                                          {sf.reasons[0]}
+                                        </p>
+                                      )}
+                                      <button
+                                        className="text-xs text-blue-500 hover:text-blue-400 hover:underline cursor-pointer flex-shrink-0"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          toggleExplanation(sfExplainKey);
+                                        }}
+                                      >
+                                        {expandedExplanations.has(sfExplainKey) ? 'hide' : 'explain...'}
+                                      </button>
+                                    </div>
                                   </div>
-                                  {sf.reasons.length > 0 && (
-                                    <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                                      {sf.reasons[0]}
-                                    </p>
-                                  )}
+
+                                  <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
+                                    <span className={`text-xs ${getRelevanceColor(sf.relevanceScore)}`}>
+                                      {sf.relevanceScore}%
+                                    </span>
+                                    <Checkbox
+                                      checked={!isSfInactive}
+                                      onCheckedChange={() => toggleSafeguard(sf.safeguardId)}
+                                      disabled={isControlInactive}
+                                    />
+                                  </div>
                                 </div>
 
-                                <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
-                                  <span className={`text-xs ${getRelevanceColor(sf.relevanceScore)}`}>
-                                    {sf.relevanceScore}%
-                                  </span>
-                                  <Checkbox
-                                    checked={!isSfInactive}
-                                    onCheckedChange={() => toggleSafeguard(sf.safeguardId)}
-                                    disabled={isControlInactive}
-                                  />
-                                </div>
+                                {/* Expanded safeguard explanation */}
+                                {expandedExplanations.has(sfExplainKey) && sf.factors && (
+                                  <div className="px-4 py-2 pl-12 bg-muted/10 border-t">
+                                    <div className="rounded border bg-background/50 overflow-hidden">
+                                      <table className="w-full text-xs">
+                                        <thead className="bg-muted/50">
+                                          <tr>
+                                            <th className="text-left px-2 py-1 font-medium">Parameter</th>
+                                            <th className="text-left px-2 py-1 font-medium">Value</th>
+                                            <th className="text-left px-2 py-1 font-medium">Impact</th>
+                                            <th className="text-left px-2 py-1 font-medium">Explanation</th>
+                                          </tr>
+                                        </thead>
+                                        <tbody className="divide-y">
+                                          {sf.factors.map((factor, idx) => (
+                                            <tr key={idx} className="hover:bg-muted/30">
+                                              <td className="px-2 py-1 font-medium">{factor.parameter}</td>
+                                              <td className="px-2 py-1 text-muted-foreground font-mono text-[10px]">
+                                                {factor.value || '—'}
+                                              </td>
+                                              <td className="px-2 py-1">
+                                                <span className={
+                                                  factor.impact.includes('+') ? 'text-green-500' :
+                                                  factor.impact.includes('-') ? 'text-red-500' :
+                                                  factor.impact.includes('INACTIVE') ? 'text-red-500 font-medium' :
+                                                  'text-muted-foreground'
+                                                }>
+                                                  {factor.impact}
+                                                </span>
+                                              </td>
+                                              <td className="px-2 py-1 text-muted-foreground">{factor.explanation}</td>
+                                            </tr>
+                                          ))}
+                                        </tbody>
+                                      </table>
+                                    </div>
+                                    <p className="text-xs text-muted-foreground mt-1">
+                                      Final: <span className={`font-medium ${getRelevanceColor(sf.relevanceScore)}`}>{sf.relevanceScore}%</span>
+                                      {sf.shouldBeInactive && <span className="text-red-500 ml-1">(Inactive)</span>}
+                                    </p>
+                                  </div>
+                                )}
                               </div>
                             );
                           })}

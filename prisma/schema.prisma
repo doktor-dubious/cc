@@ -43,6 +43,7 @@ model User {
   sessions         Session[]
   accounts         Account[]
   twoFactors       TwoFactor[]
+  userStars        UserStar[]
 
   @@map("login")
 }
@@ -154,6 +155,7 @@ model Organization {
   profiles             Profile[]
   tasks                Task[]
   organizationStar     OrganizationStar?
+  fileStars            FileStar[]
 
   @@map("organization")
 }
@@ -432,6 +434,30 @@ model ArtifactStar {
   @@id([artifactId])
   @@index([artifactId])
   @@map("artifact_star")
+}
+
+/// Starred users (logins) - for admin management
+model UserStar {
+  userId    String   @map("user_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@id([userId])
+  @@index([userId])
+  @@map("user_star")
+}
+
+/// Starred incoming files - organization-scoped, uses file path as identifier
+model FileStar {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  filePath       String       @map("file_path")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, filePath])
+  @@index([organizationId])
+  @@map("file_star")
 }
 
 /// Messages tied to Tasks - can be system-generated or from users

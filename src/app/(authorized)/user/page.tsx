@@ -4,8 +4,16 @@ import { useUser }              from '@/context/UserContext';
 import { useRouter }            from 'next/navigation';
 import { useRef, useEffect, useState }  from 'react';
 import { zxcvbn }                         from '@/lib/zxcvbn';
-import { Trash2 }               from 'lucide-react';
+import { Trash2, Star, ChevronDown, ShieldCheck, ShieldOff }     from 'lucide-react';
 import { Button }               from "@/components/ui/button";
+import { Checkbox }             from "@/components/ui/checkbox";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { useTranslations }      from 'next-intl';
 
 import {
@@ -107,6 +115,16 @@ export default function UserPage()
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
 
+    // Selection and starring
+    const [selectedUserIds, setSelectedUserIds] = useState<Set<string>>(new Set());
+    const [starredUserIds, setStarredUserIds] = useState<Set<string>>(new Set());
+
+    // Bulk delete
+    const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
+    const [bulkDeleteConfirmChecked, setBulkDeleteConfirmChecked] = useState(false);
+    const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
+    const [isBulkProcessing, setIsBulkProcessing] = useState(false);
+
     // Email validation (edit form)
     const [emailValid, setEmailValid]             = useState<number | null>(null);
     const [isCheckingEmail, setIsCheckingEmail]   = useState(false);
@@ -154,6 +172,177 @@ export default function UserPage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FETCH STARRED USERS
+    const fetchStarredUsers = async () =>
+    {
+        try
+        {
+            const res = await fetch('/api/user-star');
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to fetch starred users:', data.message);
+                return;
+            }
+            setStarredUserIds(new Set(data.data || []));
+        }
+        catch (error)
+        {
+            console.error('Failed to fetch starred users:', error);
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (API call)
+    const toggleStarApi = async (userId: string) =>
+    {
+        try
+        {
+            const res = await fetch('/api/user-star', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId }),
+            });
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to toggle star:', data.message);
+                toast.error(data.message || t('toast.starError'));
+                return;
+            }
+            setStarredUserIds(prev => {
+                const newSet = new Set(prev);
+                if (data.starred) {
+                    newSet.add(userId);
+                } else {
+                    newSet.delete(userId);
+                }
+                return newSet;
+            });
+        }
+        catch (error)
+        {
+            console.error('Failed to toggle star:', error);
+            toast.error(t('toast.starError'));
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (UI wrapper with event handling)
+    const toggleStar = (userId: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        toggleStarApi(userId);
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // SELECTION HELPERS
+    const toggleUserSelection = (userId: string) => {
+        setSelectedUserIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(userId)) {
+                newSet.delete(userId);
+            } else {
+                newSet.add(userId);
+            }
+            return newSet;
+        });
+    };
+
+    const selectAllCurrent = () => {
+        setSelectedUserIds(prev => {
+            const newSet = new Set(prev);
+            currentUsers.forEach(u => newSet.add(u.id));
+            return newSet;
+        });
+    };
+
+    const deselectAllCurrent = () => {
+        setSelectedUserIds(prev => {
+            const newSet = new Set(prev);
+            currentUsers.forEach(u => newSet.delete(u.id));
+            return newSet;
+        });
+    };
+
+    const selectByRole = (role: string) => {
+        setSelectedUserIds(prev => {
+            const newSet = new Set(prev);
+            filteredUsers.filter(u => u.role === role).forEach(u => newSet.add(u.id));
+            return newSet;
+        });
+    };
+
+    const selectStarred = () => {
+        setSelectedUserIds(prev => {
+            const newSet = new Set(prev);
+            filteredUsers.filter(u => starredUserIds.has(u.id)).forEach(u => newSet.add(u.id));
+            return newSet;
+        });
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // GET LOCALIZED DELETE WORD
+    const getDeleteWord = () => {
+        return tc('words.delete') || 'delete';
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // BULK DELETE
+    const handleBulkDelete = async () => {
+        if (selectedUserIds.size === 0) return;
+        if (!bulkDeleteConfirmChecked) return;
+        if (bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
+
+        setIsBulkProcessing(true);
+        let successCount = 0;
+        let errorCount = 0;
+
+        for (const userId of selectedUserIds) {
+            // Don't delete own account - find the user being deleted and check email
+            const userToDelete = users.find(u => u.id === userId);
+            if (userToDelete?.email === user?.email) {
+                toast.error(t('toast.cannotDeleteSelf'));
+                errorCount++;
+                continue;
+            }
+            try {
+                const res = await fetch(`/api/user/${userId}`, {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                });
+                const data = await res.json();
+                if (data.success) {
+                    successCount++;
+                } else {
+                    errorCount++;
+                }
+            } catch {
+                errorCount++;
+            }
+        }
+
+        setIsBulkProcessing(false);
+        setIsBulkDeleteDialogOpen(false);
+        setBulkDeleteConfirmChecked(false);
+        setBulkDeleteConfirmText("");
+        setSelectedUserIds(new Set());
+
+        if (successCount > 0) {
+            toast.success(t('toast.usersDeleted', { count: successCount }));
+            fetchUsers();
+            if (selectedUser && selectedUserIds.has(selectedUser.id)) {
+                setSelectedUser(null);
+            }
+        }
+        if (errorCount > 0) {
+            toast.error(t('toast.usersDeleteFailed', { count: errorCount }));
+        }
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // PROTECT ROUTE
     useEffect(() =>
     {
@@ -171,8 +360,12 @@ export default function UserPage()
         if (user?.role !== 'SUPER_ADMIN') return;
 
         fetchUsers();
+        fetchStarredUsers();
 
-        const handleRefresh = () => fetchUsers();
+        const handleRefresh = () => {
+            fetchUsers();
+            fetchStarredUsers();
+        };
         window.addEventListener('refreshPage', handleRefresh);
         return () => window.removeEventListener('refreshPage', handleRefresh);
     }, [user]);
@@ -636,16 +829,30 @@ export default function UserPage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FILTER & PAGINATION
-    const filteredUsers = users.filter(u =>
-        u.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        u.nickname?.toLowerCase().includes(filterText.toLowerCase()) ||
-        u.email.toLowerCase().includes(filterText.toLowerCase())
-    );
+    const filteredUsers = users
+        .filter(u =>
+            u.name.toLowerCase().includes(filterText.toLowerCase()) ||
+            u.email.toLowerCase().includes(filterText.toLowerCase())
+        )
+        // Sort: current user first, then by updatedAt descending
+        .sort((a, b) => {
+            // Current user always on top
+            if (user?.email === a.email) return -1;
+            if (user?.email === b.email) return 1;
+            // Then sort by updatedAt descending (most recent first)
+            const dateA = new Date(a.updatedAt).getTime();
+            const dateB = new Date(b.updatedAt).getTime();
+            return dateB - dateA;
+        });
 
     const totalPages = Math.ceil(filteredUsers.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
     const currentUsers = filteredUsers.slice(startIndex, endIndex);
+
+    // Selection helpers for checkbox state
+    const allCurrentSelected = currentUsers.length > 0 && currentUsers.every(u => selectedUserIds.has(u.id));
+    const someCurrentSelected = currentUsers.some(u => selectedUserIds.has(u.id)) && !allCurrentSelected;
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // ROLE BADGE
@@ -663,7 +870,6 @@ export default function UserPage()
     // EXPORT COLUMNS
     const exportColumns: ExportColumn[] = [
         { header: 'Name', accessor: 'name' },
-        { header: 'Nickname', accessor: 'nickname' },
         { header: 'Email', accessor: 'email' },
         { header: 'Role', accessor: 'role' },
     ];
@@ -678,6 +884,60 @@ export default function UserPage()
     // DOM
     return (
 <>
+
+{/* ── Bulk Delete Dialog ── */}
+<Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="text-destructive">{t('dialogs.bulkDeleteTitle')}</DialogTitle>
+      <DialogDescription>
+        {t('dialogs.bulkDeleteDescription', { count: selectedUserIds.size })}
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="space-y-4 py-4">
+      <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+        <Checkbox
+          id="bulk-delete-confirm"
+          checked={bulkDeleteConfirmChecked}
+          onCheckedChange={(checked) => setBulkDeleteConfirmChecked(!!checked)}
+        />
+        <label htmlFor="bulk-delete-confirm" className="text-sm cursor-pointer">
+          {t('dialogs.bulkDeleteConfirmCheckbox')}
+        </label>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm">
+          {t('dialogs.bulkDeleteTypeWord', { word: getDeleteWord() })}
+        </label>
+        <Input
+          value={bulkDeleteConfirmText}
+          onChange={(e) => setBulkDeleteConfirmText(e.target.value)}
+          placeholder={getDeleteWord()}
+          className={bulkDeleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+        />
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button variant="outline" onClick={() => setIsBulkDeleteDialogOpen(false)} disabled={isBulkProcessing}>
+        {tc('buttons.cancel')}
+      </Button>
+      <Button
+        variant="destructive"
+        onClick={handleBulkDelete}
+        disabled={
+          isBulkProcessing ||
+          !bulkDeleteConfirmChecked ||
+          bulkDeleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+        }
+      >
+        {isBulkProcessing ? tc('buttons.deleting') : t('buttons.deleteUsers', { count: selectedUserIds.size })}
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
 
 {/* ── Delete confirmation ── */}
 <AlertDialog
@@ -722,17 +982,6 @@ export default function UserPage()
           placeholder={t('placeholders.enterName')}
           className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
           autoFocus
-        />
-      </div>
-
-      <div className="grid gap-2">
-        <label className="block text-sm">{t('labels.nickname')}</label>
-        <input
-          type="text"
-          value={newNickname}
-          onChange={(e) => setNewNickname(e.target.value)}
-          placeholder={t('placeholders.enterNickname')}
-          className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
         />
       </div>
 
@@ -870,16 +1119,56 @@ export default function UserPage()
     <Table>
         <TableHeader>
             <TableRow>
+                {/* Checkbox column with dropdown */}
+                <TableHead className="w-12">
+                    <div className="flex items-center gap-0.5">
+                        <Checkbox
+                            checked={allCurrentSelected ? true : someCurrentSelected ? "indeterminate" : false}
+                            onCheckedChange={(checked) => {
+                                if (checked) {
+                                    selectAllCurrent();
+                                } else {
+                                    deselectAllCurrent();
+                                }
+                            }}
+                        />
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <button className="p-1 hover:bg-muted rounded">
+                                    <ChevronDown className="h-3 w-3" />
+                                </button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="start">
+                                <DropdownMenuItem onClick={selectAllCurrent}>
+                                    {tc('selection.selectAll')}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => selectByRole('USER')}>
+                                    {tc('selection.selectUsers')}
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => selectByRole('ADMIN')}>
+                                    {tc('selection.selectAdmins')}
+                                </DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={selectStarred}>
+                                    <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                                    {tc('selection.starred')}
+                                </DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
+                </TableHead>
                 <TableHead>{t('labels.name')}</TableHead>
-                <TableHead>{t('labels.nickname')}</TableHead>
                 <TableHead>{t('labels.email')}</TableHead>
                 <TableHead className="w-32 text-center">{t('labels.role')}</TableHead>
+                {/* Star column */}
+                <TableHead className="w-12"></TableHead>
             </TableRow>
         </TableHeader>
         <TableBody>
 {currentUsers.length === 0 ? (
             <TableRow>
-                <TableCell colSpan={4} className="text-center text-muted-foreground">
+                <TableCell colSpan={5} className="text-center text-muted-foreground">
                     {filterText ? t('empty.noUsersMatch') : t('empty.noUsersFound')}
                 </TableCell>
             </TableRow>
@@ -892,14 +1181,39 @@ export default function UserPage()
                     ${selectedUser?.id === u.id ? "bg-muted/60 hover:bg-muted/80" : "hover:bg-muted/50"}
                 `}
                 onClick={() => handleRowClick(u)}
+                onContextMenu={(e) => {
+                    e.preventDefault();
+                    toggleStar(u.id);
+                }}
             >
+                {/* Checkbox cell */}
+                <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                        checked={selectedUserIds.has(u.id)}
+                        onCheckedChange={() => toggleUserSelection(u.id)}
+                    />
+                </TableCell>
                 <TableCell>{u.name}</TableCell>
-                <TableCell>{u.nickname}</TableCell>
                 <TableCell>{u.email}</TableCell>
                 <TableCell className="w-32 text-center">
                     <Badge className={`${getRoleBadge(u.role)} text-white text-xs`}>
                         {t(`roles.${u.role}`)}
                     </Badge>
+                </TableCell>
+                {/* Star cell */}
+                <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <button
+                        onClick={(e) => toggleStar(u.id, e)}
+                        className="p-1 hover:bg-muted rounded transition-colors"
+                    >
+                        <Star
+                            className={`h-4 w-4 ${
+                                starredUserIds.has(u.id)
+                                    ? 'fill-yellow-400 text-yellow-400'
+                                    : 'text-muted-foreground hover:text-yellow-400'
+                            }`}
+                        />
+                    </button>
                 </TableCell>
             </TableRow>
         ))
@@ -952,6 +1266,24 @@ export default function UserPage()
         </div>
     </div>
 )}
+
+    {/* Bulk Action Bar */}
+    {selectedUserIds.size > 0 && (
+        <div className="flex items-center gap-4 mt-4 p-3 bg-muted/50 rounded-lg border">
+            <span className="text-sm text-muted-foreground">
+                {t('selection.selectedOf', { selected: selectedUserIds.size, total: filteredUsers.length })}
+            </span>
+            <div className="flex items-center gap-1 ml-auto">
+                <button
+                    onClick={() => { setBulkDeleteConfirmChecked(false); setBulkDeleteConfirmText(""); setIsBulkDeleteDialogOpen(true); }}
+                    className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"
+                    title={t('buttons.deleteSelected')}
+                >
+                    <Trash2 className="h-4 w-4" />
+                </button>
+            </div>
+        </div>
+    )}
 
     {/* ── Detail Section with TABS ── */}
 {selectedUser && (
@@ -1007,16 +1339,6 @@ export default function UserPage()
                             className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
                         />
                     </div>
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.nickname')}</label>
-                        <input
-                            type="text"
-                            value={nickname}
-                            onChange={(e) => setNickname(e.target.value)}
-                            placeholder={t('placeholders.enterNickname')}
-                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-4 py-2.5 focus:outline-none focus:ring-2 focus:ring-neutral-600 focus:border-transparent"
-                        />
-                    </div>
                     <div className="grid gap-2">
                         <label className="block text-sm mb-2">{t('labels.email')}</label>
                         <input
@@ -1045,7 +1367,7 @@ export default function UserPage()
                         )}
                     </div>
                     <div className="grid gap-2 relative">
-                        <label className="block text-sm mb-2">{t('labels.newPassword')}</label>
+                        <label className="block text-sm mb-2">{t('labels.password')}</label>
                         <input
                             type="password"
                             name="new-password"
@@ -1110,6 +1432,63 @@ export default function UserPage()
                         <p className="text-sm text-muted-foreground mb-6">
                             {t('sections.userActionsDescription')}
                         </p>
+                    </div>
+
+                    {/* Two-Factor Authentication Section */}
+                    <div className="border border-neutral-700 rounded-lg p-4">
+                        <div className="flex items-start gap-4">
+                            <div className="flex-1">
+                                <div className="flex items-center gap-2 mb-1">
+                                    {selectedUser?.twoFactorEnabled
+                                        ? <ShieldCheck className="h-5 w-5 text-green-500" />
+                                        : <ShieldOff className="h-5 w-5 text-muted-foreground" />
+                                    }
+                                    <h4 className="font-medium">{t('sections.twoFactorTitle')}</h4>
+                                    {selectedUser?.twoFactorEnabled && (
+                                        <span className="text-xs font-medium px-2 py-0.5 bg-green-900/30 text-green-400 border border-green-800 ml-2">
+                                            {t('sections.twoFactorEnabled')}
+                                        </span>
+                                    )}
+                                </div>
+                                <p className="text-sm text-muted-foreground">
+                                    {selectedUser?.twoFactorEnabled
+                                        ? t('sections.twoFactorEnabledDescription')
+                                        : t('sections.twoFactorDisabledDescription')
+                                    }
+                                </p>
+                            </div>
+                            {selectedUser?.twoFactorEnabled && (
+                                <Button
+                                    variant="outline"
+                                    onClick={async () => {
+                                        try {
+                                            const res = await fetch(`/api/user/${selectedUser.id}/disable-2fa`, {
+                                                method: 'POST',
+                                                headers: { 'Content-Type': 'application/json' },
+                                            });
+                                            const data = await res.json();
+                                            if (data.success) {
+                                                toast.success(t('toast.twoFactorDisabled'));
+                                                // Update local state
+                                                setUsers(prev => prev.map(u =>
+                                                    u.id === selectedUser.id ? { ...u, twoFactorEnabled: false } : u
+                                                ));
+                                                setSelectedUser({ ...selectedUser, twoFactorEnabled: false });
+                                            } else {
+                                                toast.error(data.error || t('toast.twoFactorDisableError'));
+                                            }
+                                        } catch (error) {
+                                            console.error('Failed to disable 2FA:', error);
+                                            toast.error(t('toast.twoFactorDisableError'));
+                                        }
+                                    }}
+                                    className="shrink-0"
+                                >
+                                    <ShieldOff className="w-4 h-4 mr-2" />
+                                    {t('buttons.disable2FA')}
+                                </Button>
+                            )}
+                        </div>
                     </div>
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">

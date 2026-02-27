@@ -164,6 +164,104 @@
 
 ────────────────────
 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Friday 27 Feb
+* Page Users + Page Incomming Files:
+  -> Fixed stars functionality.
+* Created new CLAUDE.md (old one dissapeared?)
+* Exploratory GAP : examining explanation for suggestions...
+  -> Most are marked as "Standard Scope IG3 none  No specific organizational factors affect this safeguard"
+  A few with "Data Sensitivity  SPECIAL_CATEGORY, PAYMENT_CARD  +15 Sensitive data handling increases data protection priority"
+* Page users:
+  1) Changed default sort order to last changed + current user always on top.
+  2) Moved "Enable Two Factor Authentication" from the "Profile Settings" page to here. Under the action tab, above delete.
+  3) Nickname removed (unused)
+  4) "New Password" -> "Password"
+
+
+
+
+
+Page users:
+  1) Default sort, should put the curret user on the top of the table. And the remaining sorted after when they were last edited (updatedAt)
+  2) Copy the "Enable Two Factor Authentication" from the Profile Settings table, to this page, under the tab actions (put above the delete action)
+  3) Remove nickname from the page (unused, can keep in the database for now)
+  4) Chance text "New Password" to just "Password"
+
+
+
+
+
+
+I'm looking into the explanation for how the "Exploratory GAP" analysis was created. Almost all safeguards are given "Standard Scope IG3 none  No specific organizational factors affect this safeguard"
+It seems like all the organization information is ignored when determining which safeguards are relevant.
+
+What information should be included to better influence the calculations?
+
+For instance, Control 1/ Safeguard 1: "1.1 Establish and Maintain Detailed Enterprise Asset Inventory"
+What parametres would influence the relevance of this?
+
+
+Users:
+  ID
+  Name
+  Nickname
+  Email
+  New Password (_> Password)
+  Role
+  -> DELETE
+
+Profile Settings:
+  Profile : Name
+            Nickname
+            Work Function
+  Login   : 
+  Account : Enable Two Factor Authentication
+  Settings: 
+  Log     : 
+
+
+
+To Do:
+User page:
+  Some changes that resemble those we just did on the Profile, Task & Safeguard pages.
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars. Make the starred permanent, like on the Profile, Task, pages,
+    3) Header row over new ckeckbox column, a checkbox to select all and a dropdown menu to 1) select all, 2) Select Users; 3) Select Admins; 4) select starred
+    4) If one or more users have been selected, show action bar below table:
+      Display something like: "Selected 2 of 28 users" And action icons: 
+      Icon (lucide-react: Trash2) delete all selected users => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
+
+
+
+Is it possible in the report to give some indication of how much weight is put to each of the parametres of the Organization (Taxonomy & Classification) in deciding the verdict on each Control and Safeguard? Perhaps with a fold-out box, if the information would take up too much space.
+
+Is it possible in the report to give some indication of how much weight is put to each of the parametres of the Organization (Taxonomy & Classification) in deciding the verdict on each Control and Safeguard? 
+Have a text saying "explain..." under the Control / Safeguard. Fold out the information here when clicking on the explain text.
+Display in a fold-out box under the Control / Safeguard.
+
+, if the information would take up too much space.
+
+
+
+
+This whole application, Compliance Circle, is an application which is meant to aid specialists help companies fulfill the requirements of CIS18 (https://www.cisecurity.org/controls/cis-controls-list). Spefically, at which Implementation Group (IG1-3) they should target, and which controls and safeguards may be wholly or partially irrelevant for an organization of their size, of their type, etc.
+
+All the Organization Taxonomy & Classification are meant to be input to create a first suggestion of which controls and safeguards to include and which to set as "inactive". On the page "Exploratory GAP" there should be a button: "Generate Exploratory GAP" which generates this suggestion.
+
+Can you generate a suggestion on which Controls and Safeguard to include and which to set as "inactive" based on the information given in the Organization Taxonomy & Classification and based on the CIS18 documents. If there are more relevant questions to include in Taxonomy & Classification, then go ahead and add them. Also if your research finds any other suggestions (such as combining controls or safeguards, renaming, etc.) go ahead and implement these also.
+
+The suggestion should be displayed in the Exploratory GAP page, with the possibility for the user to adjust them (add/remove controls & safeguards). And finally a button to implement the suggestion. At which time, the Controls and Safeguards in the CIS Control/Safeguards page is updated.
+
+This is a big task. Task as long as you require. You have permission to do everything without stopping to ask.
+--- 
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Thursday 26 Feb
 
 * CIS Control -> Safeguards page: 
@@ -264,137 +362,30 @@
 * CIS Control -> Safeguards page:
   -> New column: Exclude. With a button to set a Safeguard to be inactive. The status is saved in the database, connected to the organization.
   -> New Switch: Show inactive.
-* Create Control & Safeguard GAP recommendation engine based on the organization information available in Taxonomy & Classification & based on the official documentation. (mega major task!)
-
-
-
-
-
-
-
-
-
-This whole application, Compliance Circle, is an application which is meant to aid specialists help companies fulfill the requirements of CIS18 (https://www.cisecurity.org/controls/cis-controls-list). Spefically, at which Implementation Group (IG1-3) they should target, and which controls and safeguards may be wholly or partially irrelevant for an organization of their size, of their type, etc.
-
-All the Organization Taxonomy & Classification are meant to be input to create a first suggestion of which controls and safeguards to include and which to set as "inactive". On the page "Exploratory GAP" there should be a button: "Generate Exploratory GAP" which generates this suggestion.
-
-Can you generate a suggestion on which Controls and Safeguard to include and which to set as "inactive" based on the information given in the Organization Taxonomy & Classification and based on the CIS18 documents. If there are more relevant questions to include in Taxonomy & Classification, then go ahead and add them. Also if your research finds any other suggestions (such as combining controls or safeguards, renaming, etc.) go ahead and implement these also.
-
-The suggestion should be displayed in the Exploratory GAP page, with the possibility for the user to adjust them (add/remove controls & safeguards). And finally a button to implement the suggestion. At which time, the Controls and Safeguards in the CIS Control/Safeguards page is updated.
-
-This is a big task. Task as long as you require. You have permission to do everything without stopping to ask.
---- 
-
-
-
-Can you make the starred Profiles and starred Assets permanent, like on the Task page.
-
-
-
-
-
-
-Organization page:
-  Some changes that resemble those we just did on the Profile, Task & Safeguard pages.
-    1) New leftmost column: checkbox to select
-    2) New rightmost column: stars. Make the starred permanent, like on the Profile, Task, pages,
-    3) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to select all, select starred
-    4) If one or more organizations have been selected, show action bar below table:
-      Display something like: "Selected 2 of 28 Organizations" And action icons: 
-      Icon (lucide-react: Trash2) delete all selected organizations => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
-
-Database:
-  New column in the organization table: ig. Should be numeric, possible values 1,2,3. Default: 1
-Organization page:
-  1) Add field in the detail pane to display the ig: "Target Implementation Group (IG)". The selections should between three badges: IG1, IG2, IG3
-Having the same colours as before:
-#5D664D;
-#335c8c;
-#ad423f;
-
-
-
-
-
-Deleting select tasks on the task page makes you go through two confirm modals. Can we change it so it follows how it works on the profile page: Only one confirm modal, have to check a checkbox and write "delete" in the selected language.
-
-
-
-
-ig1 : #5D664D;
-ig2 : #335c8c;
-ig3 : #ad423f;
-
-
-The selection drop down should be like on the Task page. Clicking on the checkbox selects all, clicking on the down caret opens the dropdown select options. And the "deselect all" should be removed.
-
-
-
-
-
-
-Some Safeguards are in all three Implementation Groups (IG1, IG2, IG3), but some are only in IG2+IG3 or only in IG3.
-If they're in all, then the IG column should show IG1 in a badge
-If they're only in IG2+IG3, the IG column should show IG2 in a badge
-If they're only in IG3, the IG column should show IG3 in a badge
-
-
-
-On the CIS Control page, move the "Show inactive" selector to below the Combined Group section
-
-Profile page:
-  Some changes that resemble those we just did on the Task & Safeguard pages.
+* Exploratory GAP : Create Control & Safeguard GAP recommendation engine based on the organization information available in Taxonomy & Classification & based on the official documentation. (mega major task!)
+* Exploratory GAP : Included explanation for suggestions.
+* User page:
     1) New leftmost column: checkbox to select
     2) New rightmost column: stars
-    3) Remove email column and add a new column there instead: login. Yes if the user has a login (a row in the login table), no otherweise. Make the yes/no into badges.
-    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to select all, Select users, select admins, select starred
-    5) If one or more profiles have been selected, show action bar below table:
-      Display something like: "Selected 2 of 28 Profiles" And action icons: 
-      Icon (lucide-react: Trash2) delete all selected profiles => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to a) select all, b) Select users, c) select admins, d) select starred
+    5) Selected Profile action bar:
+      -> "Selected 2 of 28 Users"
+      -> Action icons: Delete => confirm modal: check box + write "delete" (in selected langguage) to delete.
+* Incomming files page:
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to a) select all, b) select starred
+    5) Selected Profile action bar:
+      -> "Selected 2 of 28 Files"
+      -> Action icons: Delete => confirm modal: check box + write "delete" (in selected langguage) to delete.
+    6) Pagination
+    7) Filter/Search Input + functionality.
+* Organization Page
+  1) Changed default sorting order: a) last edited (updatedAt); 2) currently selected on top.
+  2) Fixed error to do with the Save Changes button now being showed if changes has been made to one of the items under Taxonomy or Classification
+* Create Control & Safeguard GAP recommendation engine based on the organization information available in Taxonomy & Classification & based on the official documentation. (mega major task!)
 
-
-      to create tasks from selected Safeguards => Modal to confirm action. The create tasks prefilled with Name = Sageguard Name; Description = Sageguard Definition + Purpose + Why; Start Date = Today
-
-
-    New column The Task column should show a badge with Yes/No, if it has a task. If Yes, and if there are multiple tasks, show the number in parantesis.
-    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to select all, select tasked (safeguards connected to a task), select untasked (safeguards not connected to a task), select starred
-    5) If one or more tasks has been selected, show action bar below table:
-      Display something like: "Selected 2 of 28 Safeguards" And action icons: Icon (lucide-react: ClipboardList) to create tasks from selected Safeguards => Modal to confirm action. The create tasks prefilled with Name = Sageguard Name; Description = Sageguard Definition + Purpose + Why; Start Date = Today
-
-
-
-
-
-
-
-
-5)      aster table: Header row for checkbox: checkbox to select all, dropdown menu to select various selections (starred, open, etc.)
-
-    New coloumns (much like t)
-
-
-   1) Master table: new column: Time Left. If not started=infinity sign, otherwise colour code for urgency
-    2) Master table: new column: Star.
-    3) Master table: rightclick on column / clicking on the star => stars row.
-    4) Master table: new column: Checkbox to select.
-    5) Master table: Header row for checkbox: checkbox to select all, dropdown menu to select various selections (starred, open, etc.)
-    6) Master table: added sorting functionality for columns (name, time left, status, star) + sort asc/desc + sort icon
-    7) Save starred rows in the database.
-    8) Master table: added new information/action row, displayed when one or more tasks have been selected.
-      8A) Add profiles to selected tasks => Popup
-      8B) Add start/end dates to selected tasks => Popup
-      8C) Change status of selected tasks => Popup
-      8D) Delete selected tasks. Double confirmation.
-      8E) Changed colour and icon size.
- 
-
-
-
-    Add button to create Tasks of all Safeguards of the selected IG
-
-
-
-
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Wednesday 25 Feb
 * Login Page (continued)
   -> Redo to use the "Better Auth" library (major) (continued)

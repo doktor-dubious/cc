@@ -1,6 +1,7 @@
 'use client';
 
 import { useUser }              from '@/context/UserContext';
+import { useOrganization }      from '@/context/OrganizationContext';
 import { useRouter }            from 'next/navigation';
 import { useEffect, useState }  from 'react';
 import { Trash2, Star, ChevronDown } from 'lucide-react';
@@ -69,6 +70,7 @@ import type { ExportColumn } from '@/lib/export';
 export default function OrganizationPage()
 {
     const user = useUser();
+    const { activeOrganization } = useOrganization();
     const router = useRouter();
     const t = useTranslations('Organization');
     const tc = useTranslations('Common');
@@ -830,17 +832,69 @@ export default function OrganizationPage()
             return;
         }
 
-        // Edit existing organization mode
-        const originalName = selectedOrg.name || "";
-        const originalDesc = selectedOrg.description || "";
-        const originalIg = selectedOrg.ig || 1;
+        // Helper to compare arrays
+        const arraysEqual = (a: string[], b: string[]) =>
+            a.length === b.length && a.every((v, i) => v === b[i]);
 
-        const nameChanged   = name.trim() !== originalName.trim();
-        const descChanged   = description.trim() !== originalDesc.trim();
-        const igChanged     = ig !== originalIg;
+        // Edit existing organization mode - Basic fields
+        const nameChanged = name.trim() !== (selectedOrg.name || "").trim();
+        const descChanged = description.trim() !== (selectedOrg.description || "").trim();
+        const igChanged = ig !== (selectedOrg.ig || 1);
+        const sizeChanged = size !== (selectedOrg.size || "MICRO");
 
-        setHasChanges(nameChanged || descChanged || igChanged);
-    }, [name, description, ig, selectedOrg]);
+        // Classification fields (Taxonomy tab)
+        const naceSectionChanged = naceSection !== (selectedOrg.naceSection || null);
+        const legalFormChanged = legalForm !== (selectedOrg.legalForm || null);
+        const revenueRangeChanged = revenueRange !== (selectedOrg.revenueRange || null);
+        const maturityChanged = maturity !== (selectedOrg.maturity || null);
+        const ownershipTypeChanged = ownershipType !== (selectedOrg.ownershipType || null);
+        const geographicScopeChanged = geographicScope !== (selectedOrg.geographicScope || null);
+        const businessOrientationChanged = businessOrientation !== (selectedOrg.businessOrientation || null);
+        const digitalMaturityChanged = digitalMaturity !== (selectedOrg.digitalMaturity || null);
+        const esgStatusChanged = esgStatus !== (selectedOrg.esgStatus || null);
+        const supplyChainRoleChanged = supplyChainRole !== (selectedOrg.supplyChainRole || null);
+        const riskProfileChanged = riskProfile !== (selectedOrg.riskProfile || null);
+        const euTaxonomyAlignedChanged = euTaxonomyAligned !== (selectedOrg.euTaxonomyAligned ?? null);
+
+        // IT & Security Classification fields
+        const itSecurityStaffChanged = itSecurityStaff !== (selectedOrg.itSecurityStaff || null);
+        const securityMaturityChanged = securityMaturity !== (selectedOrg.securityMaturity || null);
+        const dataSensitivityChanged = !arraysEqual(dataSensitivity, selectedOrg.dataSensitivity || []);
+        const regulatoryObligationsChanged = !arraysEqual(regulatoryObligations, selectedOrg.regulatoryObligations || []);
+        const itEndpointRangeChanged = itEndpointRange !== (selectedOrg.itEndpointRange || null);
+        const infrastructureTypesChanged = !arraysEqual(infrastructureTypes, selectedOrg.infrastructureTypes || []);
+        const softwareDevelopmentChanged = softwareDevelopment !== (selectedOrg.softwareDevelopment || null);
+        const publicFacingServicesChanged = publicFacingServices !== (selectedOrg.publicFacingServices || null);
+        const targetedAttackLikelihoodChanged = targetedAttackLikelihood !== (selectedOrg.targetedAttackLikelihood || null);
+        const downtimeToleranceChanged = downtimeTolerance !== (selectedOrg.downtimeTolerance || null);
+        const supplyChainPositionChanged = supplyChainPosition !== (selectedOrg.supplyChainPosition || null);
+        const securityBudgetRangeChanged = securityBudgetRange !== (selectedOrg.securityBudgetRange || null);
+
+        const hasAnyChange =
+            nameChanged || descChanged || igChanged || sizeChanged ||
+            // Classification
+            naceSectionChanged || legalFormChanged || revenueRangeChanged || maturityChanged ||
+            ownershipTypeChanged || geographicScopeChanged || businessOrientationChanged ||
+            digitalMaturityChanged || esgStatusChanged || supplyChainRoleChanged ||
+            riskProfileChanged || euTaxonomyAlignedChanged ||
+            // IT & Security
+            itSecurityStaffChanged || securityMaturityChanged || dataSensitivityChanged ||
+            regulatoryObligationsChanged || itEndpointRangeChanged || infrastructureTypesChanged ||
+            softwareDevelopmentChanged || publicFacingServicesChanged || targetedAttackLikelihoodChanged ||
+            downtimeToleranceChanged || supplyChainPositionChanged || securityBudgetRangeChanged;
+
+        setHasChanges(hasAnyChange);
+    }, [
+        name, description, ig, size, selectedOrg,
+        // Classification fields
+        naceSection, legalForm, revenueRange, maturity, ownershipType,
+        geographicScope, businessOrientation, digitalMaturity, esgStatus,
+        supplyChainRole, riskProfile, euTaxonomyAligned,
+        // IT & Security fields
+        itSecurityStaff, securityMaturity, dataSensitivity, regulatoryObligations,
+        itEndpointRange, infrastructureTypes, softwareDevelopment, publicFacingServices,
+        targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange
+    ]);
 
     // Reset to page 1 when filter changes
     useEffect(() =>
@@ -1487,10 +1541,21 @@ export default function OrganizationPage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FILTER ORGANIZATION TABLE
-    const filteredOrganizations = organizations.filter(org => 
-        org.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        org.id.toString().includes(filterText)
-    );
+    const filteredOrganizations = organizations
+        .filter(org =>
+            org.name.toLowerCase().includes(filterText.toLowerCase()) ||
+            org.id.toString().includes(filterText)
+        )
+        // Sort: active organization first, then by updatedAt descending
+        .sort((a, b) => {
+            // Active organization always on top
+            if (activeOrganization?.id === a.id) return -1;
+            if (activeOrganization?.id === b.id) return 1;
+            // Then sort by updatedAt descending (most recent first)
+            const dateA = new Date(a.updatedAt).getTime();
+            const dateB = new Date(b.updatedAt).getTime();
+            return dateB - dateA;
+        });
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // Calculate pagination based on filtered data
