@@ -170,96 +170,77 @@
   -> Fixed stars functionality.
 * Created new CLAUDE.md (old one dissapeared?)
 * Exploratory GAP : examining explanation for suggestions...
-  -> Most are marked as "Standard Scope IG3 none  No specific organizational factors affect this safeguard"
-  A few with "Data Sensitivity  SPECIAL_CATEGORY, PAYMENT_CARD  +15 Sensitive data handling increases data protection priority"
+  --> Substantially refined sugestion parametres.
 * Page users:
   1) Changed default sort order to last changed + current user always on top.
   2) Moved "Enable Two Factor Authentication" from the "Profile Settings" page to here. Under the action tab, above delete.
   3) Nickname removed (unused)
   4) "New Password" -> "Password"
+  5) Track login activity/history. Database changes + new tab.
+  6) Changed cursor to hover, when over the delete button.
+  7) Added warning when turning on 2FA for a user.
+  8) Fixed bug in 2FA enable. Now the QR code / backup codes are showed.
+  9) Added 
+* Sidemenu:
+  1) Organizations moved to under the separator/above profiles (Admins - Advisors can create / update Organizations) 
+  2) Organizaion selector. Current Organization on top, others sorted after last selected.
+  3) Organizaion selector: Search/Filter input & functionality, if there are more than 8 of them.
+* Profile Settings page & menu: Removed (functionality moved to Page Users)
+* Message page:
+    1) New leftmost column: checkbox to select
+    2) New rightmost column: stars
+    3) ID column removed
+    4) Header row over new ckeckbox column, a checkbox to select/deselect all and a dropdown menu to a) select all, b) select starred
+    5) Sorting of columns.
+* User Page: Enabled sorting on columns Name, Email, Role, Stars
+* Organization page: Enabled sorting on columns Name, Stars
+* Profiles page: Enabled sorting on columns Name, Role, Stars
+* Asset page: Enabled sorting on columns Name, Type, Stars
+* Incomming files page: Enabled sorting on columns Filename, size, Modifies, Stars
+* Recreated Profile Settings page. oy! In a smaller version.
+* Sidemenu: Settings -> 1) Profile Settings; 2) Application Settings.
+* Audit Trail Page: Enable sorting on columns Date, User, Importance, Message, Enity
+* CIS Control page:
+  1) "Show Inactive" activates switch + hover cursor pointer.
+* Exploratory GAP Analysis, results made more permanent.
+* Users, Organization, Profiles, Task, Assets pages: tab triggers giver cursor pointer on hover.
+* Fixed page title for a number of pages which prevously had incorrect titles.
+* CIS Control page:
+  1) New button ("Risc Analysis Composition") under "Show Inactive". => Open up the Exploratory GAP Analysis page.
+  2) Rename "Exploratory GAP Analysis" page to "CIS Risc Analysis"
+  3) Remove link to report from Sidemenu -> Reports menu
+  4) Rename "exploratory-gap" to "CIS Risc Analysis" and move to under cis/cis-risc-analysis (from where it is now: reports/exploratory-gap)
+CIS Risc Analysis page
+  1) Title renamed to "CIS Risc Analysis" (was: "Exploratory GAP Analysis")
+  2) "Current Organization" & organization name removed. Execute button renamed "Generate" (was "Generate Exploratory GAP"), and moved to left of page.
+  3) New button "Clear" -> removes the current analysis. First a popup warning. Button on the right side, in the same box as the "Generate" button. Only be displayed if an analysis has been made.
+  4) Button "Implement Recommendations" moved from bottom of page, to the right of the "clear" button and rename to "Implement"
+  5) Changing the recommeded implementation group, did not change the safeguards. The safeguards not available under the chosed implementation group should be removed. => fixed
+  6) Change clear button to "secondary"
+  7) Moved the Control "explain scoring" up from the expanded (safeguard) section.
+  8) Altered threshold-based scoring logic: 
+      * Score < 30 → automatically mark as inactive;                                                                                                                   
+      * Score < 50 → suggest as inactive (but not forced)
+      * Score ≥ 50 → active
 
 
-
-
-
-Page users:
-  1) Default sort, should put the curret user on the top of the table. And the remaining sorted after when they were last edited (updatedAt)
-  2) Copy the "Enable Two Factor Authentication" from the Profile Settings table, to this page, under the tab actions (put above the delete action)
-  3) Remove nickname from the page (unused, can keep in the database for now)
-  4) Chance text "New Password" to just "Password"
-
-
-
-
-
-
-I'm looking into the explanation for how the "Exploratory GAP" analysis was created. Almost all safeguards are given "Standard Scope IG3 none  No specific organizational factors affect this safeguard"
-It seems like all the organization information is ignored when determining which safeguards are relevant.
-
-What information should be included to better influence the calculations?
-
-For instance, Control 1/ Safeguard 1: "1.1 Establish and Maintain Detailed Enterprise Asset Inventory"
-What parametres would influence the relevance of this?
-
-
-Users:
-  ID
-  Name
-  Nickname
-  Email
-  New Password (_> Password)
-  Role
-  -> DELETE
-
-Profile Settings:
-  Profile : Name
-            Nickname
-            Work Function
-  Login   : 
-  Account : Enable Two Factor Authentication
-  Settings: 
-  Log     : 
 
 
 
 To Do:
-User page:
+Message page:
   Some changes that resemble those we just did on the Profile, Task & Safeguard pages.
     1) New leftmost column: checkbox to select
     2) New rightmost column: stars. Make the starred permanent, like on the Profile, Task, pages,
-    3) Header row over new ckeckbox column, a checkbox to select all and a dropdown menu to 1) select all, 2) Select Users; 3) Select Admins; 4) select starred
+    3) Header row over new ckeckbox column, a checkbox to select all and a dropdown menu to 1) select all, 2) select starred
+    4) Remove ID column
+    5) Enable sorting of columns.
+
     4) If one or more users have been selected, show action bar below table:
       Display something like: "Selected 2 of 28 users" And action icons: 
       Icon (lucide-react: Trash2) delete all selected users => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
 
-
-
-Is it possible in the report to give some indication of how much weight is put to each of the parametres of the Organization (Taxonomy & Classification) in deciding the verdict on each Control and Safeguard? Perhaps with a fold-out box, if the information would take up too much space.
-
-Is it possible in the report to give some indication of how much weight is put to each of the parametres of the Organization (Taxonomy & Classification) in deciding the verdict on each Control and Safeguard? 
-Have a text saying "explain..." under the Control / Safeguard. Fold out the information here when clicking on the explain text.
-Display in a fold-out box under the Control / Safeguard.
-
-, if the information would take up too much space.
-
-
-
-
-This whole application, Compliance Circle, is an application which is meant to aid specialists help companies fulfill the requirements of CIS18 (https://www.cisecurity.org/controls/cis-controls-list). Spefically, at which Implementation Group (IG1-3) they should target, and which controls and safeguards may be wholly or partially irrelevant for an organization of their size, of their type, etc.
-
-All the Organization Taxonomy & Classification are meant to be input to create a first suggestion of which controls and safeguards to include and which to set as "inactive". On the page "Exploratory GAP" there should be a button: "Generate Exploratory GAP" which generates this suggestion.
-
-Can you generate a suggestion on which Controls and Safeguard to include and which to set as "inactive" based on the information given in the Organization Taxonomy & Classification and based on the CIS18 documents. If there are more relevant questions to include in Taxonomy & Classification, then go ahead and add them. Also if your research finds any other suggestions (such as combining controls or safeguards, renaming, etc.) go ahead and implement these also.
-
-The suggestion should be displayed in the Exploratory GAP page, with the possibility for the user to adjust them (add/remove controls & safeguards). And finally a button to implement the suggestion. At which time, the Controls and Safeguards in the CIS Control/Safeguards page is updated.
-
-This is a big task. Task as long as you require. You have permission to do everything without stopping to ask.
---- 
-
-
-
-
-
+Audit Trail Page: Enable sorting on columns Date, User, Importance, Message, Enity, Stars
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Thursday 26 Feb

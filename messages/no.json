@@ -74,6 +74,8 @@
     "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
+    "cisControls": "CIS Kontroller",
+    "cisSafeguards": "CIS Sikkerhetstiltak",
     "academy": "Akademi",
     "ai": "AI",
     "learnMore": "Lær mer",
@@ -82,6 +84,7 @@
     "termsOfService": "Brukervilkår",
     "blog": "Blogg",
     "theme": "Tema",
+    "settings": "Innstillinger",
     "profileSettings": "Profilinnstillinger",
     "applicationSettings": "Programinnstillinger",
     "language": "Språk",
@@ -395,70 +398,102 @@
 
   "User": {
     "buttons": {
-      "newUser": "New Login",
-      "createUser": "Create Login",
-      "saveChanges": "Save Changes",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "deleteUser": "Delete Login",
-      "creating": "Creating...",
-      "saving": "Saving...",
-      "deleting": "Deleting..."
+      "newUser": "Ny innlogging",
+      "createUser": "Opprett innlogging",
+      "saveChanges": "Lagre endringer",
+      "cancel": "Avbryt",
+      "delete": "Slett",
+      "deleteUser": "Slett innlogging",
+      "deleteUsers": "Slett {count} innlogging(er)",
+      "deleteSelected": "Slett valgte innlogginger",
+      "creating": "Oppretter...",
+      "saving": "Lagrer...",
+      "deleting": "Sletter...",
+      "disable2FA": "Deaktiver 2FA"
     },
     "dialogs": {
-      "createTitle": "Create New Login",
-      "createDescription": "Enter the details for the new login.",
-      "deleteTitle": "Are you absolutely sure?",
-      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system."
+      "createTitle": "Opprett ny innlogging",
+      "createDescription": "Skriv inn detaljene for den nye innloggingen.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Dette vil deaktivere innloggingen \"{name}\" og de vil ikke lenger ha tilgang til systemet.",
+      "bulkDeleteTitle": "Slett flere innlogginger",
+      "bulkDeleteDescription": "Du er i ferd med å slette {count} innlogginger. Denne handlingen kan ikke angres.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse innloggingene",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for å bekrefte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} av {total} innlogginger"
     },
     "labels": {
-      "name": "Name",
-      "nickname": "Nickname",
-      "email": "Email",
-      "password": "Password",
-      "newPassword": "New Password",
-      "role": "Role",
+      "name": "Navn",
+      "nickname": "Kallenavn",
+      "email": "E-post",
+      "emailCannotBeChanged": "E-post kan ikke endres",
+      "password": "Passord",
+      "newPassword": "Nytt passord",
+      "role": "Rolle",
       "id": "ID"
     },
     "placeholders": {
-      "enterName": "Enter full name",
-      "enterNickname": "Enter nickname",
-      "enterEmail": "Enter email address",
-      "enterPassword": "Enter password",
-      "enterNewPassword": "Leave empty to keep current password",
-      "filterByNameOrEmail": "Filter by name or email..."
+      "enterName": "Skriv inn fullt navn",
+      "enterNickname": "Skriv inn kallenavn",
+      "enterEmail": "Skriv inn e-postadresse",
+      "enterPassword": "Skriv inn passord",
+      "enterNewPassword": "La stå tomt for å beholde nåværende passord",
+      "filterByNameOrEmail": "Filtrer etter navn eller e-post...",
+      "filterSessions": "Filtrer etter enhet, sted eller IP..."
     },
     "tabs": {
-      "details": "Details",
-      "actions": "Actions"
+      "details": "Detaljer",
+      "loginHistory": "Innloggingshistorikk",
+      "actions": "Handlinger"
     },
     "roles": {
-      "USER": "User",
+      "USER": "Bruker",
       "ADMIN": "Admin",
-      "SUPER_ADMIN": "Super Admin"
+      "SUPER_ADMIN": "Superadmin"
     },
     "empty": {
-      "noUsersMatch": "No logins match your filter",
-      "noUsersFound": "No logins found"
+      "noUsersMatch": "Ingen innlogginger matcher filteret ditt",
+      "noUsersFound": "Ingen innlogginger funnet",
+      "noSessions": "Ingen innloggingsøkter funnet",
+      "noSessionsMatch": "Ingen økter matcher filteret ditt"
     },
     "pagination": {
-      "showingUsers": "Showing {start} to {end} of {total} logins"
+      "showingUsers": "Viser {start} til {end} av {total} innlogginger",
+      "showingSessions": "Viser {start} til {end} av {total} økter"
     },
     "toast": {
-      "userCreated": "Login created successfully",
-      "userUpdated": "Login updated successfully",
-      "saveError": "Could not save login",
-      "userDeleted": "Login deleted successfully",
-      "deleteError": "Could not delete login",
-      "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account",
-      "passwordTooWeak": "Password is too weak. Please make it stronger."
+      "userCreated": "Innlogging opprettet",
+      "userUpdated": "Innlogging oppdatert",
+      "saveError": "Kunne ikke lagre innlogging",
+      "userDeleted": "Innlogging slettet",
+      "deleteError": "Kunne ikke slette innlogging",
+      "emailTaken": "En bruker med denne e-posten finnes allerede",
+      "cannotDeleteSelf": "Kan ikke slette din egen konto",
+      "passwordTooWeak": "Passordet er for svakt. Gjør det sterkere.",
+      "usersDeleted": "Slettet {count} innlogging(er)",
+      "usersDeleteFailed": "Kunne ikke slette {count} innlogging(er)",
+      "twoFactorDisabled": "Tofaktorautentisering deaktivert",
+      "twoFactorDisableError": "Kunne ikke deaktivere tofaktorautentisering",
+      "starError": "Kunne ikke oppdatere stjerne"
     },
     "sections": {
-      "userActions": "Login Actions",
-      "userActionsDescription": "Manage this login with the actions below.",
-      "deleteUserTitle": "Delete Login",
-      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+      "userActions": "Innloggingshandlinger",
+      "userActionsDescription": "Administrer denne innloggingen med handlingene nedenfor.",
+      "deleteUserTitle": "Slett innlogging",
+      "deleteUserDescription": "Deaktiver denne innloggingen permanent. Brukeren vil ikke lenger ha tilgang til systemet.",
+      "loginHistory": "Innloggingshistorikk",
+      "twoFactorTitle": "Tofaktorautentisering",
+      "twoFactorEnabled": "Aktivert",
+      "twoFactorEnabledDescription": "Denne brukeren har tofaktorautentisering aktivert. Du kan deaktivere den hvis de mister tilgang til autentiseringsappen.",
+      "twoFactorDisabledDescription": "Denne brukeren har ikke tofaktorautentisering aktivert."
+    },
+    "sessionLabels": {
+      "device": "Enhet",
+      "location": "Sted",
+      "created": "Opprettet",
+      "updated": "Oppdatert"
     },
     "password": {
       "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
@@ -473,6 +508,12 @@
       "invalidFormat": "Invalid email format",
       "alreadyTaken": "This email is already taken",
       "available": "Email is available"
+    },
+    "twoFactor": {
+      "shareWithUser": "Del QR-koden og sikkerhetskodene med brukeren. De må skanne QR-koden med sin autentiseringsapp (Google Authenticator, Authy, etc.).",
+      "scanQrCode": "Skann denne QR-koden med en autentiseringsapp",
+      "backupCodes": "Sikkerhetskoder (lagre disse trygt)",
+      "saveBackupCodes": "Lagre sikkerhetskodene dine på et trygt sted. Du vil trenge dem hvis du mister tilgang til autentiseringsappen din."
     }
   },
 
@@ -1085,7 +1126,8 @@
     "toast": {
       "messageDeleted": "Melding slettet",
       "deleteError": "Kunne ikke slette melding",
-      "loadError": "Kunne ikke laste meldinger"
+      "loadError": "Kunne ikke laste meldinger",
+      "starError": "Kunne ikke oppdatere stjerne"
     }
   },
 

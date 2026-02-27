@@ -28,6 +28,7 @@ type SafeUser =
     role             : UserRole;
     workFunction     : WorkFunction;
     twoFactorEnabled : boolean;
+    updatedAt        : Date;
 };
 
 const selectFields =
@@ -39,6 +40,7 @@ const selectFields =
     role             : true,
     workFunction     : true,
     twoFactorEnabled : true,
+    updatedAt        : true,
 } as const;
 
 export const userRepository =

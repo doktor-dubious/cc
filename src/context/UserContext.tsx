@@ -4,6 +4,7 @@ import { createContext, useContext, ReactNode } from 'react';
 import type { UserRole } from '@prisma/client';
 
 interface User {
+  id                : string;
   name              : string;
   email             : string;
   role              : UserRole;

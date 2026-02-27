@@ -25,10 +25,20 @@ export async function GET(request: Request) {
 
     const { searchParams } = new URL(request.url);
     const organizationId = searchParams.get('organizationId');
+    const targetIgParam = searchParams.get('targetIg');
+    const targetIg = targetIgParam ? parseInt(targetIgParam, 10) : undefined;
 
     if (!organizationId) {
       return NextResponse.json<ApiResponse>(
         { success: false, error: 'organizationId is required' },
+        { status: 400 }
+      );
+    }
+
+    // Validate targetIg if provided
+    if (targetIg !== undefined && (targetIg < 1 || targetIg > 3)) {
+      return NextResponse.json<ApiResponse>(
+        { success: false, error: 'targetIg must be 1, 2, or 3' },
         { status: 400 }
       );
     }
@@ -89,8 +99,8 @@ export async function GET(request: Request) {
       securityBudgetRange: organization.securityBudgetRange,
     };
 
-    // Generate recommendations
-    const recommendation = generateGapRecommendation(profile);
+    // Generate recommendations (with optional targetIg override)
+    const recommendation = generateGapRecommendation(profile, targetIg);
 
     return NextResponse.json<ApiResponse>({
       success: true,
@@ -98,6 +108,7 @@ export async function GET(request: Request) {
         organizationId,
         organizationName: organization.name,
         recommendation,
+        targetIgOverride: targetIg, // Include to confirm if override was used
       },
     });
   } catch (error: any) {

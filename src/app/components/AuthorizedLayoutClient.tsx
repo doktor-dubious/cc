@@ -158,15 +158,27 @@ let pathname = usePathname();
 // Map routes to titles
 const getPageTitle = () =>
 {
-    if (pathname.includes('/asset'))            return t('assets');
-    if (pathname.includes('/task'))             return t('tasks');
-    if (pathname.includes('/organization'))     return t('organizations');
-    if (pathname.includes('/settings/profile')) return t('profileSettings');
+    if (pathname.includes('/asset'))                return t('assets');
+    if (pathname.includes('/task'))                 return t('tasks');
+    if (pathname.includes('/organization'))         return t('organizations');
+    if (pathname.includes('/settings/profile'))     return t('profileSettings');
     if (pathname.includes('/settings/application')) return t('applicationSettings');
-    if (pathname.includes('/profile'))          return t('profiles');
-    if (pathname.includes('/upload-files'))     return t('uploadFiles');
-    if (pathname.includes('/incomming-files'))  return t('incommingFiles');
-    if (pathname.includes('/home'))             return t('home');
+    if (pathname.includes('/profile'))              return t('profiles');
+    if (pathname.includes('/upload-files'))         return t('uploadFiles');
+    if (pathname.includes('/incomming-files'))      return t('incommingFiles');
+    if (pathname.includes('/home'))                 return t('home');
+    if (pathname.includes('/user'))                 return t('users');
+    if (pathname.includes('/message'))              return t('messages');
+    if (pathname.includes('/audit-trail'))          return t('auditTrail');
+    if (pathname.includes('/cis/controls'))         return t('cisControls');
+    if (pathname.includes('/cis/safeguards'))       return t('cisSafeguards');
+    if (pathname.includes('/cis/cis-risc-analysis')) return t('cisRiscAnalysis');
+    if (pathname.includes('/reports/status'))       return t('statusReport');
+    if (pathname.includes('/reports/progress'))     return t('progressReport');
+    if (pathname.includes('/reports/gap'))          return t('gap');
+    if (pathname.includes('/reports/conq'))         return t('conq');
+    if (pathname.includes('/turk'))                 return t('mechanicalTurk');
+    if (pathname.includes('/dashboard'))            return t('home');
 
     return 'Dashboard';
 };
@@ -785,7 +797,6 @@ function TaskSidebarSections({
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/status')}>{t('statusReport')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/progress')}>{t('progressReport')}</DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/exploratory-gap')}>{t('exploratoryGap')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/gap')}>{t('gap')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/conq')}>{t('conq')}</DropdownMenuItem>
                       </DropdownMenuSubContent>

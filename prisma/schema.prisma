@@ -44,6 +44,7 @@ model User {
   accounts         Account[]
   twoFactors       TwoFactor[]
   userStars        UserStar[]
+  loginHistory     LoginHistory[]
 
   @@map("login")
 }
@@ -60,7 +61,29 @@ model Session {
   userId    String   @map("user_id") @db.Uuid
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
+  // Location fields (populated via IP geolocation)
+  city      String?
+  region    String?
+  country   String?
+
   @@map("session")
+}
+
+/// Login history — tracks each login event for audit purposes
+model LoginHistory {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId    String   @map("user_id") @db.Uuid
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  ipAddress String?  @map("ip_address")
+  userAgent String?  @map("user_agent")
+  city      String?
+  region    String?
+  country   String?
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+
+  @@index([userId])
+  @@index([createdAt])
+  @@map("login_history")
 }
 
 /// Better Auth account table — stores credentials (password hash) and OAuth tokens
@@ -460,6 +483,17 @@ model FileStar {
   @@map("file_star")
 }
 
+/// Starred messages - organization-wide, visible to all users in the organization
+model MessageStar {
+  messageId String   @map("message_id") @db.Uuid
+  createdAt DateTime @default(now()) @map("created_at")
+  message   Message  @relation(fields: [messageId], references: [id], onDelete: Cascade)
+
+  @@id([messageId])
+  @@index([messageId])
+  @@map("message_star")
+}
+
 /// Messages tied to Tasks - can be system-generated or from users
 model Message {
   id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -473,8 +507,9 @@ model Message {
   active    Boolean     @default(true)
   createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
-  sender    User?       @relation(fields: [senderId], references: [id])
-  task      Task        @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  sender       User?        @relation(fields: [senderId], references: [id])
+  task         Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  messageStars MessageStar[]
 
   @@index([taskId])
   @@index([senderId])

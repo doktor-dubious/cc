@@ -9,9 +9,11 @@ import { useTranslations }                      from 'next-intl';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { ExportMenu } from '@/components/ui/export-menu';
 import type { ExportColumn } from '@/lib/export';
+import { Star, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 import {
   Table,
@@ -50,6 +52,14 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog"
 
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
+
 export default function MessagePage()
 {
     const user = useUser();
@@ -72,8 +82,13 @@ export default function MessagePage()
     const [isMessageModalOpen, setIsMessageModalOpen] = useState(false);
 
     // Delete
-    const [messageToDelete, setMessageToDelete] = useState<number | null>(null);
+    const [messageToDelete, setMessageToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+
+    // Stars, selection, sorting
+    const [starredMessageIds, setStarredMessageIds] = useState<Set<string>>(new Set());
+    const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string>>(new Set());
+    const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FETCH MESSAGES
@@ -102,19 +117,43 @@ export default function MessagePage()
         }
     };
 
+    // FETCH STARRED MESSAGES
+    const fetchStarredMessages = async () =>
+    {
+        if (!activeOrganization) return;
+
+        try
+        {
+            const res = await fetch(`/api/message-star?organizationId=${activeOrganization.id}`);
+            const data = await res.json();
+            if (data.success)
+            {
+                setStarredMessageIds(new Set(data.data));
+            }
+        }
+        catch (err)
+        {
+            console.error("Fetch starred messages error:", err);
+        }
+    };
+
     useEffect(() =>
     {
         if (activeOrganization)
         {
             setLoading(true);
             fetchMessages();
+            fetchStarredMessages();
         }
     }, [activeOrganization]);
 
     // Listen for page refresh events
     useEffect(() =>
     {
-        const handleRefresh = () => fetchMessages();
+        const handleRefresh = () => {
+            fetchMessages();
+            fetchStarredMessages();
+        };
         window.addEventListener('refreshPage', handleRefresh);
         return () => window.removeEventListener('refreshPage', handleRefresh);
     }, [activeOrganization]);
@@ -124,6 +163,50 @@ export default function MessagePage()
     {
         setCurrentPage(1);
     }, [filterText]);
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // TOGGLE STAR (API call)
+    const toggleStarApi = async (messageId: string) =>
+    {
+        try
+        {
+            const res = await fetch('/api/message-star', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ messageId }),
+            });
+            const data = await res.json();
+            if (!data.success)
+            {
+                console.error('Failed to toggle star:', data.message);
+                toast.error(t('toast.starError'));
+                return;
+            }
+            // Update local state based on response
+            setStarredMessageIds(prev => {
+                const newSet = new Set(prev);
+                if (data.starred) {
+                    newSet.add(messageId);
+                } else {
+                    newSet.delete(messageId);
+                }
+                return newSet;
+            });
+        }
+        catch (err)
+        {
+            console.error("Toggle star error:", err);
+            toast.error(t('toast.starError'));
+        }
+    };
+
+    const toggleStar = (messageId: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.preventDefault();
+            e.stopPropagation();
+        }
+        toggleStarApi(messageId);
+    };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // VIEW MESSAGE
@@ -206,23 +289,118 @@ export default function MessagePage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // FILTER & PAGINATION
-    const filteredMessages = messages.filter((message) =>
-        message.content.toLowerCase().includes(filterText.toLowerCase()) ||
-        (message.task?.name || '').toLowerCase().includes(filterText.toLowerCase()) ||
-        (message.sender?.name || '').toLowerCase().includes(filterText.toLowerCase())
-    );
+    // SELECTION HELPERS
+    const toggleMessageSelection = (messageId: string, e?: React.MouseEvent) => {
+        if (e) {
+            e.stopPropagation();
+        }
+        setSelectedMessageIds(prev => {
+            const newSet = new Set(prev);
+            if (newSet.has(messageId)) {
+                newSet.delete(messageId);
+            } else {
+                newSet.add(messageId);
+            }
+            return newSet;
+        });
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // SORTING
+    const handleSort = (key: string) => {
+        setSortConfig(prev => {
+            if (prev?.key === key) {
+                return { key, direction: prev.direction === 'asc' ? 'desc' : 'asc' };
+            }
+            return { key, direction: 'asc' };
+        });
+    };
+
+    const getSortIcon = (key: string) => {
+        if (sortConfig?.key !== key) {
+            return <ArrowUpDown className="ml-1 h-3 w-3 inline opacity-50" />;
+        }
+        return sortConfig.direction === 'asc'
+            ? <ArrowUp className="ml-1 h-3 w-3 inline" />
+            : <ArrowDown className="ml-1 h-3 w-3 inline" />;
+    };
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FILTER, SORT & PAGINATION
+    const filteredMessages = messages
+        .filter((message) =>
+            message.content.toLowerCase().includes(filterText.toLowerCase()) ||
+            (message.task?.name || '').toLowerCase().includes(filterText.toLowerCase()) ||
+            (message.sender?.name || '').toLowerCase().includes(filterText.toLowerCase())
+        )
+        .sort((a, b) => {
+            if (!sortConfig) return 0;
+            const { key, direction } = sortConfig;
+            const multiplier = direction === 'asc' ? 1 : -1;
+
+            if (key === 'message') {
+                return multiplier * a.content.localeCompare(b.content);
+            }
+            if (key === 'task') {
+                const aTask = a.task?.name || '';
+                const bTask = b.task?.name || '';
+                return multiplier * aTask.localeCompare(bTask);
+            }
+            if (key === 'sender') {
+                const aSender = a.type === 'SYSTEM' ? 'System' : (a.sender?.name || 'Unknown');
+                const bSender = b.type === 'SYSTEM' ? 'System' : (b.sender?.name || 'Unknown');
+                return multiplier * aSender.localeCompare(bSender);
+            }
+            if (key === 'date') {
+                return multiplier * (new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
+            }
+            if (key === 'star') {
+                const aStarred = starredMessageIds.has(a.id) ? 1 : 0;
+                const bStarred = starredMessageIds.has(b.id) ? 1 : 0;
+                return multiplier * (bStarred - aStarred); // Starred first when ascending
+            }
+            return 0;
+        });
 
     const totalPages = Math.ceil(filteredMessages.length / perPage);
     const startIndex = (currentPage - 1) * perPage;
     const endIndex = startIndex + perPage;
     const currentMessages = filteredMessages.slice(startIndex, endIndex);
 
+    // Selection helpers
+    const allCurrentSelected = currentMessages.length > 0 && currentMessages.every(m => selectedMessageIds.has(m.id));
+    const someCurrentSelected = currentMessages.some(m => selectedMessageIds.has(m.id)) && !allCurrentSelected;
+
+    const selectAllCurrent = () => {
+        setSelectedMessageIds(prev => {
+            const newSet = new Set(prev);
+            currentMessages.forEach(m => newSet.add(m.id));
+            return newSet;
+        });
+    };
+
+    const deselectAllCurrent = () => {
+        setSelectedMessageIds(prev => {
+            const newSet = new Set(prev);
+            currentMessages.forEach(m => newSet.delete(m.id));
+            return newSet;
+        });
+    };
+
+    const selectStarred = () => {
+        setSelectedMessageIds(prev => {
+            const newSet = new Set(prev);
+            filteredMessages.filter(m => starredMessageIds.has(m.id)).forEach(m => newSet.add(m.id));
+            return newSet;
+        });
+    };
+
     const exportColumns: ExportColumn[] = [
         { header: 'Message', accessor: 'content' },
         { header: 'Task', accessor: (row: any) => row.task?.name || '' },
         { header: 'Sender', accessor: (row: any) => row.sender?.name || 'System' },
         { header: 'Date', accessor: (row: any) => new Date(row.createdAt).toLocaleString() },
+        { header: 'Starred', accessor: (row: any) => starredMessageIds.has(row.id) ? 'Yes' : 'No' },
     ];
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -312,23 +490,92 @@ export default function MessagePage()
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-20 text-right">{t('table.id')}</TableHead>
-              <TableHead>{t('table.message')}</TableHead>
-              <TableHead className="w-48">{t('table.task')}</TableHead>
-              <TableHead className="w-40">{t('table.sender')}</TableHead>
-              <TableHead className="w-44">{t('table.date')}</TableHead>
+              {/* Checkbox column with dropdown */}
+              <TableHead className="w-12">
+                <div className="flex items-center gap-1">
+                  <Checkbox
+                    checked={allCurrentSelected}
+                    ref={(el) => {
+                      if (el) (el as any).indeterminate = someCurrentSelected;
+                    }}
+                    onCheckedChange={(checked) => {
+                      if (checked) {
+                        selectAllCurrent();
+                      } else {
+                        deselectAllCurrent();
+                      }
+                    }}
+                  />
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <button className="p-1 hover:bg-muted rounded">
+                        <ChevronDown className="h-3 w-3" />
+                      </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="start">
+                      <DropdownMenuItem onClick={selectAllCurrent}>
+                        {tc('selection.selectAll')}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={selectStarred}>
+                        <Star className="h-4 w-4 mr-2 fill-yellow-400 text-yellow-400" />
+                        {tc('selection.starred')}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </TableHead>
+              {/* Message column - sortable */}
+              <TableHead
+                className="cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('message')}
+              >
+                {t('table.message')}
+                {getSortIcon('message')}
+              </TableHead>
+              {/* Task column - sortable */}
+              <TableHead
+                className="w-48 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('task')}
+              >
+                {t('table.task')}
+                {getSortIcon('task')}
+              </TableHead>
+              {/* Sender column - sortable */}
+              <TableHead
+                className="w-40 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('sender')}
+              >
+                {t('table.sender')}
+                {getSortIcon('sender')}
+              </TableHead>
+              {/* Date column - sortable */}
+              <TableHead
+                className="w-44 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('date')}
+              >
+                {t('table.date')}
+                {getSortIcon('date')}
+              </TableHead>
+              {/* Star column - sortable */}
+              <TableHead
+                className="w-12 cursor-pointer select-none hover:bg-muted/50"
+                onClick={() => handleSort('star')}
+              >
+                {getSortIcon('star')}
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {loading ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   {t('empty.loading')}
                 </TableCell>
               </TableRow>
             ) : currentMessages.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   {filterText ? t('empty.noMessagesMatch') : t('empty.noMessagesFound')}
                 </TableCell>
               </TableRow>
@@ -342,8 +589,19 @@ export default function MessagePage()
                     hover:bg-muted/50
                   `}
                   onClick={() => handleViewMessage(message)}
+                  onContextMenu={(e) => {
+                    e.preventDefault();
+                    toggleStar(message.id);
+                  }}
                 >
-                  <TableCell className="w-20 text-right tabular-nums">{message.id}</TableCell>
+                  {/* Checkbox cell */}
+                  <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <Checkbox
+                      checked={selectedMessageIds.has(message.id)}
+                      onCheckedChange={() => toggleMessageSelection(message.id)}
+                    />
+                  </TableCell>
+                  {/* Message cell */}
                   <TableCell className="max-w-md">
                     <div className="flex items-center gap-2">
                       {!message.isRead && (
@@ -357,12 +615,30 @@ export default function MessagePage()
                       <span className="truncate">{message.content}</span>
                     </div>
                   </TableCell>
+                  {/* Task cell */}
                   <TableCell className="w-48 truncate">{message.task?.name || '-'}</TableCell>
+                  {/* Sender cell */}
                   <TableCell className="w-40 truncate">
                     {message.type === 'SYSTEM' ? t('badges.system') : (message.sender?.name || 'Unknown')}
                   </TableCell>
+                  {/* Date cell */}
                   <TableCell className="w-44 text-muted-foreground text-sm">
                     {new Date(message.createdAt).toLocaleString()}
+                  </TableCell>
+                  {/* Star cell */}
+                  <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
+                    <button
+                      onClick={(e) => toggleStar(message.id, e)}
+                      className="p-1 hover:bg-muted rounded transition-colors"
+                    >
+                      <Star
+                        className={`h-4 w-4 ${
+                          starredMessageIds.has(message.id)
+                            ? 'fill-yellow-400 text-yellow-400'
+                            : 'text-muted-foreground hover:text-yellow-400'
+                        }`}
+                      />
+                    </button>
                   </TableCell>
                 </TableRow>
               ))

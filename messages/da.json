@@ -74,6 +74,8 @@
     "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
+    "cisControls": "CIS Kontroller",
+    "cisSafeguards": "CIS Sikkerhedsforanstaltninger",
     "academy": "Akademi",
     "ai": "AI",
     "learnMore": "Læs mere",
@@ -82,6 +84,7 @@
     "termsOfService": "Servicevilkår",
     "blog": "Blog",
     "theme": "Tema",
+    "settings": "Indstillinger",
     "profileSettings": "Profilindstillinger",
     "applicationSettings": "Programindstillinger",
     "language": "Sprog",
@@ -397,70 +400,102 @@
 
   "User": {
     "buttons": {
-      "newUser": "New Login",
-      "createUser": "Create Login",
-      "saveChanges": "Save Changes",
-      "cancel": "Cancel",
-      "delete": "Delete",
-      "deleteUser": "Delete Login",
-      "creating": "Creating...",
-      "saving": "Saving...",
-      "deleting": "Deleting..."
+      "newUser": "Nyt login",
+      "createUser": "Opret login",
+      "saveChanges": "Gem ændringer",
+      "cancel": "Annuller",
+      "delete": "Slet",
+      "deleteUser": "Slet login",
+      "deleteUsers": "Slet {count} login(s)",
+      "deleteSelected": "Slet valgte logins",
+      "creating": "Opretter...",
+      "saving": "Gemmer...",
+      "deleting": "Sletter...",
+      "disable2FA": "Deaktiver 2FA"
     },
     "dialogs": {
-      "createTitle": "Create New Login",
-      "createDescription": "Enter the details for the new login.",
-      "deleteTitle": "Are you absolutely sure?",
-      "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system."
+      "createTitle": "Opret nyt login",
+      "createDescription": "Indtast detaljerne for det nye login.",
+      "deleteTitle": "Er du helt sikker?",
+      "deleteDescription": "Dette vil deaktivere login \"{name}\" og de vil ikke længere have adgang til systemet.",
+      "bulkDeleteTitle": "Slet flere logins",
+      "bulkDeleteDescription": "Du er ved at slette {count} logins. Denne handling kan ikke fortrydes.",
+      "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse logins",
+      "bulkDeleteTypeWord": "Skriv \"{word}\" for at bekræfte"
+    },
+    "selection": {
+      "selectedOf": "Valgt {selected} af {total} logins"
     },
     "labels": {
-      "name": "Name",
-      "nickname": "Nickname",
-      "email": "Email",
-      "password": "Password",
-      "newPassword": "New Password",
-      "role": "Role",
+      "name": "Navn",
+      "nickname": "Kælenavn",
+      "email": "E-mail",
+      "emailCannotBeChanged": "E-mail kan ikke ændres",
+      "password": "Adgangskode",
+      "newPassword": "Ny adgangskode",
+      "role": "Rolle",
       "id": "ID"
     },
     "placeholders": {
-      "enterName": "Enter full name",
-      "enterNickname": "Enter nickname",
-      "enterEmail": "Enter email address",
-      "enterPassword": "Enter password",
-      "enterNewPassword": "Leave empty to keep current password",
-      "filterByNameOrEmail": "Filter by name or email..."
+      "enterName": "Indtast fulde navn",
+      "enterNickname": "Indtast kælenavn",
+      "enterEmail": "Indtast e-mailadresse",
+      "enterPassword": "Indtast adgangskode",
+      "enterNewPassword": "Efterlad tom for at beholde nuværende adgangskode",
+      "filterByNameOrEmail": "Filtrer efter navn eller e-mail...",
+      "filterSessions": "Filtrer efter enhed, lokation eller IP..."
     },
     "tabs": {
-      "details": "Details",
-      "actions": "Actions"
+      "details": "Detaljer",
+      "loginHistory": "Loginhistorik",
+      "actions": "Handlinger"
     },
     "roles": {
-      "USER": "User",
+      "USER": "Bruger",
       "ADMIN": "Admin",
       "SUPER_ADMIN": "Super Admin"
     },
     "empty": {
-      "noUsersMatch": "No logins match your filter",
-      "noUsersFound": "No logins found"
+      "noUsersMatch": "Ingen logins matcher dit filter",
+      "noUsersFound": "Ingen logins fundet",
+      "noSessions": "Ingen login-sessioner fundet",
+      "noSessionsMatch": "Ingen sessioner matcher dit filter"
     },
     "pagination": {
-      "showingUsers": "Showing {start} to {end} of {total} logins"
+      "showingUsers": "Viser {start} til {end} af {total} logins",
+      "showingSessions": "Viser {start} til {end} af {total} sessioner"
     },
     "toast": {
-      "userCreated": "Login created successfully",
-      "userUpdated": "Login updated successfully",
-      "saveError": "Could not save login",
-      "userDeleted": "Login deleted successfully",
-      "deleteError": "Could not delete login",
-      "emailTaken": "A user with this email already exists",
-      "cannotDeleteSelf": "Cannot delete your own account",
-      "passwordTooWeak": "Password is too weak. Please make it stronger."
+      "userCreated": "Login oprettet",
+      "userUpdated": "Login opdateret",
+      "saveError": "Kunne ikke gemme login",
+      "userDeleted": "Login slettet",
+      "deleteError": "Kunne ikke slette login",
+      "emailTaken": "En bruger med denne e-mail findes allerede",
+      "cannotDeleteSelf": "Kan ikke slette din egen konto",
+      "passwordTooWeak": "Adgangskoden er for svag. Gør den stærkere.",
+      "usersDeleted": "Slettede {count} login(s)",
+      "usersDeleteFailed": "Kunne ikke slette {count} login(s)",
+      "twoFactorDisabled": "To-faktor-godkendelse deaktiveret",
+      "twoFactorDisableError": "Kunne ikke deaktivere to-faktor-godkendelse",
+      "starError": "Kunne ikke opdatere stjerne"
     },
     "sections": {
-      "userActions": "Login Actions",
-      "userActionsDescription": "Manage this login with the actions below.",
-      "deleteUserTitle": "Delete Login",
-      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+      "userActions": "Login-handlinger",
+      "userActionsDescription": "Administrer dette login med handlingerne nedenfor.",
+      "deleteUserTitle": "Slet login",
+      "deleteUserDescription": "Deaktiver dette login permanent. Brugeren vil ikke længere have adgang til systemet.",
+      "loginHistory": "Loginhistorik",
+      "twoFactorTitle": "To-faktor-godkendelse",
+      "twoFactorEnabled": "Aktiveret",
+      "twoFactorEnabledDescription": "Denne bruger har to-faktor-godkendelse aktiveret. Du kan deaktivere den hvis de mister adgang til deres godkendelsesapp.",
+      "twoFactorDisabledDescription": "Denne bruger har ikke to-faktor-godkendelse aktiveret."
+    },
+    "sessionLabels": {
+      "device": "Enhed",
+      "location": "Lokation",
+      "created": "Oprettet",
+      "updated": "Opdateret"
     },
     "password": {
       "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
@@ -475,6 +510,12 @@
       "invalidFormat": "Invalid email format",
       "alreadyTaken": "This email is already taken",
       "available": "Email is available"
+    },
+    "twoFactor": {
+      "shareWithUser": "Del QR-koden og sikkerhedskoderne med brugeren. De skal scanne QR-koden med deres godkendelsesapp (Google Authenticator, Authy, osv.).",
+      "scanQrCode": "Scan denne QR-kode med en godkendelsesapp",
+      "backupCodes": "Sikkerhedskoder (gem disse sikkert)",
+      "saveBackupCodes": "Gem dine sikkerhedskoder et sikkert sted. Du får brug for dem, hvis du mister adgang til din godkendelsesapp."
     }
   },
 
@@ -1087,7 +1128,8 @@
     "toast": {
       "messageDeleted": "Besked slettet",
       "deleteError": "Kunne ikke slette besked",
-      "loadError": "Kunne ikke indlæse beskeder"
+      "loadError": "Kunne ikke indlæse beskeder",
+      "starError": "Kunne ikke opdatere stjerne"
     }
   },
 

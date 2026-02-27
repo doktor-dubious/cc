@@ -91,6 +91,195 @@ export type GapRecommendation = {
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
+// Human-readable label mappings for enum values
+// ────────────────────────────────────────────────────────────────────────────────
+
+const DATA_SENSITIVITY_LABELS: Record<string, string> = {
+  BASIC_BUSINESS: 'Basic business data',
+  CUSTOMER_PII: 'Customer PII',
+  SPECIAL_CATEGORY: 'Special category data (health, biometric)',
+  PAYMENT_CARD: 'Payment card data (PCI)',
+  INTELLECTUAL_PROPERTY: 'Intellectual property / trade secrets',
+  CLASSIFIED_GOVERNMENT: 'Classified / government data',
+  CRITICAL_INFRASTRUCTURE: 'Critical infrastructure data',
+};
+
+const REGULATORY_LABELS: Record<string, string> = {
+  GDPR: 'GDPR',
+  NIS2: 'NIS2',
+  DORA: 'DORA',
+  PCI_DSS: 'PCI DSS',
+  HIPAA: 'HIPAA',
+  SOX: 'SOX',
+  ISO27001: 'ISO 27001',
+  CRITICAL_INFRASTRUCTURE: 'Critical infrastructure regulations',
+  SECTOR_SPECIFIC: 'Sector-specific regulations',
+  NONE_IDENTIFIED: 'None identified',
+};
+
+const SOFTWARE_DEV_LABELS: Record<string, string> = {
+  NONE: 'None',
+  SOME_INTERNAL: 'Some (internal tools, websites)',
+  CORE_BUSINESS: 'Core business depends on custom software',
+  SOFTWARE_IS_PRODUCT: 'Software is the product (SaaS/ISV)',
+};
+
+const INFRASTRUCTURE_LABELS: Record<string, string> = {
+  ON_PREMISES: 'On-premises only',
+  CLOUD_ONLY: 'Cloud only (SaaS-heavy)',
+  HYBRID: 'Hybrid (on-prem + cloud)',
+  MULTI_CLOUD: 'Multi-cloud',
+  OPERATIONAL_TECHNOLOGY: 'Operational Technology (OT/ICS/SCADA)',
+};
+
+const DIGITAL_MATURITY_LABELS: Record<string, string> = {
+  TRADITIONAL: 'Traditional / Minimal digital',
+  DEVELOPING: 'Digitally developing',
+  MATURE: 'Digitally mature',
+  DIGITAL_NATIVE: 'Digital-native / Tech company',
+};
+
+const PUBLIC_FACING_LABELS: Record<string, string> = {
+  NONE: 'No internet-facing services',
+  BASIC_WEB: 'Basic web presence (website, email)',
+  ECOMMERCE_PORTALS: 'E-commerce / customer portals',
+  CRITICAL_SERVICES: 'Critical public-facing services',
+};
+
+const DOWNTIME_TOLERANCE_LABELS: Record<string, string> = {
+  DAYS: 'Days (can tolerate extended downtime)',
+  HOURS: 'Hours (can tolerate limited downtime)',
+  NEAR_ZERO: 'Near-zero (24/7 operations required)',
+};
+
+const ATTACK_LIKELIHOOD_LABELS: Record<string, string> = {
+  LOW: 'Low (small, non-strategic)',
+  MEDIUM: 'Medium (some attacker value)',
+  HIGH: 'High (known brand, critical infra, high-value IP)',
+};
+
+const IT_SECURITY_STAFF_LABELS: Record<string, string> = {
+  NO_DEDICATED_IT: 'No dedicated IT staff',
+  IT_NO_SECURITY: 'IT staff without dedicated security',
+  DEDICATED_SECURITY: 'Dedicated security role/team',
+  SPECIALIZED_SECURITY: 'Specialized security team (SOC, etc.)',
+};
+
+const SECURITY_MATURITY_LABELS: Record<string, string> = {
+  NO_PROGRAM: 'No formal security program',
+  BASIC: 'Basic security measures',
+  DEFINED: 'Defined security program',
+  MANAGED: 'Managed and measured',
+  OPTIMIZING: 'Optimizing and improving',
+};
+
+const ORG_SIZE_LABELS: Record<string, string> = {
+  MICRO: 'Micro (1-9 employees)',
+  SMALL: 'Small (10-49 employees)',
+  MEDIUM: 'Medium (50-249 employees)',
+  LARGE: 'Large (250-999 employees)',
+  ENTERPRISE: 'Enterprise (1000+ employees)',
+};
+
+const IT_ENDPOINT_LABELS: Record<string, string> = {
+  UNDER_25: 'Under 25 endpoints',
+  FROM_25_100: '25-100 endpoints',
+  FROM_100_500: '100-500 endpoints',
+  FROM_500_5000: '500-5000 endpoints',
+  OVER_5000: 'Over 5000 endpoints',
+};
+
+const SECURITY_BUDGET_LABELS: Record<string, string> = {
+  MINIMAL: 'Minimal (no dedicated budget)',
+  UNDER_50K: 'Under €50K/year',
+  FROM_50K_250K: '€50K-€250K/year',
+  FROM_250K_1M: '€250K-€1M/year',
+  OVER_1M: 'Over €1M/year',
+};
+
+const GEOGRAPHIC_SCOPE_LABELS: Record<string, string> = {
+  LOCAL: 'Local',
+  REGIONAL: 'Regional',
+  NATIONAL: 'National',
+  EUROPEAN: 'European',
+  GLOBAL: 'Global',
+};
+
+const SUPPLY_CHAIN_LABELS: Record<string, string> = {
+  END_CONSUMER: 'End consumer of IT services',
+  B2B_PROVIDER: 'B2B provider (services/products to businesses)',
+  CRITICAL_SUPPLIER: 'Critical supplier (essential entities)',
+  MSP_CLOUD_PROVIDER: 'MSP / cloud provider (handles client data)',
+};
+
+// Helper to format a single enum value
+function formatEnumValue(value: string, labels: Record<string, string>): string {
+  return labels[value] || value;
+}
+
+// Helper to format an array of enum values
+function formatEnumValues(values: string[], labels: Record<string, string>): string {
+  return values.map(v => labels[v] || v).join(', ');
+}
+
+// Convenience formatters for specific types
+function formatDataSensitivity(values: string[]): string {
+  return formatEnumValues(values, DATA_SENSITIVITY_LABELS);
+}
+
+function formatRegulations(values: string[]): string {
+  return formatEnumValues(values, REGULATORY_LABELS);
+}
+
+function formatSoftwareDev(value: string): string {
+  return formatEnumValue(value, SOFTWARE_DEV_LABELS);
+}
+
+function formatInfrastructure(values: string[]): string {
+  return formatEnumValues(values, INFRASTRUCTURE_LABELS);
+}
+
+function formatDigitalMaturity(value: string): string {
+  return formatEnumValue(value, DIGITAL_MATURITY_LABELS);
+}
+
+function formatPublicFacing(value: string): string {
+  return formatEnumValue(value, PUBLIC_FACING_LABELS);
+}
+
+function formatDowntimeTolerance(value: string): string {
+  return formatEnumValue(value, DOWNTIME_TOLERANCE_LABELS);
+}
+
+function formatAttackLikelihood(value: string): string {
+  return formatEnumValue(value, ATTACK_LIKELIHOOD_LABELS);
+}
+
+function formatItSecurityStaff(value: string): string {
+  return formatEnumValue(value, IT_SECURITY_STAFF_LABELS);
+}
+
+function formatSecurityMaturity(value: string): string {
+  return formatEnumValue(value, SECURITY_MATURITY_LABELS);
+}
+
+function formatOrgSize(value: string): string {
+  return formatEnumValue(value, ORG_SIZE_LABELS);
+}
+
+function formatItEndpointRange(value: string): string {
+  return formatEnumValue(value, IT_ENDPOINT_LABELS);
+}
+
+function formatSecurityBudget(value: string): string {
+  return formatEnumValue(value, SECURITY_BUDGET_LABELS);
+}
+
+function formatGeographicScope(value: string): string {
+  return formatEnumValue(value, GEOGRAPHIC_SCOPE_LABELS);
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
 // IG Recommendation Logic
 // ────────────────────────────────────────────────────────────────────────────────
 
@@ -346,7 +535,7 @@ function calculateControlRelevance(
         reasons.push('Organization handles sensitive data - data protection is critical');
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+10 → 100',
           explanation: 'Sensitive data handling requires maximum data protection'
         });
@@ -356,7 +545,7 @@ function calculateControlRelevance(
         reasons.push('GDPR compliance requires robust data protection controls');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: 'GDPR',
+          value: REGULATORY_LABELS['GDPR'],
           impact: '→ 100',
           explanation: 'GDPR mandates comprehensive data protection'
         });
@@ -409,7 +598,7 @@ function calculateControlRelevance(
         reasons.push('Public-facing services require active vulnerability management');
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+10 → 100',
           explanation: 'External exposure increases vulnerability risk'
         });
@@ -429,7 +618,7 @@ function calculateControlRelevance(
         reasons.push('Regulatory compliance requires comprehensive audit logging');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.join(', '),
+          value: formatRegulations(profile.regulatoryObligations),
           impact: '+10 → 95',
           explanation: 'Regulations require audit trail capabilities'
         });
@@ -471,7 +660,7 @@ function calculateControlRelevance(
         reasons.push('Low downtime tolerance requires robust data recovery');
         factors.push({
           parameter: 'Downtime Tolerance',
-          value: 'NEAR_ZERO',
+          value: DOWNTIME_TOLERANCE_LABELS['NEAR_ZERO'],
           impact: '+5 → 100',
           explanation: 'Zero downtime tolerance demands robust recovery'
         });
@@ -491,7 +680,7 @@ function calculateControlRelevance(
         reasons.push('On-premises/hybrid infrastructure requires network management');
         factors.push({
           parameter: 'Infrastructure Types',
-          value: profile.infrastructureTypes?.join(', ') || null,
+          value: profile.infrastructureTypes ? formatInfrastructure(profile.infrastructureTypes) : null,
           impact: '+10 → 95',
           explanation: 'On-prem/hybrid infrastructure needs direct network management'
         });
@@ -501,7 +690,7 @@ function calculateControlRelevance(
         reasons.push('Cloud-only infrastructure has reduced network management needs');
         factors.push({
           parameter: 'Infrastructure Types',
-          value: 'CLOUD_ONLY',
+          value: INFRASTRUCTURE_LABELS['CLOUD_ONLY'],
           impact: '-20 → 65',
           explanation: 'Cloud provider manages network infrastructure'
         });
@@ -521,7 +710,7 @@ function calculateControlRelevance(
         reasons.push('High threat environment requires advanced network monitoring');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+20 → 100',
           explanation: 'High threat level requires advanced detection'
         });
@@ -531,7 +720,7 @@ function calculateControlRelevance(
         reasons.push('Small organizations may have limited network monitoring needs');
         factors.push({
           parameter: 'Organization Size',
-          value: profile.size || null,
+          value: profile.size ? formatOrgSize(profile.size) : null,
           impact: '-25 → 55',
           explanation: 'Small organizations have simpler network environments'
         });
@@ -562,7 +751,7 @@ function calculateControlRelevance(
         reasons.push('Heavy cloud usage requires vendor/service provider management');
         factors.push({
           parameter: 'Infrastructure Types',
-          value: profile.infrastructureTypes?.join(', ') || null,
+          value: profile.infrastructureTypes ? formatInfrastructure(profile.infrastructureTypes) : null,
           impact: '+20 → 95',
           explanation: 'Cloud reliance increases third-party risk'
         });
@@ -572,7 +761,7 @@ function calculateControlRelevance(
         reasons.push('As a service provider, you must demonstrate strong controls');
         factors.push({
           parameter: 'Supply Chain Position',
-          value: 'MSP_CLOUD_PROVIDER',
+          value: SUPPLY_CHAIN_LABELS['MSP_CLOUD_PROVIDER'],
           impact: '→ 100',
           explanation: 'Service providers must demonstrate security to clients'
         });
@@ -592,7 +781,7 @@ function calculateControlRelevance(
         reasons.push('Software product company - application security is critical');
         factors.push({
           parameter: 'Software Development',
-          value: 'SOFTWARE_IS_PRODUCT',
+          value: SOFTWARE_DEV_LABELS['SOFTWARE_IS_PRODUCT'],
           impact: '+30 → 100',
           explanation: 'Software products require comprehensive AppSec'
         });
@@ -601,7 +790,7 @@ function calculateControlRelevance(
         reasons.push('Custom software development requires application security');
         factors.push({
           parameter: 'Software Development',
-          value: 'CORE_BUSINESS',
+          value: SOFTWARE_DEV_LABELS['CORE_BUSINESS'],
           impact: '+25 → 95',
           explanation: 'Business-critical software needs security controls'
         });
@@ -611,7 +800,7 @@ function calculateControlRelevance(
         reasons.push('No in-house software development - application security controls less applicable');
         factors.push({
           parameter: 'Software Development',
-          value: 'NONE',
+          value: SOFTWARE_DEV_LABELS['NONE'],
           impact: '-35 → INACTIVE',
           explanation: 'No development means AppSec controls have minimal applicability'
         });
@@ -631,7 +820,7 @@ function calculateControlRelevance(
         reasons.push('NIS2/DORA requires formal incident response capabilities');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations?.filter(r => ['NIS2', 'DORA'].includes(r)).join(', ') || null,
+          value: profile.regulatoryObligations ? formatRegulations(profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r))) : null,
           impact: '+15 → 100',
           explanation: 'NIS2/DORA mandate formal incident response'
         });
@@ -651,7 +840,7 @@ function calculateControlRelevance(
         reasons.push('Small organizations may defer penetration testing initially');
         factors.push({
           parameter: 'Organization Size',
-          value: profile.size || null,
+          value: profile.size ? formatOrgSize(profile.size) : null,
           impact: '-20 → 40',
           explanation: 'Small orgs may lack resources for regular pentesting'
         });
@@ -661,7 +850,7 @@ function calculateControlRelevance(
         reasons.push('PCI-DSS requires regular penetration testing');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: 'PCI_DSS',
+          value: REGULATORY_LABELS['PCI_DSS'],
           impact: '→ 100',
           explanation: 'PCI-DSS mandates annual penetration testing'
         });
@@ -671,7 +860,7 @@ function calculateControlRelevance(
         reasons.push('Critical public services should undergo penetration testing');
         factors.push({
           parameter: 'Public-Facing Services',
-          value: 'CRITICAL_SERVICES',
+          value: PUBLIC_FACING_LABELS['CRITICAL_SERVICES'],
           impact: '→ 95',
           explanation: 'Critical services need regular security validation'
         });
@@ -681,7 +870,7 @@ function calculateControlRelevance(
         reasons.push('Budget constraints may limit penetration testing scope');
         factors.push({
           parameter: 'Security Budget',
-          value: profile.securityBudgetRange || null,
+          value: profile.securityBudgetRange ? formatSecurityBudget(profile.securityBudgetRange) : null,
           impact: 'cap → 45',
           explanation: 'Budget limits testing frequency and scope'
         });
@@ -783,7 +972,7 @@ function calculateControlRelevance(
       if ([1, 2].includes(controlId)) {
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'TRADITIONAL',
+          value: DIGITAL_MATURITY_LABELS['TRADITIONAL'],
           impact: 'note',
           explanation: 'Traditional maturity may require manual inventory processes initially'
         });
@@ -792,7 +981,7 @@ function calculateControlRelevance(
       if (controlId === 7) {
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'TRADITIONAL',
+          value: DIGITAL_MATURITY_LABELS['TRADITIONAL'],
           impact: 'note',
           explanation: 'May need to build automation capabilities for vulnerability scanning'
         });
@@ -802,7 +991,7 @@ function calculateControlRelevance(
         score = Math.max(60, score - 10);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'TRADITIONAL',
+          value: DIGITAL_MATURITY_LABELS['TRADITIONAL'],
           impact: '-10 (floor: 60)',
           explanation: 'Advanced network monitoring requires digital infrastructure'
         });
@@ -816,7 +1005,7 @@ function calculateControlRelevance(
         score = Math.min(100, score + 5);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'DIGITAL_NATIVE',
+          value: DIGITAL_MATURITY_LABELS['DIGITAL_NATIVE'],
           impact: '+5',
           explanation: 'Digital-native can implement continuous vulnerability management'
         });
@@ -826,7 +1015,7 @@ function calculateControlRelevance(
         score = Math.min(100, score + 5);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'DIGITAL_NATIVE',
+          value: DIGITAL_MATURITY_LABELS['DIGITAL_NATIVE'],
           impact: '+5',
           explanation: 'Digital-native can deploy sophisticated monitoring'
         });
@@ -836,11 +1025,33 @@ function calculateControlRelevance(
         score = Math.min(100, score + 5);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'DIGITAL_NATIVE',
+          value: DIGITAL_MATURITY_LABELS['DIGITAL_NATIVE'],
           impact: '+5',
           explanation: 'Digital-native organizations can integrate security into CI/CD'
         });
       }
+    }
+  }
+
+  // Apply threshold-based inactive logic
+  if (!shouldBeInactive && score < 50) {
+    shouldBeInactive = true;
+    if (score < 30) {
+      reasons.push(`Low relevance score (${score}%) - control not applicable to organization profile`);
+      factors.push({
+        parameter: 'Score Threshold',
+        value: `${score}%`,
+        impact: '→ INACTIVE',
+        explanation: 'Score below 30% threshold - automatically marked inactive'
+      });
+    } else {
+      reasons.push(`Moderate relevance score (${score}%) - control suggested as inactive`);
+      factors.push({
+        parameter: 'Score Threshold',
+        value: `${score}%`,
+        impact: '→ INACTIVE (suggested)',
+        explanation: 'Score between 30-49% - suggested inactive but can be enabled'
+      });
     }
   }
 
@@ -911,7 +1122,7 @@ function calculateSafeguardRelevance(
           reasons.push('Large endpoint count makes asset inventory critical');
           factors.push({
             parameter: 'IT Endpoints',
-            value: 'OVER_5000',
+            value: IT_ENDPOINT_LABELS['OVER_5000'],
             impact: '+15',
             explanation: '5000+ endpoints require comprehensive inventory management'
           });
@@ -920,7 +1131,7 @@ function calculateSafeguardRelevance(
           reasons.push('Significant endpoint count increases inventory importance');
           factors.push({
             parameter: 'IT Endpoints',
-            value: 'FROM_500_5000',
+            value: IT_ENDPOINT_LABELS['FROM_500_5000'],
             impact: '+10',
             explanation: '500-5000 endpoints benefit from formal inventory'
           });
@@ -933,7 +1144,7 @@ function calculateSafeguardRelevance(
         reasons.push('Global operations increase asset tracking complexity');
         factors.push({
           parameter: 'Geographic Scope',
-          value: 'GLOBAL',
+          value: GEOGRAPHIC_SCOPE_LABELS['GLOBAL'],
           impact: '+10',
           explanation: 'Distributed assets across countries need systematic tracking'
         });
@@ -941,7 +1152,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 5);
         factors.push({
           parameter: 'Geographic Scope',
-          value: 'EUROPEAN',
+          value: GEOGRAPHIC_SCOPE_LABELS['EUROPEAN'],
           impact: '+5',
           explanation: 'European presence adds asset management complexity'
         });
@@ -953,7 +1164,7 @@ function calculateSafeguardRelevance(
         reasons.push('Hybrid infrastructure requires comprehensive asset tracking');
         factors.push({
           parameter: 'Infrastructure Types',
-          value: profile.infrastructureTypes.join(', '),
+          value: formatInfrastructure(profile.infrastructureTypes),
           impact: '+10',
           explanation: 'Mixed infrastructure needs unified asset inventory'
         });
@@ -967,7 +1178,7 @@ function calculateSafeguardRelevance(
         reasons.push('High threat environment requires strict unauthorized asset control');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+15',
           explanation: 'Unauthorized devices are attack vectors in high-threat environments'
         });
@@ -976,7 +1187,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+10',
           explanation: 'External exposure increases risk from unauthorized assets'
         });
@@ -990,7 +1201,7 @@ function calculateSafeguardRelevance(
         reasons.push('Large environment benefits from automated asset discovery');
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+15',
           explanation: 'Automation essential for managing hundreds of assets'
         });
@@ -999,7 +1210,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 20);
         factors.push({
           parameter: 'Security Budget',
-          value: profile.securityBudgetRange,
+          value: profile.securityBudgetRange ? formatSecurityBudget(profile.securityBudgetRange) : null,
           impact: '-20 (floor: 50)',
           explanation: 'Budget may limit automated tooling options'
         });
@@ -1013,7 +1224,7 @@ function calculateSafeguardRelevance(
         reasons.push('Cloud-only environment has limited DHCP logging needs');
         factors.push({
           parameter: 'Infrastructure Types',
-          value: 'CLOUD_ONLY',
+          value: INFRASTRUCTURE_LABELS['CLOUD_ONLY'],
           impact: '-30 (floor: 40)',
           explanation: 'Cloud providers manage DHCP; less relevant for cloud-only'
         });
@@ -1022,7 +1233,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Infrastructure Types',
-          value: profile.infrastructureTypes.join(', '),
+          value: formatInfrastructure(profile.infrastructureTypes),
           impact: '+10',
           explanation: 'On-premises infrastructure benefits from DHCP logging'
         });
@@ -1046,7 +1257,7 @@ function calculateSafeguardRelevance(
         reasons.push('High-threat environment benefits from passive detection');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '→ 100',
           explanation: 'Passive discovery detects stealthy unauthorized devices'
         });
@@ -1065,7 +1276,7 @@ function calculateSafeguardRelevance(
         reasons.push('Large endpoint count requires comprehensive software inventory');
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+15',
           explanation: 'More endpoints mean more software to track and manage'
         });
@@ -1074,7 +1285,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.join(', '),
+          value: formatRegulations(profile.regulatoryObligations),
           impact: '+10',
           explanation: 'Compliance requires knowing what software is deployed'
         });
@@ -1088,7 +1299,7 @@ function calculateSafeguardRelevance(
         reasons.push('NIS2/DORA requires supported software for vulnerability management');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r)).join(', '),
+          value: formatRegulations(profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r))),
           impact: '+15',
           explanation: 'Regulations require up-to-date, supported software'
         });
@@ -1097,7 +1308,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+10',
           explanation: 'Sensitive data requires software with security patches'
         });
@@ -1111,7 +1322,7 @@ function calculateSafeguardRelevance(
         reasons.push('High-threat environment must control unauthorized software');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+15',
           explanation: 'Unauthorized software is a common attack vector'
         });
@@ -1120,7 +1331,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Organization Size',
-          value: profile.size,
+          value: profile.size ? formatOrgSize(profile.size) : null,
           impact: '+10',
           explanation: 'Larger organizations face more shadow IT challenges'
         });
@@ -1134,7 +1345,7 @@ function calculateSafeguardRelevance(
         reasons.push('Large environment requires automated software inventory');
         factors.push({
           parameter: 'IT Endpoints',
-          value: 'OVER_5000',
+          value: IT_ENDPOINT_LABELS['OVER_5000'],
           impact: '+20',
           explanation: 'Manual inventory impractical at this scale'
         });
@@ -1142,7 +1353,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 15);
         factors.push({
           parameter: 'IT Endpoints',
-          value: 'FROM_500_5000',
+          value: IT_ENDPOINT_LABELS['FROM_500_5000'],
           impact: '+15',
           explanation: 'Automation significantly improves inventory accuracy'
         });
@@ -1151,7 +1362,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 20);
         factors.push({
           parameter: 'Security Budget',
-          value: 'MINIMAL',
+          value: SECURITY_BUDGET_LABELS['MINIMAL'],
           impact: '-20 (floor: 50)',
           explanation: 'Budget constraints may limit tooling options'
         });
@@ -1165,7 +1376,7 @@ function calculateSafeguardRelevance(
         reasons.push('High-threat environment benefits from application allowlisting');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+15',
           explanation: 'Allowlisting prevents unauthorized execution'
         });
@@ -1174,7 +1385,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 20);
         factors.push({
           parameter: 'Security Maturity',
-          value: profile.securityMaturity,
+          value: profile.securityMaturity ? formatSecurityMaturity(profile.securityMaturity) : null,
           impact: '-20 (floor: 50)',
           explanation: 'Allowlisting requires mature process to manage exceptions'
         });
@@ -1197,7 +1408,7 @@ function calculateSafeguardRelevance(
         relevanceScore = 100;
         factors.push({
           parameter: 'Software Development',
-          value: 'SOFTWARE_IS_PRODUCT',
+          value: SOFTWARE_DEV_LABELS['SOFTWARE_IS_PRODUCT'],
           impact: '→ 100',
           explanation: 'Software companies must control library dependencies'
         });
@@ -1220,7 +1431,7 @@ function calculateSafeguardRelevance(
         relevanceScore = 100;
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '→ 100',
           explanation: 'Malicious scripts are common attack technique'
         });
@@ -1242,7 +1453,7 @@ function calculateSafeguardRelevance(
         reasons.push('Handling highly sensitive data');
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+15',
           explanation: 'High-sensitivity data requires strong protection'
         });
@@ -1250,7 +1461,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+10',
           explanation: 'Sensitive data handling increases protection priority'
         });
@@ -1262,7 +1473,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Regulatory Obligations',
-        value: 'GDPR',
+        value: REGULATORY_LABELS['GDPR'],
         impact: '+10',
         explanation: 'GDPR mandates comprehensive data protection'
       });
@@ -1275,7 +1486,7 @@ function calculateSafeguardRelevance(
         reasons.push('Regulatory compliance requires data retention policies');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.join(', '),
+          value: formatRegulations(profile.regulatoryObligations),
           impact: '+10',
           explanation: 'Regulations often specify retention requirements'
         });
@@ -1288,7 +1499,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+10',
           explanation: 'External services must encrypt data in transit'
         });
@@ -1302,7 +1513,7 @@ function calculateSafeguardRelevance(
         reasons.push('PCI data must be encrypted at rest');
         factors.push({
           parameter: 'Data Sensitivity',
-          value: 'PAYMENT_CARD',
+          value: 'Payment card data (PCI)',
           impact: '→ 100',
           explanation: 'PCI-DSS requires encryption of cardholder data'
         });
@@ -1320,7 +1531,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+10',
           explanation: 'More endpoints require standardized configurations'
         });
@@ -1343,7 +1554,7 @@ function calculateSafeguardRelevance(
         reasons.push('On-premises infrastructure requires network configuration management');
         factors.push({
           parameter: 'Infrastructure Types',
-          value: profile.infrastructureTypes.join(', '),
+          value: formatInfrastructure(profile.infrastructureTypes),
           impact: '+15',
           explanation: 'Direct network infrastructure needs secure configuration'
         });
@@ -1352,7 +1563,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 20);
         factors.push({
           parameter: 'Infrastructure Types',
-          value: 'CLOUD_ONLY',
+          value: INFRASTRUCTURE_LABELS['CLOUD_ONLY'],
           impact: '-20 (floor: 50)',
           explanation: 'Cloud provider manages core network infrastructure'
         });
@@ -1366,7 +1577,7 @@ function calculateSafeguardRelevance(
         reasons.push('Public-facing systems must not have default credentials');
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+15',
           explanation: 'Default accounts are common attack vector on exposed systems'
         });
@@ -1379,7 +1590,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+10',
           explanation: 'Minimizing services reduces attack surface'
         });
@@ -1396,7 +1607,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Organization Size',
-        value: profile.size,
+        value: profile.size ? formatOrgSize(profile.size) : null,
         impact: '+10',
         explanation: 'More employees mean more accounts to manage'
       });
@@ -1408,7 +1619,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+10',
           explanation: 'Large environments have many service and user accounts'
         });
@@ -1422,7 +1633,7 @@ function calculateSafeguardRelevance(
         reasons.push('Dormant accounts are targets for attackers');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+15',
           explanation: 'Attackers target unused accounts for persistence'
         });
@@ -1435,7 +1646,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 15);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r)).join(', '),
+          value: formatRegulations(profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r))),
           impact: '+15',
           explanation: 'NIS2/DORA require privileged access controls'
         });
@@ -1452,7 +1663,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Data Sensitivity',
-        value: profile.dataSensitivity.join(', '),
+        value: formatDataSensitivity(profile.dataSensitivity),
         impact: '+10',
         explanation: 'Sensitive data requires strict access control'
       });
@@ -1464,7 +1675,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Organization Size',
-          value: profile.size,
+          value: profile.size ? formatOrgSize(profile.size) : null,
           impact: '+10',
           explanation: 'Larger organizations need formal access processes'
         });
@@ -1478,7 +1689,7 @@ function calculateSafeguardRelevance(
         reasons.push('External services must use MFA');
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '→ 100',
           explanation: 'MFA is essential for externally accessible applications'
         });
@@ -1492,7 +1703,7 @@ function calculateSafeguardRelevance(
         reasons.push('Distributed workforce requires MFA for remote access');
         factors.push({
           parameter: 'Geographic Scope',
-          value: profile.geographicScope,
+          value: profile.geographicScope ? formatGeographicScope(profile.geographicScope) : null,
           impact: '→ 100',
           explanation: 'Remote workers need MFA for secure network access'
         });
@@ -1521,7 +1732,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Public-Facing Services',
-        value: profile.publicFacingServices,
+        value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
         impact: '+10',
         explanation: 'External exposure increases vulnerability risk'
       });
@@ -1533,7 +1744,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.join(', '),
+          value: formatRegulations(profile.regulatoryObligations),
           impact: '+10',
           explanation: 'Compliance requires documented vulnerability management'
         });
@@ -1547,7 +1758,7 @@ function calculateSafeguardRelevance(
         reasons.push('Large environment requires automated patching');
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+15',
           explanation: 'Manual patching impractical at scale'
         });
@@ -1560,7 +1771,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 15);
         factors.push({
           parameter: 'IT Endpoints',
-          value: 'OVER_5000',
+          value: IT_ENDPOINT_LABELS['OVER_5000'],
           impact: '+15',
           explanation: 'Large environments need automated scanning'
         });
@@ -1569,7 +1780,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+10',
           explanation: 'High-threat environments need continuous scanning'
         });
@@ -1583,7 +1794,7 @@ function calculateSafeguardRelevance(
         reasons.push('Critical public services require external scanning');
         factors.push({
           parameter: 'Public-Facing Services',
-          value: 'CRITICAL_SERVICES',
+          value: PUBLIC_FACING_LABELS['CRITICAL_SERVICES'],
           impact: '→ 100',
           explanation: 'Critical external services need regular vulnerability scanning'
         });
@@ -1600,7 +1811,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Regulatory Obligations',
-        value: profile.regulatoryObligations.join(', '),
+        value: formatRegulations(profile.regulatoryObligations),
         impact: '+10',
         explanation: 'Compliance requires comprehensive audit logging'
       });
@@ -1612,7 +1823,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+10',
           explanation: 'Sensitive data access must be logged'
         });
@@ -1626,7 +1837,7 @@ function calculateSafeguardRelevance(
         reasons.push('Large environment benefits from centralized logging');
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+15',
           explanation: 'Centralization essential for log analysis at scale'
         });
@@ -1635,7 +1846,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Geographic Scope',
-          value: 'GLOBAL',
+          value: GEOGRAPHIC_SCOPE_LABELS['GLOBAL'],
           impact: '+10',
           explanation: 'Distributed operations benefit from centralized logs'
         });
@@ -1648,7 +1859,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 15);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r)).join(', '),
+          value: formatRegulations(profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r))),
           impact: '+15',
           explanation: 'NIS2/DORA require regular log review'
         });
@@ -1665,7 +1876,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 5);
       factors.push({
         parameter: 'Organization Size',
-        value: profile.size,
+        value: profile.size ? formatOrgSize(profile.size) : null,
         impact: '+5',
         explanation: 'More users increase phishing/malware risk surface'
       });
@@ -1677,7 +1888,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+10',
           explanation: 'Attackers exploit outdated browsers and email clients'
         });
@@ -1692,7 +1903,7 @@ function calculateSafeguardRelevance(
           reasons.push('DNS filtering provides low-effort protection for small orgs');
           factors.push({
             parameter: 'IT Security Staff',
-            value: profile.itSecurityStaff || 'NO_DEDICATED_IT',
+            value: formatItSecurityStaff(profile.itSecurityStaff || 'NO_DEDICATED_IT'),
             impact: '+10',
             explanation: 'DNS filtering is easy to deploy without security staff'
           });
@@ -1706,7 +1917,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+10',
           explanation: 'DMARC protects brand from email spoofing'
         });
@@ -1723,7 +1934,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'IT Endpoints',
-        value: profile.itEndpointRange,
+        value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
         impact: '+10',
         explanation: 'More endpoints increase malware exposure surface'
       });
@@ -1759,7 +1970,7 @@ function calculateSafeguardRelevance(
         reasons.push('High-threat environment needs advanced malware detection');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+15',
           explanation: 'Advanced threats require behavior-based detection'
         });
@@ -1777,7 +1988,7 @@ function calculateSafeguardRelevance(
       reasons.push('Near-zero downtime tolerance requires robust recovery');
       factors.push({
         parameter: 'Downtime Tolerance',
-        value: 'NEAR_ZERO',
+        value: DOWNTIME_TOLERANCE_LABELS['NEAR_ZERO'],
         impact: '+15',
         explanation: 'Business continuity demands fast recovery capability'
       });
@@ -1785,7 +1996,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Downtime Tolerance',
-        value: 'HOURS',
+        value: DOWNTIME_TOLERANCE_LABELS['HOURS'],
         impact: '+10',
         explanation: 'Limited tolerance requires tested recovery procedures'
       });
@@ -1796,7 +2007,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 5);
       factors.push({
         parameter: 'Data Sensitivity',
-        value: profile.dataSensitivity.join(', '),
+        value: formatDataSensitivity(profile.dataSensitivity),
         impact: '+5',
         explanation: 'Sensitive data loss has greater business impact'
       });
@@ -1808,7 +2019,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+10',
           explanation: 'Large environments require automated backup processes'
         });
@@ -1822,7 +2033,7 @@ function calculateSafeguardRelevance(
         reasons.push('High threat environment needs isolated recovery data');
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+15',
           explanation: 'Ransomware/wipers require isolated backups'
         });
@@ -1836,7 +2047,7 @@ function calculateSafeguardRelevance(
         reasons.push('DORA requires regular recovery testing');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: 'DORA',
+          value: REGULATORY_LABELS['DORA'],
           impact: '→ 100',
           explanation: 'DORA mandates regular resilience testing'
         });
@@ -1854,7 +2065,7 @@ function calculateSafeguardRelevance(
       reasons.push('Cloud-only environment has reduced network management needs');
       factors.push({
         parameter: 'Infrastructure Types',
-        value: 'CLOUD_ONLY',
+        value: INFRASTRUCTURE_LABELS['CLOUD_ONLY'],
         impact: '-30 (floor: 40)',
         explanation: 'Cloud provider manages network infrastructure'
       });
@@ -1862,7 +2073,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Infrastructure Types',
-        value: profile.infrastructureTypes.join(', '),
+        value: formatInfrastructure(profile.infrastructureTypes),
         impact: '+10',
         explanation: 'On-prem/hybrid infrastructure needs direct management'
       });
@@ -1874,7 +2085,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+10',
           explanation: 'Public exposure requires up-to-date network devices'
         });
@@ -1888,7 +2099,7 @@ function calculateSafeguardRelevance(
         reasons.push('Distributed workforce requires secure remote access');
         factors.push({
           parameter: 'Geographic Scope',
-          value: profile.geographicScope,
+          value: profile.geographicScope ? formatGeographicScope(profile.geographicScope) : null,
           impact: '+15',
           explanation: 'Remote workers need VPN for secure access'
         });
@@ -1906,7 +2117,7 @@ function calculateSafeguardRelevance(
       reasons.push('Small organization with simpler monitoring requirements');
       factors.push({
         parameter: 'Organization Size',
-        value: profile.size || null,
+        value: profile.size ? formatOrgSize(profile.size) : null,
         impact: '-30 (floor: 40)',
         explanation: 'Small environments have simpler network patterns'
       });
@@ -1918,7 +2129,7 @@ function calculateSafeguardRelevance(
       reasons.push('High threat environment requires advanced network monitoring');
       factors.push({
         parameter: 'Targeted Attack Likelihood',
-        value: 'HIGH',
+        value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
         impact: '+20',
         explanation: 'Detection capabilities critical in high-threat environment'
       });
@@ -1930,7 +2141,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'IT Endpoints',
-          value: profile.itEndpointRange,
+          value: profile.itEndpointRange ? formatItEndpointRange(profile.itEndpointRange) : null,
           impact: '+10',
           explanation: 'Large environments need centralized alerting'
         });
@@ -1943,7 +2154,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 20);
         factors.push({
           parameter: 'Infrastructure Types',
-          value: 'CLOUD_ONLY',
+          value: INFRASTRUCTURE_LABELS['CLOUD_ONLY'],
           impact: '-20 (floor: 50)',
           explanation: 'Cloud environments use different flow logging approaches'
         });
@@ -1960,7 +2171,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Organization Size',
-        value: profile.size,
+        value: profile.size ? formatOrgSize(profile.size) : null,
         impact: '+10',
         explanation: 'More employees require structured training programs'
       });
@@ -1972,7 +2183,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.join(', '),
+          value: formatRegulations(profile.regulatoryObligations),
           impact: '+10',
           explanation: 'Compliance often requires security awareness programs'
         });
@@ -1985,7 +2196,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Public-Facing Services',
-          value: profile.publicFacingServices,
+          value: profile.publicFacingServices ? formatPublicFacing(profile.publicFacingServices) : null,
           impact: '+10',
           explanation: 'External services increase credential attack risk'
         });
@@ -1999,7 +2210,7 @@ function calculateSafeguardRelevance(
         reasons.push('Sensitive data handling requires data exposure training');
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+15',
           explanation: 'Sensitive data mishandling has serious consequences'
         });
@@ -2012,7 +2223,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Software Development',
-          value: profile.softwareDevelopment,
+          value: profile.softwareDevelopment ? formatSoftwareDev(profile.softwareDevelopment) : null,
           impact: '+10',
           explanation: 'Developers need specific secure coding training'
         });
@@ -2021,7 +2232,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'IT Security Staff',
-          value: profile.itSecurityStaff,
+          value: profile.itSecurityStaff ? formatItSecurityStaff(profile.itSecurityStaff) : null,
           impact: '+10',
           explanation: 'Security staff need ongoing specialized training'
         });
@@ -2039,7 +2250,7 @@ function calculateSafeguardRelevance(
       reasons.push('Cloud dependency requires strong vendor management');
       factors.push({
         parameter: 'Infrastructure Types',
-        value: profile.infrastructureTypes.join(', '),
+        value: formatInfrastructure(profile.infrastructureTypes),
         impact: '+15',
         explanation: 'Cloud reliance increases third-party risk'
       });
@@ -2051,7 +2262,7 @@ function calculateSafeguardRelevance(
       reasons.push('Service provider must demonstrate strong security controls');
       factors.push({
         parameter: 'Supply Chain Position',
-        value: 'MSP_CLOUD_PROVIDER',
+        value: SUPPLY_CHAIN_LABELS['MSP_CLOUD_PROVIDER'],
         impact: '→ 100',
         explanation: 'Service providers must meet client security requirements'
       });
@@ -2063,7 +2274,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 15);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r)).join(', '),
+          value: formatRegulations(profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r))),
           impact: '+15',
           explanation: 'NIS2/DORA require vendor inventory and risk assessment'
         });
@@ -2076,7 +2287,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Data Sensitivity',
-          value: profile.dataSensitivity.join(', '),
+          value: formatDataSensitivity(profile.dataSensitivity),
           impact: '+10',
           explanation: 'Sensitive data sharing requires contractual protections'
         });
@@ -2095,7 +2306,7 @@ function calculateSafeguardRelevance(
       reasons.push('No software development - application security controls not applicable');
       factors.push({
         parameter: 'Software Development',
-        value: 'NONE',
+        value: SOFTWARE_DEV_LABELS['NONE'],
         impact: '→ INACTIVE (10)',
         explanation: 'No in-house development makes AppSec not applicable'
       });
@@ -2104,7 +2315,7 @@ function calculateSafeguardRelevance(
       reasons.push('Software product company - all AppSec safeguards are critical');
       factors.push({
         parameter: 'Software Development',
-        value: 'SOFTWARE_IS_PRODUCT',
+        value: SOFTWARE_DEV_LABELS['SOFTWARE_IS_PRODUCT'],
         impact: '→ 100',
         explanation: 'Software products require comprehensive application security'
       });
@@ -2113,7 +2324,7 @@ function calculateSafeguardRelevance(
       reasons.push('Business-critical software development requires AppSec');
       factors.push({
         parameter: 'Software Development',
-        value: 'CORE_BUSINESS',
+        value: SOFTWARE_DEV_LABELS['CORE_BUSINESS'],
         impact: '+15',
         explanation: 'Business-critical applications need security controls'
       });
@@ -2121,7 +2332,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 5);
       factors.push({
         parameter: 'Software Development',
-        value: 'SOME_INTERNAL',
+        value: SOFTWARE_DEV_LABELS['SOME_INTERNAL'],
         impact: '+5',
         explanation: 'Internal tools benefit from basic AppSec practices'
       });
@@ -2133,7 +2344,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: 'DORA',
+          value: REGULATORY_LABELS['DORA'],
           impact: '+10',
           explanation: 'DORA requires secure development practices'
         });
@@ -2146,7 +2357,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Public-Facing Services',
-          value: 'CRITICAL_SERVICES',
+          value: PUBLIC_FACING_LABELS['CRITICAL_SERVICES'],
           impact: '+10',
           explanation: 'Critical services need code-level security checks'
         });
@@ -2164,7 +2375,7 @@ function calculateSafeguardRelevance(
       reasons.push('NIS2/DORA require formal incident response capabilities');
       factors.push({
         parameter: 'Regulatory Obligations',
-        value: profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r)).join(', '),
+        value: formatRegulations(profile.regulatoryObligations.filter(r => ['NIS2', 'DORA'].includes(r))),
         impact: '+15',
         explanation: 'NIS2/DORA mandate incident response and reporting'
       });
@@ -2175,7 +2386,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 10);
       factors.push({
         parameter: 'Targeted Attack Likelihood',
-        value: 'HIGH',
+        value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
         impact: '+10',
         explanation: 'High-threat environment needs robust incident response'
       });
@@ -2187,7 +2398,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'IT Security Staff',
-          value: profile.itSecurityStaff,
+          value: profile.itSecurityStaff ? formatItSecurityStaff(profile.itSecurityStaff) : null,
           impact: '+10',
           explanation: 'Security staff can handle incident response roles'
         });
@@ -2200,7 +2411,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Downtime Tolerance',
-          value: 'NEAR_ZERO',
+          value: DOWNTIME_TOLERANCE_LABELS['NEAR_ZERO'],
           impact: '+10',
           explanation: 'Low tolerance demands efficient incident response'
         });
@@ -2214,7 +2425,7 @@ function calculateSafeguardRelevance(
         reasons.push('DORA requires regular incident response exercises');
         factors.push({
           parameter: 'Regulatory Obligations',
-          value: 'DORA',
+          value: REGULATORY_LABELS['DORA'],
           impact: '→ 100',
           explanation: 'DORA mandates regular resilience testing'
         });
@@ -2232,7 +2443,7 @@ function calculateSafeguardRelevance(
       reasons.push('Limited budget may constrain penetration testing');
       factors.push({
         parameter: 'Security Budget',
-        value: 'MINIMAL',
+        value: SECURITY_BUDGET_LABELS['MINIMAL'],
         impact: '-40 (floor: 30)',
         explanation: 'Budget constraints limit testing scope and frequency'
       });
@@ -2243,7 +2454,7 @@ function calculateSafeguardRelevance(
       reasons.push('Micro organization may defer penetration testing');
       factors.push({
         parameter: 'Organization Size',
-        value: 'MICRO',
+        value: ORG_SIZE_LABELS['MICRO'],
         impact: '-40 (floor: 20)',
         explanation: 'Micro organizations typically defer pentesting'
       });
@@ -2251,7 +2462,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.max(40, relevanceScore - 20);
       factors.push({
         parameter: 'Organization Size',
-        value: 'SMALL',
+        value: ORG_SIZE_LABELS['SMALL'],
         impact: '-20 (floor: 40)',
         explanation: 'Small organizations may do limited pentesting'
       });
@@ -2263,7 +2474,7 @@ function calculateSafeguardRelevance(
       reasons.push('PCI-DSS requires regular penetration testing');
       factors.push({
         parameter: 'Regulatory Obligations',
-        value: 'PCI_DSS',
+        value: REGULATORY_LABELS['PCI_DSS'],
         impact: '→ 100',
         explanation: 'PCI-DSS mandates annual penetration testing'
       });
@@ -2273,7 +2484,7 @@ function calculateSafeguardRelevance(
       relevanceScore = Math.min(100, relevanceScore + 15);
       factors.push({
         parameter: 'Regulatory Obligations',
-        value: 'DORA',
+        value: REGULATORY_LABELS['DORA'],
         impact: '+15',
         explanation: 'DORA requires threat-led penetration testing'
       });
@@ -2285,7 +2496,7 @@ function calculateSafeguardRelevance(
       reasons.push('Critical public services should undergo penetration testing');
       factors.push({
         parameter: 'Public-Facing Services',
-        value: 'CRITICAL_SERVICES',
+        value: PUBLIC_FACING_LABELS['CRITICAL_SERVICES'],
         impact: '+15',
         explanation: 'Critical services need regular security validation'
       });
@@ -2297,7 +2508,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Targeted Attack Likelihood',
-          value: 'HIGH',
+          value: ATTACK_LIKELIHOOD_LABELS['HIGH'],
           impact: '+10',
           explanation: 'High-threat environments benefit from regular testing'
         });
@@ -2310,7 +2521,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 10);
         factors.push({
           parameter: 'Security Maturity',
-          value: profile.securityMaturity,
+          value: profile.securityMaturity ? formatSecurityMaturity(profile.securityMaturity) : null,
           impact: '+10',
           explanation: 'Mature programs benefit from control validation'
         });
@@ -2419,7 +2630,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 15);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'TRADITIONAL',
+          value: DIGITAL_MATURITY_LABELS['TRADITIONAL'],
           impact: '-15 (floor: 50)',
           explanation: 'Automated tools require digital infrastructure to deploy'
         });
@@ -2428,7 +2639,7 @@ function calculateSafeguardRelevance(
       if (['7.3', '7.4'].includes(sfId)) {
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'TRADITIONAL',
+          value: DIGITAL_MATURITY_LABELS['TRADITIONAL'],
           impact: 'note',
           explanation: 'Automated patching may require infrastructure improvements'
         });
@@ -2438,7 +2649,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.max(50, relevanceScore - 10);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'TRADITIONAL',
+          value: DIGITAL_MATURITY_LABELS['TRADITIONAL'],
           impact: '-10 (floor: 50)',
           explanation: 'Log centralization requires compatible infrastructure'
         });
@@ -2452,7 +2663,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 5);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'DIGITAL_NATIVE',
+          value: DIGITAL_MATURITY_LABELS['DIGITAL_NATIVE'],
           impact: '+5',
           explanation: 'Digital-native can easily deploy automated discovery'
         });
@@ -2462,7 +2673,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 5);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'DIGITAL_NATIVE',
+          value: DIGITAL_MATURITY_LABELS['DIGITAL_NATIVE'],
           impact: '+5',
           explanation: 'Can implement continuous/automated vulnerability scanning'
         });
@@ -2472,7 +2683,7 @@ function calculateSafeguardRelevance(
         relevanceScore = Math.min(100, relevanceScore + 5);
         factors.push({
           parameter: 'Digital Maturity',
-          value: 'DIGITAL_NATIVE',
+          value: DIGITAL_MATURITY_LABELS['DIGITAL_NATIVE'],
           impact: '+5',
           explanation: 'Can integrate security into CI/CD pipelines'
         });
@@ -2493,6 +2704,30 @@ function calculateSafeguardRelevance(
     });
   }
 
+  // ════════════════════════════════════════════════════════════════════════════
+  // Apply threshold-based inactive logic for safeguards
+  // ════════════════════════════════════════════════════════════════════════════
+  if (!shouldBeInactive && relevanceScore < 50) {
+    shouldBeInactive = true;
+    if (relevanceScore < 30) {
+      reasons.push(`Low relevance score (${relevanceScore}%) - safeguard not applicable`);
+      factors.push({
+        parameter: 'Score Threshold',
+        value: `${relevanceScore}%`,
+        impact: '→ INACTIVE',
+        explanation: 'Score below 30% threshold - automatically marked inactive'
+      });
+    } else {
+      reasons.push(`Moderate relevance score (${relevanceScore}%) - safeguard suggested as inactive`);
+      factors.push({
+        parameter: 'Score Threshold',
+        value: `${relevanceScore}%`,
+        impact: '→ INACTIVE (suggested)',
+        explanation: 'Score between 30-49% - suggested inactive but can be enabled'
+      });
+    }
+  }
+
   return {
     safeguardId: safeguard.id,
     controlId,
@@ -2509,8 +2744,10 @@ function calculateSafeguardRelevance(
 // Main Recommendation Generator
 // ────────────────────────────────────────────────────────────────────────────────
 
-export function generateGapRecommendation(profile: OrganizationProfile): GapRecommendation {
-  const { ig: recommendedIg, reasons: igReasons } = calculateRecommendedIg(profile);
+export function generateGapRecommendation(profile: OrganizationProfile, targetIg?: number): GapRecommendation {
+  const { ig: calculatedIg, reasons: igReasons } = calculateRecommendedIg(profile);
+  // Use targetIg if provided (user override), otherwise use calculated recommendation
+  const recommendedIg = targetIg ?? calculatedIg;
 
   const controls: ControlRecommendation[] = [];
   let totalSafeguards = 0;

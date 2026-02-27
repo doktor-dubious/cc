@@ -7,6 +7,63 @@ import { twoFactor }       from 'better-auth/plugins';
 import { prisma }          from '@/lib/prisma';
 import { headers }         from 'next/headers';
 import bcrypt              from 'bcryptjs';
+import { log }             from '@/lib/log';
+
+// ────────────────────────────────────────────────────────────────────────────
+// IP Geolocation using ip-api.com (free, no API key required)
+interface GeoLocation {
+    city?:    string;
+    region?:  string;
+    country?: string;
+}
+
+function isLocalOrPrivateIP(ip: string): boolean {
+    if (!ip) return true;
+
+    // IPv4 localhost and private ranges
+    if (ip === '127.0.0.1' || ip.startsWith('127.')) return true;
+    if (ip.startsWith('192.168.') || ip.startsWith('10.') || ip.startsWith('172.16.')) return true;
+
+    // IPv6 localhost and unspecified
+    if (ip === '::1' || ip === '::') return true;
+    // Full form of IPv6 unspecified (::) and localhost (::1)
+    if (ip === '0000:0000:0000:0000:0000:0000:0000:0000') return true;
+    if (ip === '0000:0000:0000:0000:0000:0000:0000:0001') return true;
+    // Compressed forms with leading zeros
+    if (/^(0+:){7}0+$/.test(ip) || /^(0+:){7}0*1$/.test(ip)) return true;
+    // IPv6 link-local
+    if (ip.toLowerCase().startsWith('fe80:')) return true;
+
+    return false;
+}
+
+async function getGeoLocation(ip: string): Promise<GeoLocation> {
+    // Skip for localhost/private IPs
+    if (isLocalOrPrivateIP(ip)) {
+        return { city: 'Local', region: 'Local', country: 'Local' };
+    }
+
+    try {
+        const response = await fetch(`http://ip-api.com/json/${ip}?fields=city,regionName,country`, {
+            signal: AbortSignal.timeout(3000), // 3 second timeout
+        });
+
+        if (!response.ok) {
+            log.warn({ ip, status: response.status }, 'IP geolocation request failed');
+            return {};
+        }
+
+        const data = await response.json();
+        return {
+            city:    data.city    || undefined,
+            region:  data.regionName || undefined,
+            country: data.country || undefined,
+        };
+    } catch (error) {
+        log.warn({ ip, error }, 'IP geolocation lookup failed');
+        return {};
+    }
+}
 
 // ────────────────────────────────────────────────────────────────────────────
 // Better Auth instance
@@ -52,6 +109,43 @@ export const auth = betterAuth({
         nextCookies(),
         twoFactor({ issuer: 'Compliance Circle' }),
     ],
+
+    databaseHooks: {
+        session: {
+            create: {
+                after: async (session) => {
+                    const ip = session.ipAddress;
+                    const geo = ip ? await getGeoLocation(ip) : {};
+
+                    // Update session with geolocation
+                    if (geo.city || geo.region || geo.country) {
+                        await prisma.session.update({
+                            where: { id: session.id },
+                            data: {
+                                city:    geo.city,
+                                region:  geo.region,
+                                country: geo.country,
+                            },
+                        });
+                    }
+
+                    // Create login history entry (always, for audit trail)
+                    await prisma.loginHistory.create({
+                        data: {
+                            userId:    session.userId,
+                            ipAddress: ip,
+                            userAgent: session.userAgent,
+                            city:      geo.city,
+                            region:    geo.region,
+                            country:   geo.country,
+                        },
+                    });
+
+                    log.debug({ userId: session.userId, ip, geo }, 'Login history recorded');
+                },
+            },
+        },
+    },
 });
 
 // ────────────────────────────────────────────────────────────────────────────

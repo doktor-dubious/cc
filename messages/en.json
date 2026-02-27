@@ -30,6 +30,7 @@
       "sender": "Sender",
       "task": "Task"
     },
+    "clear": "Clear",
     "words": {
       "yes": "Yes",
       "no": "No",
@@ -75,6 +76,9 @@
     "conq": "CONQ",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
+    "cisControls": "CIS Controls",
+    "cisSafeguards": "CIS Safeguards",
+    "cisRiscAnalysis": "CIS Risc Analysis",
     "academy": "Academy",
     "ai": "AI",
     "learnMore": "Learn More",
@@ -1152,6 +1156,9 @@
     }
   },
   "CISControls": {
+    "buttons": {
+      "riscAnalysis": "Risc Analysis Composition"
+    },
     "legends": {
       "controlGroups": "Control Groups",
       "riskScore": "Risk Score",
@@ -1404,11 +1411,14 @@
   },
   "ExploratoryGap": {
     "title": "Exploratory GAP Analysis",
+    "titleCISRisc": "CIS Risc Analysis",
     "description": "Generate a tailored CIS Controls recommendation based on your organization's profile, taxonomy, and classification.",
     "buttons": {
       "generate": "Generate Exploratory GAP",
+      "generateShort": "Generate",
       "generating": "Generating...",
       "implement": "Implement Recommendations",
+      "implementShort": "Implement",
       "implementing": "Implementing...",
       "confirm": "Confirm & Implement",
       "cancel": "Cancel"
@@ -1446,7 +1456,9 @@
       "description": "This will apply the following changes to {name}:",
       "targetIg": "Target Implementation Group",
       "controlsInactive": "Controls to set as inactive",
-      "safeguardsInactive": "Safeguards to set as inactive"
+      "safeguardsInactive": "Safeguards to set as inactive",
+      "clearTitle": "Clear Analysis?",
+      "clearDescription": "This will remove the current analysis. You can generate a new one at any time."
     },
     "empty": {
       "noOrganization": "No Organization Selected",
@@ -1457,7 +1469,8 @@
       "generateError": "Failed to generate recommendation",
       "implementSuccess": "Recommendations implemented successfully",
       "implementError": "Failed to implement recommendations",
-      "selectOrganization": "Please select an organization first"
+      "selectOrganization": "Please select an organization first",
+      "clearSuccess": "Analysis cleared"
     },
     "ig": {
       "ig1": "IG1 - Essential Cyber Hygiene",

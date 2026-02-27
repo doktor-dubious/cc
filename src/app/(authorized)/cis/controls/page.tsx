@@ -861,13 +861,20 @@ export default function CISControlsPage() {
 
           {/* Show inactive toggle */}
           <div className="space-y-3">
-            <div className="flex items-center gap-2">
+            <label className="flex items-center gap-2 cursor-pointer">
               <Switch
                 checked={showInactive}
                 onCheckedChange={setShowInactive}
               />
               <span className="text-sm text-muted-foreground">{t('legends.showInactive')}</span>
-            </div>
+            </label>
+            <Button
+              variant="default"
+              size="sm"
+              onClick={() => router.push('/cis/cis-risc-analysis')}
+            >
+              {t('buttons.riscAnalysis')}
+            </Button>
           </div>
 
         </div>
