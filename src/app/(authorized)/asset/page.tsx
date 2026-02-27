@@ -4,7 +4,7 @@ import { useUser }                              from '@/context/UserContext';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { useRouter }                            from 'next/navigation';
 import { useEffect, useState }                  from 'react';
-import { SquarePen, Trash2, Star, ChevronDown } from 'lucide-react';
+import { SquarePen, Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react';
 import { Button }                               from "@/components/ui/button";
 import { Checkbox }                             from "@/components/ui/checkbox";
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
@@ -110,6 +110,10 @@ export default function ArtifactPage()
 
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
+
+    // Sorting
+    const [sortField, setSortField] = useState<'name' | 'type' | 'starred' | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     // Selection and starring state
     const [selectedAssetIds, setSelectedAssetIds] = useState<Set<number>>(new Set());
@@ -615,10 +619,58 @@ export default function ArtifactPage()
           }
       };
 
-    const filteredArtifacts = artifacts.filter(artifact =>
-      artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      artifact.id.toString().includes(filterText)
+    // Sorting helper
+    const handleSort = (field: 'name' | 'type' | 'starred') => {
+        if (sortField === field) {
+            setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // Sortable column header renderer
+    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'type' | 'starred', children: React.ReactNode, className?: string }) => (
+        <TableHead
+            className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
+            onClick={() => handleSort(field)}
+        >
+            <div className="flex items-center gap-1">
+                {children}
+                {sortField === field ? (
+                    sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                ) : (
+                    <ArrowUpDown className="h-4 w-4 opacity-30" />
+                )}
+            </div>
+        </TableHead>
     );
+
+    const filteredArtifacts = artifacts
+      .filter(artifact =>
+        artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        artifact.id.toString().includes(filterText)
+      )
+      .sort((a, b) => {
+        if (sortField) {
+            let comparison = 0;
+            switch (sortField) {
+                case 'name':
+                    comparison = a.name.localeCompare(b.name);
+                    break;
+                case 'type':
+                    comparison = a.type.localeCompare(b.type);
+                    break;
+                case 'starred':
+                    const aStarred = starredAssetIds.has(a.id) ? 1 : 0;
+                    const bStarred = starredAssetIds.has(b.id) ? 1 : 0;
+                    comparison = bStarred - aStarred;
+                    break;
+            }
+            return sortDirection === 'asc' ? comparison : -comparison;
+        }
+        return 0;
+      });
 
     // Selection helpers
     const toggleAssetSelection = (assetId: number) => {
@@ -1069,10 +1121,10 @@ export default function ArtifactPage()
                   </DropdownMenu>
                 </div>
               </TableHead>
-              <TableHead>{tc('table.name')}</TableHead>
+              <SortableHeader field="name">{tc('table.name')}</SortableHeader>
               <TableHead>{tc('table.description')}</TableHead>
-              <TableHead className="w-40">{tc('table.type')}</TableHead>
-              <TableHead className="w-10"></TableHead>
+              <SortableHeader field="type" className="w-40">{tc('table.type')}</SortableHeader>
+              <SortableHeader field="starred" className="w-10"><Star className="h-4 w-4" /></SortableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>

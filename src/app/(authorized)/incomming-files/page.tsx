@@ -5,7 +5,7 @@
 import { useState, useEffect }                  from 'react';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
-import { File, Trash2, Star, ChevronDown }      from 'lucide-react';
+import { File, Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown }      from 'lucide-react';
 import { useTranslations }                      from 'next-intl';
 import { Button }                               from '@/components/ui/button';
 import { Input }                                from '@/components/ui/input';
@@ -87,6 +87,10 @@ export default function ArtifactFilesPage()
 
     // Filter
     const [filterText, setFilterText] = useState("");
+
+    // Sorting
+    const [sortField, setSortField] = useState<'name' | 'size' | 'modified' | 'starred' | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     // Selection and starring
     const [selectedFilePaths, setSelectedFilePaths] = useState<Set<string>>(new Set());
@@ -430,11 +434,63 @@ export default function ArtifactFilesPage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // FILTER & PAGINATION
-    const filteredFiles = files.filter(f =>
-        f.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        f.relativePath.toLowerCase().includes(filterText.toLowerCase())
+    // SORTING HELPER
+    const handleSort = (field: 'name' | 'size' | 'modified' | 'starred') => {
+        if (sortField === field) {
+            setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // Sortable column header renderer
+    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'size' | 'modified' | 'starred', children: React.ReactNode, className?: string }) => (
+        <TableHead
+            className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
+            onClick={() => handleSort(field)}
+        >
+            <div className="flex items-center gap-1">
+                {children}
+                {sortField === field ? (
+                    sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                ) : (
+                    <ArrowUpDown className="h-4 w-4 opacity-30" />
+                )}
+            </div>
+        </TableHead>
     );
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // FILTER & PAGINATION
+    const filteredFiles = files
+        .filter(f =>
+            f.name.toLowerCase().includes(filterText.toLowerCase()) ||
+            f.relativePath.toLowerCase().includes(filterText.toLowerCase())
+        )
+        .sort((a, b) => {
+            if (sortField) {
+                let comparison = 0;
+                switch (sortField) {
+                    case 'name':
+                        comparison = a.name.localeCompare(b.name);
+                        break;
+                    case 'size':
+                        comparison = a.size - b.size;
+                        break;
+                    case 'modified':
+                        comparison = new Date(a.modified).getTime() - new Date(b.modified).getTime();
+                        break;
+                    case 'starred':
+                        const aStarred = starredFilePaths.has(a.relativePath) ? 1 : 0;
+                        const bStarred = starredFilePaths.has(b.relativePath) ? 1 : 0;
+                        comparison = bStarred - aStarred;
+                        break;
+                }
+                return sortDirection === 'asc' ? comparison : -comparison;
+            }
+            return 0;
+        });
 
     const totalPages = Math.ceil(filteredFiles.length / itemsPerPage);
     const startIndex = (currentPage - 1) * itemsPerPage;
@@ -590,12 +646,12 @@ export default function ArtifactFilesPage()
                       </DropdownMenu>
                     </div>
                   </TableHead>
-                  <TableHead>{t('table.filename')}</TableHead>
-                  <TableHead className="w-32 text-right">{t('table.size')}</TableHead>
-                  <TableHead className="w-40 text-right">{t('table.modified')}</TableHead>
+                  <SortableHeader field="name">{t('table.filename')}</SortableHeader>
+                  <SortableHeader field="size" className="w-32 text-right">{t('table.size')}</SortableHeader>
+                  <SortableHeader field="modified" className="w-40 text-right">{t('table.modified')}</SortableHeader>
                   <TableHead className="w-48 text-right">{t('table.actions')}</TableHead>
                   {/* Star column */}
-                  <TableHead className="w-12"></TableHead>
+                  <SortableHeader field="starred" className="w-12"><Star className="h-4 w-4" /></SortableHeader>
                 </TableRow>
               </TableHeader>
               <TableBody>

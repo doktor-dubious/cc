@@ -83,6 +83,7 @@
     "termsOfService": "Terms of Service",
     "blog": "Blog",
     "theme": "Theme",
+    "settings": "Settings",
     "profileSettings": "Profile Settings",
     "applicationSettings": "Application Settings",
     "language": "Language",
@@ -408,7 +409,12 @@
       "deleteSelected": "Delete selected logins",
       "creating": "Creating...",
       "saving": "Saving...",
-      "deleting": "Deleting..."
+      "deleting": "Deleting...",
+      "disable2FA": "Disable 2FA",
+      "enable2FA": "Enable 2FA",
+      "enabling": "Enabling...",
+      "copyBackupCodes": "Copy Backup Codes",
+      "done": "Done"
     },
     "dialogs": {
       "createTitle": "Create New Login",
@@ -418,7 +424,11 @@
       "bulkDeleteTitle": "Delete Multiple Logins",
       "bulkDeleteDescription": "You are about to delete {count} logins. This action cannot be undone.",
       "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these logins",
-      "bulkDeleteTypeWord": "Type \"{word}\" to confirm"
+      "bulkDeleteTypeWord": "Type \"{word}\" to confirm",
+      "enable2faTitle": "Enable Two-Factor Authentication",
+      "enable2faDescription": "You are about to enable two-factor authentication for this user. After enabling, they will need to enter a code from their authenticator app (or a backup code) every time they log in.",
+      "enable2faWarning": "Important: You must share the QR code or backup codes with the user. Without them, the user will be locked out of their account.",
+      "enable2faConfirmCheckbox": "I understand that I must share the QR code or backup codes with the user before they can log in"
     },
     "selection": {
       "selectedOf": "Selected {selected} of {total} logins"
@@ -427,6 +437,7 @@
       "name": "Name",
       "nickname": "Nickname",
       "email": "Email",
+      "emailCannotBeChanged": "Email cannot be changed",
       "password": "Password",
       "newPassword": "New Password",
       "role": "Role",
@@ -438,10 +449,12 @@
       "enterEmail": "Enter email address",
       "enterPassword": "Enter password",
       "enterNewPassword": "Leave blank to keep current password",
-      "filterByNameOrEmail": "Filter by name or email..."
+      "filterByNameOrEmail": "Filter by name or email...",
+      "filterSessions": "Filter by device, location or IP..."
     },
     "tabs": {
       "details": "Details",
+      "loginHistory": "Login History",
       "actions": "Actions"
     },
     "roles": {
@@ -451,10 +464,13 @@
     },
     "empty": {
       "noUsersMatch": "No logins match your filter",
-      "noUsersFound": "No logins found"
+      "noUsersFound": "No logins found",
+      "noSessions": "No login sessions found",
+      "noSessionsMatch": "No sessions match your filter"
     },
     "pagination": {
-      "showingUsers": "Showing {start} to {end} of {total} logins"
+      "showingUsers": "Showing {start} to {end} of {total} logins",
+      "showingSessions": "Showing {start} to {end} of {total} sessions"
     },
     "toast": {
       "userCreated": "Login created successfully",
@@ -466,13 +482,36 @@
       "cannotDeleteSelf": "Cannot delete your own account",
       "passwordTooWeak": "Password is too weak. Please make it stronger.",
       "usersDeleted": "Deleted {count} login(s) successfully",
-      "usersDeleteFailed": "Failed to delete {count} login(s)"
+      "usersDeleteFailed": "Failed to delete {count} login(s)",
+      "twoFactorDisabled": "Two-factor authentication disabled",
+      "twoFactorDisableError": "Could not disable two-factor authentication",
+      "twoFactorEnabled": "Two-factor authentication enabled",
+      "twoFactorEnableError": "Could not enable two-factor authentication",
+      "backupCodesCopied": "Backup codes copied to clipboard",
+      "starError": "Could not update star"
+    },
+    "twoFactor": {
+      "shareWithUser": "Share the QR code and backup codes with the user. They will need to scan the QR code with their authenticator app (Google Authenticator, Authy, etc.).",
+      "scanQrCode": "Scan this QR code with an authenticator app",
+      "backupCodes": "Backup codes (save these securely)",
+      "saveBackupCodes": "Save your backup codes in a safe place. You will need them if you lose access to your authenticator app."
     },
     "sections": {
       "userActions": "Login Actions",
       "userActionsDescription": "Manage this login with the actions below.",
       "deleteUserTitle": "Delete Login",
-      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system."
+      "deleteUserDescription": "Permanently deactivate this login. The user will no longer be able to access the system.",
+      "loginHistory": "Login History",
+      "twoFactorTitle": "Two-Factor Authentication",
+      "twoFactorEnabled": "Enabled",
+      "twoFactorEnabledDescription": "This user has two-factor authentication enabled. You can disable it if they lose access to their authenticator.",
+      "twoFactorDisabledDescription": "This user does not have two-factor authentication enabled. You can enable it here, but it's more secure for the user to enable it themselves in their Profile Settings."
+    },
+    "sessionLabels": {
+      "device": "Device",
+      "location": "Location",
+      "created": "Created",
+      "updated": "Updated"
     },
     "password": {
       "minLength": "Use at least 8 characters with a mix of letters, numbers & symbols",
@@ -1108,7 +1147,8 @@
     "toast": {
       "messageDeleted": "Message deleted successfully",
       "deleteError": "Could not delete message",
-      "loadError": "Could not load messages"
+      "loadError": "Could not load messages",
+      "starError": "Could not update star"
     }
   },
   "CISControls": {

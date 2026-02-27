@@ -6,7 +6,7 @@ import { useRouter }                            from 'next/navigation';
 import { useEffect, useState }                  from 'react';
 
 import { useTranslations } from 'next-intl';
-import { ExternalLink } from 'lucide-react';
+import { ExternalLink, ChevronUp, ChevronDown, ArrowUpDown } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -47,6 +47,10 @@ export default function AuditTrailPage()
     const [filterText, setFilterText] = useState("");
     const [currentPage, setCurrentPage] = useState(1);
     const perPage = 8;
+
+    // Sorting
+    const [sortField, setSortField] = useState<'date' | 'user' | 'importance' | 'message' | 'entity' | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // IMPORTANCE BADGE
@@ -135,20 +139,81 @@ export default function AuditTrailPage()
     }, [filterText]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // SORTING HELPER
+    const handleSort = (field: 'date' | 'user' | 'importance' | 'message' | 'entity') => {
+        if (sortField === field) {
+            setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // Helper to get entity name for sorting
+    const getEntityName = (event: any): string => {
+        return event.task?.name || event.organization?.name || event.profile?.name || event.artifact?.name || '';
+    };
+
+    // Importance order for sorting
+    const importanceOrder: Record<string, number> = { LOW: 1, MIDDLE: 2, HIGH: 3 };
+
+    // Sortable column header renderer
+    const SortableHeader = ({ field, children, className = '' }: { field: 'date' | 'user' | 'importance' | 'message' | 'entity', children: React.ReactNode, className?: string }) => (
+        <TableHead
+            className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
+            onClick={() => handleSort(field)}
+        >
+            <div className="flex items-center gap-1">
+                {children}
+                {sortField === field ? (
+                    sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                ) : (
+                    <ArrowUpDown className="h-4 w-4 opacity-30" />
+                )}
+            </div>
+        </TableHead>
+    );
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FILTER & PAGINATION
-    const filteredEvents = events.filter((event) =>
-    {
-        const search = filterText.toLowerCase();
-        return (
-            event.message.toLowerCase().includes(search) ||
-            (event.user?.name || '').toLowerCase().includes(search) ||
-            (event.task?.name || '').toLowerCase().includes(search) ||
-            (event.organization?.name || '').toLowerCase().includes(search) ||
-            (event.profile?.name || '').toLowerCase().includes(search) ||
-            (event.artifact?.name || '').toLowerCase().includes(search) ||
-            (event.importance || '').toLowerCase().includes(search)
-        );
-    });
+    const filteredEvents = events
+        .filter((event) => {
+            const search = filterText.toLowerCase();
+            return (
+                event.message.toLowerCase().includes(search) ||
+                (event.user?.name || '').toLowerCase().includes(search) ||
+                (event.task?.name || '').toLowerCase().includes(search) ||
+                (event.organization?.name || '').toLowerCase().includes(search) ||
+                (event.profile?.name || '').toLowerCase().includes(search) ||
+                (event.artifact?.name || '').toLowerCase().includes(search) ||
+                (event.importance || '').toLowerCase().includes(search)
+            );
+        })
+        .sort((a, b) => {
+            if (sortField) {
+                let comparison = 0;
+                switch (sortField) {
+                    case 'date':
+                        comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
+                        break;
+                    case 'user':
+                        comparison = (a.user?.name || 'System').localeCompare(b.user?.name || 'System');
+                        break;
+                    case 'importance':
+                        comparison = (importanceOrder[a.importance] || 0) - (importanceOrder[b.importance] || 0);
+                        break;
+                    case 'message':
+                        comparison = a.message.localeCompare(b.message);
+                        break;
+                    case 'entity':
+                        comparison = getEntityName(a).localeCompare(getEntityName(b));
+                        break;
+                }
+                return sortDirection === 'asc' ? comparison : -comparison;
+            }
+            // Default: sort by date descending (most recent first)
+            return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
 
     const totalPages = Math.ceil(filteredEvents.length / perPage);
     const startIndex = (currentPage - 1) * perPage;
@@ -184,11 +249,11 @@ export default function AuditTrailPage()
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-44">{tc('table.date')}</TableHead>
-              <TableHead className="w-36">{tc('table.user')}</TableHead>
-              <TableHead className="w-28">{tc('table.importance')}</TableHead>
-              <TableHead>{tc('table.message')}</TableHead>
-              <TableHead className="w-48">{t('table.entity')}</TableHead>
+              <SortableHeader field="date" className="w-44">{tc('table.date')}</SortableHeader>
+              <SortableHeader field="user" className="w-36">{tc('table.user')}</SortableHeader>
+              <SortableHeader field="importance" className="w-28">{tc('table.importance')}</SortableHeader>
+              <SortableHeader field="message">{tc('table.message')}</SortableHeader>
+              <SortableHeader field="entity" className="w-48">{t('table.entity')}</SortableHeader>
               <TableHead className="w-16"></TableHead>
             </TableRow>
           </TableHeader>

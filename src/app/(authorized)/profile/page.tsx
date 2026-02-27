@@ -6,7 +6,7 @@ import { useUser }                        from '@/context/UserContext';
 import { useOrganization }                from '@/context/OrganizationContext';
 import { useRouter }                      from 'next/navigation';
 import { useTranslations }                from 'next-intl';
-import { Trash2, Star, ChevronDown }      from 'lucide-react';
+import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown }      from 'lucide-react';
 import { Button }                         from "@/components/ui/button";
 import { Checkbox }                       from "@/components/ui/checkbox";
 
@@ -110,6 +110,10 @@ export default function ProfilePage()
 
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
+
+    // Sorting
+    const [sortField, setSortField] = useState<'name' | 'role' | 'starred' | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     // Selection and starring state
     const [selectedProfileIds, setSelectedProfileIds] = useState<Set<string>>(new Set());
@@ -1045,11 +1049,59 @@ export default function ProfilePage()
         }
     };
 
-    const filteredProfiles = profiles.filter(profile =>
-      profile.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      profile.user?.email.toLowerCase().includes(filterText.toLowerCase()) ||
-      profile.id.toString().includes(filterText)
+    // Sorting helper
+    const handleSort = (field: 'name' | 'role' | 'starred') => {
+        if (sortField === field) {
+            setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // Sortable column header renderer
+    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'role' | 'starred', children: React.ReactNode, className?: string }) => (
+        <TableHead
+            className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
+            onClick={() => handleSort(field)}
+        >
+            <div className="flex items-center gap-1">
+                {children}
+                {sortField === field ? (
+                    sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                ) : (
+                    <ArrowUpDown className="h-4 w-4 opacity-30" />
+                )}
+            </div>
+        </TableHead>
     );
+
+    const filteredProfiles = profiles
+      .filter(profile =>
+        profile.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        profile.user?.email.toLowerCase().includes(filterText.toLowerCase()) ||
+        profile.id.toString().includes(filterText)
+      )
+      .sort((a, b) => {
+        if (sortField) {
+            let comparison = 0;
+            switch (sortField) {
+                case 'name':
+                    comparison = a.name.localeCompare(b.name);
+                    break;
+                case 'role':
+                    comparison = (a.user?.role || '').localeCompare(b.user?.role || '');
+                    break;
+                case 'starred':
+                    const aStarred = starredProfileIds.has(a.id) ? 1 : 0;
+                    const bStarred = starredProfileIds.has(b.id) ? 1 : 0;
+                    comparison = bStarred - aStarred;
+                    break;
+            }
+            return sortDirection === 'asc' ? comparison : -comparison;
+        }
+        return 0;
+      });
 
     // Selection helpers
     const toggleProfileSelection = (profileId: string) => {
@@ -1626,11 +1678,11 @@ export default function ProfilePage()
                   </DropdownMenu>
                 </div>
               </TableHead>
-              <TableHead>{tc('table.name')}</TableHead>
+              <SortableHeader field="name">{tc('table.name')}</SortableHeader>
               <TableHead>{tc('table.login')}</TableHead>
-              <TableHead>{tc('table.role')}</TableHead>
+              <SortableHeader field="role">{tc('table.role')}</SortableHeader>
               <TableHead className="w-28 text-right">{tc('table.tasks')}</TableHead>
-              <TableHead className="w-10"></TableHead>
+              <SortableHeader field="starred" className="w-10"><Star className="h-4 w-4" /></SortableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>

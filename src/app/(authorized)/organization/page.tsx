@@ -4,7 +4,7 @@ import { useUser }              from '@/context/UserContext';
 import { useOrganization }      from '@/context/OrganizationContext';
 import { useRouter }            from 'next/navigation';
 import { useEffect, useState }  from 'react';
-import { Trash2, Star, ChevronDown } from 'lucide-react';
+import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react';
 import { Button }               from "@/components/ui/button";
 import { Checkbox }             from "@/components/ui/checkbox";
 import { useTranslations }      from 'next-intl';
@@ -143,6 +143,10 @@ export default function OrganizationPage()
 
     const [filterText, setFilterText] = useState("")
     const [activeTab, setActiveTab] = useState("details")
+
+    // Sorting
+    const [sortField, setSortField] = useState<'name' | 'starred' | null>(null);
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
 
     // Settings tab fields
     const [uploadDirectory, setUploadDirectory] = useState("");
@@ -1540,18 +1544,63 @@ export default function OrganizationPage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+    // SORTING HELPER
+    const handleSort = (field: 'name' | 'starred') => {
+        if (sortField === field) {
+            setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
+        } else {
+            setSortField(field);
+            setSortDirection('asc');
+        }
+    };
+
+    // Sortable column header renderer
+    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'starred', children: React.ReactNode, className?: string }) => (
+        <TableHead
+            className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
+            onClick={() => handleSort(field)}
+        >
+            <div className="flex items-center gap-1">
+                {children}
+                {sortField === field ? (
+                    sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
+                ) : (
+                    <ArrowUpDown className="h-4 w-4 opacity-30" />
+                )}
+            </div>
+        </TableHead>
+    );
+
+    // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // FILTER ORGANIZATION TABLE
     const filteredOrganizations = organizations
         .filter(org =>
             org.name.toLowerCase().includes(filterText.toLowerCase()) ||
             org.id.toString().includes(filterText)
         )
-        // Sort: active organization first, then by updatedAt descending
+        // Sort: by selected column, or default (active org first, then by updatedAt)
         .sort((a, b) => {
             // Active organization always on top
             if (activeOrganization?.id === a.id) return -1;
             if (activeOrganization?.id === b.id) return 1;
-            // Then sort by updatedAt descending (most recent first)
+
+            // If a sort field is selected, use it
+            if (sortField) {
+                let comparison = 0;
+                switch (sortField) {
+                    case 'name':
+                        comparison = a.name.localeCompare(b.name);
+                        break;
+                    case 'starred':
+                        const aStarred = starredOrgIds.has(a.id) ? 1 : 0;
+                        const bStarred = starredOrgIds.has(b.id) ? 1 : 0;
+                        comparison = bStarred - aStarred;
+                        break;
+                }
+                return sortDirection === 'asc' ? comparison : -comparison;
+            }
+
+            // Default: sort by updatedAt descending
             const dateA = new Date(a.updatedAt).getTime();
             const dateB = new Date(b.updatedAt).getTime();
             return dateB - dateA;
@@ -2164,10 +2213,10 @@ export default function OrganizationPage()
                         </DropdownMenu>
                     </div>
                 </TableHead>
-                <TableHead>{tc('table.name')}</TableHead>
+                <SortableHeader field="name">{tc('table.name')}</SortableHeader>
                 <TableHead className="w-28 text-right">{tc('table.profiles')}</TableHead>
                 <TableHead className="w-28 text-right">{tc('table.tasks')}</TableHead>
-                <TableHead className="w-10"></TableHead>
+                <SortableHeader field="starred" className="w-10"><Star className="h-4 w-4" /></SortableHeader>
             </TableRow>
         </TableHeader>
         <TableBody>

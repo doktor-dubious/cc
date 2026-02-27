@@ -1,9 +1,10 @@
 'use client';
 
 import { useRouter, usePathname }   from 'next/navigation';
-import { useState, useEffect }      from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import Link                         from 'next/link'
 import { Button }                   from "@/components/ui/button"
+import { Input }                    from "@/components/ui/input"
 import { 
   DropdownMenu,
   DropdownMenuContent,
@@ -46,11 +47,11 @@ import {
   useSidebar
 } from "@/components/ui/sidebar"
 
-import { 
-  ChevronDown, 
-  Home, 
-  FileText, 
-  User, 
+import {
+  ChevronDown,
+  Home,
+  FileText,
+  User,
   PanelLeft,
   ChevronUp,
 
@@ -77,7 +78,8 @@ import {
   Lightbulb,
 
   Cog,
-  PlusSquare
+  PlusSquare,
+  Search
 } from "lucide-react"
 
 
@@ -121,6 +123,7 @@ import { useOrganization } from '@/context/OrganizationContext';
 
 interface User
 {
+    id                : string;
     name              : string;
     email             : string;
     role              : UserRole;
@@ -153,15 +156,16 @@ export default function AuthorizedLayout({children, user, organizations, tasks}:
 let pathname = usePathname();
 
 // Map routes to titles
-const getPageTitle = () => 
+const getPageTitle = () =>
 {
     if (pathname.includes('/asset'))            return t('assets');
     if (pathname.includes('/task'))             return t('tasks');
     if (pathname.includes('/organization'))     return t('organizations');
+    if (pathname.includes('/settings/profile')) return t('profileSettings');
+    if (pathname.includes('/settings/application')) return t('applicationSettings');
     if (pathname.includes('/profile'))          return t('profiles');
     if (pathname.includes('/upload-files'))     return t('uploadFiles');
     if (pathname.includes('/incomming-files'))  return t('incommingFiles');
-    if (pathname.includes('/settings'))         return t('profileSettings');
     if (pathname.includes('/home'))             return t('home');
 
     return 'Dashboard';
@@ -171,8 +175,33 @@ const getPageTitle = () =>
 function OrganizationSwitcher()
 {
     const { organizations, sortedOrganizations, activeOrganization, setActiveOrganization } = useOrganization();
+    const [searchQuery, setSearchQuery] = useState("");
+    const [isOpen, setIsOpen] = useState(false);
+
+    // Reset search when dropdown closes
+    useEffect(() => {
+        if (!isOpen) setSearchQuery("");
+    }, [isOpen]);
+
+    // Sort: active org first, then by recency
+    const orderedOrganizations = useMemo(() => {
+        if (!activeOrganization) return sortedOrganizations;
+        const withoutActive = sortedOrganizations.filter(org => org.id !== activeOrganization.id);
+        return [activeOrganization, ...withoutActive];
+    }, [sortedOrganizations, activeOrganization]);
+
+    // Filter by search query
+    const filteredOrganizations = useMemo(() => {
+        if (!searchQuery.trim()) return orderedOrganizations;
+        const query = searchQuery.toLowerCase();
+        return orderedOrganizations.filter(org =>
+            org.name.toLowerCase().includes(query)
+        );
+    }, [orderedOrganizations, searchQuery]);
 
     if (!activeOrganization) return null;
+
+    const showSearch = organizations.length > 8;
 
     // Only one Organization → Badge (icon only when collapsed).
     if (organizations.length === 1)
@@ -211,7 +240,7 @@ function OrganizationSwitcher()
     bg-secondary
     text-muted-foreground"
 >
-  <DropdownMenu>
+  <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
     <DropdownMenuTrigger asChild>
       <Button
         variant="secondary"
@@ -245,15 +274,39 @@ function OrganizationSwitcher()
         w-(--sidebar-width)">
       <DropdownMenuLabel>{t('organizations')}</DropdownMenuLabel>
       <DropdownMenuSeparator />
-      {sortedOrganizations.map(org => (
-        <DropdownMenuItem
-          key={org.id}
-          onClick={() => setActiveOrganization(org)}
-          className="cursor-pointer"
-        >
-          {org.name}
-        </DropdownMenuItem>
-      ))}
+      {showSearch && (
+        <div className="px-2 py-1.5">
+          <div className="relative">
+            <Search className="absolute left-2 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="h-8 pl-8"
+              onClick={(e) => e.stopPropagation()}
+              onKeyDown={(e) => e.stopPropagation()}
+            />
+          </div>
+        </div>
+      )}
+      <div className="max-h-64 overflow-y-auto">
+        {filteredOrganizations.map(org => (
+          <DropdownMenuItem
+            key={org.id}
+            onClick={() => setActiveOrganization(org)}
+            className="cursor-pointer"
+          >
+            <span className={org.id === activeOrganization.id ? "font-medium" : ""}>
+              {org.name}
+            </span>
+          </DropdownMenuItem>
+        ))}
+        {filteredOrganizations.length === 0 && (
+          <div className="px-2 py-4 text-center text-sm text-muted-foreground">
+            No results
+          </div>
+        )}
+      </div>
     </DropdownMenuContent>
   </DropdownMenu>
 </div>
@@ -641,20 +694,21 @@ function TaskSidebarSections({
                     </DropdownMenuItem>
                   )}
 
-                  {/*  ── Organizations ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────── */}
-                  {user.role === 'SUPER_ADMIN' && (
-                    <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/organization')}>
-                      {t('organizations')}
-                    </DropdownMenuItem>
-                  )}
-
                   {(user.role === 'SUPER_ADMIN' || user.role === 'ADMIN') && (
                   <>
                     <DropdownMenuSeparator />
                     <DropdownMenuGroup>
 
                     {/* ------------------------------------------------------------- */}
-                    {/* Organizations (ADMIN) */}
+                    {/* Organizations (SUPER_ADMIN) */}
+                    {user.role === 'SUPER_ADMIN' && (
+                      <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/organization')}>
+                        {t('organizations')}
+                      </DropdownMenuItem>
+                    )}
+
+                    {/* ------------------------------------------------------------- */}
+                    {/* Profiles (ADMIN) */}
                     {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && (
                       <DropdownMenuItem className='cursor-pointer' onClick={() => router.push('/profile')}>
                         {t('profiles')}
@@ -806,12 +860,23 @@ function TaskSidebarSections({
                     </DropdownMenuLabel>
                     </AnimateIcon>
 
-                    <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/profile')}>
-                      {t('profileSettings')}
-                    </DropdownMenuItem>
-                    {user.role === 'SUPER_ADMIN' && (
-                      <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/application')}>
-                        {t('applicationSettings')}
+                    {user.role === 'SUPER_ADMIN' ? (
+                      <DropdownMenuSub>
+                        <DropdownMenuSubTrigger className="cursor-pointer">{t('settings')}</DropdownMenuSubTrigger>
+                        <DropdownMenuPortal>
+                          <DropdownMenuSubContent className="text-muted-foreground font-normal">
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/profile')}>
+                              {t('profileSettings')}
+                            </DropdownMenuItem>
+                            <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/application')}>
+                              {t('applicationSettings')}
+                            </DropdownMenuItem>
+                          </DropdownMenuSubContent>
+                        </DropdownMenuPortal>
+                      </DropdownMenuSub>
+                    ) : (
+                      <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/settings/profile')}>
+                        {t('settings')}
                       </DropdownMenuItem>
                     )}
                     <DropdownMenuSub>
