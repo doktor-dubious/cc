@@ -49,6 +49,13 @@
     "dialogs": {
       "deleteTitle": "Er du helt sikker?",
       "cannotBeUndone": "Denne handlingen kan ikke angres."
+    },
+    "navigation": {
+      "previous": "Forrige",
+      "next": "Neste",
+      "exit": "Avslutt",
+      "workflow": "Arbeidsflyt",
+      "finish": "Fullfør"
     }
   },
   "Sidebar": {
@@ -66,12 +73,15 @@
     "incommingFiles": "Innkommende filer",
     "messages": "Meldinger",
     "auditTrail": "Revisjonslogg",
+    "workflow": "Arbeidsflyt",
+    "customerOnboarding": "Kunde Onboarding",
     "reports": "Rapporter",
     "statusReport": "Statusrapport",
     "progressReport": "Fremdriftsrapport",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "cisControls": "CIS Kontroller",
@@ -130,6 +140,8 @@
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette ressursen \"{name}\" og fjerne den fra systemet.",
       "alsoDeleteFile": "Slett også filen fra filsystemet",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne ressursen og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for å bekrefte",
       "bulkDeleteTitle": "Slett flere ressurser",
       "bulkDeleteDescription": "Du er i ferd med å slette {count} ressurser. Denne handlingen kan ikke angres.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette vil permanent slette disse ressursene og alle tilknyttede data",
@@ -286,6 +298,8 @@
       "deleteTitle": "Er du helt sikker?",
       "deleteMessageDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette denne meldingen.",
       "deleteTaskDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette oppgaven \"{name}\" og fjerne den fra systemet.",
+      "deleteTaskConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne oppgaven og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for å bekrefte",
       "removeArtifactTitle": "Fjern ressurs fra oppgave?",
       "removeArtifactDescription": "Dette fjerner koblingen mellom ressursen og den gjeldende oppgaven (sletter lenken i TaskArtifact). Ressursen beholdes i systemet. Handlingen kan ikke angres.",
       "removeProfileTitle": "Fjern profil fra oppgave?",
@@ -346,6 +360,9 @@
       "showingArtifacts": "Viser {start} til {end} av {total} ressurser",
       "showingProfiles": "Viser {start} til {end} av {total} profiler",
       "showingEvents": "Viser {start} til {end} av {total} hendelser"
+    },
+    "table": {
+      "taskName": "Oppgavenavn"
     },
     "toast": {
       "allMessagesRead": "Alle meldinger markert som lest",
@@ -416,6 +433,8 @@
       "createDescription": "Skriv inn detaljene for den nye innloggingen.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Dette vil deaktivere innloggingen \"{name}\" og de vil ikke lenger ha tilgang til systemet.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne innloggingen.",
+      "deleteTypeWord": "Skriv \"{word}\" for å bekrefte",
       "bulkDeleteTitle": "Slett flere innlogginger",
       "bulkDeleteDescription": "Du er i ferd med å slette {count} innlogginger. Denne handlingen kan ikke angres.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse innloggingene",
@@ -542,6 +561,8 @@
       "removeTaskDescription": "Dette fjerner oppgavetildelingen fra denne profilen (sletter lenken i TaskProfile). Oppgaven beholdes i systemet. Handlingen kan ikke angres.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne profilen og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for å bekrefte",
       "bulkDeleteTitle": "Slett flere profiler",
       "bulkDeleteDescription": "Du er i ferd med å slette {count} profiler. Denne handlingen kan ikke angres.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette vil permanent slette disse profilene og alle tilknyttede data",
@@ -660,7 +681,9 @@
       "removing": "Fjerner...",
       "adding": "Legger til...",
       "deleteOrganizations": "Slett {count} organisasjoner",
-      "deleteSelected": "Slett valgte"
+      "deleteSelected": "Slett valgte",
+      "onboardingWizard": "Onboarding Guide",
+      "editInWizard": "Rediger i Guide"
     },
     "dialogs": {
       "createTitle": "Opprett ny organisasjon",
@@ -679,6 +702,8 @@
       "removeProfileDescription": "Dette fjerner koblingen mellom profilen og den gjeldende organisasjonen (setter organizationId til null). Profilen beholdes i systemet. Handlingen kan ikke angres.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handlingen kan ikke angres. Dette vil permanent slette organisasjonen \"{name}\" og fjerne den fra systemet.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne organisasjonen og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for å bekrefte",
       "bulkDeleteTitle": "Slett organisasjoner",
       "bulkDeleteDescription": "Du er i ferd med å slette {count} organisasjoner. Denne handlingen kan ikke angres.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette de valgte organisasjonene og alle tilknyttede data.",
@@ -818,7 +843,8 @@
       "taskUpdated": "Oppgave oppdatert",
       "updateTaskError": "Kunne ikke oppdatere oppgave",
       "organizationsDeleted": "{count} organisasjoner slettet",
-      "organizationsDeleteFailed": "Kunne ikke slette {count} organisasjoner"
+      "organizationsDeleteFailed": "Kunne ikke slette {count} organisasjoner",
+      "loadError": "Kunne ikke laste organisasjon"
     },
     "loading": {
       "loadingUser": "Laster bruker...",
@@ -1035,6 +1061,71 @@
       "substantial": "Betydelig (€250K-1M/år)",
       "enterprise": "Storforetak (> €1M/år)"
     },
+    "onboard": {
+      "title": "Sett opp organisasjonen din",
+      "titleEdit": "Rediger organisasjonsprofil",
+      "subtitle": "Fullfør følgende trinn for å konfigurere organisasjonens compliance-profil",
+      "saving": "Lagrer...",
+      "loading": "Laster organisasjon...",
+      "steps": {
+        "title": "Trinn",
+        "basics": "Navn og beskrivelse",
+        "sizeIndustry": "Størrelse og bransje",
+        "legalOwnership": "Juridisk form og eierskap",
+        "maturityRevenue": "Modenhet og omsetning",
+        "geographyOrientation": "Geografi og orientering",
+        "digitalEsg": "Digital og ESG",
+        "supplyChainRisk": "Forsyningskjede og risiko",
+        "euTaxonomy": "EU Taksonomi",
+        "itSecurityStaff": "IT og sikkerhetspersonell",
+        "itInfrastructure": "IT-infrastruktur",
+        "softwareServices": "Programvare og tjenester",
+        "dataCompliance": "Data og compliance",
+        "riskTolerance": "Risiko og toleranse",
+        "supplyChainBudget": "Posisjon og budsjett"
+      }
+    },
+    "summary": {
+      "title": "Organisasjonsoversikt",
+      "subtitle": "Gjennomgå organisasjonens profilinformasjon",
+      "sections": {
+        "basicInfo": "Grunnleggende informasjon",
+        "businessProfile": "Forretningsprofil",
+        "itSecurity": "IT og sikkerhet",
+        "infrastructure": "Infrastruktur",
+        "compliance": "Compliance og data"
+      }
+    },
+    "fields": {
+      "name": "Navn",
+      "description": "Beskrivelse",
+      "size": "Størrelse",
+      "naceSection": "Bransje (NACE)",
+      "legalForm": "Juridisk form",
+      "revenueRange": "Inntektsområde",
+      "maturity": "Modenhet",
+      "ownershipType": "Eiertype",
+      "geographicScope": "Geografisk omfang",
+      "businessOrientation": "Forretningsorientering",
+      "digitalMaturity": "Digital modenhet",
+      "esgStatus": "ESG-status",
+      "supplyChainRole": "Forsyningskjederolle",
+      "riskProfile": "Risikoprofil",
+      "euTaxonomyAligned": "EU-taksonomi tilpasset",
+      "itSecurityStaff": "IT-sikkerhetspersonell",
+      "securityMaturity": "Sikkerhetsmodenhet",
+      "securityBudgetRange": "Sikkerhetsbudsjett",
+      "targetedAttackLikelihood": "Sannsynlighet for målrettet angrep",
+      "downtimeTolerance": "Nedetidstoleranse",
+      "itEndpointRange": "IT-endepunkter",
+      "infrastructureTypes": "Infrastrukturtyper",
+      "softwareDevelopment": "Programvareutvikling",
+      "publicFacingServices": "Offentlig tilgjengelige tjenester",
+      "supplyChainPosition": "Posisjon i forsyningskjeden",
+      "dataSensitivity": "Datafølsomhet",
+      "regulatoryObligations": "Regulatoriske forpliktelser",
+      "ig": "Implementeringsgruppe"
+    },
     "status": {
       "currentlyIn": "For tiden i: {name}",
       "unassigned": "Ikke tildelt",
@@ -1055,6 +1146,8 @@
     "dialogs": {
       "deleteTitle": "Slett fil?",
       "deleteDescription": "Er du sikker på at du vil slette <strong>{name}</strong>? Denne handlingen kan ikke angres.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne filen.",
+      "deleteTypeWord": "Skriv \"{word}\" for å bekrefte",
       "assignTitle": "Tildel fil som ressurs",
       "assignFileLabel": "Fil: {name}"
     },
@@ -1072,6 +1165,7 @@
       "filename": "Filnavn",
       "size": "Størrelse",
       "modified": "Endret",
+      "date": "Dato",
       "actions": "Handlinger"
     },
     "empty": {
@@ -1132,6 +1226,17 @@
   },
 
   "CISControls": {
+    "buttons": {
+      "riscAnalysis": "Risikoanalyse"
+    },
+    "riscAnalysis": {
+      "description": "Generer en relevant Safeguard-profil basert på en risikoscore-evaluering ved bruk av organisasjonsdata.",
+      "openButton": "Åpne analyse"
+    },
+    "inactive": {
+      "title": "Inaktive kontroller",
+      "description": "Klikk på det ytre sirkeldiagram-segmentet for å inaktivere/aktivere en kontroll."
+    },
     "legends": {
       "controlGroups": "Kontrollgrupper",
       "riskScore": "Risikoscore",
@@ -1388,13 +1493,20 @@
   "ExploratoryGap": {
     "title": "Utforskende GAP-analyse",
     "description": "Generer en skreddersydd CIS Controls-anbefaling basert på organisasjonens profil, taksonomi og klassifisering.",
+    "backToControls": "Tilbake til kontroller",
     "buttons": {
       "generate": "Generer Utforskende GAP",
       "generating": "Genererer...",
       "implement": "Implementer anbefalinger",
       "implementing": "Implementerer...",
       "confirm": "Bekreft og implementer",
-      "cancel": "Avbryt"
+      "cancel": "Avbryt",
+      "viewReport": "Sammendrag & anbefaling",
+      "summary": "Sammendrag"
+    },
+    "actions": {
+      "title": "Gjennomgang & Implementering",
+      "description": "Se risikoanalysesammendraget eller implementer de anbefalte kontrollene"
     },
     "labels": {
       "currentOrganization": "Nåværende organisasjon",
@@ -1438,6 +1550,143 @@
       "ig1": "IG1 - Grunnleggende cyberhygiene",
       "ig2": "IG2 - Mellomliggende kontroller",
       "ig3": "IG3 - Avansert / Omfattende"
+    }
+  },
+  "RiskReport": {
+    "title": "Strukturell Risikoeksponering Oversikt",
+    "backToAnalysis": "Tilbake til CIS Risikoanalyse",
+    "export": "Eksporter",
+    "exportPdf": "Eksporter PDF",
+    "exportDocx": "Eksporter Word",
+    "exportJson": "Eksporter JSON",
+    "exporting": "Eksporterer...",
+    "noData": "Ingen Risikoanalysedata",
+    "noDataDescription": "Vennligst kjør CIS Risikoanalysen først for å generere en rapport.",
+    "section1": {
+      "title": "Strukturelle Eksponeringsindikatorer",
+      "exposureDriver": "Eksponeringsfaktor",
+      "assessment": "Vurdering"
+    },
+    "section2": {
+      "title": "Strukturell Risikotolkning"
+    },
+    "section3": {
+      "title": "Forventede Prioritetskontrolldomener"
+    },
+    "section4": {
+      "title": "Neste Trinn Vurderinger"
+    },
+    "footer": {
+      "confidential": "Konfidensiell",
+      "generatedBy": "Generert av Compliance Circle",
+      "version": "Vurdering v1.0"
+    }
+  },
+  "Workflow": {
+    "customerOnboarding": {
+      "title": "Kunde-onboarding",
+      "welcome": "Velkommen til kunde-onboarding",
+      "description": "Fullfør følgende trinn for å sette opp organisasjonens compliance-profil og generere din første GAP-rapport.",
+      "startStep": "Start",
+      "reviewStep": "Gjennomgå",
+      "progress": "{completed} av {total} trinn fullført",
+      "stepCount": "{count} trinn i denne arbeidsflyten",
+      "adapt": "Tilpass",
+      "save": "Lagre",
+      "saving": "Lagrer...",
+      "adaptModeHint": "Klikk på X eller + ikonene for å fjerne eller legge til trinn i denne arbeidsflyten.",
+      "exitDialog": {
+        "title": "Avslutt arbeidsflyt?",
+        "description": "Fremgangen din er lagret. Du kan gå tilbake til denne arbeidsflyten når som helst fra sidemenyen."
+      }
+    },
+    "steps": {
+      "organizationWizard": {
+        "title": "Organisasjonsprofil",
+        "description": "Sett opp organisasjonens grunnleggende informasjon, bransjeklassifisering og compliance-krav. Denne informasjonen brukes til å tilpasse anbefalinger til dine spesifikke behov."
+      },
+      "cisRiscAnalysis": {
+        "title": "CIS Risikoanalyse",
+        "description": "Analyser organisasjonens risikoprofil og motta skreddersydde anbefalinger for implementering av CIS-kontroller basert på organisasjonens karakteristikker."
+      },
+      "gapReport": {
+        "title": "GAP-rapport",
+        "description": "Gjennomgå og vurder din nåværende sikkerhetsposisjon mot de anbefalte CIS-kontrollene. Sett nåværende og mål CMMI-nivåer for hver sikkerhetstiltak."
+      }
+    }
+  },
+  "GapReport": {
+    "title": "GAP-rapport",
+    "catalog": {
+      "title": "CIS-kontrollkatalog"
+    },
+    "labels": {
+      "control": "Kontroll",
+      "safeguards": "Sikkerhetstiltak",
+      "definition": "Definisjon",
+      "purpose": "Formål",
+      "why": "Hvorfor dette er viktig",
+      "scope": "Omfang",
+      "approach": "Tilnærming",
+      "example": "Eksempel",
+      "resources": "Ressurser",
+      "notes": "Notater",
+      "active": "Aktiv",
+      "igDetails": "Implementeringsgruppe {ig} detaljer"
+    },
+    "tableColumns": {
+      "id": "ID",
+      "title": "Tittel",
+      "ig": "IG",
+      "active": "Aktiv"
+    },
+    "navigation": {
+      "previous": "Forrige",
+      "next": "Neste"
+    },
+    "noteStatus": {
+      "saving": "Lagrer...",
+      "saved": "Lagret {time}",
+      "error": "Kunne ikke lagre",
+      "justNow": "nettopp",
+      "minutesAgo": "{count}m siden",
+      "hoursAgo": "{count}t siden"
+    },
+    "placeholders": {
+      "notes": "Legg til notater for dette elementet..."
+    },
+    "messages": {
+      "selectOrganization": "Velg en organisasjon",
+      "controlNotFound": "Kontroll ikke funnet",
+      "noIgData": "Dette sikkerhetstiltaket har ikke spesifikk veiledning for IG{ig}. Det gjelder kanskje ikke på dette implementeringsnivået.",
+      "reportFinalized": "GAP-rapporten er ferdigstilt"
+    },
+    "errors": {
+      "toggleControl": "Kunne ikke endre kontrollstatus",
+      "toggleSafeguard": "Kunne ikke endre sikkerhetstiltakstatus",
+      "setIg": "Kunne ikke sette IG",
+      "finalizeReport": "Kunne ikke ferdigstille GAP-rapporten"
+    },
+    "cmmi": {
+      "currentCmmi": "Nåværende CMMI",
+      "targetCmmi": "Mål CMMI",
+      "gap": "GAP Score"
+    },
+    "summary": {
+      "title": "GAP-rapport sammendrag",
+      "subtitle": "Gjennomgå og ferdigstill din GAP-vurdering",
+      "totalSafeguards": "Totalt sikkerhetstiltak",
+      "assessed": "Vurdert",
+      "unassessed": "Ikke vurdert",
+      "averageGap": "Gjennomsnittlig GAP",
+      "cmmiDistribution": "CMMI-nivåfordeling",
+      "remarks": "Merknader",
+      "remarksPlaceholder": "Legg til eventuelle avsluttende merknader eller observasjoner om denne GAP-vurderingen...",
+      "unassessedWarning": "Noen sikkerhetstiltak er ikke vurdert",
+      "unassessedWarningDescription": "{count} sikkerhetstiltak har ikke fått tildelt CMMI-nivåer. De vil settes til nivå 1 for både nåværende og mål.",
+      "finalizeButton": "Ferdigstill GAP-rapport",
+      "finalizing": "Ferdigstiller...",
+      "finalized": "Denne GAP-rapporten er ferdigstilt"
     }
   }
 }

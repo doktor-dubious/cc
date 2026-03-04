@@ -3,13 +3,13 @@
 import { useUser }                              from '@/context/UserContext';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { useRouter, useSearchParams }            from 'next/navigation';
-import { useEffect, useState }                  from 'react';
+import { useEffect, useState, useMemo }         from 'react';
 import { TASK_STATUS_LABELS, TASK_STATUSES }    from '@/lib/constants/task-status';
 import { TaskStatus }                           from '@prisma/client';
 import { format }                               from "date-fns";
 import { useTranslations }                      from 'next-intl';
 
-import { Trash2, Shield, X, Star, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, UserRoundPlus, CalendarDays, Waypoints } from 'lucide-react';
+import { Trash2, Shield, X, Star, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, UserRoundPlus, CalendarDays, Waypoints, Table2, GanttChart, Focus } from 'lucide-react';
 import { CIS_CONTROLS } from '@/lib/constants/cis-controls';
 import { Button } from "@/components/ui/button";
 
@@ -67,6 +67,8 @@ import {
 } from "@/components/ui/alert-dialog"
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { ViewSwitcher, type ViewOption } from "@/components/ui/view-switcher"
+import { TaskGanttView } from "@/components/task-gantt-view"
 import { Badge } from "@/components/ui/badge"
 import { Checkbox } from "@/components/ui/checkbox"
 import {
@@ -105,13 +107,23 @@ export default function TaskPage()
 
     const [hasChanges, setHasChanges] = useState(false);
     const [isSaving, setIsSaving] = useState(false);
+    const [ganttResetKey, setGanttResetKey] = useState(0);
 
     const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
 
     const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteConfirmChecked, setDeleteConfirmChecked] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
     const [filterText, setFilterText] = useState("");
+    const [viewMode, setViewMode] = useState<"table" | "gantt">(() => {
+        if (typeof window !== 'undefined') {
+            const saved = localStorage.getItem('taskViewMode');
+            return saved === 'gantt' ? 'gantt' : 'table';
+        }
+        return 'table';
+    });
     const [activeTab, setActiveTab] = useState("messages");
     const [messages, setMessages] = useState<any[]>([]);
     const [loadingMessages, setLoadingMessages] = useState(false);
@@ -159,6 +171,7 @@ export default function TaskPage()
     // For task table features: starring, selection, sorting
     const [starredTaskIds, setStarredTaskIds] = useState<Set<string>>(new Set());
     const [selectedTaskIds, setSelectedTaskIds] = useState<Set<string>>(new Set());
+    const [showOnlySelected, setShowOnlySelected] = useState(false);
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
     // Bulk action dialogs
@@ -837,6 +850,7 @@ export default function TaskPage()
         setBulkDeleteConfirmChecked(false);
         setBulkDeleteConfirmText("");
         setSelectedTaskIds(new Set());
+        setShowOnlySelected(false);
 
         if (successCount > 0) {
             toast.success(`Deleted ${successCount} task(s)`);
@@ -880,6 +894,11 @@ export default function TaskPage()
         };
 
     }, [user, activeOrganization, selectedTask]);
+
+    // Persist view mode to localStorage
+    useEffect(() => {
+        localStorage.setItem('taskViewMode', viewMode);
+    }, [viewMode]);
 
     // Open new task dialog when navigated with ?new=1
     useEffect(() => {
@@ -1088,6 +1107,13 @@ export default function TaskPage()
       setCurrentPage(1);
   }, [filterText]);
 
+  // Auto-disable "show only selected" filter when selection is emptied
+  useEffect(() => {
+      if (showOnlySelected && selectedTaskIds.size === 0) {
+          setShowOnlySelected(false);
+      }
+  }, [selectedTaskIds, showOnlySelected]);
+
   // Reset message pagination when messages change
   useEffect(() =>
   {
@@ -1102,10 +1128,37 @@ export default function TaskPage()
       setEventsCurrentPage(1);
   }, [selectedTask]);
 
-  const handleRowClick = (task: any) => 
+  const handleRowClick = (task: any) =>
   {
       setSelectedTask(task);
       document.getElementById('edit-form')?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  // Handle date changes from Gantt chart dragging
+  // Handle date changes from Gantt chart dragging
+  // Use requestAnimationFrame to defer state updates, allowing SVAR to stabilize first
+  const handleGanttDateChange = (change: { taskId: string | number; startAt: Date; endAt: Date }) => {
+    // Find the task being modified
+    const task = tasks.find(t => t.id === change.taskId);
+    if (!task) return;
+
+    // Defer state updates to let SVAR finish its internal update
+    requestAnimationFrame(() => {
+      // If this task isn't selected, select it first
+      if (!selectedTask || selectedTask.id !== change.taskId) {
+        setSelectedTask(task);
+        // Set all form fields for the task
+        setName(task.name);
+        setDescription(task.description || "");
+        setExpectedEvidence(task.expectedEvidence || "");
+        setStatus(task.status as TaskStatus);
+      }
+
+      // Update the date fields
+      setStartAt(format(change.startAt, "yyyy-MM-dd"));
+      setEndAt(format(change.endAt, "yyyy-MM-dd"));
+      setHasChanges(true);
+    });
   };
 
   const handleNewTask = () => 
@@ -1121,9 +1174,9 @@ export default function TaskPage()
       setIsNewDialogOpen(true);
   };
 
-  const handleCancel = () => 
+  const handleCancel = () =>
   {
-      if (!selectedTask) 
+      if (!selectedTask)
       {
           setName("");
           setDescription("");
@@ -1131,8 +1184,8 @@ export default function TaskPage()
           setStartAt("");
           setEndAt("");
           setStatus(TaskStatus.NOT_STARTED);
-      } 
-      else 
+      }
+      else
       {
           setName(selectedTask.name || "");
           setDescription(selectedTask.description || "");
@@ -1144,6 +1197,8 @@ export default function TaskPage()
 
       setHasChanges(false);
       setIsNewDialogOpen(false);
+      // Reset Gantt pending changes
+      setGanttResetKey(prev => prev + 1);
   };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1267,9 +1322,11 @@ export default function TaskPage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // DELETE TASK
-    const handleDelete = async () => 
+    const handleDelete = async () =>
     {
         if (!taskToDelete) return;
+        if (!deleteConfirmChecked) return;
+        if (deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
 
         setIsDeleting(true);
 
@@ -1295,12 +1352,14 @@ export default function TaskPage()
 
             toast.success(t('toast.taskDeleted'));
             setTaskToDelete(null);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
         }
         catch (err)
         {
             toast.error(t('toast.deleteError'));
-        } 
-        finally 
+        }
+        finally
         {
             setIsDeleting(false);
         }
@@ -1680,11 +1739,12 @@ useEffect(() => {
       : <ArrowDown className="ml-1 h-3 w-3 inline" />;
   };
 
-  // Filter and sort tasks
-  const filteredTasks = tasks
+  // Filter and sort tasks - memoized to prevent unnecessary recalculations
+  const filteredTasks = useMemo(() => tasks
     .filter(task =>
-      task.name.toLowerCase().includes(filterText.toLowerCase()) ||
-      task.id.toString().includes(filterText)
+      (task.name.toLowerCase().includes(filterText.toLowerCase()) ||
+      task.id.toString().includes(filterText)) &&
+      (!showOnlySelected || selectedTaskIds.has(task.id))
     )
     .sort((a, b) => {
       if (!sortConfig) return 0;
@@ -1714,7 +1774,7 @@ useEffect(() => {
         return multiplier * (bStarred - aStarred); // Starred first when ascending
       }
       return 0;
-    });
+    }), [tasks, filterText, showOnlySelected, selectedTaskIds, sortConfig, starredTaskIds]);
 
   const totalPages = Math.ceil(filteredTasks.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
@@ -1811,7 +1871,7 @@ useEffect(() => {
     };
 
   const exportColumns: ExportColumn[] = [
-      { header: 'Name', accessor: 'name' },
+      { header: 'Task Name', accessor: 'name' },
       { header: 'Description', accessor: (row: any) => row.description || '' },
       { header: 'Time Left', accessor: (row: any) => formatTimeLeft(row) },
       { header: 'Status', accessor: 'status' },
@@ -2034,31 +2094,67 @@ useEffect(() => {
   </DialogContent>
 </Dialog>
 
-      <AlertDialog
+      <Dialog
         open={taskToDelete !== null}
         onOpenChange={(open) => {
-          if (!open) setTaskToDelete(null);
+          if (!open) {
+            setTaskToDelete(null);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
+          }
         }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">{t('dialogs.deleteTitle')}</DialogTitle>
+            <DialogDescription>
               {t('dialogs.deleteTaskDescription', { name: tasks.find(t => t.id === taskToDelete)?.name || 'this item' })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{t('buttons.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+              <Checkbox
+                id="delete-confirm"
+                checked={deleteConfirmChecked}
+                onCheckedChange={(checked) => setDeleteConfirmChecked(!!checked)}
+              />
+              <label htmlFor="delete-confirm" className="text-sm cursor-pointer">
+                {t('dialogs.deleteTaskConfirmCheckbox')}
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm">
+                {t('dialogs.deleteTypeWord', { word: getDeleteWord() })}
+              </label>
+              <Input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder={getDeleteWord()}
+                className={deleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setTaskToDelete(null)} disabled={isDeleting}>
+              {t('buttons.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
               onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={
+                isDeleting ||
+                !deleteConfirmChecked ||
+                deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+              }
             >
               {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
         <DialogContent className="sm:max-w-125">
@@ -2655,7 +2751,7 @@ useEffect(() => {
   </DialogContent>
 </Dialog>
 
-      <div className="space-y-8 p-6">
+      <div className="space-y-8 p-6 overflow-x-hidden">
         <div className="flex justify-center">
           <Button
             variant="default"
@@ -2666,16 +2762,41 @@ useEffect(() => {
           </Button>
         </div>
 
-        <div className="flex justify-end gap-2">
-          <Input
-            placeholder={t('placeholders.filterByNameOrId')}
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-            className="max-w-sm"
+        <div className="flex justify-between items-center gap-4">
+          <ViewSwitcher
+            options={[
+              { id: "table", label: "Table", icon: <Table2 /> },
+              { id: "gantt", label: "Gantt", icon: <GanttChart /> },
+            ]}
+            value={viewMode}
+            onChange={(v) => setViewMode(v as "table" | "gantt")}
           />
-          <ExportMenu data={filteredTasks} columns={exportColumns} filename="tasks" />
+          <div className="flex gap-2">
+            <Input
+              placeholder={t('placeholders.filterByNameOrId')}
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+              className="max-w-sm"
+            />
+            <ExportMenu data={filteredTasks} columns={exportColumns} filename="tasks" />
+          </div>
         </div>
 
+        {viewMode === "gantt" ? (
+          <div className="w-full">
+            <TaskGanttView
+              tasks={filteredTasks}
+              onTaskClick={handleRowClick}
+              selectedTaskId={selectedTask?.id}
+              getStatusBadge={getStatusBadge}
+              starredTaskIds={starredTaskIds}
+              onToggleStar={toggleStar}
+              onTaskDateChange={handleGanttDateChange}
+              resetKey={ganttResetKey}
+            />
+          </div>
+        ) : (
+        <>
         <Table>
           <TableHeader>
             <TableRow>
@@ -2732,7 +2853,7 @@ useEffect(() => {
                 className="cursor-pointer select-none hover:bg-muted/50"
                 onClick={() => handleSort('name')}
               >
-                {tc('table.name')}
+                {t('table.taskName')}
                 {getSortIcon('name')}
               </TableHead>
               {/* Description column */}
@@ -2875,6 +2996,8 @@ useEffect(() => {
             </div>
           </div>
         )}
+        </>
+        )}
 
         {/* Bulk Action Bar */}
         {selectedTaskIds.size > 0 && (
@@ -2904,6 +3027,19 @@ useEffect(() => {
               >
                 <Waypoints className="h-4 w-4" />
               </button>
+              <div className="w-px h-4 bg-border mx-1" />
+              <button
+                onClick={() => setShowOnlySelected(!showOnlySelected)}
+                className={`p-1.5 rounded transition-colors cursor-pointer ${
+                  showOnlySelected
+                    ? 'bg-primary/20 text-primary hover:bg-primary/30'
+                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                }`}
+                title={showOnlySelected ? "Show All Tasks" : "Show Only Selected Tasks"}
+              >
+                <Focus className="h-4 w-4" />
+              </button>
+              <div className="w-px h-4 bg-border mx-1" />
               <button
                 onClick={() => { setBulkDeleteConfirmChecked(false); setBulkDeleteConfirmText(""); setIsBulkDeleteDialogOpen(true); }}
                 className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"

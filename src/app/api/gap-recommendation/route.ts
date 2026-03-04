@@ -67,6 +67,9 @@ export async function GET(request: Request) {
         downtimeTolerance: true,
         supplyChainPosition: true,
         securityBudgetRange: true,
+        manualOperation: true,
+        productionDependency: true,
+        customerAccess: true,
       },
     });
 
@@ -97,6 +100,9 @@ export async function GET(request: Request) {
       downtimeTolerance: organization.downtimeTolerance,
       supplyChainPosition: organization.supplyChainPosition,
       securityBudgetRange: organization.securityBudgetRange,
+      manualOperation: organization.manualOperation,
+      productionDependency: organization.productionDependency,
+      customerAccess: organization.customerAccess,
     };
 
     // Generate recommendations (with optional targetIg override)

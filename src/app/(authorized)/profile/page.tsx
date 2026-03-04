@@ -6,7 +6,7 @@ import { useUser }                        from '@/context/UserContext';
 import { useOrganization }                from '@/context/OrganizationContext';
 import { useRouter }                      from 'next/navigation';
 import { useTranslations }                from 'next-intl';
-import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown }      from 'lucide-react';
+import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown, Focus } from 'lucide-react';
 import { Button }                         from "@/components/ui/button";
 import { Checkbox }                       from "@/components/ui/checkbox";
 
@@ -107,6 +107,8 @@ export default function ProfilePage()
 
     const [profileToDelete, setProfileToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteConfirmChecked, setDeleteConfirmChecked] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
@@ -118,6 +120,7 @@ export default function ProfilePage()
     // Selection and starring state
     const [selectedProfileIds, setSelectedProfileIds] = useState<Set<string>>(new Set());
     const [starredProfileIds, setStarredProfileIds] = useState<Set<string>>(new Set());
+    const [showOnlySelected, setShowOnlySelected] = useState(false);
 
     // Bulk delete state
     const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
@@ -769,6 +772,13 @@ export default function ProfilePage()
         setCurrentPage(1);
     }, [filterText]);
 
+    // Auto-disable "show only selected" filter when selection is emptied
+    useEffect(() => {
+        if (showOnlySelected && selectedProfileIds.size === 0) {
+            setShowOnlySelected(false);
+        }
+    }, [selectedProfileIds, showOnlySelected]);
+
   const handleRowClick = (profile: any) =>
   {
       setSelectedProfile(profile);
@@ -989,6 +999,8 @@ export default function ProfilePage()
     const handleDelete = async () =>
     {
         if (!profileToDelete) return;
+        if (!deleteConfirmChecked) return;
+        if (deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
 
         setIsDeleting(true);
 
@@ -1037,6 +1049,8 @@ export default function ProfilePage()
 
           toast.success(t('toast.profileDeleted'));
           setProfileToDelete(null);
+          setDeleteConfirmChecked(false);
+          setDeleteConfirmText("");
         }
         catch (err)
         {
@@ -1078,9 +1092,10 @@ export default function ProfilePage()
 
     const filteredProfiles = profiles
       .filter(profile =>
-        profile.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        (profile.name.toLowerCase().includes(filterText.toLowerCase()) ||
         profile.user?.email.toLowerCase().includes(filterText.toLowerCase()) ||
-        profile.id.toString().includes(filterText)
+        profile.id.toString().includes(filterText)) &&
+        (!showOnlySelected || selectedProfileIds.has(profile.id))
       )
       .sort((a, b) => {
         if (sortField) {
@@ -1192,6 +1207,7 @@ export default function ProfilePage()
                 setSelectedProfile(null);
             }
             setSelectedProfileIds(new Set());
+            setShowOnlySelected(false);
             toast.success(t('toast.profilesDeleted', { count: success }));
         }
         if (failed > 0) {
@@ -1292,31 +1308,67 @@ export default function ProfilePage()
       </AlertDialog>
 
       { /* Delete Profile Alert */ }
-      <AlertDialog
+      <Dialog
         open={profileToDelete !== null}
         onOpenChange={(open) => {
-          if (!open) setProfileToDelete(null);
+          if (!open) {
+            setProfileToDelete(null);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
+          }
         }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">{t('dialogs.deleteTitle')}</DialogTitle>
+            <DialogDescription>
               {t('dialogs.deleteDescription', { name: profiles.find(p => p.id === profileToDelete)?.name || 'this item' })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+              <Checkbox
+                id="delete-confirm"
+                checked={deleteConfirmChecked}
+                onCheckedChange={(checked) => setDeleteConfirmChecked(!!checked)}
+              />
+              <label htmlFor="delete-confirm" className="text-sm cursor-pointer">
+                {t('dialogs.deleteConfirmCheckbox')}
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm">
+                {t('dialogs.deleteTypeWord', { word: getDeleteWord() })}
+              </label>
+              <Input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder={getDeleteWord()}
+                className={deleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setProfileToDelete(null)} disabled={isDeleting}>
+              {tc('buttons.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
               onClick={handleDelete}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={
+                isDeleting ||
+                !deleteConfirmChecked ||
+                deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+              }
             >
               {isDeleting ? tc('buttons.deleting') : tc('buttons.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       { /* Bulk Delete Profiles Dialog */ }
       <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
@@ -1806,18 +1858,30 @@ export default function ProfilePage()
             <span className="text-sm text-muted-foreground">
               {t('selection.selectedOf', { selected: selectedProfileIds.size, total: currentProfiles.length })}
             </span>
-            <div className="flex items-center gap-4">
-              <span
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowOnlySelected(!showOnlySelected)}
+                className={`p-1.5 rounded transition-colors cursor-pointer ${
+                  showOnlySelected
+                    ? 'bg-primary/20 text-primary hover:bg-primary/30'
+                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                }`}
+                title={showOnlySelected ? "Show All Profiles" : "Show Only Selected Profiles"}
+              >
+                <Focus className="h-4 w-4" />
+              </button>
+              <div className="w-px h-4 bg-border" />
+              <button
                 title={t('buttons.deleteSelected')}
                 onClick={() => {
                   setBulkDeleteConfirmChecked(false);
                   setBulkDeleteConfirmText("");
                   setIsBulkDeleteDialogOpen(true);
                 }}
-                className="cursor-pointer"
+                className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"
               >
-                <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
-              </span>
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}

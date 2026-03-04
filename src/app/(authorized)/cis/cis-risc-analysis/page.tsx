@@ -2,7 +2,7 @@
 
 import { useState, useMemo, useEffect }    from 'react';
 import { useTranslations }                 from 'next-intl';
-import { useRouter }                       from 'next/navigation';
+import { useRouter, useSearchParams }      from 'next/navigation';
 import { Button }                          from '@/components/ui/button';
 import { Badge }                           from '@/components/ui/badge';
 import { Switch }                          from '@/components/ui/switch';
@@ -17,7 +17,9 @@ import {
   Info,
   Loader2,
   ArrowRight,
+  ArrowLeft,
   Trash2,
+  FileText,
 } from 'lucide-react';
 
 import {
@@ -92,7 +94,11 @@ export default function CISRiscAnalysisPage() {
   const t = useTranslations('ExploratoryGap');
   const tc = useTranslations('Common');
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { activeOrganization } = useOrganization();
+
+  // Get return URL for workflow mode
+  const returnUrl = searchParams.get('returnUrl');
 
   const [isLoading, setIsLoading] = useState(false);
   const [isChangingIg, setIsChangingIg] = useState(false);
@@ -357,7 +363,7 @@ export default function CISRiscAnalysisPage() {
       if (data.success) {
         toast.success(t('toast.implementSuccess'));
         setShowConfirmDialog(false);
-        router.push('/cis/controls');
+        router.push(returnUrl || '/cis/controls');
       } else {
         toast.error(data.error || t('toast.implementError'));
       }
@@ -407,13 +413,24 @@ export default function CISRiscAnalysisPage() {
 
   return (
     <div className="p-6 space-y-8 max-w-6xl">
+      {/* Back to Controls / Workflow */}
+      <Button
+        variant="secondary"
+        size="sm"
+        className="gap-2 select-none"
+        onClick={() => router.push(returnUrl || '/cis/controls')}
+      >
+        <ArrowLeft size={16} />
+        {returnUrl ? tc('navigation.previous') : t('backToControls')}
+      </Button>
+
       {/* Header */}
       <div className="space-y-2">
         <h1 className="text-2xl font-semibold">{t('titleCISRisc')}</h1>
         <p className="text-muted-foreground">{t('description')}</p>
       </div>
 
-      {/* Generate button and Clear/Implement buttons */}
+      {/* Generate and Clear buttons */}
       <div className="border rounded-lg p-6 bg-muted/30">
         <div className="flex items-center justify-between">
           <Button
@@ -435,26 +452,48 @@ export default function CISRiscAnalysisPage() {
           </Button>
 
           {recommendation && (
-            <div className="flex items-center gap-2">
-              <Button
-                variant="secondary"
-                onClick={() => setShowClearDialog(true)}
-                className="gap-2"
-              >
-                <Trash2 className="w-4 h-4" />
-                {tc('clear')}
-              </Button>
-              <Button
-                onClick={() => setShowConfirmDialog(true)}
-                className="gap-2"
-              >
-                {t('buttons.implementShort')}
-                <ArrowRight className="w-4 h-4" />
-              </Button>
-            </div>
+            <Button
+              variant="secondary"
+              onClick={() => setShowClearDialog(true)}
+              className="gap-2"
+            >
+              <Trash2 className="w-4 h-4" />
+              {tc('clear')}
+            </Button>
           )}
         </div>
       </div>
+
+      {/* Summary and Implement buttons */}
+      {recommendation && (
+        <div className="bg-neutral-800/50 border border-neutral-700 rounded-lg p-4 space-y-3">
+          <div>
+            <h4 className="text-sm font-medium">{t('actions.title')}</h4>
+            <p className="text-xs text-muted-foreground mt-1">
+              {t('actions.description')}
+            </p>
+          </div>
+          <div className="flex items-center gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => router.push(`/cis/cis-risc-analysis/report${returnUrl ? `?returnUrl=/cis/cis-risc-analysis?returnUrl=${encodeURIComponent(returnUrl)}` : ''}`)}
+              className="gap-2"
+            >
+              <FileText className="w-4 h-4" />
+              {t('buttons.summary')}
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => setShowConfirmDialog(true)}
+              className="gap-2"
+            >
+              {t('buttons.implementShort')}
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      )}
 
       {/* Recommendation Results */}
       {recommendation && (

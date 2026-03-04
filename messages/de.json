@@ -148,7 +148,8 @@
     "progressReport": "Fortschrittsbericht",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -246,6 +247,46 @@
       "invalidFormat": "Invalid email format",
       "alreadyTaken": "This email is already taken",
       "available": "Email is available"
+    }
+  },
+  "ExploratoryGap": {
+    "buttons": {
+      "viewReport": "Zusammenfassung & Empfehlung",
+      "summary": "Zusammenfassung"
+    },
+    "actions": {
+      "title": "Überprüfung & Implementierung",
+      "description": "Risikoanalyse-Zusammenfassung anzeigen oder empfohlene Kontrollen implementieren"
+    }
+  },
+  "RiskReport": {
+    "title": "Strukturelle Risikoexpositions-Übersicht",
+    "backToAnalysis": "Zurück zur CIS-Risikoanalyse",
+    "export": "Exportieren",
+    "exportPdf": "Als PDF exportieren",
+    "exportDocx": "Word exportieren",
+    "exportJson": "Als JSON exportieren",
+    "exporting": "Exportiere...",
+    "noData": "Keine Risikoanalysedaten",
+    "noDataDescription": "Bitte führen Sie zuerst die CIS-Risikoanalyse durch, um einen Bericht zu erstellen.",
+    "section1": {
+      "title": "Strukturelle Expositionsindikatoren",
+      "exposureDriver": "Expositionsfaktor",
+      "assessment": "Bewertung"
+    },
+    "section2": {
+      "title": "Strukturelle Risikointerpretation"
+    },
+    "section3": {
+      "title": "Erwartete Prioritätskontrollbereiche"
+    },
+    "section4": {
+      "title": "Nächste Schritte Überlegungen"
+    },
+    "footer": {
+      "confidential": "Vertraulich",
+      "generatedBy": "Erstellt von Compliance Circle",
+      "version": "Bewertung v1.0"
     }
   },
   "LoginPage": {

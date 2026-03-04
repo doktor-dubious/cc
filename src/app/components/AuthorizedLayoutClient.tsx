@@ -144,7 +144,7 @@ export default function AuthorizedLayout({children, user, organizations, tasks}:
     const router = useRouter();
     const locale = useLocale();
     const t = useTranslations('Sidebar');
-    const [openSubmenu, setOpenSubmenu] = useState<string | null>('tasks1'); // ← Set initial value here
+    const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
     const [isRefreshing, setIsRefreshing] = useState(false);
     const [messageCount, setMessageCount] = useState(0);
     const [pollingInterval, setPollingInterval] = useState(30000); // Default 30 seconds
@@ -176,7 +176,8 @@ const getPageTitle = () =>
     if (pathname.includes('/reports/status'))       return t('statusReport');
     if (pathname.includes('/reports/progress'))     return t('progressReport');
     if (pathname.includes('/reports/gap'))          return t('gap');
-    if (pathname.includes('/reports/conq'))         return t('conq');
+    if (pathname.includes('/reports/ces'))          return t('ces');
+    if (pathname.includes('/reports/conc'))         return t('conc');
     if (pathname.includes('/turk'))                 return t('mechanicalTurk');
     if (pathname.includes('/dashboard'))            return t('home');
 
@@ -615,14 +616,15 @@ function TaskSidebarSections({
     <SidebarProvider>
       <div className="flex min-h-screen w-full">
         {/* Sidebar */}
-        <Sidebar 
-          collapsible="icon" 
+        <Sidebar
+          collapsible="icon"
           className="
-            border-0 
-            group-data-[side=left]:border-r-0 
-            group-data-[side=right]:border-l-0 
+            border-0
+            border-r
+            border-r-sidebar-border
+            group-data-[side=right]:border-l-0
             w-(--sidebar-width)
-            text-muted-foreground 
+            text-muted-foreground
             overflow-x-hidden
             select-none"
         >
@@ -792,13 +794,23 @@ function TaskSidebarSections({
                   </DropdownMenuItem>
 
                   <DropdownMenuSub>
+                    <DropdownMenuSubTrigger className="cursor-pointer">{t('workflow')}</DropdownMenuSubTrigger>
+                    <DropdownMenuPortal>
+                      <DropdownMenuSubContent className="text-muted-foreground font-normal">
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/workflows/customer-onboarding')}>{t('customerOnboarding')}</DropdownMenuItem>
+                      </DropdownMenuSubContent>
+                    </DropdownMenuPortal>
+                  </DropdownMenuSub>
+
+                  <DropdownMenuSub>
                     <DropdownMenuSubTrigger className="cursor-pointer">{t('reports')}</DropdownMenuSubTrigger>
                     <DropdownMenuPortal>
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/status')}>{t('statusReport')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/progress')}>{t('progressReport')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/gap')}>{t('gap')}</DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/conq')}>{t('conq')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/ces')}>{t('ces')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/conc')}>{t('conc')}</DropdownMenuItem>
                       </DropdownMenuSubContent>
                     </DropdownMenuPortal>
                   </DropdownMenuSub>

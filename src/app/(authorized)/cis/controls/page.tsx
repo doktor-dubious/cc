@@ -277,8 +277,18 @@ export default function CISControlsPage() {
   const [combinedGroups, setCombinedGroups] = useState<CombinedGroup[]>([]);
   const [selectedForCombine, setSelectedForCombine] = useState<Set<number>>(new Set());
 
-  // Show/hide inactive controls toggle
-  const [showInactive, setShowInactive] = useState(false);
+  // Show/hide inactive controls toggle (persisted in localStorage)
+  const [showInactive, setShowInactive] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('cis-controls-show-inactive') === 'true';
+    }
+    return false;
+  });
+
+  // Persist showInactive to localStorage
+  useEffect(() => {
+    localStorage.setItem('cis-controls-show-inactive', showInactive ? 'true' : 'false');
+  }, [showInactive]);
 
   // Confirm dialog for toggling inactive
   const [confirmInactive, setConfirmInactive] = useState<{ ids: number[]; names: string[] } | null>(null);
@@ -794,11 +804,11 @@ export default function CISControlsPage() {
           </div>
 
           {/* Combined groups section */}
-          <div className="space-y-3">
-            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">{t('segments.combinedGroups')}</p>
-
-            {/* Instructions */}
-            <p className="text-xs text-muted-foreground">{t('segments.ctrlClickHint')}</p>
+          <div className="bg-neutral-800/50 border border-neutral-700 rounded-lg p-4 space-y-3">
+            <div>
+              <h4 className="text-sm font-medium">{t('segments.combinedGroups')}</h4>
+              <p className="text-xs text-muted-foreground mt-1">{t('segments.ctrlClickHint')}</p>
+            </div>
 
             {/* Selected controls info + combine button */}
             {selectedForCombine.size > 0 && (
@@ -860,7 +870,11 @@ export default function CISControlsPage() {
           </div>
 
           {/* Show inactive toggle */}
-          <div className="space-y-3">
+          <div className="bg-neutral-800/50 border border-neutral-700 rounded-lg p-4 space-y-3">
+            <div>
+              <h4 className="text-sm font-medium">{t('inactive.title')}</h4>
+              <p className="text-xs text-muted-foreground mt-1">{t('inactive.description')}</p>
+            </div>
             <label className="flex items-center gap-2 cursor-pointer">
               <Switch
                 checked={showInactive}
@@ -868,12 +882,22 @@ export default function CISControlsPage() {
               />
               <span className="text-sm text-muted-foreground">{t('legends.showInactive')}</span>
             </label>
+          </div>
+
+          {/* Risc Analysis */}
+          <div className="bg-neutral-800/50 border border-neutral-700 rounded-lg p-4 space-y-3">
+            <div>
+              <h4 className="text-sm font-medium">{t('buttons.riscAnalysis')}</h4>
+              <p className="text-xs text-muted-foreground mt-1">
+                {t('riscAnalysis.description')}
+              </p>
+            </div>
             <Button
               variant="default"
               size="sm"
               onClick={() => router.push('/cis/cis-risc-analysis')}
             >
-              {t('buttons.riscAnalysis')}
+              {t('riscAnalysis.openButton')}
             </Button>
           </div>
 

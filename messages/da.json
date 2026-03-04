@@ -49,6 +49,13 @@
     "dialogs": {
       "deleteTitle": "Er du helt sikker?",
       "cannotBeUndone": "Denne handling kan ikke fortrydes."
+    },
+    "navigation": {
+      "previous": "Forrige",
+      "next": "Næste",
+      "exit": "Afslut",
+      "workflow": "Workflow",
+      "finish": "Afslut"
     }
   },
   "Sidebar": {
@@ -66,12 +73,15 @@
     "incommingFiles": "Indkommende filer",
     "messages": "Beskeder",
     "auditTrail": "Revisionsspor",
+    "workflow": "Arbejdsgang",
+    "customerOnboarding": "Kunde Onboarding",
     "reports": "Rapporter",
     "statusReport": "Statusrapport",
     "progressReport": "Fremdriftsrapport",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "cisControls": "CIS Kontroller",
@@ -130,6 +140,8 @@
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette aktivet \"{name}\" og fjerne det fra systemet.",
       "alsoDeleteFile": "Slet også filen fra filsystemet",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette dette aktiv og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for at bekræfte",
       "bulkDeleteTitle": "Slet flere aktiver",
       "bulkDeleteDescription": "Du er ved at slette {count} aktiver. Denne handling kan ikke fortrydes.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse aktiver og alle tilknyttede data",
@@ -288,6 +300,8 @@
       "deleteTitle": "Er du helt sikker?",
       "deleteMessageDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette denne besked.",
       "deleteTaskDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette opgaven \"{name}\" og fjerne den fra systemet.",
+      "deleteTaskConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne opgave og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for at bekræfte",
       "removeArtifactTitle": "Fjern aktiv fra opgave?",
       "removeArtifactDescription": "Dette fjerner forbindelsen mellem aktivet og den aktuelle opgave (sletter linket i TaskArtifact). Aktivet forbliver i systemet. Handlingen kan ikke fortrydes.",
       "removeProfileTitle": "Fjern profil fra opgave?",
@@ -348,6 +362,9 @@
       "showingArtifacts": "Viser {start} til {end} af {total} aktiver",
       "showingProfiles": "Viser {start} til {end} af {total} profiler",
       "showingEvents": "Viser {start} til {end} af {total} hændelser"
+    },
+    "table": {
+      "taskName": "Opgavenavn"
     },
     "toast": {
       "allMessagesRead": "Alle beskeder markeret som læst",
@@ -418,6 +435,8 @@
       "createDescription": "Indtast detaljerne for det nye login.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Dette vil deaktivere login \"{name}\" og de vil ikke længere have adgang til systemet.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette dette login.",
+      "deleteTypeWord": "Skriv \"{word}\" for at bekræfte",
       "bulkDeleteTitle": "Slet flere logins",
       "bulkDeleteDescription": "Du er ved at slette {count} logins. Denne handling kan ikke fortrydes.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse logins",
@@ -544,6 +563,8 @@
       "removeTaskDescription": "Dette fjerner opgavetildelingen fra denne profil (sletter linket i TaskProfile). Opgaven forbliver i systemet. Handlingen kan ikke fortrydes.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette profilen \"{name}\" og fjerne den fra systemet.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne profil og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for at bekræfte",
       "bulkDeleteTitle": "Slet flere profiler",
       "bulkDeleteDescription": "Du er ved at slette {count} profiler. Denne handling kan ikke fortrydes.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette disse profiler og alle tilknyttede data",
@@ -662,7 +683,9 @@
       "removing": "Fjerner...",
       "adding": "Tilføjer...",
       "deleteOrganizations": "Slet {count} organisationer",
-      "deleteSelected": "Slet valgte"
+      "deleteSelected": "Slet valgte",
+      "onboardingWizard": "Onboarding Guide",
+      "editInWizard": "Rediger i Guide"
     },
     "dialogs": {
       "createTitle": "Opret ny organisation",
@@ -681,6 +704,8 @@
       "removeProfileDescription": "Dette fjerner forbindelsen mellem profilen og den aktuelle organisation (sætter organizationId til null). Profilen forbliver i systemet. Handlingen kan ikke fortrydes.",
       "deleteTitle": "Er du helt sikker?",
       "deleteDescription": "Denne handling kan ikke fortrydes. Dette vil permanent slette organisationen \"{name}\" og fjerne den fra systemet.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne organisation og alle tilknyttede data.",
+      "deleteTypeWord": "Skriv \"{word}\" for at bekræfte",
       "bulkDeleteTitle": "Slet organisationer",
       "bulkDeleteDescription": "Du er ved at slette {count} organisationer. Denne handling kan ikke fortrydes.",
       "bulkDeleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette de valgte organisationer og alle tilknyttede data.",
@@ -820,7 +845,8 @@
       "taskUpdated": "Opgave opdateret",
       "updateTaskError": "Kunne ikke opdatere opgave",
       "organizationsDeleted": "{count} organisationer slettet",
-      "organizationsDeleteFailed": "Kunne ikke slette {count} organisationer"
+      "organizationsDeleteFailed": "Kunne ikke slette {count} organisationer",
+      "loadError": "Kunne ikke indlæse organisation"
     },
     "loading": {
       "loadingUser": "Indlæser bruger...",
@@ -1037,6 +1063,71 @@
       "substantial": "Betydeligt (€250K-1M/år)",
       "enterprise": "Enterprise (> €1M/år)"
     },
+    "onboard": {
+      "title": "Opsæt din organisation",
+      "titleEdit": "Rediger organisationsprofil",
+      "subtitle": "Gennemfør følgende trin for at konfigurere din organisations complianceprofil",
+      "saving": "Gemmer...",
+      "loading": "Indlæser organisation...",
+      "steps": {
+        "title": "Trin",
+        "basics": "Navn og beskrivelse",
+        "sizeIndustry": "Størrelse og branche",
+        "legalOwnership": "Juridisk form og ejerskab",
+        "maturityRevenue": "Modenhed og omsætning",
+        "geographyOrientation": "Geografi og orientering",
+        "digitalEsg": "Digital og ESG",
+        "supplyChainRisk": "Forsyningskæde og risiko",
+        "euTaxonomy": "EU Taksonomi",
+        "itSecurityStaff": "IT og sikkerhedspersonale",
+        "itInfrastructure": "IT-infrastruktur",
+        "softwareServices": "Software og tjenester",
+        "dataCompliance": "Data og compliance",
+        "riskTolerance": "Risiko og tolerance",
+        "supplyChainBudget": "Position og budget"
+      }
+    },
+    "summary": {
+      "title": "Organisationsoversigt",
+      "subtitle": "Gennemgå din organisations profilinformation",
+      "sections": {
+        "basicInfo": "Grundlæggende information",
+        "businessProfile": "Forretningsprofil",
+        "itSecurity": "IT og sikkerhed",
+        "infrastructure": "Infrastruktur",
+        "compliance": "Compliance og data"
+      }
+    },
+    "fields": {
+      "name": "Navn",
+      "description": "Beskrivelse",
+      "size": "Størrelse",
+      "naceSection": "Branche (NACE)",
+      "legalForm": "Juridisk form",
+      "revenueRange": "Omsætningsområde",
+      "maturity": "Modenhed",
+      "ownershipType": "Ejerskabstype",
+      "geographicScope": "Geografisk omfang",
+      "businessOrientation": "Forretningsorientering",
+      "digitalMaturity": "Digital modenhed",
+      "esgStatus": "ESG-status",
+      "supplyChainRole": "Forsyningskæderolle",
+      "riskProfile": "Risikoprofil",
+      "euTaxonomyAligned": "EU-taksonomi tilpasset",
+      "itSecurityStaff": "IT-sikkerhedspersonale",
+      "securityMaturity": "Sikkerhedsmodenhed",
+      "securityBudgetRange": "Sikkerhedsbudget",
+      "targetedAttackLikelihood": "Sandsynlighed for målrettet angreb",
+      "downtimeTolerance": "Nedetidstolerance",
+      "itEndpointRange": "IT-endepunkter",
+      "infrastructureTypes": "Infrastrukturtyper",
+      "softwareDevelopment": "Softwareudvikling",
+      "publicFacingServices": "Offentligt tilgængelige tjenester",
+      "supplyChainPosition": "Position i forsyningskæden",
+      "dataSensitivity": "Datafølsomhed",
+      "regulatoryObligations": "Regulatoriske forpligtelser",
+      "ig": "Implementeringsgruppe"
+    },
     "status": {
       "currentlyIn": "Aktuelt i: {name}",
       "unassigned": "Ikke tildelt",
@@ -1057,6 +1148,8 @@
     "dialogs": {
       "deleteTitle": "Slet fil?",
       "deleteDescription": "Er du sikker på at du vil slette <strong>{name}</strong>? Denne handling kan ikke fortrydes.",
+      "deleteConfirmCheckbox": "Jeg forstår at dette permanent vil slette denne fil.",
+      "deleteTypeWord": "Skriv \"{word}\" for at bekræfte",
       "assignTitle": "Tildel fil som aktiv",
       "assignFileLabel": "Fil: {name}"
     },
@@ -1074,6 +1167,7 @@
       "filename": "Filnavn",
       "size": "Størrelse",
       "modified": "Ændret",
+      "date": "Dato",
       "actions": "Handlinger"
     },
     "empty": {
@@ -1134,6 +1228,17 @@
   },
 
   "CISControls": {
+    "buttons": {
+      "riscAnalysis": "Risikoanalyse"
+    },
+    "riscAnalysis": {
+      "description": "Generér en relevant Safeguard-profil baseret på en risikoscore-evaluering ved brug af organisationsdata.",
+      "openButton": "Åbn analyse"
+    },
+    "inactive": {
+      "title": "Inaktive kontroller",
+      "description": "Klik på det ydre cirkeldiagram-segment for at inaktivere/aktivere en kontrol."
+    },
     "legends": {
       "controlGroups": "Kontrolgrupper",
       "riskScore": "Risikoscore",
@@ -1390,13 +1495,20 @@
   "ExploratoryGap": {
     "title": "Udforskende GAP-analyse",
     "description": "Generer en skræddersyet CIS Controls-anbefaling baseret på din organisations profil, taksonomi og klassificering.",
+    "backToControls": "Tilbage til kontroller",
     "buttons": {
       "generate": "Generer Udforskende GAP",
       "generating": "Genererer...",
       "implement": "Implementer anbefalinger",
       "implementing": "Implementerer...",
       "confirm": "Bekræft og implementer",
-      "cancel": "Annuller"
+      "cancel": "Annuller",
+      "viewReport": "Resumé & anbefaling",
+      "summary": "Sammendrag"
+    },
+    "actions": {
+      "title": "Gennemgang & Implementering",
+      "description": "Se risikoanalysesammendraget eller implementer de anbefalede kontrolelementer"
     },
     "labels": {
       "currentOrganization": "Nuværende organisation",
@@ -1440,6 +1552,143 @@
       "ig1": "IG1 - Grundlæggende cyberhygiejne",
       "ig2": "IG2 - Mellemliggende kontroller",
       "ig3": "IG3 - Avanceret / Omfattende"
+    }
+  },
+  "RiskReport": {
+    "title": "Strukturel Risikoeksponering Oversigt",
+    "backToAnalysis": "Tilbage til CIS Risikoanalyse",
+    "export": "Eksporter",
+    "exportPdf": "Eksporter PDF",
+    "exportDocx": "Eksporter Word",
+    "exportJson": "Eksporter JSON",
+    "exporting": "Eksporterer...",
+    "noData": "Ingen Risikoanalysedata",
+    "noDataDescription": "Kør venligst CIS Risikoanalysen først for at generere en rapport.",
+    "section1": {
+      "title": "Strukturelle Eksponeringsindikatorer",
+      "exposureDriver": "Eksponeringsfaktor",
+      "assessment": "Vurdering"
+    },
+    "section2": {
+      "title": "Strukturel Risikotolkning"
+    },
+    "section3": {
+      "title": "Forventede Prioritetskontroldomæner"
+    },
+    "section4": {
+      "title": "Næste Trin Overvejelser"
+    },
+    "footer": {
+      "confidential": "Fortroligt",
+      "generatedBy": "Genereret af Compliance Circle",
+      "version": "Vurdering v1.0"
+    }
+  },
+  "Workflow": {
+    "customerOnboarding": {
+      "title": "Kunde-onboarding",
+      "welcome": "Velkommen til kunde-onboarding",
+      "description": "Gennemfør følgende trin for at oprette din organisations compliance-profil og generere din første GAP-rapport.",
+      "startStep": "Start",
+      "reviewStep": "Gennemgå",
+      "progress": "{completed} af {total} trin gennemført",
+      "stepCount": "{count} trin i dette workflow",
+      "adapt": "Tilpas",
+      "save": "Gem",
+      "saving": "Gemmer...",
+      "adaptModeHint": "Klik på X eller + ikonerne for at fjerne eller tilføje trin til dette workflow.",
+      "exitDialog": {
+        "title": "Afslut workflow?",
+        "description": "Din fremgang er gemt. Du kan vende tilbage til dette workflow når som helst fra sidemenuen."
+      }
+    },
+    "steps": {
+      "organizationWizard": {
+        "title": "Organisationsprofil",
+        "description": "Opsæt din organisations grundlæggende information, brancheklassifikation og compliance-krav. Denne information bruges til at tilpasse anbefalinger til dine specifikke behov."
+      },
+      "cisRiscAnalysis": {
+        "title": "CIS Risikoanalyse",
+        "description": "Analysér din organisations risikoprofil og modtag skræddersyede anbefalinger til implementering af CIS-kontroller baseret på din organisations karakteristika."
+      },
+      "gapReport": {
+        "title": "GAP-rapport",
+        "description": "Gennemgå og vurder din nuværende sikkerhedsstilling i forhold til de anbefalede CIS-kontroller. Sæt nuværende og mål CMMI-niveauer for hver beskyttelsesforanstaltning."
+      }
+    }
+  },
+  "GapReport": {
+    "title": "GAP-rapport",
+    "catalog": {
+      "title": "CIS-kontrolkatalog"
+    },
+    "labels": {
+      "control": "Kontrol",
+      "safeguards": "Sikkerhedsforanstaltninger",
+      "definition": "Definition",
+      "purpose": "Formål",
+      "why": "Hvorfor dette er vigtigt",
+      "scope": "Omfang",
+      "approach": "Tilgang",
+      "example": "Eksempel",
+      "resources": "Ressourcer",
+      "notes": "Noter",
+      "active": "Aktiv",
+      "igDetails": "Implementeringsgruppe {ig} detaljer"
+    },
+    "tableColumns": {
+      "id": "ID",
+      "title": "Titel",
+      "ig": "IG",
+      "active": "Aktiv"
+    },
+    "navigation": {
+      "previous": "Forrige",
+      "next": "Næste"
+    },
+    "noteStatus": {
+      "saving": "Gemmer...",
+      "saved": "Gemt {time}",
+      "error": "Kunne ikke gemme",
+      "justNow": "lige nu",
+      "minutesAgo": "{count}m siden",
+      "hoursAgo": "{count}t siden"
+    },
+    "placeholders": {
+      "notes": "Tilføj noter til dette element..."
+    },
+    "messages": {
+      "selectOrganization": "Vælg venligst en organisation",
+      "controlNotFound": "Kontrol ikke fundet",
+      "noIgData": "Denne sikkerhedsforanstaltning har ikke specifik vejledning for IG{ig}. Den gælder muligvis ikke på dette implementeringsniveau.",
+      "reportFinalized": "GAP-rapporten er afsluttet"
+    },
+    "errors": {
+      "toggleControl": "Kunne ikke ændre kontrolstatus",
+      "toggleSafeguard": "Kunne ikke ændre sikkerhedsforanstaltningsstatus",
+      "setIg": "Kunne ikke sætte IG",
+      "finalizeReport": "Kunne ikke afslutte GAP-rapporten"
+    },
+    "cmmi": {
+      "currentCmmi": "Nuværende CMMI",
+      "targetCmmi": "Mål CMMI",
+      "gap": "GAP Score"
+    },
+    "summary": {
+      "title": "GAP-rapport oversigt",
+      "subtitle": "Gennemgå og afslut din GAP-vurdering",
+      "totalSafeguards": "Samlede sikkerhedsforanstaltninger",
+      "assessed": "Vurderet",
+      "unassessed": "Ikke vurderet",
+      "averageGap": "Gennemsnitlig GAP",
+      "cmmiDistribution": "CMMI-niveaufordeling",
+      "remarks": "Bemærkninger",
+      "remarksPlaceholder": "Tilføj eventuelle afsluttende bemærkninger eller observationer om denne GAP-vurdering...",
+      "unassessedWarning": "Nogle sikkerhedsforanstaltninger er ikke vurderet",
+      "unassessedWarningDescription": "{count} sikkerhedsforanstaltning(er) har ikke fået tildelt CMMI-niveauer. De vil blive sat til niveau 1 for både nuværende og mål.",
+      "finalizeButton": "Afslut GAP-rapport",
+      "finalizing": "Afslutter...",
+      "finalized": "Denne GAP-rapport er afsluttet"
     }
   }
 }

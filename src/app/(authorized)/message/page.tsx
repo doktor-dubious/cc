@@ -13,7 +13,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { toast } from "sonner";
 import { ExportMenu } from '@/components/ui/export-menu';
 import type { ExportColumn } from '@/lib/export';
-import { Star, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown } from 'lucide-react';
+import { Star, ChevronDown, ArrowUpDown, ArrowUp, ArrowDown, Focus } from 'lucide-react';
 
 import {
   Table,
@@ -88,6 +88,7 @@ export default function MessagePage()
     // Stars, selection, sorting
     const [starredMessageIds, setStarredMessageIds] = useState<Set<string>>(new Set());
     const [selectedMessageIds, setSelectedMessageIds] = useState<Set<string>>(new Set());
+    const [showOnlySelected, setShowOnlySelected] = useState(false);
     const [sortConfig, setSortConfig] = useState<{ key: string; direction: 'asc' | 'desc' } | null>(null);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -163,6 +164,13 @@ export default function MessagePage()
     {
         setCurrentPage(1);
     }, [filterText]);
+
+    // Auto-disable "show only selected" filter when selection is emptied
+    useEffect(() => {
+        if (showOnlySelected && selectedMessageIds.size === 0) {
+            setShowOnlySelected(false);
+        }
+    }, [selectedMessageIds, showOnlySelected]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // TOGGLE STAR (API call)
@@ -329,9 +337,10 @@ export default function MessagePage()
     // FILTER, SORT & PAGINATION
     const filteredMessages = messages
         .filter((message) =>
-            message.content.toLowerCase().includes(filterText.toLowerCase()) ||
+            (message.content.toLowerCase().includes(filterText.toLowerCase()) ||
             (message.task?.name || '').toLowerCase().includes(filterText.toLowerCase()) ||
-            (message.sender?.name || '').toLowerCase().includes(filterText.toLowerCase())
+            (message.sender?.name || '').toLowerCase().includes(filterText.toLowerCase())) &&
+            (!showOnlySelected || selectedMessageIds.has(message.id))
         )
         .sort((a, b) => {
             if (!sortConfig) return 0;
@@ -645,6 +654,28 @@ export default function MessagePage()
             )}
           </TableBody>
         </Table>
+
+        {/* Bulk Action Bar */}
+        {selectedMessageIds.size > 0 && (
+          <div className="flex items-center gap-4 mt-4 p-3 bg-muted/50 rounded-lg border">
+            <span className="text-sm text-muted-foreground">
+              Selected {selectedMessageIds.size} of {filteredMessages.length} messages
+            </span>
+            <div className="flex items-center gap-1 ml-auto">
+              <button
+                onClick={() => setShowOnlySelected(!showOnlySelected)}
+                className={`p-1.5 rounded transition-colors cursor-pointer ${
+                  showOnlySelected
+                    ? 'bg-primary/20 text-primary hover:bg-primary/30'
+                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                }`}
+                title={showOnlySelected ? "Show All Messages" : "Show Only Selected Messages"}
+              >
+                <Focus className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        )}
 
         {totalPages > 1 && (
           <div className="flex items-center justify-between mt-4">

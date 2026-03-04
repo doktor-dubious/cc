@@ -166,6 +166,11 @@ model Organization {
   supplyChainPosition      SupplyChainPosition?      @map("supply_chain_position")
   securityBudgetRange      SecurityBudgetRange?      @map("security_budget_range")
 
+  /// Business Continuity Classification fields
+  manualOperation          ManualOperation?          @map("manual_operation")
+  productionDependency     ProductionDependency?     @map("production_dependency")
+  customerAccess           CustomerAccess?           @map("customer_access")
+
   active      Boolean               @default(true)
   createdAt   DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -173,12 +178,15 @@ model Organization {
   cisControls          OrganizationCisControl[]
   cisControlGroups     CisControlGroup[]
   inactiveSafeguards   OrganizationInactiveSafeguard[]
+  cisNotes             OrganizationCisNote[]
+  gapReports           GapReport[]
   events               Event[]
   settings             OrganisationSettings?
   profiles             Profile[]
   tasks                Task[]
   organizationStar     OrganizationStar?
   fileStars            FileStar[]
+  workflowConfigs      WorkflowConfig[]
 
   @@map("organization")
 }
@@ -398,6 +406,58 @@ model OrganizationInactiveSafeguard {
   @@map("organization_inactive_safeguard")
 }
 
+/// Organization-level notes for CIS Controls and Safeguards
+model OrganizationCisNote {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  itemId         String       @map("item_id") @db.VarChar(10)  // "1" or "1.1"
+  itemType       String       @map("item_type") @db.VarChar(20) // "control" | "safeguard"
+  content        String       @db.Text
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, itemId, itemType])
+  @@index([organizationId])
+  @@map("organization_cis_note")
+}
+
+/// Finalized GAP Report with version tracking
+model GapReport {
+  id             String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int             @default(autoincrement())
+  organizationId String          @map("organization_id") @db.Uuid
+  version        Int             @default(1)
+  /// Average GAP score across all safeguards
+  averageGap     Float           @map("average_gap")
+  /// Optional remarks/notes for the report
+  remarks        String?         @db.Text
+  finalizedAt    DateTime        @default(now()) @map("finalized_at") @db.Timestamptz(3)
+  createdAt      DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  organization   Organization    @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  cmmiValues     GapReportCmmi[]
+
+  @@index([organizationId])
+  @@index([organizationId, version])
+  @@map("gap_report")
+}
+
+/// Individual CMMI values for each safeguard in a GAP report
+model GapReportCmmi {
+  id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  reportId    String    @map("report_id") @db.Uuid
+  safeguardId String    @map("safeguard_id") @db.VarChar(10)
+  currentCmmi Int       @map("current_cmmi")
+  targetCmmi  Int       @map("target_cmmi")
+  gap         Int       // target - current
+  createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  report      GapReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@index([reportId])
+  @@index([safeguardId])
+  @@map("gap_report_cmmi")
+}
+
 /// Exploratory GAP Analysis - Stores generated recommendations for an organization
 model ExploratoryGap {
   id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -468,6 +528,24 @@ model UserStar {
   @@id([userId])
   @@index([userId])
   @@map("user_star")
+}
+
+/// Workflow step configuration per organization
+model WorkflowConfig {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @map("organization_id") @db.Uuid
+  workflowId     String       @map("workflow_id") @db.VarChar(50)
+  stepId         String       @map("step_id") @db.VarChar(50)
+  active         Boolean      @default(true)
+  sortOrder      Int          @default(0) @map("sort_order")
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@unique([organizationId, workflowId, stepId])
+  @@index([organizationId])
+  @@index([workflowId])
+  @@map("workflow_config")
 }
 
 /// Starred incoming files - organization-scoped, uses file path as identifier
@@ -852,4 +930,25 @@ enum SecurityBudgetRange {
   FROM_50K_250K           /// €50K–€250K
   FROM_250K_1M            /// €250K–€1M
   OVER_1M                 /// > €1M
+}
+
+/// Manual Operation - Can core revenue-generating operations continue manually if IT systems are unavailable?
+enum ManualOperation {
+  YES                     /// 0 = Yes, operations can continue manually without material disruption
+  PARTIAL                 /// 1 = Partially; limited manual fallback possible for a short period
+  NO                      /// 2 = No; core operations stop without IT
+}
+
+/// Production Dependency - Does production/delivery depend directly on IT systems?
+enum ProductionDependency {
+  NO_DEPENDENCY           /// 0 = No direct dependency
+  PARTIAL                 /// 1 = Partial or indirect dependency
+  DIRECT                  /// 2 = Yes, direct real-time dependency
+}
+
+/// Customer Access - Is customer access required for sales, orders, or service delivery?
+enum CustomerAccess {
+  NOT_REQUIRED            /// 0 = No, sales/delivery can continue without digital access
+  PARTIAL                 /// 1 = Partially; some functions depend on customer access
+  ESSENTIAL               /// 2 = Yes, customer access is essential for revenue generation
 }

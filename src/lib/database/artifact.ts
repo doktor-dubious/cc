@@ -15,6 +15,7 @@ export type ArtifactData =
     size            : string | null;
     originalName    : string | null;
     organizationId  : string;
+    createdAt       : Date;
 };
 
 type ArtifactWithRelations = ArtifactData &
@@ -31,7 +32,7 @@ type ArtifactWithRelations = ArtifactData &
     }>;
 };
 
-const selectFields = 
+const selectFields =
 {
     id              : true,
     name            : true,
@@ -42,9 +43,10 @@ const selectFields =
     size            : true,
     originalName    : true,
     organizationId  : true,
+    createdAt       : true,
 } as const;
 
-const selectFieldsWithRelations = 
+const selectFieldsWithRelations =
 {
     id              : true,
     name            : true,
@@ -55,13 +57,14 @@ const selectFieldsWithRelations =
     size            : true,
     originalName    : true,
     organizationId  : true,
-    taskArtifacts   : 
+    createdAt       : true,
+    taskArtifacts   :
     {
-        select: 
+        select:
         {
-            task: 
+            task:
             {
-                select: 
+                select:
                 {
                     id          : true,
                     name        : true,

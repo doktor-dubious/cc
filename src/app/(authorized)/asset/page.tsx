@@ -4,7 +4,7 @@ import { useUser }                              from '@/context/UserContext';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { useRouter }                            from 'next/navigation';
 import { useEffect, useState }                  from 'react';
-import { SquarePen, Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react';
+import { SquarePen, Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown, Focus } from 'lucide-react';
 import { Button }                               from "@/components/ui/button";
 import { Checkbox }                             from "@/components/ui/checkbox";
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
@@ -107,17 +107,20 @@ export default function ArtifactPage()
 
     const [artifactToDelete, setArtifactToDelete] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteConfirmChecked, setDeleteConfirmChecked] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
     const [filterText, setFilterText] = useState("");
     const [activeTab, setActiveTab] = useState("details");
 
-    // Sorting
-    const [sortField, setSortField] = useState<'name' | 'type' | 'starred' | null>(null);
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    // Sorting - default to date descending (newest first)
+    const [sortField, setSortField] = useState<'name' | 'type' | 'createdAt' | 'starred' | null>('createdAt');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
     // Selection and starring state
     const [selectedAssetIds, setSelectedAssetIds] = useState<Set<number>>(new Set());
     const [starredAssetIds, setStarredAssetIds] = useState<Set<number>>(new Set());
+    const [showOnlySelected, setShowOnlySelected] = useState(false);
 
     // Bulk delete state
     const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
@@ -454,6 +457,13 @@ export default function ArtifactPage()
     setCurrentPage(1);
   }, [filterText]);
 
+  // Auto-disable "show only selected" filter when selection is emptied
+  useEffect(() => {
+      if (showOnlySelected && selectedAssetIds.size === 0) {
+          setShowOnlySelected(false);
+      }
+  }, [selectedAssetIds, showOnlySelected]);
+
   const handleRowClick = (artifact: any) => {
     setSelectedArtifact(artifact);
     document.getElementById('edit-form')?.scrollIntoView({ behavior: 'smooth' });
@@ -572,6 +582,8 @@ export default function ArtifactPage()
     const handleDelete = async () =>
     {
         if (!artifactToDelete) return;
+        if (!deleteConfirmChecked) return;
+        if (deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
 
         setIsDeleting(true);
 
@@ -608,6 +620,8 @@ export default function ArtifactPage()
 
             setArtifactToDelete(null);
             setDeleteFromFilesystem(false);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
           }
           catch (err)
           {
@@ -620,7 +634,7 @@ export default function ArtifactPage()
       };
 
     // Sorting helper
-    const handleSort = (field: 'name' | 'type' | 'starred') => {
+    const handleSort = (field: 'name' | 'type' | 'createdAt' | 'starred') => {
         if (sortField === field) {
             setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
         } else {
@@ -630,7 +644,7 @@ export default function ArtifactPage()
     };
 
     // Sortable column header renderer
-    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'type' | 'starred', children: React.ReactNode, className?: string }) => (
+    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'type' | 'createdAt' | 'starred', children: React.ReactNode, className?: string }) => (
         <TableHead
             className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
             onClick={() => handleSort(field)}
@@ -648,8 +662,9 @@ export default function ArtifactPage()
 
     const filteredArtifacts = artifacts
       .filter(artifact =>
-        artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||
-        artifact.id.toString().includes(filterText)
+        (artifact.name.toLowerCase().includes(filterText.toLowerCase()) ||
+        artifact.id.toString().includes(filterText)) &&
+        (!showOnlySelected || selectedAssetIds.has(artifact.id))
       )
       .sort((a, b) => {
         if (sortField) {
@@ -660,6 +675,9 @@ export default function ArtifactPage()
                     break;
                 case 'type':
                     comparison = a.type.localeCompare(b.type);
+                    break;
+                case 'createdAt':
+                    comparison = new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
                     break;
                 case 'starred':
                     const aStarred = starredAssetIds.has(a.id) ? 1 : 0;
@@ -749,6 +767,7 @@ export default function ArtifactPage()
                 setSelectedArtifact(null);
             }
             setSelectedAssetIds(new Set());
+            setShowOnlySelected(false);
             toast.success(t('toast.assetsDeleted', { count: success }));
         }
         if (failed > 0) {
@@ -916,52 +935,85 @@ export default function ArtifactPage()
     </Dialog>
 
     { /* Delete Artifact Alert */ }
-<AlertDialog
+<Dialog
   open={artifactToDelete !== null}
   onOpenChange={(open) => {
     if (!open) {
       setArtifactToDelete(null);
       setDeleteFromFilesystem(false);
+      setDeleteConfirmChecked(false);
+      setDeleteConfirmText("");
     }
   }}
 >
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
-      <AlertDialogDescription>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="text-destructive">{t('dialogs.deleteTitle')}</DialogTitle>
+      <DialogDescription>
         {t('dialogs.deleteDescription', { name: artifacts.find(a => a.id === artifactToDelete)?.name || 'this item' })}
-      </AlertDialogDescription>
-    </AlertDialogHeader>
+      </DialogDescription>
+    </DialogHeader>
 
-    <div className="flex items-center space-x-2 px-6 py-2">
-      <input
-        type="checkbox"
-        id="delete-file"
-        checked={deleteFromFilesystem}
-        onChange={(e) => setDeleteFromFilesystem(e.target.checked)}
-        className="h-4 w-4 rounded border-gray-300 text-destructive focus:ring-destructive"
-        disabled={isDeleting}
-      />
-      <label
-        htmlFor="delete-file"
-        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
-      >
-        {t('dialogs.alsoDeleteFile')}
-      </label>
+    <div className="space-y-4 py-4">
+      <div className="flex items-center space-x-2">
+        <input
+          type="checkbox"
+          id="delete-file"
+          checked={deleteFromFilesystem}
+          onChange={(e) => setDeleteFromFilesystem(e.target.checked)}
+          className="h-4 w-4 rounded border-gray-300 text-destructive focus:ring-destructive"
+          disabled={isDeleting}
+        />
+        <label
+          htmlFor="delete-file"
+          className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+        >
+          {t('dialogs.alsoDeleteFile')}
+        </label>
+      </div>
+
+      <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+        <Checkbox
+          id="delete-confirm"
+          checked={deleteConfirmChecked}
+          onCheckedChange={(checked) => setDeleteConfirmChecked(!!checked)}
+        />
+        <label htmlFor="delete-confirm" className="text-sm cursor-pointer">
+          {t('dialogs.deleteConfirmCheckbox')}
+        </label>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm">
+          {t('dialogs.deleteTypeWord', { word: getDeleteWord() })}
+        </label>
+        <Input
+          value={deleteConfirmText}
+          onChange={(e) => setDeleteConfirmText(e.target.value)}
+          placeholder={getDeleteWord()}
+          className={deleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+        />
+      </div>
     </div>
 
-    <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
-      <AlertDialogAction
+    <div className="flex justify-end gap-3">
+      <Button variant="outline" onClick={() => setArtifactToDelete(null)} disabled={isDeleting}>
+        {tc('buttons.cancel')}
+      </Button>
+      <Button
+        variant="destructive"
         onClick={handleDelete}
-        disabled={isDeleting}
-        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+        disabled={
+          isDeleting ||
+          !deleteConfirmChecked ||
+          deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+        }
       >
         {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
 
       {/* New Dialog */ }
       <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>
@@ -1124,13 +1176,14 @@ export default function ArtifactPage()
               <SortableHeader field="name">{tc('table.name')}</SortableHeader>
               <TableHead>{tc('table.description')}</TableHead>
               <SortableHeader field="type" className="w-40">{tc('table.type')}</SortableHeader>
+              <SortableHeader field="createdAt" className="w-40">{tc('table.date')}</SortableHeader>
               <SortableHeader field="starred" className="w-10"><Star className="h-4 w-4" /></SortableHeader>
             </TableRow>
           </TableHeader>
           <TableBody>
             {currentArtifacts.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center text-muted-foreground">
+                <TableCell colSpan={6} className="text-center text-muted-foreground">
                   {filterText ? t('empty.noArtifactsMatch') : t('empty.noArtifactsFound')}
                 </TableCell>
               </TableRow>
@@ -1165,6 +1218,9 @@ export default function ArtifactPage()
                       <Badge variant="secondary" className={`${getTypeBadge(artifact.type)} px-2 py-1 text-xs asset-type-badge`}>
                         {artifact.type.replace('_', ' ')}
                       </Badge>
+                    </TableCell>
+                    <TableCell className="w-40 text-muted-foreground">
+                      {new Date(artifact.createdAt).toLocaleDateString()}
                     </TableCell>
                     {/* Star cell */}
                     <TableCell className="w-10" onClick={(e) => e.stopPropagation()}>
@@ -1230,18 +1286,30 @@ export default function ArtifactPage()
             <span className="text-sm text-muted-foreground">
               {t('selection.selectedOf', { selected: selectedAssetIds.size, total: currentArtifacts.length })}
             </span>
-            <div className="flex items-center gap-4">
-              <span
+            <div className="flex items-center gap-2">
+              <button
+                onClick={() => setShowOnlySelected(!showOnlySelected)}
+                className={`p-1.5 rounded transition-colors cursor-pointer ${
+                  showOnlySelected
+                    ? 'bg-primary/20 text-primary hover:bg-primary/30'
+                    : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                }`}
+                title={showOnlySelected ? "Show All Assets" : "Show Only Selected Assets"}
+              >
+                <Focus className="h-4 w-4" />
+              </button>
+              <div className="w-px h-4 bg-border" />
+              <button
                 title={t('buttons.deleteSelected')}
                 onClick={() => {
                   setBulkDeleteConfirmChecked(false);
                   setBulkDeleteConfirmText("");
                   setIsBulkDeleteDialogOpen(true);
                 }}
-                className="cursor-pointer"
+                className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"
               >
-                <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
-              </span>
+                <Trash2 className="w-4 h-4" />
+              </button>
             </div>
           </div>
         )}
@@ -1389,7 +1457,7 @@ export default function ArtifactPage()
                     <TableBody>
                       {selectedArtifact.taskArtifacts?.length === 0 ? (
                         <TableRow>
-                          <TableCell colSpan={5} className="text-center text-muted-foreground">
+                          <TableCell colSpan={6} className="text-center text-muted-foreground">
                             {t('empty.noTasksConnected')}
                           </TableCell>
                         </TableRow>

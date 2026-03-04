@@ -3,11 +3,14 @@ import { log }                                      from '@/lib/log';
 import { NextRequest, NextResponse }                from 'next/server';
 import { getServerSession }                         from '@/lib/auth';
 import { organizationRepository }                   from '@/lib/database/organization';
+import { settingsRepository }                       from '@/lib/database/settings';
 import { canFetchOrganizations,
         canCreateOrganizations }                    from '@/lib/auth/permissions';
 import type { ApiResponse }                         from '@/lib/types/api';
-import type { OrganizationWithAll, 
+import type { OrganizationWithAll,
               organizationData }                    from '@/lib/database/organization';
+import { mkdir }                                    from 'fs/promises';
+import path                                         from 'path';
 
 export async function GET(request: NextRequest)
 {
@@ -153,6 +156,45 @@ export async function POST(request: Request)
         });
 
         log.info({ organizationId: newOrganization.id }, 'Organization created successfully');
+
+        // ── Auto-generate organization directories ───────────────────────────────────────
+        try
+        {
+            const settings = await settingsRepository.getActive();
+            if (settings?.homeDirectory)
+            {
+                const homeDir = settings.homeDirectory;
+                const orgDirName = `org-${newOrganization.id}`;
+                const orgBasePath = path.join(homeDir, orgDirName);
+
+                const uploadDir = path.join(orgBasePath, 'upload');
+                const downloadDir = path.join(orgBasePath, 'download');
+                const artifactDir = path.join(orgBasePath, 'artifact');
+
+                // Create directories recursively
+                await mkdir(uploadDir, { recursive: true });
+                await mkdir(downloadDir, { recursive: true });
+                await mkdir(artifactDir, { recursive: true });
+
+                // Create OrganisationSettings record with directory paths
+                await organizationRepository.updateSettings(newOrganization.id, {
+                    uploadDirectory   : uploadDir,
+                    downloadDirectory : downloadDir,
+                    artifactDirectory : artifactDir,
+                });
+
+                log.info({ organizationId: newOrganization.id, uploadDir, downloadDir, artifactDir }, 'Organization directories created');
+            }
+            else
+            {
+                log.warn({ organizationId: newOrganization.id }, 'No home directory configured in settings, skipping directory creation');
+            }
+        }
+        catch (dirError)
+        {
+            // Log but don't fail organization creation if directory creation fails
+            log.error({ error: dirError, organizationId: newOrganization.id }, 'Failed to create organization directories');
+        }
 
         return NextResponse.json<ApiResponse<organizationData>>(
             {

@@ -105,6 +105,9 @@ export default async function AuthorizedLayout({children,}:
         downtimeTolerance        : org.downtimeTolerance,
         supplyChainPosition      : org.supplyChainPosition,
         securityBudgetRange      : org.securityBudgetRange,
+        manualOperation          : org.manualOperation,
+        productionDependency     : org.productionDependency,
+        customerAccess           : org.customerAccess,
     }));
 
     return (

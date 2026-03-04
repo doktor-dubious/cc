@@ -111,6 +111,8 @@ export default function UserPage()
     const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
     const [userToDelete, setUserToDelete] = useState<string | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteConfirmChecked, setDeleteConfirmChecked] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
     // Filter & tabs
     const [filterText, setFilterText] = useState("");
@@ -856,6 +858,8 @@ export default function UserPage()
     const handleDelete = async () =>
     {
         if (!userToDelete) return;
+        if (!deleteConfirmChecked) return;
+        if (deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
 
         setIsDeleting(true);
 
@@ -891,6 +895,8 @@ export default function UserPage()
 
             toast.success(t('toast.userDeleted'));
             setUserToDelete(null);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
         }
         catch (err)
         {
@@ -1188,29 +1194,67 @@ export default function UserPage()
 </Dialog>
 
 {/* ── Delete confirmation ── */}
-<AlertDialog
+<Dialog
   open={userToDelete !== null}
-  onOpenChange={(open) => { if (!open) setUserToDelete(null); }}
+  onOpenChange={(open) => {
+    if (!open) {
+      setUserToDelete(null);
+      setDeleteConfirmChecked(false);
+      setDeleteConfirmText("");
+    }
+  }}
 >
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
-      <AlertDialogDescription>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="text-destructive">{t('dialogs.deleteTitle')}</DialogTitle>
+      <DialogDescription>
         {t('dialogs.deleteDescription', { name: users.find(u => u.id === userToDelete)?.name || '' })}
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
-      <AlertDialogAction
-        className="bg-destructive text-white hover:bg-destructive/90"
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="space-y-4 py-4">
+      <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+        <Checkbox
+          id="delete-confirm"
+          checked={deleteConfirmChecked}
+          onCheckedChange={(checked) => setDeleteConfirmChecked(!!checked)}
+        />
+        <label htmlFor="delete-confirm" className="text-sm cursor-pointer">
+          {t('dialogs.deleteConfirmCheckbox')}
+        </label>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm">
+          {t('dialogs.deleteTypeWord', { word: getDeleteWord() })}
+        </label>
+        <Input
+          value={deleteConfirmText}
+          onChange={(e) => setDeleteConfirmText(e.target.value)}
+          placeholder={getDeleteWord()}
+          className={deleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+        />
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button variant="outline" onClick={() => setUserToDelete(null)} disabled={isDeleting}>
+        {tc('buttons.cancel')}
+      </Button>
+      <Button
+        variant="destructive"
         onClick={handleDelete}
-        disabled={isDeleting}
+        disabled={
+          isDeleting ||
+          !deleteConfirmChecked ||
+          deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+        }
       >
         {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
 
 {/* ── Create new user dialog ── */}
 <Dialog open={isNewDialogOpen} onOpenChange={setIsNewDialogOpen}>

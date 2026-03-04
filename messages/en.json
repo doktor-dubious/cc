@@ -50,6 +50,13 @@
     "dialogs": {
       "deleteTitle": "Are you absolutely sure?",
       "cannotBeUndone": "This action cannot be undone."
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next",
+      "exit": "Exit",
+      "workflow": "Workflow",
+      "finish": "Finish"
     }
   },
   "Sidebar": {
@@ -68,12 +75,15 @@
     "incommingFiles": "Incomming Files",
     "messages": "Messages",
     "auditTrail": "Audit Trail",
+    "workflow": "Workflow",
+    "customerOnboarding": "Customer Onboarding",
     "reports": "Reports",
     "statusReport": "Status Report",
     "progressReport": "Progress Report",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "cisControls": "CIS Controls",
@@ -133,6 +143,8 @@
       "deleteTitle": "Are you absolutely sure?",
       "deleteDescription": "This action cannot be undone. This will permanently delete the artifact \"{name}\" and remove it from the system.",
       "alsoDeleteFile": "Also delete file from filesystem",
+      "deleteConfirmCheckbox": "I understand that this will permanently delete this asset and all associated data.",
+      "deleteTypeWord": "Type \"{word}\" to confirm",
       "bulkDeleteTitle": "Delete Multiple Assets",
       "bulkDeleteDescription": "You are about to delete {count} assets. This action cannot be undone.",
       "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these assets and all associated data",
@@ -292,6 +304,8 @@
       "deleteTitle": "Are you absolutely sure?",
       "deleteMessageDescription": "This action cannot be undone. This will permanently delete this message.",
       "deleteTaskDescription": "This action cannot be undone. This will permanently delete the task \"{name}\" and remove it from the system.",
+      "deleteTaskConfirmCheckbox": "I understand that this will permanently delete this task and all associated data.",
+      "deleteTypeWord": "Type \"{word}\" to confirm",
       "removeArtifactTitle": "Remove artifact from task?",
       "removeArtifactDescription": "This will unlink the artifact from the current task (delete the link in TaskArtifact). The artifact itself remains in the system and can still be assigned to other tasks. This action cannot be undone.",
       "removeProfileTitle": "Remove profile from task?",
@@ -352,6 +366,9 @@
       "showingArtifacts": "Showing {start} to {end} of {total} artifacts",
       "showingProfiles": "Showing {start} to {end} of {total} profiles",
       "showingEvents": "Showing {start} to {end} of {total} events"
+    },
+    "table": {
+      "taskName": "Task Name"
     },
     "toast": {
       "allMessagesRead": "All messages marked as read",
@@ -425,6 +442,8 @@
       "createDescription": "Enter the details for the new login.",
       "deleteTitle": "Are you absolutely sure?",
       "deleteDescription": "This will deactivate the login \"{name}\" and they will no longer be able to access the system.",
+      "deleteConfirmCheckbox": "I understand that this will permanently delete this login.",
+      "deleteTypeWord": "Type \"{word}\" to confirm",
       "bulkDeleteTitle": "Delete Multiple Logins",
       "bulkDeleteDescription": "You are about to delete {count} logins. This action cannot be undone.",
       "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these logins",
@@ -557,6 +576,8 @@
       "removeTaskDescription": "This will remove the task assignment from this profile (delete the link in TaskProfile). The task itself remains in the system and can be assigned to other profiles or organizations. This action cannot be undone.",
       "deleteTitle": "Are you absolutely sure?",
       "deleteDescription": "This action cannot be undone. This will permanently delete the profile \"{name}\" and remove it from the system.",
+      "deleteConfirmCheckbox": "I understand that this will permanently delete this profile and all associated data.",
+      "deleteTypeWord": "Type \"{word}\" to confirm",
       "bulkDeleteTitle": "Delete Multiple Profiles",
       "bulkDeleteDescription": "You are about to delete {count} profiles. This action cannot be undone.",
       "bulkDeleteConfirmCheckbox": "I understand this will permanently delete these profiles and all associated data",
@@ -674,7 +695,9 @@
       "removing": "Removing...",
       "adding": "Adding...",
       "deleteOrganizations": "Delete {count} organizations",
-      "deleteSelected": "Delete selected"
+      "deleteSelected": "Delete selected",
+      "onboardingWizard": "Onboarding Wizard",
+      "editInWizard": "Edit in Wizard"
     },
     "dialogs": {
       "createTitle": "Create New Organisation",
@@ -693,6 +716,8 @@
       "removeProfileDescription": "This will unlink the profile from the current organization (set organizationId to null). The profile record itself will remain in the system. This action cannot be undone.",
       "deleteTitle": "Are you absolutely sure?",
       "deleteDescription": "This action cannot be undone. This will permanently delete the organization \"{name}\" and remove it from the system.",
+      "deleteConfirmCheckbox": "I understand that this will permanently delete this organization and all associated data.",
+      "deleteTypeWord": "Type \"{word}\" to confirm",
       "bulkDeleteTitle": "Delete Organizations",
       "bulkDeleteDescription": "You are about to delete {count} organizations. This action cannot be undone.",
       "bulkDeleteConfirmCheckbox": "I understand that this will permanently delete the selected organizations and all associated data.",
@@ -735,7 +760,11 @@
       "targetedAttackLikelihood": "Targeted Attack Likelihood",
       "downtimeTolerance": "Downtime Tolerance",
       "supplyChainPosition": "Supply Chain Position",
-      "securityBudgetRange": "Security Budget"
+      "securityBudgetRange": "Security Budget",
+      "businessContinuitySection": "Business Continuity",
+      "manualOperation": "Manual Operation",
+      "productionDependency": "Production Dependency",
+      "customerAccess": "Customer Access"
     },
     "sizes": {
       "micro": "Micro (0-9 employees)",
@@ -778,7 +807,10 @@
       "selectTargetedAttackLikelihood": "Select targeted attack likelihood",
       "selectDowntimeTolerance": "Select downtime tolerance",
       "selectSupplyChainPosition": "Select supply chain position",
-      "selectSecurityBudgetRange": "Select security budget range"
+      "selectSecurityBudgetRange": "Select security budget range",
+      "selectManualOperation": "Select manual operation capability",
+      "selectProductionDependency": "Select production dependency level",
+      "selectCustomerAccess": "Select customer access requirement"
     },
     "tabs": {
       "details": "Details",
@@ -832,7 +864,8 @@
       "taskUpdated": "Task updated",
       "updateTaskError": "Could not update task",
       "organizationsDeleted": "{count} organizations deleted successfully",
-      "organizationsDeleteFailed": "Failed to delete {count} organizations"
+      "organizationsDeleteFailed": "Failed to delete {count} organizations",
+      "loadError": "Could not load organization"
     },
     "loading": {
       "loadingUser": "Loading user...",
@@ -863,7 +896,10 @@
       "targetedAttackLikelihoodHelp": "Likelihood of being specifically targeted by threat actors",
       "downtimeToleranceHelp": "Business impact tolerance for system unavailability",
       "supplyChainPositionHelp": "Your position in the supply chain relative to end customers",
-      "securityBudgetRangeHelp": "Approximate annual budget allocated to security"
+      "securityBudgetRangeHelp": "Approximate annual budget allocated to security",
+      "manualOperationHelp": "Can core revenue-generating operations continue manually if IT systems are unavailable?",
+      "productionDependencyHelp": "Does production/delivery depend directly on IT systems in a way that stops billing, delivery, or fulfillment?",
+      "customerAccessHelp": "Is customer access required for sales, orders, or service delivery?"
     },
     "nace": {
       "A": "A - Agriculture, forestry and fishing",
@@ -950,7 +986,8 @@
       "distributor": "Distributor / Wholesaler",
       "retailer": "Retailer",
       "serviceProvider": "Service provider",
-      "platform": "Platform / Marketplace"
+      "platform": "Platform / Marketplace",
+      "endUser": "End user / Consumer"
     },
     "riskProfiles": {
       "low": "Low risk",
@@ -1047,7 +1084,173 @@
       "limited": "Limited (€10K-50K/year)",
       "moderate": "Moderate (€50K-250K/year)",
       "substantial": "Substantial (€250K-1M/year)",
-      "enterprise": "Enterprise (> €1M/year)"
+      "enterprise": "Enterprise (> €1M/year)",
+      "under50k": "Under €50K/year",
+      "from50kTo250k": "€50K - €250K/year",
+      "from250kTo1m": "€250K - €1M/year",
+      "over1m": "Over €1M/year"
+    },
+    "itEndpointRange": {
+      "under10": "< 10 endpoints",
+      "from10to50": "10-50 endpoints",
+      "from50to250": "50-250 endpoints",
+      "from250to1000": "250-1,000 endpoints",
+      "from1000to5000": "1,000-5,000 endpoints",
+      "over5000": "> 5,000 endpoints",
+      "under25": "Under 25 endpoints",
+      "from25To100": "25 - 100 endpoints",
+      "from100To500": "100 - 500 endpoints",
+      "from500To5000": "500 - 5,000 endpoints"
+    },
+    "infrastructureTypes": {
+      "onPremises": "On-premises data center",
+      "privateCloud": "Private cloud",
+      "publicCloud": "Public cloud (AWS, Azure, GCP)",
+      "hybrid": "Hybrid infrastructure",
+      "saasOnly": "SaaS-only (no own infrastructure)",
+      "otIcs": "OT/ICS systems",
+      "cloudOnly": "Cloud only",
+      "multiCloud": "Multi-cloud",
+      "operationalTechnology": "Operational Technology (OT/ICS)"
+    },
+    "softwareDevelopment": {
+      "none": "No in-house development",
+      "internalTools": "Internal tools only",
+      "customerFacing": "Customer-facing applications",
+      "commercialProducts": "Commercial software products",
+      "someInternal": "Some internal development",
+      "coreBusiness": "Core business development",
+      "softwareIsProduct": "Software is the product"
+    },
+    "publicFacingServices": {
+      "minimal": "Minimal (email, basic website)",
+      "standardWeb": "Standard web presence",
+      "ecommerce": "E-commerce / customer portals",
+      "criticalServices": "Critical online services",
+      "none": "No public-facing services",
+      "basicWeb": "Basic website presence",
+      "ecommercePortals": "E-commerce and customer portals"
+    },
+    "targetedAttackLikelihood": {
+      "low": "Low - Opportunistic threats only",
+      "medium": "Medium - Some targeted interest",
+      "high": "High - Known target",
+      "critical": "Critical - Active threat actor interest"
+    },
+    "downtimeTolerance": {
+      "highTolerance": "High tolerance (days acceptable)",
+      "moderate": "Moderate (hours acceptable)",
+      "lowTolerance": "Low tolerance (< 4 hours)",
+      "zeroTolerance": "Zero tolerance (24/7 required)",
+      "days": "Can tolerate days of downtime",
+      "hours": "Can tolerate hours of downtime",
+      "nearZero": "Near-zero downtime tolerance"
+    },
+    "supplyChainPosition": {
+      "endConsumer": "End consumer organization",
+      "downstream": "Downstream (closer to consumers)",
+      "midstream": "Midstream",
+      "upstream": "Upstream (closer to raw materials)",
+      "criticalSupplier": "Critical supplier to essential services",
+      "b2bProvider": "B2B service/product provider",
+      "mspCloudProvider": "MSP / Cloud provider"
+    },
+    "regulatoryObligations": {
+      "gdpr": "GDPR",
+      "nis2": "NIS2",
+      "dora": "DORA",
+      "pciDss": "PCI DSS",
+      "hipaa": "HIPAA",
+      "sox": "SOX",
+      "iso27001": "ISO 27001",
+      "criticalInfrastructure": "Critical infrastructure regulations",
+      "sectorSpecific": "Sector-specific regulations",
+      "noneIdentified": "None identified",
+      "euAiAct": "EU AI Act",
+      "industrySpecific": "Industry-specific regulations",
+      "cyberInsurance": "Cyber insurance requirements",
+      "noneNotSure": "None / Not sure"
+    },
+    "manualOperation": {
+      "yes": "Yes - Operations can continue manually without material disruption",
+      "partial": "Partial - Limited manual fallback possible for a short period",
+      "no": "No - Core operations stop without IT"
+    },
+    "productionDependency": {
+      "noDependency": "No direct dependency on IT systems",
+      "partial": "Partial or indirect dependency",
+      "direct": "Yes - Direct real-time dependency"
+    },
+    "customerAccess": {
+      "notRequired": "No - Sales/delivery can continue without digital access",
+      "partial": "Partial - Some functions depend on customer access",
+      "essential": "Yes - Customer access is essential for revenue generation"
+    },
+    "onboard": {
+      "title": "Set Up Your Organization",
+      "titleEdit": "Edit Organization Profile",
+      "subtitle": "Complete the following steps to configure your organization's compliance profile",
+      "saving": "Saving...",
+      "loading": "Loading organization...",
+      "steps": {
+        "title": "Steps",
+        "basics": "Name & Description",
+        "sizeIndustry": "Size & Industry",
+        "legalOwnership": "Legal & Ownership",
+        "maturityRevenue": "Maturity & Revenue",
+        "geographyOrientation": "Geography & Orientation",
+        "digitalEsg": "Digital & ESG",
+        "supplyChainRisk": "Supply Chain & Risk",
+        "euTaxonomy": "EU Taxonomy",
+        "itSecurityStaff": "IT & Security Staff",
+        "itInfrastructure": "IT Infrastructure",
+        "softwareServices": "Software & Services",
+        "dataCompliance": "Data & Compliance",
+        "riskTolerance": "Risk & Tolerance",
+        "supplyChainBudget": "Position & Budget",
+        "businessContinuity": "Business Continuity"
+      }
+    },
+    "summary": {
+      "title": "Organization Summary",
+      "subtitle": "Review your organization's profile information",
+      "sections": {
+        "basicInfo": "Basic Information",
+        "businessProfile": "Business Profile",
+        "itSecurity": "IT & Security",
+        "infrastructure": "Infrastructure",
+        "compliance": "Compliance & Data"
+      }
+    },
+    "fields": {
+      "name": "Name",
+      "description": "Description",
+      "size": "Size",
+      "naceSection": "Industry (NACE)",
+      "legalForm": "Legal Form",
+      "revenueRange": "Revenue Range",
+      "maturity": "Maturity",
+      "ownershipType": "Ownership Type",
+      "geographicScope": "Geographic Scope",
+      "businessOrientation": "Business Orientation",
+      "digitalMaturity": "Digital Maturity",
+      "esgStatus": "ESG Status",
+      "supplyChainRole": "Supply Chain Role",
+      "riskProfile": "Risk Profile",
+      "euTaxonomyAligned": "EU Taxonomy Aligned",
+      "itSecurityStaff": "IT Security Staff",
+      "securityMaturity": "Security Maturity",
+      "securityBudgetRange": "Security Budget",
+      "targetedAttackLikelihood": "Targeted Attack Likelihood",
+      "downtimeTolerance": "Downtime Tolerance",
+      "itEndpointRange": "IT Endpoints",
+      "infrastructureTypes": "Infrastructure Types",
+      "softwareDevelopment": "Software Development",
+      "publicFacingServices": "Public Facing Services",
+      "supplyChainPosition": "Supply Chain Position",
+      "dataSensitivity": "Data Sensitivity",
+      "regulatoryObligations": "Regulatory Obligations",
+      "ig": "Implementation Group"
     },
     "status": {
       "currentlyIn": "Currently in: {name}",
@@ -1056,6 +1259,22 @@
       "noEmail": "No email",
       "noDescription": "No description"
     }
+  },
+  "UploadFiles": {
+    "title": "Upload Files",
+    "description": "Upload files to {organization}. Files will be stored securely in the cloud.",
+    "uploading": "Uploading files...",
+    "recentUploads": "Recent Uploads",
+    "size": "Size",
+    "uploadStarted": "Starting upload of {count, plural, one {# file} other {# files}}...",
+    "uploadSuccess": "{count, plural, one {# file} other {# files}} uploaded successfully",
+    "uploadError": "{count, plural, one {# file} other {# files}} failed to upload",
+    "uploadFailed": "Upload failed",
+    "statusSuccess": "Success",
+    "statusFailed": "Failed",
+    "removeFromList": "Remove from list?",
+    "removeFromListDescription": "This will only remove the file from this list, not from storage.",
+    "remove": "Remove"
   },
   "IncommingFiles": {
     "buttons": {
@@ -1070,6 +1289,8 @@
     "dialogs": {
       "deleteTitle": "Delete File?",
       "deleteDescription": "Are you sure you want to delete {name}? This action cannot be undone.",
+      "deleteConfirmCheckbox": "I understand that this will permanently delete this file.",
+      "deleteTypeWord": "Type \"{word}\" to confirm",
       "assignTitle": "Assign File as Artifact",
       "assignFileLabel": "File: {name}",
       "bulkDeleteTitle": "Delete Multiple Files",
@@ -1095,6 +1316,7 @@
       "filename": "Filename",
       "size": "Size",
       "modified": "Modified",
+      "date": "Date",
       "actions": "Actions"
     },
     "empty": {
@@ -1157,7 +1379,15 @@
   },
   "CISControls": {
     "buttons": {
-      "riscAnalysis": "Risc Analysis Composition"
+      "riscAnalysis": "Risc Analysis"
+    },
+    "riscAnalysis": {
+      "description": "Generate a relevant Safeguard profile, based on a risk score evaluation using the Organization data.",
+      "openButton": "Open Analysis"
+    },
+    "inactive": {
+      "title": "Inactive Controls",
+      "description": "Click on the outer pie segment to inactivate/activate a Control."
     },
     "legends": {
       "controlGroups": "Control Groups",
@@ -1413,6 +1643,7 @@
     "title": "Exploratory GAP Analysis",
     "titleCISRisc": "CIS Risc Analysis",
     "description": "Generate a tailored CIS Controls recommendation based on your organization's profile, taxonomy, and classification.",
+    "backToControls": "Back to Controls",
     "buttons": {
       "generate": "Generate Exploratory GAP",
       "generateShort": "Generate",
@@ -1421,7 +1652,13 @@
       "implementShort": "Implement",
       "implementing": "Implementing...",
       "confirm": "Confirm & Implement",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "viewReport": "Summary & recommendation",
+      "summary": "Summary"
+    },
+    "actions": {
+      "title": "Review & Implementation",
+      "description": "View the risk analysis summary report or implement the recommended controls"
     },
     "labels": {
       "currentOrganization": "Current Organization",
@@ -1476,6 +1713,143 @@
       "ig1": "IG1 - Essential Cyber Hygiene",
       "ig2": "IG2 - Intermediate Controls",
       "ig3": "IG3 - Advanced / Comprehensive"
+    }
+  },
+  "RiskReport": {
+    "title": "Structural Risk Exposure Overview",
+    "backToAnalysis": "Back to CIS Risk Analysis",
+    "export": "Export",
+    "exportPdf": "Export PDF",
+    "exportDocx": "Export Word",
+    "exportJson": "Export JSON",
+    "exporting": "Exporting...",
+    "noData": "No Risk Analysis Data",
+    "noDataDescription": "Please run the CIS Risk Analysis first to generate a report.",
+    "section1": {
+      "title": "Structural Exposure Indicators",
+      "exposureDriver": "Exposure Driver",
+      "assessment": "Assessment"
+    },
+    "section2": {
+      "title": "Structural Risk Interpretation"
+    },
+    "section3": {
+      "title": "Expected Priority Control Domains"
+    },
+    "section4": {
+      "title": "Next Step Consideration"
+    },
+    "footer": {
+      "confidential": "Confidential",
+      "generatedBy": "Generated by Compliance Circle",
+      "version": "Assessment v1.0"
+    }
+  },
+  "Workflow": {
+    "customerOnboarding": {
+      "title": "Customer Onboarding",
+      "welcome": "Welcome to Customer Onboarding",
+      "description": "Complete the following steps to set up your organization's compliance profile and generate your first GAP report.",
+      "startStep": "Start",
+      "reviewStep": "Review",
+      "progress": "{completed} of {total} steps completed",
+      "stepCount": "{count} steps in this workflow",
+      "adapt": "Adapt",
+      "save": "Save",
+      "saving": "Saving...",
+      "adaptModeHint": "Click the X or + icons to remove or add steps to this workflow.",
+      "exitDialog": {
+        "title": "Exit Workflow?",
+        "description": "Your progress has been saved. You can return to this workflow at any time from the sidebar menu."
+      }
+    },
+    "steps": {
+      "organizationWizard": {
+        "title": "Organization Profile",
+        "description": "Set up your organization's basic information, industry classification, and compliance requirements. This information will be used to tailor recommendations to your specific needs."
+      },
+      "cisRiscAnalysis": {
+        "title": "CIS Risk Analysis",
+        "description": "Analyze your organization's risk profile and receive tailored recommendations for CIS Controls implementation based on your organization's characteristics."
+      },
+      "gapReport": {
+        "title": "GAP Report",
+        "description": "Review and assess your current security posture against the recommended CIS Controls. Set current and target CMMI levels for each safeguard."
+      }
+    }
+  },
+  "GapReport": {
+    "title": "GAP Report",
+    "catalog": {
+      "title": "CIS Controls Catalog"
+    },
+    "labels": {
+      "control": "Control",
+      "safeguards": "Safeguards",
+      "definition": "Definition",
+      "purpose": "Purpose",
+      "why": "Why This Matters",
+      "scope": "Scope",
+      "approach": "Approach",
+      "example": "Example",
+      "resources": "Resources",
+      "notes": "Notes",
+      "active": "Active",
+      "igDetails": "Implementation Group {ig} Details"
+    },
+    "tableColumns": {
+      "id": "ID",
+      "title": "Title",
+      "ig": "IG",
+      "active": "Active"
+    },
+    "navigation": {
+      "previous": "Previous",
+      "next": "Next"
+    },
+    "noteStatus": {
+      "saving": "Saving...",
+      "saved": "Saved {time}",
+      "error": "Failed to save",
+      "justNow": "just now",
+      "minutesAgo": "{count}m ago",
+      "hoursAgo": "{count}h ago"
+    },
+    "placeholders": {
+      "notes": "Add notes for this item..."
+    },
+    "messages": {
+      "selectOrganization": "Please select an organization",
+      "controlNotFound": "Control not found",
+      "noIgData": "This safeguard does not have specific guidance for IG{ig}. It may not apply at this implementation group level.",
+      "reportFinalized": "GAP report has been finalized"
+    },
+    "errors": {
+      "toggleControl": "Failed to toggle control status",
+      "toggleSafeguard": "Failed to toggle safeguard status",
+      "setIg": "Failed to set IG",
+      "finalizeReport": "Failed to finalize GAP report"
+    },
+    "cmmi": {
+      "currentCmmi": "Current CMMI",
+      "targetCmmi": "Target CMMI",
+      "gap": "GAP Score"
+    },
+    "summary": {
+      "title": "GAP Report Summary",
+      "subtitle": "Review and finalize your GAP assessment",
+      "totalSafeguards": "Total Safeguards",
+      "assessed": "Assessed",
+      "unassessed": "Not Assessed",
+      "averageGap": "Average GAP",
+      "cmmiDistribution": "CMMI Level Distribution",
+      "remarks": "Remarks",
+      "remarksPlaceholder": "Add any final remarks or observations about this GAP assessment...",
+      "unassessedWarning": "Some safeguards have not been assessed",
+      "unassessedWarningDescription": "{count} safeguard(s) have not been assigned CMMI levels. They will default to Level 1 for both current and target.",
+      "finalizeButton": "Finalize GAP Report",
+      "finalizing": "Finalizing...",
+      "finalized": "This GAP report has been finalized"
     }
   }
 }

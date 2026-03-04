@@ -98,6 +98,16 @@ export async function PUT(request: Request)
             create: { organizationId, controlId, active },
         });
 
+        // When reactivating a control, also reactivate all its safeguards
+        if (active) {
+            await prisma.organizationInactiveSafeguard.deleteMany({
+                where: {
+                    organizationId,
+                    safeguardId: { startsWith: `${controlId}.` },
+                },
+            });
+        }
+
         return NextResponse.json<ApiResponse>({
             success: true,
             data: record,

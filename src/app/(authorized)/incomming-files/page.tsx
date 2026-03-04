@@ -5,7 +5,7 @@
 import { useState, useEffect }                  from 'react';
 import { useOrganization }                      from '@/context/OrganizationContext';
 import { ARTIFACT_TYPE_LABELS, ARTIFACT_TYPES } from '@/lib/constants/artifact-type';
-import { File, Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown }      from 'lucide-react';
+import { File, Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown, Focus, HardDrive, Cloud, FileInput } from 'lucide-react';
 import { useTranslations }                      from 'next-intl';
 import { Button }                               from '@/components/ui/button';
 import { Input }                                from '@/components/ui/input';
@@ -55,12 +55,16 @@ import {
 import { toast }                                                            from 'sonner';
 import { Skeleton }                                                         from '@/components/ui/skeleton';
 
+type FileSource = 'local' | 's3';
+
 type FileItem = {
   name        : string;
   relativePath: string;
   size        : number;
   modified    : string;
   mime        : string;
+  source      : FileSource;
+  s3Key?      : string; // S3 object key for S3 files
 };
 
 export default function ArtifactFilesPage() 
@@ -80,6 +84,8 @@ export default function ArtifactFilesPage()
     // Delete file state
     const [fileToDelete, setFileToDelete] = useState<FileItem | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
+    const [deleteConfirmChecked, setDeleteConfirmChecked] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
     // Pagination
     const [currentPage, setCurrentPage] = useState(1);
@@ -88,13 +94,14 @@ export default function ArtifactFilesPage()
     // Filter
     const [filterText, setFilterText] = useState("");
 
-    // Sorting
-    const [sortField, setSortField] = useState<'name' | 'size' | 'modified' | 'starred' | null>(null);
-    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+    // Sorting - default to date descending (newest first)
+    const [sortField, setSortField] = useState<'name' | 'size' | 'modified' | 'starred' | 'source' | null>('modified');
+    const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('desc');
 
     // Selection and starring
     const [selectedFilePaths, setSelectedFilePaths] = useState<Set<string>>(new Set());
     const [starredFilePaths, setStarredFilePaths] = useState<Set<string>>(new Set());
+    const [showOnlySelected, setShowOnlySelected] = useState(false);
 
     // Bulk delete
     const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
@@ -102,50 +109,114 @@ export default function ArtifactFilesPage()
     const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
     const [isBulkProcessing, setIsBulkProcessing] = useState(false);
 
-    const fetchFiles = async () => 
+    // Guess artifact type based on MIME type
+    const guessArtifactType = (mimeType: string): string => {
+        const mime = mimeType.toLowerCase();
+
+        // PDF
+        if (mime === 'application/pdf') return 'PDF';
+
+        // Excel / Spreadsheets
+        if (mime.includes('spreadsheet') ||
+            mime.includes('excel') ||
+            mime === 'application/vnd.ms-excel' ||
+            mime === 'text/csv') return 'EXCEL';
+
+        // Images
+        if (mime.startsWith('image/')) return 'IMAGE';
+
+        // Video
+        if (mime.startsWith('video/')) return 'VIDEO';
+
+        // Audio
+        if (mime.startsWith('audio/')) return 'AUDIO';
+
+        // Presentations
+        if (mime.includes('presentation') ||
+            mime.includes('powerpoint')) return 'PRESENTATION';
+
+        // Archives
+        if (mime === 'application/zip' ||
+            mime === 'application/x-rar-compressed' ||
+            mime === 'application/x-7z-compressed' ||
+            mime === 'application/gzip' ||
+            mime === 'application/x-tar') return 'ARCHIVE';
+
+        // Source code / text
+        if (mime === 'application/json' ||
+            mime === 'application/javascript' ||
+            mime === 'application/xml' ||
+            mime === 'text/html' ||
+            mime === 'text/css' ||
+            mime === 'text/javascript') return 'SOURCE_CODE';
+
+        // Data files
+        if (mime === 'application/sql' ||
+            mime === 'text/csv') return 'DATA';
+
+        // Word documents
+        if (mime.includes('word') ||
+            mime === 'application/msword' ||
+            mime === 'text/plain' ||
+            mime === 'text/rtf') return 'DOCUMENT';
+
+        return 'OTHER';
+    };
+
+    const fetchFiles = async () =>
     {
         if (!activeOrganization?.id) return;
 
         setLoading(true);
 
-        try 
+        try
         {
-            const res = await fetch(`/api/files/upload-dir/${activeOrganization.id}?ts=${Date.now()}`);
+            // Fetch local files and S3 files in parallel
+            const [localRes, s3Res] = await Promise.all([
+                fetch(`/api/files/upload-dir/${activeOrganization.id}?ts=${Date.now()}`),
+                fetch(`/api/files/s3?organizationId=${activeOrganization.id}&ts=${Date.now()}`),
+            ]);
 
-            if (!res.ok) 
-            {
-              console.error('Failed to load files (HTTP)', res.status);
-              throw new Error(`HTTP ${res.status}`);
+            const allFiles: FileItem[] = [];
+
+            // Process local files
+            if (localRes.ok) {
+                const localData = await localRes.json();
+                if (localData.success && Array.isArray(localData.data?.files)) {
+                    const localFiles = localData.data.files.map((f: any) => ({
+                        ...f,
+                        source: 'local' as FileSource,
+                    }));
+                    allFiles.push(...localFiles);
+                }
             }
 
-            const data = await res.json();
-            console.log("API Response:", data);
-
-            if (!data.success) 
-            {
-                console.error('API failure:', data.error);
-                throw new Error(data.error || 'API returned failure');
+            // Process S3 files
+            if (s3Res.ok) {
+                const s3Data = await s3Res.json();
+                if (s3Data.success && Array.isArray(s3Data.data?.files)) {
+                    const s3Files = s3Data.data.files.map((f: any) => ({
+                        name: f.name,
+                        relativePath: f.key, // Use S3 key as relativePath for consistency
+                        size: f.size,
+                        modified: f.modified,
+                        mime: f.mime,
+                        source: 's3' as FileSource,
+                        s3Key: f.key,
+                    }));
+                    allFiles.push(...s3Files);
+                }
             }
 
-            const fileList = data.data?.files || [];
-            console.log("fileList:", fileList);
+            setFiles(allFiles);
 
-            if (!Array.isArray(fileList)) 
-            {
-                console.warn('fileList is not an array:', fileList);
-                setFiles([]);
-                return;
-            }
-
-            setFiles(fileList);
-
-        } 
-        catch (err: any) 
+        }
+        catch (err: any)
         {
             console.error('Fetch error:', err);
             toast.error(t('toast.loadError'));
             setFiles([]);
-        } 
+        }
         finally {
             setLoading(false);
         }
@@ -264,7 +335,7 @@ export default function ArtifactFilesPage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // BULK DELETE
+    // BULK DELETE (handles both local and S3)
     const handleBulkDelete = async () => {
         if (selectedFilePaths.size === 0) return;
         if (!bulkDeleteConfirmChecked) return;
@@ -276,14 +347,37 @@ export default function ArtifactFilesPage()
 
         for (const filePath of selectedFilePaths) {
             try {
-                const res = await fetch('/api/files/upload-dir', {
-                    method: 'DELETE',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        organizationId: activeOrganization?.id,
-                        filename: filePath,
-                    }),
-                });
+                // Find the file to determine its source
+                const file = files.find(f => f.relativePath === filePath);
+                if (!file) {
+                    errorCount++;
+                    continue;
+                }
+
+                let res: Response;
+
+                if (file.source === 's3') {
+                    // Delete from S3
+                    res = await fetch('/api/files/s3', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            organizationId: activeOrganization?.id,
+                            key: file.s3Key,
+                        }),
+                    });
+                } else {
+                    // Delete from local filesystem
+                    res = await fetch('/api/files/upload-dir', {
+                        method: 'DELETE',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            organizationId: activeOrganization?.id,
+                            filename: filePath,
+                        }),
+                    });
+                }
+
                 const data = await res.json();
                 if (data.success) {
                     successCount++;
@@ -300,6 +394,7 @@ export default function ArtifactFilesPage()
         setBulkDeleteConfirmChecked(false);
         setBulkDeleteConfirmText("");
         setSelectedFilePaths(new Set());
+        setShowOnlySelected(false);
 
         if (successCount > 0) {
             toast.success(t('toast.filesDeleted', { count: successCount }));
@@ -338,33 +433,42 @@ export default function ArtifactFilesPage()
         setCurrentPage(1);
     }, [filterText]);
 
+    // Auto-disable "show only selected" filter when selection is emptied
+    useEffect(() => {
+        if (showOnlySelected && selectedFilePaths.size === 0) {
+            setShowOnlySelected(false);
+        }
+    }, [selectedFilePaths, showOnlySelected]);
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // Assign file as artifact
-    const handleAssign = async () => 
+    const handleAssign = async () =>
     {
-        if (!selectedFile || !artifactName.trim()) 
+        if (!selectedFile || !artifactName.trim())
         {
             toast.error(t('toast.nameRequired'));
             return;
         }
 
-        try 
+        try
         {
-            const res = await fetch('/api/artifact/from-file', 
+            const res = await fetch('/api/artifact/from-file',
             {
                 method              : 'POST',
                 headers             : { 'Content-Type': 'application/json' },
                 body                : JSON.stringify(
                 {
                     organizationId  : activeOrganization?.id,
-                    filename        : selectedFile.relativePath,
+                    filename        : selectedFile.name,
                     name            : artifactName.trim(),
                     description     : artifactDesc.trim() || undefined,
                     type            : artifactType,
+                    source          : selectedFile.source,
+                    s3Key           : selectedFile.s3Key,
                 }),
             });
 
-            if (!res.ok) 
+            if (!res.ok)
             {
                 const err = await res.json();
                 throw new Error(err.error || 'Failed to create artifact');
@@ -380,8 +484,8 @@ export default function ArtifactFilesPage()
             setArtifactName('');
             setArtifactDesc('');
             setArtifactType('OTHER');
-        } 
-        catch (err: any) 
+        }
+        catch (err: any)
         {
             console.error(err);
             toast.error(err.message || t('toast.assignError'));
@@ -389,27 +493,42 @@ export default function ArtifactFilesPage()
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-    // Delete file
-    const handleDeleteFile = async () => 
+    // Delete file (handles both local and S3)
+    const handleDeleteFile = async () =>
     {
         if (!fileToDelete) return;
+        if (!deleteConfirmChecked) return;
+        if (deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
 
         setIsDeleting(true);
 
-        try 
+        try
         {
-            const res = await fetch('/api/files/upload-dir', 
-            {
-                method  : 'DELETE',
-                headers : { 'Content-Type': 'application/json' },
-                body    : JSON.stringify(
-                {
-                    organizationId  : activeOrganization?.id,
-                    filename        : fileToDelete.relativePath,
-                }),
-            });
+            let res: Response;
 
-            if (!res.ok) 
+            if (fileToDelete.source === 's3') {
+                // Delete from S3
+                res = await fetch('/api/files/s3', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        organizationId: activeOrganization?.id,
+                        key: fileToDelete.s3Key,
+                    }),
+                });
+            } else {
+                // Delete from local filesystem
+                res = await fetch('/api/files/upload-dir', {
+                    method: 'DELETE',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        organizationId: activeOrganization?.id,
+                        filename: fileToDelete.relativePath,
+                    }),
+                });
+            }
+
+            if (!res.ok)
             {
                 const err = await res.json();
                 throw new Error(err.error || 'Failed to delete file');
@@ -421,12 +540,14 @@ export default function ArtifactFilesPage()
             toast.success(t('toast.fileDeleted'));
             setFiles((prev) => prev.filter((f) => f.relativePath !== fileToDelete.relativePath));
             setFileToDelete(null);
-        } 
-        catch (err: any) 
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
+        }
+        catch (err: any)
         {
             console.error('Delete error:', err);
             toast.error(err.message || 'Could not delete file');
-        } 
+        }
         finally
         {
             setIsDeleting(false);
@@ -435,7 +556,7 @@ export default function ArtifactFilesPage()
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // SORTING HELPER
-    const handleSort = (field: 'name' | 'size' | 'modified' | 'starred') => {
+    const handleSort = (field: 'name' | 'size' | 'modified' | 'starred' | 'source') => {
         if (sortField === field) {
             setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
         } else {
@@ -445,12 +566,12 @@ export default function ArtifactFilesPage()
     };
 
     // Sortable column header renderer
-    const SortableHeader = ({ field, children, className = '' }: { field: 'name' | 'size' | 'modified' | 'starred', children: React.ReactNode, className?: string }) => (
+    const SortableHeader = ({ field, children, className = '', align }: { field: 'name' | 'size' | 'modified' | 'starred' | 'source', children: React.ReactNode, className?: string, align?: 'left' | 'right' }) => (
         <TableHead
             className={`cursor-pointer select-none hover:bg-muted/50 ${className}`}
             onClick={() => handleSort(field)}
         >
-            <div className="flex items-center gap-1">
+            <div className={`flex items-center gap-1 ${align === 'right' ? 'justify-end' : ''}`}>
                 {children}
                 {sortField === field ? (
                     sortDirection === 'asc' ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />
@@ -465,8 +586,9 @@ export default function ArtifactFilesPage()
     // FILTER & PAGINATION
     const filteredFiles = files
         .filter(f =>
-            f.name.toLowerCase().includes(filterText.toLowerCase()) ||
-            f.relativePath.toLowerCase().includes(filterText.toLowerCase())
+            (f.name.toLowerCase().includes(filterText.toLowerCase()) ||
+            f.relativePath.toLowerCase().includes(filterText.toLowerCase())) &&
+            (!showOnlySelected || selectedFilePaths.has(f.relativePath))
         )
         .sort((a, b) => {
             if (sortField) {
@@ -486,6 +608,9 @@ export default function ArtifactFilesPage()
                         const bStarred = starredFilePaths.has(b.relativePath) ? 1 : 0;
                         comparison = bStarred - aStarred;
                         break;
+                    case 'source':
+                        comparison = a.source.localeCompare(b.source);
+                        break;
                 }
                 return sortDirection === 'asc' ? comparison : -comparison;
             }
@@ -504,31 +629,67 @@ export default function ArtifactFilesPage()
   return (
     <>
       {/* Delete File Alert Dialog */}
-      <AlertDialog
+      <Dialog
         open={fileToDelete !== null}
         onOpenChange={(open) => {
-          if (!open) setFileToDelete(null);
+          if (!open) {
+            setFileToDelete(null);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
+          }
         }}
       >
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('dialogs.deleteTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-destructive">{t('dialogs.deleteTitle')}</DialogTitle>
+            <DialogDescription>
               {t('dialogs.deleteDescription', { name: fileToDelete?.name || '' })}
-            </AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
-            <AlertDialogAction
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+              <Checkbox
+                id="delete-confirm"
+                checked={deleteConfirmChecked}
+                onCheckedChange={(checked) => setDeleteConfirmChecked(!!checked)}
+              />
+              <label htmlFor="delete-confirm" className="text-sm cursor-pointer">
+                {t('dialogs.deleteConfirmCheckbox')}
+              </label>
+            </div>
+
+            <div className="space-y-2">
+              <label className="block text-sm">
+                {t('dialogs.deleteTypeWord', { word: getDeleteWord() })}
+              </label>
+              <Input
+                value={deleteConfirmText}
+                onChange={(e) => setDeleteConfirmText(e.target.value)}
+                placeholder={getDeleteWord()}
+                className={deleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end gap-3">
+            <Button variant="outline" onClick={() => setFileToDelete(null)} disabled={isDeleting}>
+              {tc('buttons.cancel')}
+            </Button>
+            <Button
+              variant="destructive"
               onClick={handleDeleteFile}
-              disabled={isDeleting}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              disabled={
+                isDeleting ||
+                !deleteConfirmChecked ||
+                deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+              }
             >
               {isDeleting ? t('buttons.deleting') : t('buttons.delete')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {/* Bulk Delete Dialog */}
       <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
@@ -646,10 +807,12 @@ export default function ArtifactFilesPage()
                       </DropdownMenu>
                     </div>
                   </TableHead>
+                  {/* Source icon column */}
+                  <SortableHeader field="source" className="w-12"><Cloud className="h-4 w-4" /></SortableHeader>
                   <SortableHeader field="name">{t('table.filename')}</SortableHeader>
-                  <SortableHeader field="size" className="w-32 text-right">{t('table.size')}</SortableHeader>
-                  <SortableHeader field="modified" className="w-40 text-right">{t('table.modified')}</SortableHeader>
-                  <TableHead className="w-48 text-right">{t('table.actions')}</TableHead>
+                  <SortableHeader field="size" className="w-32" align="right">{t('table.size')}</SortableHeader>
+                  <SortableHeader field="modified" className="w-40" align="right">{t('table.date')}</SortableHeader>
+                  <TableHead className="w-20 text-right">{t('table.actions')}</TableHead>
                   {/* Star column */}
                   <SortableHeader field="starred" className="w-12"><Star className="h-4 w-4" /></SortableHeader>
                 </TableRow>
@@ -671,38 +834,51 @@ export default function ArtifactFilesPage()
                         onCheckedChange={() => toggleFileSelection(file.relativePath)}
                       />
                     </TableCell>
+                    {/* Source icon cell */}
+                    <TableCell className="w-12">
+                      <span title={file.source === 's3' ? 'Amazon S3' : 'Local filesystem'}>
+                        {file.source === 's3' ? (
+                          <Cloud size={16} className="text-blue-500" />
+                        ) : (
+                          <HardDrive size={16} className="text-muted-foreground" />
+                        )}
+                      </span>
+                    </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-2">
                         <File size={16} className="text-muted-foreground" />
                         {file.name}
                       </div>
                     </TableCell>
-                    <TableCell className="text-right tabular-nums">
+                    <TableCell className="text-right tabular-nums text-muted-foreground">
                       {(file.size / 1024).toFixed(1)} KB
                     </TableCell>
                     <TableCell className="text-right text-muted-foreground">
                       {new Date(file.modified).toLocaleString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <div className="flex justify-end gap-2">
+                      <div className="flex justify-end gap-1">
                         <Button
-                          variant="outline"
-                          size="sm"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-transparent"
+                          title={t('buttons.assignAsArtifact')}
                           onClick={() => {
                             setSelectedFile(file);
                             setArtifactName(file.name);
                             setArtifactDesc('');
-                            setArtifactType('OTHER');
+                            setArtifactType(guessArtifactType(file.mime));
                             setAssignDialogOpen(true);
                           }}
                         >
-                          {t('buttons.assignAsArtifact')}
+                          <FileInput size={16} />
                         </Button>
                         <Button
-                          variant="outline"
-                          size="sm"
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 cursor-pointer text-muted-foreground hover:text-foreground hover:bg-transparent"
+                          title={t('buttons.delete')}
                           onClick={() => setFileToDelete(file)}
-                          className="hover:bg-destructive hover:text-destructive-foreground"
                         >
                           <Trash2 size={16} />
                         </Button>
@@ -712,7 +888,7 @@ export default function ArtifactFilesPage()
                     <TableCell className="w-12" onClick={(e) => e.stopPropagation()}>
                       <button
                         onClick={(e) => toggleStar(file.relativePath, e)}
-                        className="p-1 hover:bg-muted rounded transition-colors"
+                        className="p-1 cursor-pointer hover:bg-muted rounded transition-colors"
                       >
                         <Star
                           className={`h-4 w-4 ${
@@ -780,6 +956,18 @@ export default function ArtifactFilesPage()
                   {t('selection.selectedOf', { selected: selectedFilePaths.size, total: filteredFiles.length })}
                 </span>
                 <div className="flex items-center gap-1 ml-auto">
+                  <button
+                    onClick={() => setShowOnlySelected(!showOnlySelected)}
+                    className={`p-1.5 rounded transition-colors cursor-pointer ${
+                      showOnlySelected
+                        ? 'bg-primary/20 text-primary hover:bg-primary/30'
+                        : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    }`}
+                    title={showOnlySelected ? "Show All Files" : "Show Only Selected Files"}
+                  >
+                    <Focus className="h-4 w-4" />
+                  </button>
+                  <div className="w-px h-4 bg-border mx-1" />
                   <button
                     onClick={() => { setBulkDeleteConfirmChecked(false); setBulkDeleteConfirmText(""); setIsBulkDeleteDialogOpen(true); }}
                     className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"

@@ -148,7 +148,8 @@
     "progressReport": "Rapport de Progrès",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -246,6 +247,46 @@
       "invalidFormat": "Invalid email format",
       "alreadyTaken": "This email is already taken",
       "available": "Email is available"
+    }
+  },
+  "ExploratoryGap": {
+    "buttons": {
+      "viewReport": "Résumé et recommandation",
+      "summary": "Résumé"
+    },
+    "actions": {
+      "title": "Revue & Mise en œuvre",
+      "description": "Consultez le rapport de synthèse de l'analyse des risques ou mettez en œuvre les contrôles recommandés"
+    }
+  },
+  "RiskReport": {
+    "title": "Aperçu de l'Exposition aux Risques Structurels",
+    "backToAnalysis": "Retour à l'Analyse des Risques CIS",
+    "export": "Exporter",
+    "exportPdf": "Exporter en PDF",
+    "exportDocx": "Exporter Word",
+    "exportJson": "Exporter en JSON",
+    "exporting": "Exportation...",
+    "noData": "Aucune Donnée d'Analyse des Risques",
+    "noDataDescription": "Veuillez d'abord exécuter l'Analyse des Risques CIS pour générer un rapport.",
+    "section1": {
+      "title": "Indicateurs d'Exposition Structurelle",
+      "exposureDriver": "Facteur d'Exposition",
+      "assessment": "Évaluation"
+    },
+    "section2": {
+      "title": "Interprétation des Risques Structurels"
+    },
+    "section3": {
+      "title": "Domaines de Contrôle Prioritaires Attendus"
+    },
+    "section4": {
+      "title": "Considérations sur les Prochaines Étapes"
+    },
+    "footer": {
+      "confidential": "Confidentiel",
+      "generatedBy": "Généré par Compliance Circle",
+      "version": "Évaluation v1.0"
     }
   },
   "LoginPage": {

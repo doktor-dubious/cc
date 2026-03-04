@@ -5,9 +5,110 @@ import { NextRequest, NextResponse }                from 'next/server';
 import { getServerSession }                         from '@/lib/auth';
 import { organizationRepository }                   from '@/lib/database/organization';
 import { canUpdateOrganizations,
-         canDeleteOrganizations}                    from '@/lib/auth/permissions';
+         canDeleteOrganizations }                   from '@/lib/auth/permissions';
 import type { ApiResponse }                         from '@/lib/types/api';
 import type { organizationData }                    from '@/lib/database/organization';
+
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> })
+{
+    log.debug('(PRISMA API : organization/[id] - GET');
+
+    const { id } = await params;
+    const organizationId = id;
+
+    if (!organizationId)
+    {
+        return NextResponse.json<ApiResponse>(
+            {
+                success: false,
+                error: 'Invalid organization ID'
+            },
+            { status: 400 }
+        );
+    }
+
+    try
+    {
+        // ── Authentication ────────────────────────────────────────────────────────────────
+        const session = await getServerSession();
+        if (!session?.user)
+        {
+            return NextResponse.json<ApiResponse>(
+                {
+                    success: false,
+                    error  : 'Unauthorized'
+                },
+                { status: 401 });
+        }
+
+        const { id: userId, profileId, role } = session.user;
+        log.debug({ userId: userId, profileId: profileId ?? 'missing profileId', role: role ?? 'missing role' }, 'Payload');
+
+        if (!userId || !role || (role !== 'SUPER_ADMIN' && !profileId))
+        {
+            return NextResponse.json<ApiResponse>(
+                {
+                    success: false,
+                    error  : 'Invalid token'
+                },
+                { status: 401 });
+        }
+
+        // Users who can update organizations can also fetch them for editing
+        if (!canUpdateOrganizations(role))
+        {
+            return NextResponse.json<ApiResponse>(
+                {
+                    success: false,
+                    error  : 'Unauthorized'
+                },
+                { status: 403 }
+            );
+        }
+
+        // ── Fetch organization ────────────────────────────────────────────
+        const org = await organizationRepository.findById(organizationId);
+        if (!org)
+        {
+            return NextResponse.json<ApiResponse>(
+                {
+                    success: false,
+                    error  : 'Organization not found'
+                },
+                { status: 404 });
+        }
+
+        return NextResponse.json<ApiResponse<organizationData>>(
+        {
+            success  : true,
+            data     : org,
+        },
+        { status: 200 });
+    }
+    catch (error)
+    {
+        console.error('Error fetching organization:', error);
+        log.error({ error }, 'Error fetching organization');
+
+        if (error instanceof Error && error.name === 'JWSSignatureVerificationFailed')
+        {
+            return NextResponse.json<ApiResponse>(
+                {
+                    success: false,
+                    error: 'Invalid or expired token'
+                },
+                { status: 401 });
+        }
+
+        return NextResponse.json<ApiResponse>(
+            {
+                success: false,
+                error: 'Failed to fetch organization'
+            },
+            { status: 500 }
+        );
+    }
+}
 
 export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> })
 {

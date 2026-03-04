@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams, useRouter }   from 'next/navigation';
 import { useTranslations }              from 'next-intl';
 import { ArrowLeft, Link2, Plus, Star, ChevronDown, ClipboardList } from 'lucide-react';
@@ -97,6 +97,12 @@ export default function CISSafeguardsPage() {
   const [inactiveSafeguards, setInactiveSafeguards] = useState<Set<string>>(new Set());
   const [showInactive, setShowInactive] = useState(false);
 
+  // Safeguard notes state
+  const [safeguardNotes, setSafeguardNotes] = useState<Record<string, string>>({});
+  const [editingNote, setEditingNote] = useState<string>('');
+  const [noteSaveStatus, setNoteSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
+  const noteDebounceRef = useRef<NodeJS.Timeout | null>(null);
+
   // Fetch tasks linked to selected safeguard
   const fetchLinkedTasks = async (safeguardId: string) => {
     try {
@@ -154,11 +160,16 @@ export default function CISSafeguardsPage() {
   const openCreateTaskDialog = () => {
     if (!selectedSafeguard) return;
 
+    // Build description with note if it exists
+    let description = `${selectedSafeguard.definition}\n\nPurpose: ${selectedSafeguard.purpose}\n\nWhy: ${selectedSafeguard.why}`;
+    const note = safeguardNotes[selectedSafeguard.id];
+    if (note) {
+      description += `\n\nOrganization Notes:\n${note}`;
+    }
+
     // Prefill form values
     setNewTaskName(selectedSafeguard.title);
-    setNewTaskDescription(
-      `${selectedSafeguard.definition}\n\nPurpose: ${selectedSafeguard.purpose}\n\nWhy: ${selectedSafeguard.why}`
-    );
+    setNewTaskDescription(description);
     setNewTaskExpectedEvidence("");
     setNewTaskStartAt(format(new Date(), "yyyy-MM-dd"));
     setNewTaskEndAt("");
@@ -295,6 +306,28 @@ export default function CISSafeguardsPage() {
     }
   };
 
+  // Fetch safeguard notes for the organization
+  const fetchSafeguardNotes = async () => {
+    if (!activeOrganization) return;
+    try {
+      const res = await fetch(`/api/cis-note?organizationId=${activeOrganization.id}`);
+      const data = await res.json();
+      if (data.success) {
+        // Extract only safeguard notes (not control notes)
+        const safeguardNotesOnly: Record<string, string> = {};
+        for (const [key, value] of Object.entries(data.data || {})) {
+          if (key.startsWith('safeguard:')) {
+            const safeguardId = key.replace('safeguard:', '');
+            safeguardNotesOnly[safeguardId] = value as string;
+          }
+        }
+        setSafeguardNotes(safeguardNotesOnly);
+      }
+    } catch (error) {
+      console.error('Failed to fetch safeguard notes:', error);
+    }
+  };
+
   // Toggle safeguard active/inactive status
   const toggleSafeguardActive = async (safeguardId: string) => {
     if (!activeOrganization) return;
@@ -333,6 +366,57 @@ export default function CISSafeguardsPage() {
     } catch (error) {
       console.error('Failed to toggle safeguard active status:', error);
       toast.error('Failed to update safeguard status');
+    }
+  };
+
+  // Save safeguard note
+  const saveSafeguardNote = async (safeguardId: string, content: string) => {
+    if (!activeOrganization) return;
+    setNoteSaveStatus('saving');
+    try {
+      const res = await fetch('/api/cis-note', {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          organizationId: activeOrganization.id,
+          itemId: safeguardId,
+          itemType: 'safeguard',
+          content,
+        }),
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSafeguardNotes(prev => {
+          if (content.trim() === '') {
+            const next = { ...prev };
+            delete next[safeguardId];
+            return next;
+          }
+          return { ...prev, [safeguardId]: content };
+        });
+        setNoteSaveStatus('saved');
+      } else {
+        setNoteSaveStatus('error');
+      }
+    } catch (error) {
+      console.error('Failed to save safeguard note:', error);
+      setNoteSaveStatus('error');
+    }
+  };
+
+  // Handle note change with debounce
+  const handleNoteChange = (value: string) => {
+    setEditingNote(value);
+    setNoteSaveStatus('idle');
+
+    if (noteDebounceRef.current) {
+      clearTimeout(noteDebounceRef.current);
+    }
+
+    if (selectedSafeguard) {
+      noteDebounceRef.current = setTimeout(() => {
+        saveSafeguardNote(selectedSafeguard.id, value);
+      }, 1000);
     }
   };
 
@@ -409,13 +493,20 @@ export default function CISSafeguardsPage() {
       }
 
       try {
+        // Build description with note if it exists
+        let description = `${safeguard.definition}\n\nPurpose: ${safeguard.purpose}\n\nWhy: ${safeguard.why}`;
+        const note = safeguardNotes[safeguard.id];
+        if (note) {
+          description += `\n\nOrganization Notes:\n${note}`;
+        }
+
         // Create the task
         const createRes = await fetch('/api/task', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             name: safeguard.title,
-            description: `${safeguard.definition}\n\nPurpose: ${safeguard.purpose}\n\nWhy: ${safeguard.why}`,
+            description,
             expectedEvidence: "",
             startAt: format(new Date(), "yyyy-MM-dd"),
             endAt: bulkTaskEndAt || null,
@@ -467,12 +558,13 @@ export default function CISSafeguardsPage() {
     }
   };
 
-  // Fetch task counts, IG overrides, and inactive safeguards when control/organization changes
+  // Fetch task counts, IG overrides, inactive safeguards, and notes when control/organization changes
   useEffect(() => {
     if (control && activeOrganization) {
       fetchSafeguardTaskCounts();
       fetchSafeguardIgOverrides();
       fetchInactiveSafeguards();
+      fetchSafeguardNotes();
       // Set organization's target IG as the default
       setOrganizationIg(activeOrganization.ig || 1);
       // Also set the active IG filter to match organization's target
@@ -487,10 +579,18 @@ export default function CISSafeguardsPage() {
       if (availableTasks.length === 0) {
         fetchAvailableTasks();
       }
+      // Sync editing note with saved note
+      setEditingNote(safeguardNotes[selectedSafeguard.id] || '');
+      setNoteSaveStatus('idle');
+      // Clear any pending debounce
+      if (noteDebounceRef.current) {
+        clearTimeout(noteDebounceRef.current);
+      }
     } else {
       setLinkedTaskIds([]);
+      setEditingNote('');
     }
-  }, [selectedSafeguard]);
+  }, [selectedSafeguard?.id, safeguardNotes]);
 
   // When dialog opens, fetch available tasks
   useEffect(() => {
@@ -578,7 +678,26 @@ export default function CISSafeguardsPage() {
       {/* Safeguards table */}
       {filteredSafeguards.length === 0 ? (
         <div className="text-center py-12 text-muted-foreground">
-          No safeguards defined for {IG_FULL_LABELS[activeIG]} in this control.
+          {(() => {
+            // Check if there are safeguards for this IG that are just inactive
+            const safeguardsForIg = control?.safeguards.filter(s => {
+              const ig = s[activeIG];
+              return ig.scope && ig.scope !== 'N/A';
+            }) || [];
+            const allInactive = safeguardsForIg.length > 0 && safeguardsForIg.every(s => inactiveSafeguards.has(s.id));
+
+            if (allInactive && !showInactive) {
+              return (
+                <div className="space-y-2">
+                  <p>All {safeguardsForIg.length} safeguards for {IG_FULL_LABELS[activeIG]} are currently inactive.</p>
+                  <Button variant="outline" size="sm" onClick={() => setShowInactive(true)}>
+                    Show Inactive Safeguards
+                  </Button>
+                </div>
+              );
+            }
+            return `No safeguards defined for ${IG_FULL_LABELS[activeIG]} in this control.`;
+          })()}
         </div>
       ) : (
         <div className="border rounded-lg overflow-x-auto">
@@ -852,6 +971,12 @@ export default function CISSafeguardsPage() {
               >
                 Tasks ({linkedTaskIds.length})
               </TabsTrigger>
+              <TabsTrigger
+                value="notes"
+                className="bg-transparent! rounded-none border-b-2 border-transparent data-[state=active]:border-white data-[state=active]:bg-transparent px-4 py-2"
+              >
+                Notes
+              </TabsTrigger>
             </TabsList>
 
             {/* Information Tab */}
@@ -948,6 +1073,26 @@ export default function CISSafeguardsPage() {
                   })}
                 </div>
               )}
+            </TabsContent>
+
+            {/* Notes Tab */}
+            <TabsContent value="notes" className="p-6 pt-4 space-y-4">
+              <div className="flex items-center justify-between">
+                <p className="text-sm text-muted-foreground">
+                  Organization notes for this safeguard. Notes are included when creating tasks.
+                </p>
+                <span className="text-xs text-muted-foreground">
+                  {noteSaveStatus === 'saving' && 'Saving...'}
+                  {noteSaveStatus === 'saved' && 'Saved'}
+                  {noteSaveStatus === 'error' && <span className="text-red-500">Failed to save</span>}
+                </span>
+              </div>
+              <Textarea
+                value={editingNote}
+                onChange={(e) => handleNoteChange(e.target.value)}
+                placeholder="Add notes about how your organization plans to implement this safeguard..."
+                className="min-h-40 resize-y"
+              />
             </TabsContent>
           </Tabs>
         </div>

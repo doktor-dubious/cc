@@ -148,7 +148,8 @@
     "progressReport": "Informe de Progreso",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -246,6 +247,46 @@
       "invalidFormat": "Invalid email format",
       "alreadyTaken": "This email is already taken",
       "available": "Email is available"
+    }
+  },
+  "ExploratoryGap": {
+    "buttons": {
+      "viewReport": "Resumen y recomendación",
+      "summary": "Resumen"
+    },
+    "actions": {
+      "title": "Revisión e Implementación",
+      "description": "Ver el informe resumido del análisis de riesgo o implementar los controles recomendados"
+    }
+  },
+  "RiskReport": {
+    "title": "Visión General de Exposición al Riesgo Estructural",
+    "backToAnalysis": "Volver al Análisis de Riesgos CIS",
+    "export": "Exportar",
+    "exportPdf": "Exportar PDF",
+    "exportDocx": "Exportar Word",
+    "exportJson": "Exportar JSON",
+    "exporting": "Exportando...",
+    "noData": "Sin Datos de Análisis de Riesgos",
+    "noDataDescription": "Por favor, ejecute primero el Análisis de Riesgos CIS para generar un informe.",
+    "section1": {
+      "title": "Indicadores de Exposición Estructural",
+      "exposureDriver": "Factor de Exposición",
+      "assessment": "Evaluación"
+    },
+    "section2": {
+      "title": "Interpretación del Riesgo Estructural"
+    },
+    "section3": {
+      "title": "Dominios de Control de Prioridad Esperados"
+    },
+    "section4": {
+      "title": "Consideraciones del Próximo Paso"
+    },
+    "footer": {
+      "confidential": "Confidencial",
+      "generatedBy": "Generado por Compliance Circle",
+      "version": "Evaluación v1.0"
     }
   },
   "LoginPage": {

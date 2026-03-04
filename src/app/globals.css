@@ -240,7 +240,7 @@
     --card-foreground           : oklch(0.145 0 0);
     --popover                   : oklch(1 0 0);
     --popover-foreground        : oklch(0.145 0 0);
-    --primary                   : rgb(82, 72, 184);
+    --primary                   : #4A5759; /* rgb(82, 72, 184); */
     --primary-foreground        : white;
     --secondary                 : oklch(0.97 0 0);
     --secondary-foreground      : oklch(0.205 0 0);
@@ -276,16 +276,16 @@
 
 .dark
 {
-    --background                : #171717;
+    --background                : #171717; /* may consider 383838 */
     --foreground                : oklch(0.985 0 0);
     --foreground-inverse        : #171717;
     --card                      : oklch(0.205 0 0);
     --card-foreground           : oklch(0.985 0 0);
-    --popover                   : oklch(0.205 0 0);
+    --popover                   : oklch(15.296% 0.02193 19.867);
     --popover-foreground        : oklch(0.985 0 0);
     --BW_primary                   : oklch(0.922 0 0);
     --BW_primary-foreground        : oklch(0.205 0 0);
-    --primary                   : rgb(82, 72, 184);
+    --primary                   : #4A5759; /* rgb(82, 72, 184); */
     --primary-foreground        : white;
 
     --secondary                 : oklch(0.269 0 0);
@@ -307,7 +307,7 @@
     --chart-5                   : oklch(0.645 0.246 16.439);
 
     --ORG_sidebar: oklch(0.205 0 0);
-    --sidebar                   : #070707;
+    --sidebar                   : #171717;
     --sidebar-foreground        : oklch(0.985 0 0);
     --sidebar-primary           : oklch(0.488 0.243 264.376);
     --sidebar-primary-foreground: oklch(0.985 0 0);
@@ -382,7 +382,310 @@ input:-webkit-autofill:active
     }
 }
 
-@layer components 
+/* ── SVAR Gantt Theme Overrides ─────────────────────────────────────────────── */
+/* Gantt wrapper - horizontal scroll container */
+.gantt-wrapper {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: auto;
+    overflow-y: auto;
+    position: relative;
+}
+
+/* Main gantt container - expand to content */
+.gantt-wrapper .wx-gantt {
+    min-width: fit-content !important;
+    overflow: visible !important;
+}
+
+/* Layout expands to content */
+.gantt-wrapper .wx-layout {
+    min-width: fit-content !important;
+    overflow: visible !important;
+}
+
+/* Left panel (task list) - sticky to left edge */
+.gantt-wrapper .wx-table-container {
+    position: sticky !important;
+    left: 0 !important;
+    z-index: 10 !important;
+    background: var(--background) !important;
+    flex-shrink: 0 !important;
+}
+
+/* Right panel (timeline) - natural width */
+.gantt-wrapper .wx-chart {
+    overflow: visible !important;
+    flex: 0 0 auto !important;
+}
+
+/* Timeline content keeps natural width */
+.gantt-wrapper .wx-chart .wx-scale,
+.gantt-wrapper .wx-chart .wx-area {
+    min-width: max-content !important;
+}
+
+/* Scrollbar styling */
+.gantt-wrapper {
+    scrollbar-width: thin;
+    scrollbar-color: var(--muted-foreground) var(--muted);
+}
+
+.gantt-wrapper::-webkit-scrollbar {
+    height: 14px;
+    width: 14px;
+}
+
+.gantt-wrapper::-webkit-scrollbar-track {
+    background: var(--muted);
+    border-radius: 6px;
+}
+
+.gantt-wrapper::-webkit-scrollbar-thumb {
+    background: var(--muted-foreground);
+    border-radius: 6px;
+}
+
+.gantt-wrapper::-webkit-scrollbar-thumb:hover {
+    background: var(--foreground);
+}
+
+/* Row hover and selection styles */
+.gantt-wrapper .wx-row,
+.gantt-wrapper [class*="wx-row"],
+.gantt-wrapper .wx-reorder-task,
+.gantt-wrapper [data-id]:not(.wx-bar):not(.wx-task) {
+    cursor: pointer;
+    transition: background-color 0.15s ease;
+}
+
+.gantt-wrapper .wx-row:hover,
+.gantt-wrapper [class*="wx-row"]:hover,
+.gantt-wrapper .wx-reorder-task:hover,
+.gantt-wrapper [data-id]:not(.wx-bar):not(.wx-task):hover {
+    background-color: rgba(128, 128, 128, 0.15) !important;
+}
+
+/* Selected row styling - target data-id elements and wx-selected class (exclude bars) */
+.gantt-wrapper .wx-row.wx-selected,
+.gantt-wrapper .wx-reorder-task.wx-selected,
+.gantt-wrapper [class*="wx-row"].wx-selected,
+.gantt-wrapper .wx-selected.wx-row,
+.gantt-wrapper [data-id]:not(.wx-bar):not(.wx-task).wx-selected,
+.gantt-wrapper .wx-selected[data-id]:not(.wx-bar):not(.wx-task),
+.gantt-wrapper .wx-table .wx-grid .wx-reorder-task.wx-selected,
+.gantt-wrapper [data-context-id].wx-selected {
+    background-color: rgba(128, 128, 128, 0.25) !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+}
+
+.gantt-wrapper .wx-row.wx-selected:hover,
+.gantt-wrapper .wx-reorder-task.wx-selected:hover,
+.gantt-wrapper [data-id].wx-selected:hover {
+    background-color: rgba(128, 128, 128, 0.3) !important;
+}
+
+/* Also style the corresponding timeline row area */
+.gantt-wrapper .wx-area .wx-selected,
+.gantt-wrapper .wx-selected[class*="wx-"],
+.gantt-wrapper .wx-selected[data-id] {
+    background-color: rgba(128, 128, 128, 0.25) !important;
+}
+
+/* Force override for any element with wx-selected class - highest specificity */
+.gantt-wrapper .wx-selected[class] {
+    background-color: rgba(128, 128, 128, 0.25) !important;
+    background: rgba(128, 128, 128, 0.25) !important;
+}
+
+.dark .gantt-wrapper .wx-selected[class] {
+    background-color: rgba(200, 200, 200, 0.2) !important;
+    background: rgba(200, 200, 200, 0.2) !important;
+}
+
+/* Override the wx-background variable for selected elements */
+.gantt-wrapper .wx-selected {
+    --wx-background: rgba(128, 128, 128, 0.25) !important;
+    --wx-table-select-background: rgba(128, 128, 128, 0.25) !important;
+    --wx-gantt-select-color: rgba(128, 128, 128, 0.25) !important;
+}
+
+.dark .gantt-wrapper .wx-selected {
+    --wx-background: rgba(200, 200, 200, 0.2) !important;
+    --wx-table-select-background: rgba(200, 200, 200, 0.2) !important;
+    --wx-gantt-select-color: rgba(200, 200, 200, 0.2) !important;
+}
+
+/* Force background on selected rows using attribute selectors for higher specificity */
+.gantt-wrapper [class*="wx-row"][class*="wx-selected"],
+.gantt-wrapper [class*="wx-reorder"][class*="wx-selected"],
+.gantt-wrapper .wx-grid [class*="wx-selected"] {
+    background-color: rgba(128, 128, 128, 0.25) !important;
+    background: rgba(128, 128, 128, 0.25) !important;
+}
+
+.dark .gantt-wrapper [class*="wx-row"][class*="wx-selected"],
+.dark .gantt-wrapper [class*="wx-reorder"][class*="wx-selected"],
+.dark .gantt-wrapper .wx-grid [class*="wx-selected"] {
+    background-color: rgba(200, 200, 200, 0.2) !important;
+    background: rgba(200, 200, 200, 0.2) !important;
+}
+
+/* Gantt header styling - sortable columns */
+.gantt-wrapper .wx-header .wx-cell,
+.gantt-wrapper .wx-grid .wx-header .wx-cell {
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+    position: relative;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+}
+
+.gantt-wrapper .wx-header .wx-cell:hover,
+.gantt-wrapper .wx-grid .wx-header .wx-cell:hover {
+    background-color: rgba(128, 128, 128, 0.1);
+}
+
+/* Sort icons - always visible */
+.gantt-wrapper .wx-header .wx-cell::after {
+    content: "";
+    display: inline-flex;
+    flex-direction: column;
+    margin-left: 4px;
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+    opacity: 0.5;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.gantt-wrapper .wx-header .wx-cell:hover::after {
+    opacity: 0.8;
+}
+
+/* When sorted ascending */
+.gantt-wrapper .wx-header .wx-cell.wx-sort-asc::after {
+    opacity: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+}
+
+/* When sorted descending */
+.gantt-wrapper .wx-header .wx-cell.wx-sort-desc::after {
+    opacity: 1;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23888888' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3C/svg%3E");
+}
+
+/* Dark mode sort icons */
+.dark .gantt-wrapper .wx-header .wx-cell::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23aaaaaa' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+}
+
+.dark .gantt-wrapper .wx-header .wx-cell.wx-sort-asc::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 9 5-5 5 5'/%3E%3C/svg%3E");
+}
+
+.dark .gantt-wrapper .wx-header .wx-cell.wx-sort-desc::after {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23ffffff' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m7 15 5 5 5-5'/%3E%3C/svg%3E");
+}
+
+/* Hide SVAR's built-in sort indicator since we use our own */
+.gantt-wrapper .wx-header .wx-sort,
+.gantt-wrapper .wx-grid .wx-header .wx-sort {
+    display: none !important;
+}
+
+/* Hide sort icon for empty header columns (like the star column) */
+.gantt-wrapper .wx-header .wx-cell:empty::after,
+.gantt-wrapper .wx-header .wx-cell:has(> :only-child:empty)::after {
+    display: none;
+}
+
+/* Star column styling */
+.gantt-wrapper .wx-header .wx-cell:last-child::after {
+    display: none;
+}
+
+/* Task bars cursor and border */
+.gantt-wrapper .wx-bar {
+    cursor: pointer;
+    border: 1px solid var(--foreground) !important;
+    border-radius: 4px;
+}
+
+.gantt-wrapper .wx-bar .wx-content {
+    border: none !important;
+}
+
+/* Remove default selection border/outline styles */
+.gantt-wrapper .wx-row.wx-selected,
+.gantt-wrapper .wx-bar.wx-selected,
+.gantt-wrapper .wx-task.wx-selected,
+.gantt-wrapper .wx-reorder-task.wx-selected,
+.gantt-wrapper [class*="wx-"].wx-selected {
+    border: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    border-bottom: none !important;
+    border-color: transparent !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+.gantt-wrapper .wx-row.wx-selected *,
+.gantt-wrapper .wx-reorder-task.wx-selected * {
+    border-color: transparent !important;
+}
+
+.gantt-wrapper .wx-bar:focus,
+.gantt-wrapper .wx-task:focus,
+.gantt-wrapper .wx-row:focus {
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* Light mode - match application background */
+.wx-willow-theme {
+    --wx-background: #fafafa;
+    --wx-background-alt: oklch(0.97 0 0);
+    --wx-border: oklch(0.922 0 0);
+    --wx-color: #262626;
+    --wx-color-secondary: #303030;
+    --wx-gantt-border: 1px solid oklch(0.922 0 0);
+    --wx-gantt-select-color: rgba(0, 0, 0, 0.1);
+    --wx-gantt-task-border-color: transparent;
+    --wx-gantt-task-border: 1px solid transparent;
+    --wx-gantt-summary-border-color: transparent;
+    --wx-color-primary: transparent;
+    --wx-grid-body-row-border: 1px solid transparent;
+}
+
+/* Dark mode - match application background */
+.dark .wx-willow-dark-theme,
+.wx-willow-dark-theme:is(.dark *) {
+    --wx-background: #171717;
+    --wx-background-alt: oklch(0.269 0 0);
+    --wx-border: oklch(1 0 0 / 10%);
+    --wx-color: oklch(0.985 0 0);
+    --wx-color-secondary: oklch(0.708 0 0);
+    --wx-gantt-border: 1px solid oklch(1 0 0 / 10%);
+    --wx-gantt-select-color: rgba(255, 255, 255, 0.15);
+    --wx-gantt-task-border-color: transparent;
+    --wx-gantt-task-border: 1px solid transparent;
+    --wx-gantt-summary-border-color: transparent;
+    --wx-color-primary: transparent;
+    --wx-grid-body-row-border: 1px solid transparent;
+}
+
+@layer components
 {
     /*  ── Default Button ───────────────────────────────────────*/
     button[data-variant="default"], [role="button"][data-variant="default"] 

@@ -21,6 +21,9 @@ import type {
   SecurityBudgetRange,
   DigitalMaturity,
   GeographicScope,
+  ManualOperation,
+  ProductionDependency,
+  CustomerAccess,
 } from '@prisma/client';
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -46,6 +49,10 @@ export type OrganizationProfile = {
   downtimeTolerance?: DowntimeTolerance | null;
   supplyChainPosition?: SupplyChainPosition | null;
   securityBudgetRange?: SecurityBudgetRange | null;
+  // Business Continuity fields
+  manualOperation?: ManualOperation | null;
+  productionDependency?: ProductionDependency | null;
+  customerAccess?: CustomerAccess | null;
 };
 
 export type FactorImpact = {
@@ -212,6 +219,24 @@ const SUPPLY_CHAIN_LABELS: Record<string, string> = {
   MSP_CLOUD_PROVIDER: 'MSP / cloud provider (handles client data)',
 };
 
+const MANUAL_OPERATION_LABELS: Record<string, string> = {
+  YES: 'Yes - Operations can continue manually',
+  PARTIAL: 'Partial - Limited manual fallback',
+  NO: 'No - Operations stop without IT',
+};
+
+const PRODUCTION_DEPENDENCY_LABELS: Record<string, string> = {
+  NO_DEPENDENCY: 'No direct IT dependency',
+  PARTIAL: 'Partial / indirect dependency',
+  DIRECT: 'Direct real-time dependency',
+};
+
+const CUSTOMER_ACCESS_LABELS: Record<string, string> = {
+  NOT_REQUIRED: 'Not required for revenue',
+  PARTIAL: 'Partially required',
+  ESSENTIAL: 'Essential for revenue',
+};
+
 // Helper to format a single enum value
 function formatEnumValue(value: string, labels: Record<string, string>): string {
   return labels[value] || value;
@@ -277,6 +302,33 @@ function formatSecurityBudget(value: string): string {
 
 function formatGeographicScope(value: string): string {
   return formatEnumValue(value, GEOGRAPHIC_SCOPE_LABELS);
+}
+
+function formatManualOperation(value: string): string {
+  return formatEnumValue(value, MANUAL_OPERATION_LABELS);
+}
+
+function formatProductionDependency(value: string): string {
+  return formatEnumValue(value, PRODUCTION_DEPENDENCY_LABELS);
+}
+
+function formatCustomerAccess(value: string): string {
+  return formatEnumValue(value, CUSTOMER_ACCESS_LABELS);
+}
+
+// Helper to calculate Business Impact Score (0-6) based on IT dependency
+function calculateBusinessImpactScore(profile: OrganizationProfile): number {
+  let score = 0;
+  if (profile.manualOperation === 'NO') score += 2;
+  else if (profile.manualOperation === 'PARTIAL') score += 1;
+
+  if (profile.productionDependency === 'DIRECT') score += 2;
+  else if (profile.productionDependency === 'PARTIAL') score += 1;
+
+  if (profile.customerAccess === 'ESSENTIAL') score += 2;
+  else if (profile.customerAccess === 'PARTIAL') score += 1;
+
+  return score; // 0-6: Low (0-1), Medium (2-3), High (4-6)
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -397,6 +449,34 @@ function calculateRecommendedIg(profile: OrganizationProfile): { ig: number; rea
     reasons.push('Near-zero downtime tolerance requires robust IG2+ controls');
   }
 
+  // Business Continuity - IT Dependency Assessment
+  const businessImpact = calculateBusinessImpactScore(profile);
+  if (businessImpact >= 5) {
+    // High IT dependency (5-6): core operations completely depend on IT
+    igScore = Math.max(igScore, 3);
+    reasons.push('Critical IT dependency: operations, production, and customer access all require IT systems - IG3 recommended');
+  } else if (businessImpact >= 3) {
+    // Medium-high IT dependency (3-4)
+    igScore = Math.max(igScore, 2);
+    reasons.push('Significant IT dependency for business operations requires IG2+ controls');
+  }
+
+  // Individual business continuity factors
+  if (profile.manualOperation === 'NO') {
+    igScore = Math.max(igScore, 2);
+    reasons.push('No manual fallback capability - IT disruption stops operations');
+  }
+
+  if (profile.productionDependency === 'DIRECT') {
+    igScore = Math.max(igScore, 2);
+    reasons.push('Direct IT dependency for production/delivery - availability is critical');
+  }
+
+  if (profile.customerAccess === 'ESSENTIAL') {
+    igScore = Math.max(igScore, 2);
+    reasons.push('Customer digital access is essential for revenue generation');
+  }
+
   // Supply Chain Position
   if (profile.supplyChainPosition) {
     if (profile.supplyChainPosition === 'MSP_CLOUD_PROVIDER') {
@@ -493,11 +573,11 @@ function calculateRecommendedIg(profile: OrganizationProfile): { ig: number; rea
 function calculateControlRelevance(
   controlId: number,
   profile: OrganizationProfile
-): { relevanceScore: number; shouldBeInactive: boolean; reasons: string[]; factors: FactorImpact[] } {
+): { relevanceScore: number; hasKillerFactor: boolean; reasons: string[]; factors: FactorImpact[] } {
   let score = 80;
   const reasons: string[] = [];
   const factors: FactorImpact[] = [];
-  let shouldBeInactive = false;
+  let hasKillerFactor = false; // Killer factor = entire control + all safeguards should be inactive
 
   switch (controlId) {
     case 1: // Asset Inventory
@@ -603,6 +683,17 @@ function calculateControlRelevance(
           explanation: 'External exposure increases vulnerability risk'
         });
       }
+      // Customer access dependency
+      if (profile.customerAccess === 'ESSENTIAL') {
+        score = 100;
+        reasons.push('Customer access is essential for revenue - vulnerabilities directly impact business');
+        factors.push({
+          parameter: 'Customer Access',
+          value: formatCustomerAccess('ESSENTIAL'),
+          impact: '→ 100',
+          explanation: 'Customer-facing systems must be protected - revenue depends on availability'
+        });
+      }
       break;
 
     case 8: // Audit Log Management
@@ -645,6 +736,16 @@ function calculateControlRelevance(
         impact: '100',
         explanation: 'Essential defense against prevalent threats'
       });
+      // Business continuity factor - malware impact on operations
+      if (profile.manualOperation === 'NO') {
+        factors.push({
+          parameter: 'Manual Operation',
+          value: formatManualOperation('NO'),
+          impact: 'Critical',
+          explanation: 'Malware infection stops business operations - no manual fallback'
+        });
+        reasons.push('Critical: No manual fallback - malware infection would halt all operations');
+      }
       break;
 
     case 11: // Data Recovery
@@ -663,6 +764,27 @@ function calculateControlRelevance(
           value: DOWNTIME_TOLERANCE_LABELS['NEAR_ZERO'],
           impact: '+5 → 100',
           explanation: 'Zero downtime tolerance demands robust recovery'
+        });
+      }
+      // Business continuity factors
+      if (profile.productionDependency === 'DIRECT') {
+        score = 100;
+        reasons.push('Direct IT dependency for production - fast recovery is critical');
+        factors.push({
+          parameter: 'Production Dependency',
+          value: formatProductionDependency('DIRECT'),
+          impact: '→ 100',
+          explanation: 'Production stops without IT - rapid recovery essential'
+        });
+      }
+      if (profile.manualOperation === 'NO') {
+        score = 100;
+        reasons.push('No manual operations possible - data recovery is business critical');
+        factors.push({
+          parameter: 'Manual Operation',
+          value: formatManualOperation('NO'),
+          impact: '→ 100',
+          explanation: 'Cannot operate manually - recovery determines business continuity'
         });
       }
       break;
@@ -695,6 +817,17 @@ function calculateControlRelevance(
           explanation: 'Cloud provider manages network infrastructure'
         });
       }
+      // Production dependency - network is production
+      if (profile.productionDependency === 'DIRECT') {
+        score = Math.max(score, 95);
+        reasons.push('Direct production dependency on IT - network stability is critical');
+        factors.push({
+          parameter: 'Production Dependency',
+          value: formatProductionDependency('DIRECT'),
+          impact: '→ 95',
+          explanation: 'Production relies on IT systems - network management protects revenue'
+        });
+      }
       break;
 
     case 13: // Network Monitoring
@@ -723,6 +856,17 @@ function calculateControlRelevance(
           value: profile.size ? formatOrgSize(profile.size) : null,
           impact: '-25 → 55',
           explanation: 'Small organizations have simpler network environments'
+        });
+      }
+      // Business continuity - network monitoring for production
+      if (profile.productionDependency === 'DIRECT' || profile.manualOperation === 'NO') {
+        score = Math.max(score, 90);
+        reasons.push('High IT dependency - network monitoring helps detect issues before impact');
+        factors.push({
+          parameter: 'Business Impact',
+          value: profile.productionDependency === 'DIRECT' ? formatProductionDependency('DIRECT') : formatManualOperation('NO'),
+          impact: '→ 90',
+          explanation: 'Early detection of network issues protects business continuity'
         });
       }
       break;
@@ -796,13 +940,13 @@ function calculateControlRelevance(
         });
       } else if (profile.softwareDevelopment === 'NONE') {
         score = 35;
-        shouldBeInactive = true;
-        reasons.push('No in-house software development - application security controls less applicable');
+        hasKillerFactor = true;
+        reasons.push('No in-house software development - application security controls not applicable');
         factors.push({
           parameter: 'Software Development',
           value: SOFTWARE_DEV_LABELS['NONE'],
-          impact: '-35 → INACTIVE',
-          explanation: 'No development means AppSec controls have minimal applicability'
+          impact: '→ INACTIVE (killer factor)',
+          explanation: 'No development means entire AppSec control is not applicable'
         });
       }
       break;
@@ -824,6 +968,28 @@ function calculateControlRelevance(
           impact: '+15 → 100',
           explanation: 'NIS2/DORA mandate formal incident response'
         });
+      }
+      // Business continuity factors - incident response criticality
+      {
+        const businessImpact = calculateBusinessImpactScore(profile);
+        if (businessImpact >= 4) {
+          score = Math.max(score, 100);
+          reasons.push('High IT dependency - rapid incident response is business critical');
+          factors.push({
+            parameter: 'Business Impact Score',
+            value: `${businessImpact}/6 (High)`,
+            impact: '→ 100',
+            explanation: 'High IT dependency requires fast incident response to minimize business impact'
+          });
+        } else if (businessImpact >= 2) {
+          score = Math.max(score, 95);
+          factors.push({
+            parameter: 'Business Impact Score',
+            value: `${businessImpact}/6 (Medium)`,
+            impact: '+10 → 95',
+            explanation: 'Moderate IT dependency increases incident response importance'
+          });
+        }
       }
       break;
 
@@ -1033,29 +1199,10 @@ function calculateControlRelevance(
     }
   }
 
-  // Apply threshold-based inactive logic
-  if (!shouldBeInactive && score < 50) {
-    shouldBeInactive = true;
-    if (score < 30) {
-      reasons.push(`Low relevance score (${score}%) - control not applicable to organization profile`);
-      factors.push({
-        parameter: 'Score Threshold',
-        value: `${score}%`,
-        impact: '→ INACTIVE',
-        explanation: 'Score below 30% threshold - automatically marked inactive'
-      });
-    } else {
-      reasons.push(`Moderate relevance score (${score}%) - control suggested as inactive`);
-      factors.push({
-        parameter: 'Score Threshold',
-        value: `${score}%`,
-        impact: '→ INACTIVE (suggested)',
-        explanation: 'Score between 30-49% - suggested inactive but can be enabled'
-      });
-    }
-  }
+  // Note: threshold-based inactive logic is now applied at the safeguard level only
+  // Control inactivity is derived from: (1) killer factors, or (2) all safeguards being inactive
 
-  return { relevanceScore: score, shouldBeInactive, reasons, factors };
+  return { relevanceScore: score, hasKillerFactor, reasons, factors };
 }
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -1066,18 +1213,19 @@ function calculateSafeguardRelevance(
   safeguard: Safeguard,
   controlId: number,
   recommendedIg: number,
-  profile: OrganizationProfile
+  profile: OrganizationProfile,
+  controlBaseScore: number = 80  // Inherit control's base score
 ): SafeguardRecommendation {
   const reasons: string[] = [];
   const factors: FactorImpact[] = [];
-  let relevanceScore = 80;
+  let relevanceScore = controlBaseScore;  // Start with control's base score
   let shouldBeInactive = false;
 
   factors.push({
-    parameter: 'Base Score',
+    parameter: 'Inherited Control Score',
     value: null,
-    impact: '80',
-    explanation: 'Default safeguard relevance baseline'
+    impact: `${controlBaseScore}`,
+    explanation: 'Safeguard inherits base relevance from parent control'
   });
 
   // Check if safeguard applies at recommended IG level
@@ -2704,30 +2852,6 @@ function calculateSafeguardRelevance(
     });
   }
 
-  // ════════════════════════════════════════════════════════════════════════════
-  // Apply threshold-based inactive logic for safeguards
-  // ════════════════════════════════════════════════════════════════════════════
-  if (!shouldBeInactive && relevanceScore < 50) {
-    shouldBeInactive = true;
-    if (relevanceScore < 30) {
-      reasons.push(`Low relevance score (${relevanceScore}%) - safeguard not applicable`);
-      factors.push({
-        parameter: 'Score Threshold',
-        value: `${relevanceScore}%`,
-        impact: '→ INACTIVE',
-        explanation: 'Score below 30% threshold - automatically marked inactive'
-      });
-    } else {
-      reasons.push(`Moderate relevance score (${relevanceScore}%) - safeguard suggested as inactive`);
-      factors.push({
-        parameter: 'Score Threshold',
-        value: `${relevanceScore}%`,
-        impact: '→ INACTIVE (suggested)',
-        explanation: 'Score between 30-49% - suggested inactive but can be enabled'
-      });
-    }
-  }
-
   return {
     safeguardId: safeguard.id,
     controlId,
@@ -2758,13 +2882,27 @@ export function generateGapRecommendation(profile: OrganizationProfile, targetIg
     const controlRelevance = calculateControlRelevance(control.id, profile);
     const safeguardRecs: SafeguardRecommendation[] = [];
 
+    // Calculate safeguard relevance, passing control's base score
     for (const safeguard of control.safeguards) {
-      const safeguardRec = calculateSafeguardRelevance(safeguard, control.id, recommendedIg, profile);
+      const safeguardRec = calculateSafeguardRelevance(
+        safeguard,
+        control.id,
+        recommendedIg,
+        profile,
+        controlRelevance.relevanceScore  // Pass control's base score
+      );
 
-      if (controlRelevance.shouldBeInactive) {
+      // If control has a killer factor, mark all safeguards inactive
+      if (controlRelevance.hasKillerFactor) {
         safeguardRec.shouldBeInactive = true;
-        if (!safeguardRec.reasons.includes('Parent control is inactive')) {
-          safeguardRec.reasons.push('Parent control is inactive');
+        if (!safeguardRec.reasons.includes('Parent control has disqualifying factor')) {
+          safeguardRec.reasons.push('Parent control has disqualifying factor');
+          safeguardRec.factors.push({
+            parameter: 'Control Killer Factor',
+            value: null,
+            impact: '→ INACTIVE',
+            explanation: 'Entire control is not applicable due to organization profile'
+          });
         }
       }
 
@@ -2778,14 +2916,39 @@ export function generateGapRecommendation(profile: OrganizationProfile, targetIg
       }
     }
 
+    // Determine control inactivity:
+    // 1. If killer factor → inactive
+    // 2. Otherwise, inactive only if ALL safeguards are inactive
+    const allSafeguardsInactive = safeguardRecs.every(s => s.shouldBeInactive);
+    const controlShouldBeInactive = controlRelevance.hasKillerFactor || allSafeguardsInactive;
+
+    // Build control reasons
+    const controlReasons = [...controlRelevance.reasons];
+    const controlFactors = [...controlRelevance.factors];
+
+    if (!controlRelevance.hasKillerFactor && allSafeguardsInactive) {
+      controlReasons.push('All safeguards are inactive - control marked inactive');
+      controlFactors.push({
+        parameter: 'Safeguard Status',
+        value: `0/${safeguardRecs.length} active`,
+        impact: '→ INACTIVE',
+        explanation: 'Control inactive because all its safeguards are inactive'
+      });
+    }
+
+    // Calculate average safeguard score for control's displayed score
+    const avgSafeguardScore = safeguardRecs.length > 0
+      ? Math.round(safeguardRecs.reduce((sum, s) => sum + s.relevanceScore, 0) / safeguardRecs.length)
+      : controlRelevance.relevanceScore;
+
     controls.push({
       controlId: control.id,
       title: control.title,
-      shouldBeInactive: controlRelevance.shouldBeInactive,
-      reasons: controlRelevance.reasons,
-      relevanceScore: controlRelevance.relevanceScore,
+      shouldBeInactive: controlShouldBeInactive,
+      reasons: controlReasons,
+      relevanceScore: avgSafeguardScore,  // Use average of safeguard scores
       safeguards: safeguardRecs,
-      factors: controlRelevance.factors,
+      factors: controlFactors,
     });
   }
 

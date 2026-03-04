@@ -89,6 +89,9 @@ type OrganizationWithProfiles =
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
     profiles                 : ProfileData[];
 };
 
@@ -123,6 +126,9 @@ type OrganizationWithTasks =
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
     tasks                    : TaskData[];
 };
 
@@ -157,6 +163,9 @@ type OrganizationWithProfilesAndTasks =
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
     profiles                 : ProfileData[];
     tasks                    : TaskData[];
 };
@@ -192,6 +201,9 @@ export type organizationData =
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
 };
 
 export type OrganisationSettingsData =
@@ -234,6 +246,9 @@ type OrganizationWithSettings =
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
     settings                 : OrganisationSettingsData | null;
 };
 
@@ -268,6 +283,9 @@ export type OrganizationWithAll =
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
     profiles                 : ProfileData[];
     tasks                    : TaskData[];
     settings                 : OrganisationSettingsData | null;
@@ -323,6 +341,9 @@ const selectFields =
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
+    manualOperation          : true,
+    productionDependency     : true,
+    customerAccess           : true,
 } as const;
 
 const selectFieldsWithProfiles =
@@ -356,6 +377,9 @@ const selectFieldsWithProfiles =
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
+    manualOperation          : true,
+    productionDependency     : true,
+    customerAccess           : true,
     profiles        : {
         where: { active: true },
         select: {
@@ -398,6 +422,9 @@ const selectFieldsWithTasks =
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
+    manualOperation          : true,
+    productionDependency     : true,
+    customerAccess           : true,
     tasks           : {
         where: { active: true },
         select: {
@@ -444,6 +471,9 @@ const selectFieldsWithProfilesAndTasks =
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
+    manualOperation          : true,
+    productionDependency     : true,
+    customerAccess           : true,
     profiles        : {
         where: { active: true },
         select: {
@@ -499,6 +529,9 @@ const selectFieldsWithSettings =
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
+    manualOperation          : true,
+    productionDependency     : true,
+    customerAccess           : true,
     settings                 : selectSettings,
 } as const;
 
@@ -533,6 +566,9 @@ const selectFieldsWithProfilesTasksAndSettings =
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
+    manualOperation          : true,
+    productionDependency     : true,
+    customerAccess           : true,
     settings                 : selectSettings,
     profiles    :
     {
@@ -711,6 +747,9 @@ export const organizationRepository =
         downtimeTolerance?: string | null;
         supplyChainPosition?: string | null;
         securityBudgetRange?: string | null;
+        manualOperation?: string | null;
+        productionDependency?: string | null;
+        customerAccess?: string | null;
     }): Promise<organizationData>
     {
         log.info({ ID: id, name: data.name }, 'SQL - organization: update');

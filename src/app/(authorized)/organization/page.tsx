@@ -4,7 +4,7 @@ import { useUser }              from '@/context/UserContext';
 import { useOrganization }      from '@/context/OrganizationContext';
 import { useRouter }            from 'next/navigation';
 import { useEffect, useState }  from 'react';
-import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown } from 'lucide-react';
+import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown, Focus } from 'lucide-react';
 import { Button }               from "@/components/ui/button";
 import { Checkbox }             from "@/components/ui/checkbox";
 import { useTranslations }      from 'next-intl';
@@ -116,6 +116,11 @@ export default function OrganizationPage()
     const [supplyChainPosition, setSupplyChainPosition] = useState<string | null>(null);
     const [securityBudgetRange, setSecurityBudgetRange] = useState<string | null>(null);
 
+    // Business Continuity Classification fields
+    const [manualOperation, setManualOperation] = useState<string | null>(null);
+    const [productionDependency, setProductionDependency] = useState<string | null>(null);
+    const [customerAccess, setCustomerAccess] = useState<string | null>(null);
+
     const [profileName, setProfileName] = useState("");
     const [profileDescription, setProfileDescription] = useState("");
 
@@ -185,12 +190,17 @@ export default function OrganizationPage()
     // Selection and starring state
     const [selectedOrgIds, setSelectedOrgIds] = useState<Set<string>>(new Set());
     const [starredOrgIds, setStarredOrgIds] = useState<Set<string>>(new Set());
+    const [showOnlySelected, setShowOnlySelected] = useState(false);
 
     // Bulk delete state
     const [isBulkDeleteDialogOpen, setIsBulkDeleteDialogOpen] = useState(false);
     const [bulkDeleteConfirmChecked, setBulkDeleteConfirmChecked] = useState(false);
     const [bulkDeleteConfirmText, setBulkDeleteConfirmText] = useState("");
     const [isBulkDeleting, setIsBulkDeleting] = useState(false);
+
+    // Single delete confirmation state
+    const [deleteConfirmChecked, setDeleteConfirmChecked] = useState(false);
+    const [deleteConfirmText, setDeleteConfirmText] = useState("");
 
     // ----------------------------------------------------------------------------------------------------------------
     // FETCH ORGANISATIONS - WITH SETTINGS (& refresh).
@@ -613,6 +623,9 @@ export default function OrganizationPage()
             setDowntimeTolerance(selectedOrg.downtimeTolerance || null);
             setSupplyChainPosition(selectedOrg.supplyChainPosition || null);
             setSecurityBudgetRange(selectedOrg.securityBudgetRange || null);
+            setManualOperation(selectedOrg.manualOperation || null);
+            setProductionDependency(selectedOrg.productionDependency || null);
+            setCustomerAccess(selectedOrg.customerAccess || null);
 
             // Load settings if they exist
             setUploadDirectory(selectedOrg.settings?.uploadDirectory || "");
@@ -791,6 +804,9 @@ export default function OrganizationPage()
             setDowntimeTolerance(selectedOrg.downtimeTolerance || null);
             setSupplyChainPosition(selectedOrg.supplyChainPosition || null);
             setSecurityBudgetRange(selectedOrg.securityBudgetRange || null);
+            setManualOperation(selectedOrg.manualOperation || null);
+            setProductionDependency(selectedOrg.productionDependency || null);
+            setCustomerAccess(selectedOrg.customerAccess || null);
         }
         else
         {
@@ -823,6 +839,9 @@ export default function OrganizationPage()
             setDowntimeTolerance(null);
             setSupplyChainPosition(null);
             setSecurityBudgetRange(null);
+            setManualOperation(null);
+            setProductionDependency(null);
+            setCustomerAccess(null);
         }
     }, [selectedOrg]);
 
@@ -873,6 +892,9 @@ export default function OrganizationPage()
         const downtimeToleranceChanged = downtimeTolerance !== (selectedOrg.downtimeTolerance || null);
         const supplyChainPositionChanged = supplyChainPosition !== (selectedOrg.supplyChainPosition || null);
         const securityBudgetRangeChanged = securityBudgetRange !== (selectedOrg.securityBudgetRange || null);
+        const manualOperationChanged = manualOperation !== (selectedOrg.manualOperation || null);
+        const productionDependencyChanged = productionDependency !== (selectedOrg.productionDependency || null);
+        const customerAccessChanged = customerAccess !== (selectedOrg.customerAccess || null);
 
         const hasAnyChange =
             nameChanged || descChanged || igChanged || sizeChanged ||
@@ -885,7 +907,8 @@ export default function OrganizationPage()
             itSecurityStaffChanged || securityMaturityChanged || dataSensitivityChanged ||
             regulatoryObligationsChanged || itEndpointRangeChanged || infrastructureTypesChanged ||
             softwareDevelopmentChanged || publicFacingServicesChanged || targetedAttackLikelihoodChanged ||
-            downtimeToleranceChanged || supplyChainPositionChanged || securityBudgetRangeChanged;
+            downtimeToleranceChanged || supplyChainPositionChanged || securityBudgetRangeChanged ||
+            manualOperationChanged || productionDependencyChanged || customerAccessChanged;
 
         setHasChanges(hasAnyChange);
     }, [
@@ -897,7 +920,8 @@ export default function OrganizationPage()
         // IT & Security fields
         itSecurityStaff, securityMaturity, dataSensitivity, regulatoryObligations,
         itEndpointRange, infrastructureTypes, softwareDevelopment, publicFacingServices,
-        targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange
+        targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange,
+        manualOperation, productionDependency, customerAccess
     ]);
 
     // Reset to page 1 when filter changes
@@ -905,6 +929,13 @@ export default function OrganizationPage()
     {
         setCurrentPage(1);
     }, [filterText]);
+
+    // Auto-disable "show only selected" filter when selection is emptied
+    useEffect(() => {
+        if (showOnlySelected && selectedOrgIds.size === 0) {
+            setShowOnlySelected(false);
+        }
+    }, [selectedOrgIds, showOnlySelected]);
 
     const handleRowClick = (org: any) =>
     {
@@ -1162,6 +1193,9 @@ export default function OrganizationPage()
                 downtimeTolerance        : downtimeTolerance,
                 supplyChainPosition      : supplyChainPosition,
                 securityBudgetRange      : securityBudgetRange,
+                manualOperation          : manualOperation,
+                productionDependency     : productionDependency,
+                customerAccess           : customerAccess,
             };
 
             const res = await fetch(url,
@@ -1243,6 +1277,8 @@ export default function OrganizationPage()
     const handleDelete = async () =>
     {
         if (!orgToDelete) return;
+        if (!deleteConfirmChecked) return;
+        if (deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()) return;
 
         setIsDeleting(true);
 
@@ -1284,6 +1320,8 @@ export default function OrganizationPage()
 
             // Reset
             setOrgToDelete(null);
+            setDeleteConfirmChecked(false);
+            setDeleteConfirmText("");
         }
         catch (err)
         {
@@ -1293,7 +1331,7 @@ export default function OrganizationPage()
         finally
         {
             setIsDeleting(false);
-        }  
+        }
     };
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
@@ -1575,8 +1613,9 @@ export default function OrganizationPage()
     // FILTER ORGANIZATION TABLE
     const filteredOrganizations = organizations
         .filter(org =>
-            org.name.toLowerCase().includes(filterText.toLowerCase()) ||
-            org.id.toString().includes(filterText)
+            (org.name.toLowerCase().includes(filterText.toLowerCase()) ||
+            org.id.toString().includes(filterText)) &&
+            (!showOnlySelected || selectedOrgIds.has(org.id))
         )
         // Sort: by selected column, or default (active org first, then by updatedAt)
         .sort((a, b) => {
@@ -1690,6 +1729,7 @@ export default function OrganizationPage()
                 setSelectedOrg(null);
             }
             setSelectedOrgIds(new Set());
+            setShowOnlySelected(false);
             toast.success(t('toast.organizationsDeleted', { count: success }));
         }
         if (failed > 0) {
@@ -1810,31 +1850,67 @@ export default function OrganizationPage()
 </AlertDialog>
 
 {/* Confirm Delete Organisation */}
-<AlertDialog 
-  open={orgToDelete !== null} 
+<Dialog
+  open={orgToDelete !== null}
   onOpenChange={(open) => {
-    if (!open) setOrgToDelete(null); // reset when closed
+    if (!open) {
+      setOrgToDelete(null);
+      setDeleteConfirmChecked(false);
+      setDeleteConfirmText("");
+    }
   }}
 >
-  <AlertDialogContent>
-    <AlertDialogHeader>
-      <AlertDialogTitle>{tc('dialogs.deleteTitle')}</AlertDialogTitle>
-      <AlertDialogDescription>
+  <DialogContent className="sm:max-w-md">
+    <DialogHeader>
+      <DialogTitle className="text-destructive">{tc('dialogs.deleteTitle')}</DialogTitle>
+      <DialogDescription>
         {t('dialogs.deleteDescription', { name: organizations.find(o => o.id === orgToDelete)?.name || 'this item' })}
-      </AlertDialogDescription>
-    </AlertDialogHeader>
-    <AlertDialogFooter>
-      <AlertDialogCancel disabled={isDeleting}>{tc('buttons.cancel')}</AlertDialogCancel>
-      <AlertDialogAction
-        className="bg-destructive text-white hover:bg-destructive/90"
+      </DialogDescription>
+    </DialogHeader>
+
+    <div className="space-y-4 py-4">
+      <div className="flex items-start gap-3 p-3 border border-destructive/30 rounded-lg bg-destructive/5">
+        <Checkbox
+          id="delete-confirm"
+          checked={deleteConfirmChecked}
+          onCheckedChange={(checked) => setDeleteConfirmChecked(!!checked)}
+        />
+        <label htmlFor="delete-confirm" className="text-sm cursor-pointer">
+          {t('dialogs.deleteConfirmCheckbox')}
+        </label>
+      </div>
+
+      <div className="space-y-2">
+        <label className="block text-sm">
+          {t('dialogs.deleteTypeWord', { word: getDeleteWord() })}
+        </label>
+        <Input
+          value={deleteConfirmText}
+          onChange={(e) => setDeleteConfirmText(e.target.value)}
+          placeholder={getDeleteWord()}
+          className={deleteConfirmText.toLowerCase() === getDeleteWord().toLowerCase() ? 'border-green-500' : ''}
+        />
+      </div>
+    </div>
+
+    <div className="flex justify-end gap-3">
+      <Button variant="outline" onClick={() => setOrgToDelete(null)} disabled={isDeleting}>
+        {tc('buttons.cancel')}
+      </Button>
+      <Button
+        variant="destructive"
         onClick={handleDelete}
-        disabled={isDeleting}
+        disabled={
+          isDeleting ||
+          !deleteConfirmChecked ||
+          deleteConfirmText.toLowerCase() !== getDeleteWord().toLowerCase()
+        }
       >
         {isDeleting ? tc('buttons.deleting') : tc('buttons.delete')}
-      </AlertDialogAction>
-    </AlertDialogFooter>
-  </AlertDialogContent>
-</AlertDialog>
+      </Button>
+    </div>
+  </DialogContent>
+</Dialog>
 
 {/* Bulk Delete Organizations Dialog */}
 <Dialog open={isBulkDeleteDialogOpen} onOpenChange={setIsBulkDeleteDialogOpen}>
@@ -2164,13 +2240,20 @@ export default function OrganizationPage()
 <div className="space-y-8 p-6">
 
     {/* Header Row (New Organisation) */}
-    <div className="flex justify-center">
+    <div className="flex justify-center gap-2">
     <Button
         variant="default"
         size="sm"
         onClick={handleNewOrg}
     >
         {t('buttons.newOrganisation')}
+    </Button>
+    <Button
+        variant="outline"
+        size="sm"
+        onClick={() => router.push('/organization/onboard')}
+    >
+        {t('buttons.onboardingWizard')}
     </Button>
     </div>
 
@@ -2320,18 +2403,30 @@ export default function OrganizationPage()
             <span className="text-sm text-muted-foreground">
                 {t('selection.selectedOf', { selected: selectedOrgIds.size, total: currentOrganizations.length })}
             </span>
-            <div className="flex items-center gap-4">
-                <span
+            <div className="flex items-center gap-2">
+                <button
+                    onClick={() => setShowOnlySelected(!showOnlySelected)}
+                    className={`p-1.5 rounded transition-colors cursor-pointer ${
+                        showOnlySelected
+                            ? 'bg-primary/20 text-primary hover:bg-primary/30'
+                            : 'hover:bg-muted text-muted-foreground hover:text-foreground'
+                    }`}
+                    title={showOnlySelected ? "Show All Organizations" : "Show Only Selected Organizations"}
+                >
+                    <Focus className="h-4 w-4" />
+                </button>
+                <div className="w-px h-4 bg-border" />
+                <button
                     title={t('buttons.deleteSelected')}
                     onClick={() => {
                         setBulkDeleteConfirmChecked(false);
                         setBulkDeleteConfirmText("");
                         setIsBulkDeleteDialogOpen(true);
                     }}
-                    className="cursor-pointer"
+                    className="p-1.5 hover:bg-destructive/20 text-muted-foreground hover:text-destructive rounded transition-colors cursor-pointer"
                 >
-                    <Trash2 className="w-4 h-4 text-muted-foreground hover:text-destructive transition-colors" />
-                </span>
+                    <Trash2 className="w-4 h-4" />
+                </button>
             </div>
         </div>
     )}
@@ -2363,12 +2458,14 @@ export default function OrganizationPage()
                     >
                         {t('tabs.classification')}
                     </TabsTrigger>
+                    {user.role === 'SUPER_ADMIN' && (
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="settings"
                     >
                         {t('tabs.settings')}
                     </TabsTrigger>
+                    )}
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="profiles"
@@ -2411,6 +2508,15 @@ export default function OrganizationPage()
 
             {/* Details Tab */}
             <TabsContent value="details" className="space-y-6 max-w-2xl mt-6">
+                <div className="flex justify-end mb-4">
+                    <Button
+                        variant="default"
+                        size="sm"
+                        onClick={() => router.push(`/organization/onboard?id=${selectedOrg?.id}`)}
+                    >
+                        {t('buttons.editInWizard')}
+                    </Button>
+                </div>
                 <div className="space-y-6">
                     <div>
                         <label className="block text-sm mb-2">{tc('table.id')}</label>
@@ -3017,10 +3123,70 @@ export default function OrganizationPage()
                             {t('helpers.securityBudgetRangeHelp')}
                         </p>
                     </div>
+
+                    {/* Business Continuity Section Header */}
+                    <div className="border-t border-neutral-700 pt-4 mt-6">
+                        <h3 className="text-sm font-medium mb-4">{t('labels.businessContinuitySection')}</h3>
+                    </div>
+
+                    {/* Manual Operation */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.manualOperation')}</label>
+                        <Select value={manualOperation || ""} onValueChange={(v) => setManualOperation(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectManualOperation')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="YES">{t('manualOperation.yes')}</SelectItem>
+                                <SelectItem value="PARTIAL">{t('manualOperation.partial')}</SelectItem>
+                                <SelectItem value="NO">{t('manualOperation.no')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.manualOperationHelp')}
+                        </p>
+                    </div>
+
+                    {/* Production Dependency */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.productionDependency')}</label>
+                        <Select value={productionDependency || ""} onValueChange={(v) => setProductionDependency(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectProductionDependency')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="NO_DEPENDENCY">{t('productionDependency.noDependency')}</SelectItem>
+                                <SelectItem value="PARTIAL">{t('productionDependency.partial')}</SelectItem>
+                                <SelectItem value="DIRECT">{t('productionDependency.direct')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.productionDependencyHelp')}
+                        </p>
+                    </div>
+
+                    {/* Customer Access */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.customerAccess')}</label>
+                        <Select value={customerAccess || ""} onValueChange={(v) => setCustomerAccess(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectCustomerAccess')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="NOT_REQUIRED">{t('customerAccess.notRequired')}</SelectItem>
+                                <SelectItem value="PARTIAL">{t('customerAccess.partial')}</SelectItem>
+                                <SelectItem value="ESSENTIAL">{t('customerAccess.essential')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.customerAccessHelp')}
+                        </p>
+                    </div>
                 </div>
             </TabsContent>
 
-            {/* Settings Tab */}
+            {/* Settings Tab - SUPER_ADMIN only */}
+            {user.role === 'SUPER_ADMIN' && (
             <TabsContent value="settings" className="space-y-6 max-w-2xl mt-6">
                 <div className="space-y-6">
                     <div>
@@ -3069,6 +3235,7 @@ export default function OrganizationPage()
                     )}
                 </div>
             </TabsContent>
+            )}
 
             {/* Profiles Tab */}
             <TabsContent value="profiles" className="mt-6">

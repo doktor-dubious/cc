@@ -148,7 +148,8 @@
     "progressReport": "Framstegsrapport",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
-    "conq": "CONQ",
+    "ces": "CES",
+    "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
     "cis": "CIS",
     "academy": "Academy",
@@ -246,6 +247,46 @@
       "invalidFormat": "Invalid email format",
       "alreadyTaken": "This email is already taken",
       "available": "Email is available"
+    }
+  },
+  "ExploratoryGap": {
+    "buttons": {
+      "viewReport": "Sammanfattning & rekommendation",
+      "summary": "Sammanfattning"
+    },
+    "actions": {
+      "title": "Granskning & Implementering",
+      "description": "Visa riskanalyssammandraget eller implementera de rekommenderade kontrollerna"
+    }
+  },
+  "RiskReport": {
+    "title": "Översikt av Strukturell Riskexponering",
+    "backToAnalysis": "Tillbaka till CIS-riskanalys",
+    "export": "Exportera",
+    "exportPdf": "Exportera PDF",
+    "exportDocx": "Exportera Word",
+    "exportJson": "Exportera JSON",
+    "exporting": "Exporterar...",
+    "noData": "Ingen Riskanalysdata",
+    "noDataDescription": "Vänligen kör CIS-riskanalysen först för att generera en rapport.",
+    "section1": {
+      "title": "Strukturella Exponeringsindikatorer",
+      "exposureDriver": "Exponeringsfaktor",
+      "assessment": "Bedömning"
+    },
+    "section2": {
+      "title": "Strukturell Risktolkning"
+    },
+    "section3": {
+      "title": "Förväntade Prioritetskontrolldomäner"
+    },
+    "section4": {
+      "title": "Nästa Steg Överväganden"
+    },
+    "footer": {
+      "confidential": "Konfidentiell",
+      "generatedBy": "Genererad av Compliance Circle",
+      "version": "Bedömning v1.0"
     }
   },
   "LoginPage": {
