@@ -92,6 +92,10 @@ type OrganizationWithProfiles =
     manualOperation          : string | null;
     productionDependency     : string | null;
     customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
+    autoFilledFields         : unknown;
     profiles                 : ProfileData[];
 };
 
@@ -129,6 +133,10 @@ type OrganizationWithTasks =
     manualOperation          : string | null;
     productionDependency     : string | null;
     customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
+    autoFilledFields         : unknown;
     tasks                    : TaskData[];
 };
 
@@ -166,6 +174,10 @@ type OrganizationWithProfilesAndTasks =
     manualOperation          : string | null;
     productionDependency     : string | null;
     customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
+    autoFilledFields         : unknown;
     profiles                 : ProfileData[];
     tasks                    : TaskData[];
 };
@@ -204,6 +216,10 @@ export type organizationData =
     manualOperation          : string | null;
     productionDependency     : string | null;
     customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
+    autoFilledFields         : unknown;
 };
 
 export type OrganisationSettingsData =
@@ -249,6 +265,10 @@ type OrganizationWithSettings =
     manualOperation          : string | null;
     productionDependency     : string | null;
     customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
+    autoFilledFields         : unknown;
     settings                 : OrganisationSettingsData | null;
 };
 
@@ -286,6 +306,10 @@ export type OrganizationWithAll =
     manualOperation          : string | null;
     productionDependency     : string | null;
     customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
+    autoFilledFields         : unknown;
     profiles                 : ProfileData[];
     tasks                    : TaskData[];
     settings                 : OrganisationSettingsData | null;
@@ -344,6 +368,10 @@ const selectFields =
     manualOperation          : true,
     productionDependency     : true,
     customerAccess           : true,
+    businessDaysPerYear      : true,
+    revenueConcentration     : true,
+    entityType               : true,
+    autoFilledFields         : true,
 } as const;
 
 const selectFieldsWithProfiles =
@@ -380,6 +408,10 @@ const selectFieldsWithProfiles =
     manualOperation          : true,
     productionDependency     : true,
     customerAccess           : true,
+    businessDaysPerYear      : true,
+    revenueConcentration     : true,
+    entityType               : true,
+    autoFilledFields         : true,
     profiles        : {
         where: { active: true },
         select: {
@@ -425,6 +457,10 @@ const selectFieldsWithTasks =
     manualOperation          : true,
     productionDependency     : true,
     customerAccess           : true,
+    businessDaysPerYear      : true,
+    revenueConcentration     : true,
+    entityType               : true,
+    autoFilledFields         : true,
     tasks           : {
         where: { active: true },
         select: {
@@ -474,6 +510,10 @@ const selectFieldsWithProfilesAndTasks =
     manualOperation          : true,
     productionDependency     : true,
     customerAccess           : true,
+    businessDaysPerYear      : true,
+    revenueConcentration     : true,
+    entityType               : true,
+    autoFilledFields         : true,
     profiles        : {
         where: { active: true },
         select: {
@@ -532,6 +572,10 @@ const selectFieldsWithSettings =
     manualOperation          : true,
     productionDependency     : true,
     customerAccess           : true,
+    businessDaysPerYear      : true,
+    revenueConcentration     : true,
+    entityType               : true,
+    autoFilledFields         : true,
     settings                 : selectSettings,
 } as const;
 
@@ -569,6 +613,10 @@ const selectFieldsWithProfilesTasksAndSettings =
     manualOperation          : true,
     productionDependency     : true,
     customerAccess           : true,
+    businessDaysPerYear      : true,
+    revenueConcentration     : true,
+    entityType               : true,
+    autoFilledFields         : true,
     settings                 : selectSettings,
     profiles    :
     {
@@ -750,6 +798,10 @@ export const organizationRepository =
         manualOperation?: string | null;
         productionDependency?: string | null;
         customerAccess?: string | null;
+        businessDaysPerYear?: number | null;
+        revenueConcentration?: string | null;
+        entityType?: string | null;
+        autoFilledFields?: unknown;
     }): Promise<organizationData>
     {
         log.info({ ID: id, name: data.name }, 'SQL - organization: update');

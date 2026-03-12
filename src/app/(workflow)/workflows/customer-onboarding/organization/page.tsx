@@ -1,13 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, Suspense } from 'react';
+import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react';
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight, ArrowLeft, Check } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Check, Search, Building2, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import type { CompanySearchResult, AutoFilledFields } from '@/lib/company-lookup';
 import { Label } from '@/components/ui/label';
 import { Checkbox } from '@/components/ui/checkbox';
 import {
@@ -28,7 +29,7 @@ type WizardStep = {
 
 type FieldConfig = {
   key: string;
-  type: 'text' | 'textarea' | 'select' | 'multiselect' | 'boolean';
+  type: 'text' | 'number' | 'textarea' | 'select' | 'multiselect' | 'boolean';
   labelKey: string;
   placeholderKey?: string;
   helperKey?: string;
@@ -157,6 +158,19 @@ const RISK_PROFILE_OPTIONS = [
   { value: 'LOW', labelKey: 'riskProfiles.low' },
   { value: 'MEDIUM', labelKey: 'riskProfiles.medium' },
   { value: 'HIGH', labelKey: 'riskProfiles.high' },
+];
+
+// Revenue concentration options
+const REVENUE_CONCENTRATION_OPTIONS = [
+  { value: 'LOW', labelKey: 'revenueConcentration.low' },
+  { value: 'MEDIUM', labelKey: 'revenueConcentration.medium' },
+  { value: 'HIGH', labelKey: 'revenueConcentration.high' },
+];
+
+// Entity type options
+const ENTITY_TYPE_OPTIONS = [
+  { value: 'IMPORTANT', labelKey: 'entityType.important' },
+  { value: 'ESSENTIAL', labelKey: 'entityType.essential' },
 ];
 
 // EU Taxonomy options
@@ -293,6 +307,7 @@ const CUSTOMER_ACCESS_OPTIONS = [
 
 // Define all wizard steps
 const WIZARD_STEPS: WizardStep[] = [
+  // ── Group 1: Organization & Business Profile ──────────────────────────
   {
     id: 'basics',
     titleKey: 'onboard.steps.basics',
@@ -313,8 +328,8 @@ const WIZARD_STEPS: WizardStep[] = [
     ],
   },
   {
-    id: 'size-industry',
-    titleKey: 'onboard.steps.sizeIndustry',
+    id: 'size-maturity',
+    titleKey: 'onboard.steps.sizeMaturity',
     fields: [
       {
         key: 'size',
@@ -325,12 +340,11 @@ const WIZARD_STEPS: WizardStep[] = [
         options: SIZE_OPTIONS,
       },
       {
-        key: 'naceSection',
+        key: 'maturity',
         type: 'select',
-        labelKey: 'labels.naceSection',
-        placeholderKey: 'placeholders.selectNaceSection',
-        helperKey: 'helpers.naceSectionHelp',
-        options: NACE_OPTIONS,
+        labelKey: 'labels.maturity',
+        placeholderKey: 'placeholders.selectMaturity',
+        options: MATURITY_OPTIONS,
       },
     ],
   },
@@ -355,28 +369,8 @@ const WIZARD_STEPS: WizardStep[] = [
     ],
   },
   {
-    id: 'maturity-revenue',
-    titleKey: 'onboard.steps.maturityRevenue',
-    fields: [
-      {
-        key: 'maturity',
-        type: 'select',
-        labelKey: 'labels.maturity',
-        placeholderKey: 'placeholders.selectMaturity',
-        options: MATURITY_OPTIONS,
-      },
-      {
-        key: 'revenueRange',
-        type: 'select',
-        labelKey: 'labels.revenueRange',
-        placeholderKey: 'placeholders.selectRevenueRange',
-        options: REVENUE_RANGE_OPTIONS,
-      },
-    ],
-  },
-  {
-    id: 'geography-orientation',
-    titleKey: 'onboard.steps.geographyOrientation',
+    id: 'geography-revenue',
+    titleKey: 'onboard.steps.geographyRevenue',
     fields: [
       {
         key: 'geographicScope',
@@ -386,14 +380,113 @@ const WIZARD_STEPS: WizardStep[] = [
         options: GEOGRAPHIC_SCOPE_OPTIONS,
       },
       {
+        key: 'revenueRange',
+        type: 'select',
+        labelKey: 'labels.revenueRange',
+        placeholderKey: 'placeholders.selectRevenueRange',
+        options: REVENUE_RANGE_OPTIONS,
+      },
+      {
+        key: 'businessDaysPerYear',
+        type: 'number',
+        labelKey: 'labels.businessDaysPerYear',
+        placeholderKey: 'placeholders.enterBusinessDaysPerYear',
+      },
+      {
+        key: 'revenueConcentration',
+        type: 'select',
+        labelKey: 'labels.revenueConcentration',
+        placeholderKey: 'placeholders.selectRevenueConcentration',
+        options: REVENUE_CONCENTRATION_OPTIONS,
+      },
+    ],
+  },
+  {
+    id: 'business-exposure',
+    titleKey: 'onboard.steps.businessExposure',
+    fields: [
+      {
         key: 'businessOrientation',
         type: 'select',
         labelKey: 'labels.businessOrientation',
         placeholderKey: 'placeholders.selectBusinessOrientation',
         options: BUSINESS_ORIENTATION_OPTIONS,
       },
+      {
+        key: 'riskProfile',
+        type: 'select',
+        labelKey: 'labels.riskProfile',
+        placeholderKey: 'placeholders.selectRiskProfile',
+        options: RISK_PROFILE_OPTIONS,
+      },
     ],
   },
+  {
+    id: 'market-services',
+    titleKey: 'onboard.steps.marketServices',
+    fields: [
+      {
+        key: 'publicFacingServices',
+        type: 'select',
+        labelKey: 'labels.publicFacingServices',
+        placeholderKey: 'placeholders.selectPublicFacingServices',
+        helperKey: 'helpers.publicFacingServicesHelp',
+        options: PUBLIC_FACING_SERVICES_OPTIONS,
+      },
+      {
+        key: 'targetedAttackLikelihood',
+        type: 'select',
+        labelKey: 'labels.targetedAttackLikelihood',
+        placeholderKey: 'placeholders.selectTargetedAttackLikelihood',
+        helperKey: 'helpers.targetedAttackLikelihoodHelp',
+        options: TARGETED_ATTACK_LIKELIHOOD_OPTIONS,
+      },
+    ],
+  },
+  // ── Group 2: Sector, Regulatory & Taxonomy ────────────────────────────
+  {
+    id: 'sector-regulatory',
+    titleKey: 'onboard.steps.sectorRegulatory',
+    fields: [
+      {
+        key: 'naceSection',
+        type: 'select',
+        labelKey: 'labels.naceSection',
+        placeholderKey: 'placeholders.selectNaceSection',
+        helperKey: 'helpers.naceSectionHelp',
+        options: NACE_OPTIONS,
+      },
+      {
+        key: 'regulatoryObligations',
+        type: 'multiselect',
+        labelKey: 'labels.regulatoryObligations',
+        helperKey: 'helpers.regulatoryObligationsHelp',
+        options: REGULATORY_OBLIGATIONS_OPTIONS,
+      },
+      {
+        key: 'entityType',
+        type: 'select',
+        labelKey: 'labels.entityType',
+        placeholderKey: 'placeholders.selectEntityType',
+        options: ENTITY_TYPE_OPTIONS,
+      },
+    ],
+  },
+  {
+    id: 'eu-taxonomy',
+    titleKey: 'onboard.steps.euTaxonomy',
+    fields: [
+      {
+        key: 'euTaxonomyAligned',
+        type: 'select',
+        labelKey: 'labels.euTaxonomyAligned',
+        placeholderKey: 'placeholders.selectEuTaxonomyAligned',
+        helperKey: 'helpers.euTaxonomyHelp',
+        options: EU_TAXONOMY_OPTIONS,
+      },
+    ],
+  },
+  // ── Group 3: Operations, Security & Resilience ────────────────────────
   {
     id: 'digital-esg',
     titleKey: 'onboard.steps.digitalEsg',
@@ -411,40 +504,6 @@ const WIZARD_STEPS: WizardStep[] = [
         labelKey: 'labels.esgStatus',
         placeholderKey: 'placeholders.selectEsgStatus',
         options: ESG_STATUS_OPTIONS,
-      },
-    ],
-  },
-  {
-    id: 'supply-chain-risk',
-    titleKey: 'onboard.steps.supplyChainRisk',
-    fields: [
-      {
-        key: 'supplyChainRole',
-        type: 'select',
-        labelKey: 'labels.supplyChainRole',
-        placeholderKey: 'placeholders.selectSupplyChainRole',
-        options: SUPPLY_CHAIN_ROLE_OPTIONS,
-      },
-      {
-        key: 'riskProfile',
-        type: 'select',
-        labelKey: 'labels.riskProfile',
-        placeholderKey: 'placeholders.selectRiskProfile',
-        options: RISK_PROFILE_OPTIONS,
-      },
-    ],
-  },
-  {
-    id: 'eu-taxonomy',
-    titleKey: 'onboard.steps.euTaxonomy',
-    fields: [
-      {
-        key: 'euTaxonomyAligned',
-        type: 'select',
-        labelKey: 'labels.euTaxonomyAligned',
-        placeholderKey: 'placeholders.selectEuTaxonomyAligned',
-        helperKey: 'helpers.euTaxonomyHelp',
-        options: EU_TAXONOMY_OPTIONS,
       },
     ],
   },
@@ -471,6 +530,19 @@ const WIZARD_STEPS: WizardStep[] = [
     ],
   },
   {
+    id: 'data-sensitivity',
+    titleKey: 'onboard.steps.dataSensitivity',
+    fields: [
+      {
+        key: 'dataSensitivity',
+        type: 'multiselect',
+        labelKey: 'labels.dataSensitivity',
+        helperKey: 'helpers.dataSensitivityHelp',
+        options: DATA_SENSITIVITY_OPTIONS,
+      },
+    ],
+  },
+  {
     id: 'it-infrastructure',
     titleKey: 'onboard.steps.itInfrastructure',
     fields: [
@@ -492,8 +564,8 @@ const WIZARD_STEPS: WizardStep[] = [
     ],
   },
   {
-    id: 'software-services',
-    titleKey: 'onboard.steps.softwareServices',
+    id: 'software-budget',
+    titleKey: 'onboard.steps.softwareBudget',
     fields: [
       {
         key: 'softwareDevelopment',
@@ -504,47 +576,19 @@ const WIZARD_STEPS: WizardStep[] = [
         options: SOFTWARE_DEVELOPMENT_OPTIONS,
       },
       {
-        key: 'publicFacingServices',
+        key: 'securityBudgetRange',
         type: 'select',
-        labelKey: 'labels.publicFacingServices',
-        placeholderKey: 'placeholders.selectPublicFacingServices',
-        helperKey: 'helpers.publicFacingServicesHelp',
-        options: PUBLIC_FACING_SERVICES_OPTIONS,
+        labelKey: 'labels.securityBudgetRange',
+        placeholderKey: 'placeholders.selectSecurityBudgetRange',
+        helperKey: 'helpers.securityBudgetRangeHelp',
+        options: SECURITY_BUDGET_RANGE_OPTIONS,
       },
     ],
   },
   {
-    id: 'data-compliance',
-    titleKey: 'onboard.steps.dataCompliance',
+    id: 'supply-chain-downtime',
+    titleKey: 'onboard.steps.supplyChainDowntime',
     fields: [
-      {
-        key: 'dataSensitivity',
-        type: 'multiselect',
-        labelKey: 'labels.dataSensitivity',
-        helperKey: 'helpers.dataSensitivityHelp',
-        options: DATA_SENSITIVITY_OPTIONS,
-      },
-      {
-        key: 'regulatoryObligations',
-        type: 'multiselect',
-        labelKey: 'labels.regulatoryObligations',
-        helperKey: 'helpers.regulatoryObligationsHelp',
-        options: REGULATORY_OBLIGATIONS_OPTIONS,
-      },
-    ],
-  },
-  {
-    id: 'risk-tolerance',
-    titleKey: 'onboard.steps.riskTolerance',
-    fields: [
-      {
-        key: 'targetedAttackLikelihood',
-        type: 'select',
-        labelKey: 'labels.targetedAttackLikelihood',
-        placeholderKey: 'placeholders.selectTargetedAttackLikelihood',
-        helperKey: 'helpers.targetedAttackLikelihoodHelp',
-        options: TARGETED_ATTACK_LIKELIHOOD_OPTIONS,
-      },
       {
         key: 'downtimeTolerance',
         type: 'select',
@@ -553,12 +597,13 @@ const WIZARD_STEPS: WizardStep[] = [
         helperKey: 'helpers.downtimeToleranceHelp',
         options: DOWNTIME_TOLERANCE_OPTIONS,
       },
-    ],
-  },
-  {
-    id: 'supply-chain-budget',
-    titleKey: 'onboard.steps.supplyChainBudget',
-    fields: [
+      {
+        key: 'supplyChainRole',
+        type: 'select',
+        labelKey: 'labels.supplyChainRole',
+        placeholderKey: 'placeholders.selectSupplyChainRole',
+        options: SUPPLY_CHAIN_ROLE_OPTIONS,
+      },
       {
         key: 'supplyChainPosition',
         type: 'select',
@@ -566,14 +611,6 @@ const WIZARD_STEPS: WizardStep[] = [
         placeholderKey: 'placeholders.selectSupplyChainPosition',
         helperKey: 'helpers.supplyChainPositionHelp',
         options: SUPPLY_CHAIN_POSITION_OPTIONS,
-      },
-      {
-        key: 'securityBudgetRange',
-        type: 'select',
-        labelKey: 'labels.securityBudgetRange',
-        placeholderKey: 'placeholders.selectSecurityBudgetRange',
-        helperKey: 'helpers.securityBudgetRangeHelp',
-        options: SECURITY_BUDGET_RANGE_OPTIONS,
       },
     ],
   },
@@ -641,6 +678,9 @@ type FormData = {
   manualOperation: string | null;
   productionDependency: string | null;
   customerAccess: string | null;
+  businessDaysPerYear: string | null;
+  revenueConcentration: string | null;
+  entityType: string | null;
 };
 
 const initialFormData: FormData = {
@@ -674,6 +714,9 @@ const initialFormData: FormData = {
   manualOperation: null,
   productionDependency: null,
   customerAccess: null,
+  businessDaysPerYear: null,
+  revenueConcentration: null,
+  entityType: null,
 };
 
 function OrganizationOnboardContent() {
@@ -693,6 +736,18 @@ function OrganizationOnboardContent() {
 
   // Form data
   const [formData, setFormData] = useState<FormData>(initialFormData);
+
+  // Auto-filled fields tracking
+  const [autoFilledFields, setAutoFilledFields] = useState<AutoFilledFields>({});
+
+  // Company lookup state
+  const [lookupQuery, setLookupQuery] = useState('');
+  const [lookupCountry, setLookupCountry] = useState('');
+  const [lookupResults, setLookupResults] = useState<CompanySearchResult[]>([]);
+  const [lookupLoading, setLookupLoading] = useState(false);
+  const [lookupOpen, setLookupOpen] = useState(false);
+  const [supportedCountries, setSupportedCountries] = useState<string[]>([]);
+  const lookupDebounce = useRef<NodeJS.Timeout | null>(null);
 
   // Track which fields have been filled (for sidebar progress)
   const [isSaving, setIsSaving] = useState(false);
@@ -744,7 +799,13 @@ function OrganizationOnboardContent() {
               manualOperation: org.manualOperation || null,
               productionDependency: org.productionDependency || null,
               customerAccess: org.customerAccess || null,
+              businessDaysPerYear: org.businessDaysPerYear !== null && org.businessDaysPerYear !== undefined ? String(org.businessDaysPerYear) : null,
+              revenueConcentration: org.revenueConcentration || null,
+              entityType: org.entityType || null,
             });
+            if (org.autoFilledFields && typeof org.autoFilledFields === 'object') {
+              setAutoFilledFields(org.autoFilledFields as AutoFilledFields);
+            }
           } else {
             console.error('API returned error:', data.error);
             toast.error(data.error || t('toast.loadError'));
@@ -759,6 +820,77 @@ function OrganizationOnboardContent() {
         });
     }
   }, [organizationId, t]);
+
+  // Company lookup search
+  // Fetch supported countries on mount
+  useEffect(() => {
+    fetch('/api/company-lookup/countries')
+      .then(res => res.json())
+      .then(json => {
+        const countries: string[] = json.countries ?? [];
+        setSupportedCountries(countries);
+        if (countries.length > 0) setLookupCountry(countries[0]);
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    if (!lookupQuery.trim() || lookupQuery.length < 2) {
+      setLookupResults([]);
+      setLookupOpen(false);
+      return;
+    }
+    if (lookupDebounce.current) clearTimeout(lookupDebounce.current);
+    lookupDebounce.current = setTimeout(async () => {
+      setLookupLoading(true);
+      try {
+        const res = await fetch(`/api/company-lookup?q=${encodeURIComponent(lookupQuery)}&country=${lookupCountry}`);
+        const json = await res.json();
+        setLookupResults(json.data ?? []);
+        setLookupOpen(true);
+      } catch {
+        setLookupResults([]);
+      } finally {
+        setLookupLoading(false);
+      }
+    }, 400);
+    return () => { if (lookupDebounce.current) clearTimeout(lookupDebounce.current); };
+  }, [lookupQuery, lookupCountry]);
+
+  // Handle company selection from lookup
+  const handleCompanySelect = useCallback((company: CompanySearchResult) => {
+    const newAutoFilled: AutoFilledFields = {};
+    const applyIfPresent = (key: keyof FormData, value: string | null) => {
+      if (value !== null) newAutoFilled[key] = { source: company.source, confirmedAt: null };
+    };
+    applyIfPresent('name', company.name || null);
+    applyIfPresent('size', company.size);
+    applyIfPresent('naceSection', company.naceSection);
+    applyIfPresent('legalForm', company.legalForm);
+    applyIfPresent('geographicScope', company.geographicScope);
+    applyIfPresent('ownershipType', company.ownershipType);
+    setFormData(prev => ({
+      ...prev,
+      name: company.name || prev.name,
+      size: company.size ?? prev.size,
+      naceSection: company.naceSection ?? prev.naceSection,
+      legalForm: company.legalForm ?? prev.legalForm,
+      geographicScope: company.geographicScope ?? prev.geographicScope,
+      ownershipType: company.ownershipType ?? prev.ownershipType,
+    }));
+    setAutoFilledFields(prev => ({ ...prev, ...newAutoFilled }));
+    setLookupQuery('');
+    setLookupOpen(false);
+    setLookupResults([]);
+  }, []);
+
+  // Confirm a single auto-filled field
+  const confirmAutoFilledField = useCallback((key: string) => {
+    setAutoFilledFields(prev => {
+      if (!prev[key]) return prev;
+      return { ...prev, [key]: { ...prev[key], confirmedAt: new Date().toISOString() } };
+    });
+  }, []);
 
   // Auto-save with debounce
   const saveData = useCallback(
@@ -802,6 +934,13 @@ function OrganizationOnboardContent() {
             downtimeTolerance: data.downtimeTolerance,
             supplyChainPosition: data.supplyChainPosition,
             securityBudgetRange: data.securityBudgetRange,
+            manualOperation: data.manualOperation,
+            productionDependency: data.productionDependency,
+            customerAccess: data.customerAccess,
+            businessDaysPerYear: data.businessDaysPerYear !== null ? parseInt(data.businessDaysPerYear, 10) : null,
+            revenueConcentration: data.revenueConcentration,
+            entityType: data.entityType,
+            autoFilledFields,
           }),
         });
       } catch (error) {
@@ -811,7 +950,7 @@ function OrganizationOnboardContent() {
         setIsSaving(false);
       }
     },
-    [isEditing, organizationId, t]
+    [isEditing, organizationId, t, autoFilledFields]
   );
 
   // Debounced save effect
@@ -834,12 +973,13 @@ function OrganizationOnboardContent() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [formData, isLoading]);
 
-  // Handle field change
+  // Handle field change — auto-confirm auto-filled field on manual edit
   const handleFieldChange = (key: string, value: string | string[] | boolean | null) => {
-    setFormData((prev) => ({
-      ...prev,
-      [key]: value,
-    }));
+    setFormData((prev) => ({ ...prev, [key]: value }));
+    setAutoFilledFields((prev) => {
+      if (!prev[key] || prev[key].confirmedAt !== null) return prev;
+      return { ...prev, [key]: { ...prev[key], confirmedAt: new Date().toISOString() } };
+    });
   };
 
   // Handle multiselect toggle
@@ -911,11 +1051,37 @@ function OrganizationOnboardContent() {
   // Render field
   const renderField = (field: FieldConfig) => {
     const value = formData[field.key as keyof FormData];
+    const autoFilled = autoFilledFields[field.key];
+    const isUnconfirmed = !!autoFilled && autoFilled.confirmedAt === null;
+
+    let fieldContent: React.ReactNode = null;
 
     switch (field.type) {
+      case 'number':
+        fieldContent = (
+          <div className="space-y-2">
+            <Label htmlFor={field.key}>
+              {t(field.labelKey)}
+              {field.required && <span className="text-destructive ml-1">*</span>}
+            </Label>
+            <Input
+              id={field.key}
+              type="number"
+              value={value !== null && value !== undefined ? String(value) : ''}
+              onChange={(e) => handleFieldChange(field.key, e.target.value || null)}
+              placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
+              className="w-full dark:!bg-transparent"
+            />
+            {field.helperKey && (
+              <p className="text-xs text-muted-foreground">{t(field.helperKey)}</p>
+            )}
+          </div>
+        );
+        break;
+
       case 'text':
-        return (
-          <div key={field.key} className="space-y-2">
+        fieldContent = (
+          <div className="space-y-2">
             <Label htmlFor={field.key}>
               {t(field.labelKey)}
               {field.required && <span className="text-destructive ml-1">*</span>}
@@ -932,10 +1098,11 @@ function OrganizationOnboardContent() {
             )}
           </div>
         );
+        break;
 
       case 'textarea':
-        return (
-          <div key={field.key} className="space-y-2">
+        fieldContent = (
+          <div className="space-y-2">
             <Label htmlFor={field.key}>{t(field.labelKey)}</Label>
             <Textarea
               id={field.key}
@@ -949,13 +1116,14 @@ function OrganizationOnboardContent() {
             )}
           </div>
         );
+        break;
 
       case 'select':
-        return (
-          <div key={field.key} className="space-y-2">
+        fieldContent = (
+          <div className="space-y-2">
             <Label htmlFor={field.key}>{t(field.labelKey)}</Label>
             <Select
-              value={(value as string) || ''}
+              value={value === true ? 'true' : value === false ? 'false' : (value as string) || ''}
               onValueChange={(v) => {
                 if (field.key === 'euTaxonomyAligned') {
                   handleFieldChange(field.key, v === 'true' ? true : v === 'false' ? false : null);
@@ -982,10 +1150,11 @@ function OrganizationOnboardContent() {
             )}
           </div>
         );
+        break;
 
       case 'multiselect':
-        return (
-          <div key={field.key} className="space-y-2">
+        fieldContent = (
+          <div className="space-y-2">
             <Label>{t(field.labelKey)}</Label>
             <div className="w-full space-y-2 p-3 border border-input rounded-md">
               {field.options?.map((option) => (
@@ -1009,10 +1178,36 @@ function OrganizationOnboardContent() {
             )}
           </div>
         );
-
-      default:
-        return null;
+        break;
     }
+
+    if (!fieldContent) return null;
+
+    if (isUnconfirmed) {
+      return (
+        <div key={field.key} className="rounded-md ring-2 ring-amber-400/60 ring-offset-2 ring-offset-background p-3 -m-3 relative">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-xs text-amber-500 font-medium flex items-center gap-1">
+              <Building2 className="w-3 h-3" />
+              {t('companyLookup.autoFilledFrom', { source: autoFilled!.source })}
+            </span>
+            <Button
+              type="button"
+              variant="ghost"
+              size="sm"
+              className="h-6 px-2 text-xs text-amber-500 hover:text-amber-600 hover:bg-amber-50 dark:hover:bg-amber-950/20"
+              onClick={() => confirmAutoFilledField(field.key)}
+            >
+              <CheckCircle2 className="w-3 h-3 mr-1" />
+              {t('companyLookup.confirm')}
+            </Button>
+          </div>
+          {fieldContent}
+        </div>
+      );
+    }
+
+    return <div key={field.key}>{fieldContent}</div>;
   };
 
   if (isLoading) {
@@ -1058,6 +1253,64 @@ function OrganizationOnboardContent() {
                   <span className="text-xs text-muted-foreground">{t('onboard.saving')}</span>
                 )}
               </div>
+
+              {/* Company lookup — shown only on basics step */}
+              {currentStep.id === 'basics' && supportedCountries.length > 0 && (
+                <div className="space-y-2">
+                  <Label>{t('companyLookup.searchLabel')}</Label>
+                  <div className="flex gap-2">
+                    {supportedCountries.length > 1 && (
+                    <Select value={lookupCountry} onValueChange={setLookupCountry}>
+                      <SelectTrigger className="w-24 shrink-0 dark:!bg-transparent">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {supportedCountries.includes('DK') && <SelectItem value="DK">🇩🇰 DK</SelectItem>}
+                        {supportedCountries.includes('NO') && <SelectItem value="NO">🇳🇴 NO</SelectItem>}
+                      </SelectContent>
+                    </Select>
+                    )}
+                    <div className="relative flex-1">
+                      <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                      <Input
+                        value={lookupQuery}
+                        onChange={(e) => setLookupQuery(e.target.value)}
+                        placeholder={t('companyLookup.searchPlaceholder')}
+                        className="pl-9 dark:!bg-transparent"
+                      />
+                      {lookupLoading && (
+                        <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+                      )}
+                    </div>
+                  </div>
+                  <p className="text-xs text-muted-foreground">{t('companyLookup.searchHelper')}</p>
+
+                  {lookupOpen && lookupResults.length > 0 && (
+                    <div className="border border-input rounded-md bg-background shadow-md max-h-56 overflow-y-auto">
+                      {lookupResults.map((company) => (
+                        <button
+                          key={`${company.source}-${company.id}`}
+                          type="button"
+                          className="w-full flex flex-col px-4 py-3 text-left hover:bg-muted/60 transition-colors border-b border-muted last:border-b-0"
+                          onClick={() => handleCompanySelect(company)}
+                        >
+                          <span className="font-medium text-sm">{company.name}</span>
+                          <span className="text-xs text-muted-foreground">
+                            {[company.registrationNumber, company.address, company.industryDescription]
+                              .filter(Boolean).join(' · ')}
+                          </span>
+                          <span className="text-xs text-muted-foreground/60 mt-0.5">{company.source}</span>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  {lookupOpen && !lookupLoading && lookupResults.length === 0 && (
+                    <p className="text-xs text-muted-foreground px-1">
+                      {t('companyLookup.noResults')}
+                    </p>
+                  )}
+                </div>
+              )}
 
               <div className="space-y-6">{currentStep.fields.map((field) => renderField(field))}</div>
             </div>

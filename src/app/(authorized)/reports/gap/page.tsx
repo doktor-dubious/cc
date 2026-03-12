@@ -525,6 +525,7 @@ export default function GapReportPage() {
             onSelectControl={handleSelectControl}
             onSelectSafeguard={handleSelectSafeguard}
             onToggleExpand={handleToggleExpand}
+            onSelectSummary={() => setCurrentItem({ type: 'summary', controlId: 0 })}
           />
         </div>
       </div>

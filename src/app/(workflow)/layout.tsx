@@ -82,6 +82,10 @@ export default async function WorkflowLayout({
     downtimeTolerance: org.downtimeTolerance,
     supplyChainPosition: org.supplyChainPosition,
     securityBudgetRange: org.securityBudgetRange,
+    manualOperation: org.manualOperation,
+    productionDependency: org.productionDependency,
+    customerAccess: org.customerAccess,
+    businessDaysPerYear: org.businessDaysPerYear,
   }));
 
   return (

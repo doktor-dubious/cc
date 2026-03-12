@@ -13,10 +13,13 @@ import { prisma }                           from '@/lib/prisma';
 // - AWS_ACCESS_KEY_ID
 // - AWS_SECRET_ACCESS_KEY
 // - AWS_REGION
-const router: Router = {
-    client: aws(),
-    bucketName: process.env.AWS_S3_BUCKET || 'compliance-circle-artifacts',
-    routes: {
+let _router: Router | null = null;
+function getRouter(): Router {
+    if (!_router) {
+        _router = {
+            client: aws(),
+            bucketName: process.env.AWS_S3_BUCKET || 'compliance-circle-artifacts',
+            routes: {
         // General file uploads for artifacts
         artifacts: route({
             fileTypes: [
@@ -116,7 +119,13 @@ const router: Router = {
                 };
             },
         }),
-    },
-};
+            },
+        };
+    }
+    return _router;
+}
 
-export const { POST } = toRouteHandler(router);
+export async function POST(req: Request) {
+    const { POST: handler } = toRouteHandler(getRouter());
+    return handler(req);
+}

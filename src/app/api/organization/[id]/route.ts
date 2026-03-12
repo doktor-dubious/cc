@@ -176,7 +176,10 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             esgStatus, supplyChainRole, riskProfile, euTaxonomyAligned,
             itSecurityStaff, securityMaturity, dataSensitivity, regulatoryObligations,
             itEndpointRange, infrastructureTypes, softwareDevelopment, publicFacingServices,
-            targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange
+            targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange,
+            manualOperation, productionDependency, customerAccess,
+            businessDaysPerYear, revenueConcentration, entityType,
+            autoFilledFields,
         } = body;
 
         // -- Name
@@ -234,6 +237,13 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
                 downtimeTolerance        : downtimeTolerance !== undefined ? downtimeTolerance : org.downtimeTolerance,
                 supplyChainPosition      : supplyChainPosition !== undefined ? supplyChainPosition : org.supplyChainPosition,
                 securityBudgetRange      : securityBudgetRange !== undefined ? securityBudgetRange : org.securityBudgetRange,
+                manualOperation          : manualOperation !== undefined ? manualOperation : org.manualOperation,
+                productionDependency     : productionDependency !== undefined ? productionDependency : org.productionDependency,
+                customerAccess           : customerAccess !== undefined ? customerAccess : org.customerAccess,
+                businessDaysPerYear      : businessDaysPerYear !== undefined ? businessDaysPerYear : org.businessDaysPerYear,
+                revenueConcentration     : revenueConcentration !== undefined ? revenueConcentration : org.revenueConcentration,
+                entityType               : entityType !== undefined ? entityType : org.entityType,
+                autoFilledFields         : autoFilledFields !== undefined ? autoFilledFields : org.autoFilledFields,
             }
         );
 

@@ -108,6 +108,10 @@ export default async function AuthorizedLayout({children,}:
         manualOperation          : org.manualOperation,
         productionDependency     : org.productionDependency,
         customerAccess           : org.customerAccess,
+        businessDaysPerYear      : org.businessDaysPerYear,
+        revenueConcentration     : org.revenueConcentration,
+        entityType               : org.entityType,
+        autoFilledFields         : org.autoFilledFields,
     }));
 
     return (

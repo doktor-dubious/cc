@@ -171,6 +171,14 @@ model Organization {
   productionDependency     ProductionDependency?     @map("production_dependency")
   customerAccess           CustomerAccess?           @map("customer_access")
 
+  /// Additional classification fields
+  businessDaysPerYear      Int?                      @map("business_days_per_year")
+  revenueConcentration     RevenueConcentration?     @map("revenue_concentration")
+  entityType               EntityType?               @map("entity_type")
+
+  /// Auto-filled fields from company registries — JSON map of fieldName → { source, confirmedAt }
+  autoFilledFields         Json?                     @map("auto_filled_fields")
+
   active      Boolean               @default(true)
   createdAt   DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt   DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
@@ -187,6 +195,7 @@ model Organization {
   organizationStar     OrganizationStar?
   fileStars            FileStar[]
   workflowConfigs      WorkflowConfig[]
+  thirdPartyCompanies  ThirdPartyCompany[]
 
   @@map("organization")
 }
@@ -952,3 +961,131 @@ enum CustomerAccess {
   PARTIAL                 /// 1 = Partially; some functions depend on customer access
   ESSENTIAL               /// 2 = Yes, customer access is essential for revenue generation
 }
+
+/// Revenue Concentration - degree of revenue concentration across customers/segments
+enum RevenueConcentration {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+/// Entity Type - NIS2/DORA classification
+enum EntityType {
+  IMPORTANT
+  ESSENTIAL
+}
+
+// ── CES (Customer Exposure Score) Enums ─────────────────────────────────────
+
+enum CesRegulatoryFramework {
+  NIS2_ESSENTIAL
+  NIS2_IMPORTANT
+  FINANCIAL
+  HEALTH
+  PUBLIC
+  LISTED
+  ENTERPRISE
+  DATACENTER
+  SAAS
+  NON_REG_SME
+}
+
+enum CesTriState {
+  NO
+  PARTLY
+  YES
+}
+
+enum CesDependencyLevel {
+  LOW
+  MODERATE
+  HIGH
+}
+
+enum CesDeliveryRole {
+  ADVISORY
+  SOFTWARE
+  HOSTING
+  MANAGED_IT
+  OPERATE_CRITICAL_SYSTEM
+  SUBSUPPLIER
+}
+
+enum CesAccessLevel {
+  NONE
+  READ_ONLY
+  REMOTE
+  PRIVILEGED
+  FULL_CONTROL
+}
+
+enum CesDataHandled {
+  NONE
+  PERSONAL
+  SENSITIVE
+  BUSINESS_CRITICAL
+  SOCIETAL_CRITICAL
+}
+
+enum CesDisruptionImpact {
+  NONE
+  TEMPORARY
+  OPERATIONAL_DISRUPTION
+  PRODUCTION_STOP
+  SOCIETAL_CRITICAL
+}
+
+enum CesSupplyChainRole {
+  DIRECT
+  SUBSUPPLIER
+  CRITICAL_SUBSUPPLIER
+  INTEGRATED
+}
+
+// ── CES Model ────────────────────────────────────────────────────────────────
+
+model ThirdPartyCompany {
+  id             String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int                     @default(autoincrement())
+  organizationId String                  @map("organization_id") @db.Uuid
+
+  /// Step 1: Company Profile
+  name                  String
+  description           String?                 @map("description")
+  regulatoryFramework   CesRegulatoryFramework? @map("regulatory_framework")
+  customerSector        String?                 @map("customer_sector")
+  dedicatedCompliance   Boolean?                @map("dedicated_compliance")
+  partOfGroup           Boolean?                @map("part_of_group")
+  listedOrPeOwned       Boolean?                @map("listed_or_pe_owned")
+
+  /// Step 2: Contractual & Procurement
+  standardContract      Boolean?    @map("standard_contract")
+  slaIncluded           Boolean?    @map("sla_included")
+  professionalProcurement Boolean?  @map("professional_procurement")
+  deliversToRegulated   CesTriState? @map("delivers_to_regulated")
+  deliversToPublicInfra Boolean?    @map("delivers_to_public_infra")
+
+  /// Step 3: Operations & Digital Footprint
+  internationalOps      Boolean?          @map("international_ops")
+  coreDigital           CesTriState?      @map("core_digital")
+  itDependency          CesDependencyLevel? @map("it_dependency")
+  publicBrand           Boolean?          @map("public_brand")
+  criticalSocietalRole  Boolean?          @map("critical_societal_role")
+  mediaExposure         Boolean?          @map("media_exposure")
+
+  /// Step 4: Technical Exposure
+  deliveryRole          CesDeliveryRole?    @map("delivery_role")
+  accessLevel           CesAccessLevel?     @map("access_level")
+  dataHandled           CesDataHandled?     @map("data_handled")
+  disruptionImpact      CesDisruptionImpact? @map("disruption_impact")
+  supplyChainRole       CesSupplyChainRole? @map("supply_chain_role")
+
+  active     Boolean      @default(true)
+  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt  DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("third_party_company")
+}
+

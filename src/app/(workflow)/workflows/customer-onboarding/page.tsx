@@ -33,7 +33,16 @@ import { useOrganization } from '@/context/OrganizationContext';
 const WORKFLOW_ID = 'customer-onboarding';
 
 // Define step IDs as constants
-const STEP_IDS = ['organization-wizard', 'cis-risc-analysis', 'gap-report'] as const;
+const STEP_IDS = [
+  'organization-wizard',
+  'cis-risc-analysis',
+  'structural-financial-exposure',
+  'third-party-risk-exposure',
+  'cea-report',
+  'define-gap-analysis',
+  'gap-report',
+  'conc',
+] as const;
 
 type WorkflowStepDef = {
   id: string;
@@ -88,10 +97,45 @@ export default function CustomerOnboardingWorkflowPage() {
         icon: <Shield className="h-5 w-5" />,
       },
       {
+        id: 'structural-financial-exposure',
+        titleKey: 'steps.structuralFinancialExposure.title',
+        descriptionKey: 'steps.structuralFinancialExposure.description',
+        route: '/workflows/customer-onboarding/structural-financial-exposure',
+        icon: <FileBarChart className="h-5 w-5" />,
+      },
+      {
+        id: 'third-party-risk-exposure',
+        titleKey: 'steps.thirdPartyRiskExposure.title',
+        descriptionKey: 'steps.thirdPartyRiskExposure.description',
+        route: '/workflows/customer-onboarding/third-party-risk-exposure',
+        icon: <Building2 className="h-5 w-5" />,
+      },
+      {
+        id: 'cea-report',
+        titleKey: 'steps.ceaReport.title',
+        descriptionKey: 'steps.ceaReport.description',
+        route: '/workflows/customer-onboarding/cea-report',
+        icon: <FileBarChart className="h-5 w-5" />,
+      },
+      {
+        id: 'define-gap-analysis',
+        titleKey: 'steps.defineGapAnalysis.title',
+        descriptionKey: 'steps.defineGapAnalysis.description',
+        route: '/workflows/customer-onboarding/define-gap-analysis',
+        icon: <Shield className="h-5 w-5" />,
+      },
+      {
         id: 'gap-report',
         titleKey: 'steps.gapReport.title',
         descriptionKey: 'steps.gapReport.description',
         route: '/workflows/customer-onboarding/gap-report',
+        icon: <FileBarChart className="h-5 w-5" />,
+      },
+      {
+        id: 'conc',
+        titleKey: 'steps.conc.title',
+        descriptionKey: 'steps.conc.description',
+        route: '/workflows/customer-onboarding/conc',
         icon: <FileBarChart className="h-5 w-5" />,
       },
     ],

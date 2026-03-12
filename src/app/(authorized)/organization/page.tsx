@@ -3,8 +3,9 @@
 import { useUser }              from '@/context/UserContext';
 import { useOrganization }      from '@/context/OrganizationContext';
 import { useRouter }            from 'next/navigation';
-import { useEffect, useState }  from 'react';
-import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown, Focus } from 'lucide-react';
+import { useCallback, useEffect, useRef, useState }  from 'react';
+import { Trash2, Star, ChevronDown, ChevronUp, ArrowUpDown, Focus, Plus, X, Search, Building2, Loader2, CheckCircle2 } from 'lucide-react';
+import type { CompanySearchResult, AutoFilledFields } from '@/lib/company-lookup';
 import { Button }               from "@/components/ui/button";
 import { Checkbox }             from "@/components/ui/checkbox";
 import { useTranslations }      from 'next-intl';
@@ -66,6 +67,8 @@ import { Badge } from "@/components/ui/badge"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ExportMenu } from '@/components/ui/export-menu';
 import type { ExportColumn } from '@/lib/export';
+import { Switch } from '@/components/ui/switch';
+import type { ThirdPartyCompanyObj } from '@/lib/database/third-party';
 
 export default function OrganizationPage()
 {
@@ -120,6 +123,11 @@ export default function OrganizationPage()
     const [manualOperation, setManualOperation] = useState<string | null>(null);
     const [productionDependency, setProductionDependency] = useState<string | null>(null);
     const [customerAccess, setCustomerAccess] = useState<string | null>(null);
+
+    // Additional classification fields
+    const [businessDaysPerYear, setBusinessDaysPerYear] = useState<string>('');
+    const [revenueConcentration, setRevenueConcentration] = useState<string | null>(null);
+    const [entityType, setEntityType] = useState<string | null>(null);
 
     const [profileName, setProfileName] = useState("");
     const [profileDescription, setProfileDescription] = useState("");
@@ -186,6 +194,30 @@ export default function OrganizationPage()
     // For events/audit trail
     const [events, setEvents] = useState<any[]>([]);
     const [loadingEvents, setLoadingEvents] = useState(false);
+
+    // Third Party tab
+    const [thirdParties, setThirdParties] = useState<ThirdPartyCompanyObj[]>([]);
+    const [thirdPartiesLoading, setThirdPartiesLoading] = useState(false);
+    const [selectedThirdParty, setSelectedThirdParty] = useState<ThirdPartyCompanyObj | null>(null);
+    const [thirdPartyToDelete, setThirdPartyToDelete] = useState<string | null>(null);
+    const [isDeletingThirdParty, setIsDeletingThirdParty] = useState(false);
+    const [isAddThirdPartyOpen, setIsAddThirdPartyOpen] = useState(false);
+    const [newTpName, setNewTpName] = useState("");
+    const [newTpDescription, setNewTpDescription] = useState("");
+    const [isAddingThirdParty, setIsAddingThirdParty] = useState(false);
+    const [tpDraft, setTpDraft] = useState<Record<string, any> | null>(null);
+    const [tpIsSaving, setTpIsSaving] = useState(false);
+    const tpDraftSkipSave = useRef(false);
+
+    // Company lookup state (for actions tab)
+    const [autoFilledFields, setAutoFilledFields] = useState<AutoFilledFields>({});
+    const [lookupQuery, setLookupQuery] = useState('');
+    const [lookupCountry, setLookupCountry] = useState('');
+    const [lookupResults, setLookupResults] = useState<CompanySearchResult[]>([]);
+    const [lookupLoading, setLookupLoading] = useState(false);
+    const [lookupOpen, setLookupOpen] = useState(false);
+    const [supportedCountries, setSupportedCountries] = useState<string[]>([]);
+    const lookupDebounce = useRef<NodeJS.Timeout | null>(null);
 
     // Selection and starring state
     const [selectedOrgIds, setSelectedOrgIds] = useState<Set<string>>(new Set());
@@ -584,6 +616,193 @@ export default function OrganizationPage()
     };
 
     // ----------------------------------------------------------------------------------------------------------------
+    // THIRD PARTY TAB
+
+    useEffect(() =>
+    {
+        if (activeTab === 'third-party' && selectedOrg)
+        {
+            loadThirdParties(selectedOrg.id);
+        }
+        if (activeTab !== 'third-party')
+        {
+            setSelectedThirdParty(null);
+            setTpDraft(null);
+        }
+    }, [activeTab, selectedOrg]);
+
+    useEffect(() =>
+    {
+        if (selectedThirdParty)
+        {
+            tpDraftSkipSave.current = true;
+            setTpDraft({
+                name                  : selectedThirdParty.name || '',
+                description           : selectedThirdParty.description || '',
+                regulatoryFramework   : selectedThirdParty.regulatoryFramework || null,
+                customerSector        : selectedThirdParty.customerSector || '',
+                dedicatedCompliance   : selectedThirdParty.dedicatedCompliance ?? null,
+                partOfGroup           : selectedThirdParty.partOfGroup ?? null,
+                listedOrPeOwned       : selectedThirdParty.listedOrPeOwned ?? null,
+                standardContract      : selectedThirdParty.standardContract ?? null,
+                slaIncluded           : selectedThirdParty.slaIncluded ?? null,
+                professionalProcurement : selectedThirdParty.professionalProcurement ?? null,
+                deliversToRegulated   : selectedThirdParty.deliversToRegulated || null,
+                deliversToPublicInfra : selectedThirdParty.deliversToPublicInfra ?? null,
+                internationalOps      : selectedThirdParty.internationalOps ?? null,
+                coreDigital           : selectedThirdParty.coreDigital || null,
+                itDependency          : selectedThirdParty.itDependency || null,
+                publicBrand           : selectedThirdParty.publicBrand ?? null,
+                criticalSocietalRole  : selectedThirdParty.criticalSocietalRole ?? null,
+                mediaExposure         : selectedThirdParty.mediaExposure ?? null,
+                deliveryRole          : selectedThirdParty.deliveryRole || null,
+                accessLevel           : selectedThirdParty.accessLevel || null,
+                dataHandled           : selectedThirdParty.dataHandled || null,
+                disruptionImpact      : selectedThirdParty.disruptionImpact || null,
+                supplyChainRole       : selectedThirdParty.supplyChainRole || null,
+            });
+        }
+        else
+        {
+            setTpDraft(null);
+        }
+    }, [selectedThirdParty]);
+
+    useEffect(() =>
+    {
+        if (!tpDraft || !selectedThirdParty) return;
+        if (tpDraftSkipSave.current)
+        {
+            tpDraftSkipSave.current = false;
+            return;
+        }
+        const timer = setTimeout(async () =>
+        {
+            setTpIsSaving(true);
+            try
+            {
+                const res = await fetch(`/api/third-party/${selectedThirdParty.id}`,
+                {
+                    method  : 'PATCH',
+                    headers : { 'Content-Type': 'application/json' },
+                    body    : JSON.stringify(tpDraft),
+                });
+                const json = await res.json();
+                if (json.success)
+                {
+                    setThirdParties(prev => prev.map(c => c.id === selectedThirdParty.id ? { ...c, ...tpDraft } : c));
+                }
+            }
+            catch (err)
+            {
+                console.error(err);
+            }
+            finally
+            {
+                setTpIsSaving(false);
+            }
+        }, 800);
+        return () => clearTimeout(timer);
+    }, [tpDraft]);
+
+    const loadThirdParties = async (orgId: string) =>
+    {
+        setThirdPartiesLoading(true);
+        try
+        {
+            const res = await fetch(`/api/third-party?organizationId=${orgId}`);
+            const json = await res.json();
+            if (json.success) setThirdParties(json.data);
+        }
+        catch (err)
+        {
+            console.error(err);
+            toast.error('Failed to load third-party companies');
+        }
+        finally
+        {
+            setThirdPartiesLoading(false);
+        }
+    };
+
+    const handleSelectThirdParty = (company: ThirdPartyCompanyObj) =>
+    {
+        if (selectedThirdParty?.id === company.id)
+        {
+            setSelectedThirdParty(null);
+            return;
+        }
+        setSelectedThirdParty(company);
+    };
+
+    const handleAddThirdParty = async () =>
+    {
+        if (!newTpName.trim() || !selectedOrg) return;
+        setIsAddingThirdParty(true);
+        try
+        {
+            const res = await fetch('/api/third-party',
+            {
+                method  : 'POST',
+                headers : { 'Content-Type': 'application/json' },
+                body    : JSON.stringify({ organizationId: selectedOrg.id, name: newTpName.trim(), description: newTpDescription.trim() || null }),
+            });
+            const json = await res.json();
+            if (json.success)
+            {
+                setThirdParties(prev => [...prev, json.data]);
+                setNewTpName("");
+                setNewTpDescription("");
+                setIsAddThirdPartyOpen(false);
+            }
+        }
+        catch (err)
+        {
+            console.error(err);
+            toast.error('Failed to create third-party company');
+        }
+        finally
+        {
+            setIsAddingThirdParty(false);
+        }
+    };
+
+    const handleDeleteThirdParty = async () =>
+    {
+        if (!thirdPartyToDelete) return;
+        setIsDeletingThirdParty(true);
+        try
+        {
+            const res = await fetch(`/api/third-party/${thirdPartyToDelete}`, { method: 'DELETE' });
+            const json = await res.json();
+            if (json.success)
+            {
+                setThirdParties(prev => prev.filter(c => c.id !== thirdPartyToDelete));
+                if (selectedThirdParty?.id === thirdPartyToDelete)
+                {
+                    setSelectedThirdParty(null);
+                    setTpDraft(null);
+                }
+                setThirdPartyToDelete(null);
+            }
+        }
+        catch (err)
+        {
+            console.error(err);
+            toast.error('Failed to delete third-party company');
+        }
+        finally
+        {
+            setIsDeletingThirdParty(false);
+        }
+    };
+
+    const updateTpDraft = (key: string, value: any) =>
+    {
+        setTpDraft(prev => prev ? { ...prev, [key]: value } : null);
+    };
+
+    // ----------------------------------------------------------------------------------------------------------------
     // TAB 2 - SETTINGS
 
     // Set Settings on new Organization.
@@ -626,6 +845,16 @@ export default function OrganizationPage()
             setManualOperation(selectedOrg.manualOperation || null);
             setProductionDependency(selectedOrg.productionDependency || null);
             setCustomerAccess(selectedOrg.customerAccess || null);
+            setBusinessDaysPerYear(selectedOrg.businessDaysPerYear !== null && selectedOrg.businessDaysPerYear !== undefined ? String(selectedOrg.businessDaysPerYear) : '');
+            setRevenueConcentration(selectedOrg.revenueConcentration || null);
+            setEntityType(selectedOrg.entityType || null);
+
+            // Auto-filled fields
+            if (selectedOrg.autoFilledFields && typeof selectedOrg.autoFilledFields === 'object') {
+                setAutoFilledFields(selectedOrg.autoFilledFields as AutoFilledFields);
+            } else {
+                setAutoFilledFields({});
+            }
 
             // Load settings if they exist
             setUploadDirectory(selectedOrg.settings?.uploadDirectory || "");
@@ -807,6 +1036,9 @@ export default function OrganizationPage()
             setManualOperation(selectedOrg.manualOperation || null);
             setProductionDependency(selectedOrg.productionDependency || null);
             setCustomerAccess(selectedOrg.customerAccess || null);
+            setBusinessDaysPerYear(selectedOrg.businessDaysPerYear !== null && selectedOrg.businessDaysPerYear !== undefined ? String(selectedOrg.businessDaysPerYear) : '');
+            setRevenueConcentration(selectedOrg.revenueConcentration || null);
+            setEntityType(selectedOrg.entityType || null);
         }
         else
         {
@@ -842,6 +1074,9 @@ export default function OrganizationPage()
             setManualOperation(null);
             setProductionDependency(null);
             setCustomerAccess(null);
+            setBusinessDaysPerYear('');
+            setRevenueConcentration(null);
+            setEntityType(null);
         }
     }, [selectedOrg]);
 
@@ -895,6 +1130,9 @@ export default function OrganizationPage()
         const manualOperationChanged = manualOperation !== (selectedOrg.manualOperation || null);
         const productionDependencyChanged = productionDependency !== (selectedOrg.productionDependency || null);
         const customerAccessChanged = customerAccess !== (selectedOrg.customerAccess || null);
+        const businessDaysPerYearChanged = businessDaysPerYear !== (selectedOrg.businessDaysPerYear !== null && selectedOrg.businessDaysPerYear !== undefined ? String(selectedOrg.businessDaysPerYear) : '');
+        const revenueConcentrationChanged = revenueConcentration !== (selectedOrg.revenueConcentration || null);
+        const entityTypeChanged = entityType !== (selectedOrg.entityType || null);
 
         const hasAnyChange =
             nameChanged || descChanged || igChanged || sizeChanged ||
@@ -908,7 +1146,8 @@ export default function OrganizationPage()
             regulatoryObligationsChanged || itEndpointRangeChanged || infrastructureTypesChanged ||
             softwareDevelopmentChanged || publicFacingServicesChanged || targetedAttackLikelihoodChanged ||
             downtimeToleranceChanged || supplyChainPositionChanged || securityBudgetRangeChanged ||
-            manualOperationChanged || productionDependencyChanged || customerAccessChanged;
+            manualOperationChanged || productionDependencyChanged || customerAccessChanged ||
+            businessDaysPerYearChanged || revenueConcentrationChanged || entityTypeChanged;
 
         setHasChanges(hasAnyChange);
     }, [
@@ -921,7 +1160,8 @@ export default function OrganizationPage()
         itSecurityStaff, securityMaturity, dataSensitivity, regulatoryObligations,
         itEndpointRange, infrastructureTypes, softwareDevelopment, publicFacingServices,
         targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange,
-        manualOperation, productionDependency, customerAccess
+        manualOperation, productionDependency, customerAccess,
+        businessDaysPerYear, revenueConcentration, entityType
     ]);
 
     // Reset to page 1 when filter changes
@@ -1143,8 +1383,64 @@ export default function OrganizationPage()
         setIsNewDialogOpen(false); // Close Dialog.
     };
 
+    // Fetch supported countries on mount
+    useEffect(() => {
+        fetch('/api/company-lookup/countries')
+            .then(res => res.json())
+            .then(json => {
+                const countries: string[] = json.countries ?? [];
+                setSupportedCountries(countries);
+                if (countries.length > 0) setLookupCountry(countries[0]);
+            })
+            .catch(() => {});
+    }, []);
+
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // SAVE ORGANIZATION
+    // Company lookup debounce
+    useEffect(() => {
+        if (!lookupQuery.trim() || lookupQuery.length < 2) {
+            setLookupResults([]);
+            setLookupOpen(false);
+            return;
+        }
+        if (lookupDebounce.current) clearTimeout(lookupDebounce.current);
+        lookupDebounce.current = setTimeout(async () => {
+            setLookupLoading(true);
+            try {
+                const res = await fetch(`/api/company-lookup?q=${encodeURIComponent(lookupQuery)}&country=${lookupCountry}`);
+                const json = await res.json();
+                setLookupResults(json.data ?? []);
+                setLookupOpen(true);
+            } catch {
+                setLookupResults([]);
+            } finally {
+                setLookupLoading(false);
+            }
+        }, 400);
+        return () => { if (lookupDebounce.current) clearTimeout(lookupDebounce.current); };
+    }, [lookupQuery, lookupCountry]);
+
+    const handleCompanySelect = useCallback((company: CompanySearchResult) => {
+        const newAutoFilled: AutoFilledFields = {};
+        const mark = (key: string, value: string | null) => {
+            if (value !== null) newAutoFilled[key] = { source: company.source, confirmedAt: null };
+        };
+        if (company.name)           { setName(company.name);                   mark('name', company.name); }
+        if (company.size)           { setSize(company.size);                   mark('size', company.size); }
+        if (company.naceSection)    { setNaceSection(company.naceSection);     mark('naceSection', company.naceSection); }
+        if (company.legalForm)      { setLegalForm(company.legalForm);         mark('legalForm', company.legalForm); }
+        if (company.geographicScope){ setGeographicScope(company.geographicScope); mark('geographicScope', company.geographicScope); }
+        if (company.ownershipType)  { setOwnershipType(company.ownershipType); mark('ownershipType', company.ownershipType); }
+
+        setAutoFilledFields(prev => ({ ...prev, ...newAutoFilled }));
+        setHasChanges(true);
+        setLookupQuery('');
+        setLookupOpen(false);
+        setLookupResults([]);
+        toast.success(t('companyLookup.applied', { name: company.name }));
+    }, [t]);
+
     const handleSave = async () =>
     {
         if (!name.trim())
@@ -1196,6 +1492,10 @@ export default function OrganizationPage()
                 manualOperation          : manualOperation,
                 productionDependency     : productionDependency,
                 customerAccess           : customerAccess,
+                businessDaysPerYear      : businessDaysPerYear !== '' ? parseInt(businessDaysPerYear, 10) : null,
+                revenueConcentration     : revenueConcentration,
+                entityType               : entityType,
+                autoFilledFields         : autoFilledFields,
             };
 
             const res = await fetch(url,
@@ -2439,7 +2739,7 @@ export default function OrganizationPage()
 
         <Tabs defaultValue="details" value={activeTab} onValueChange={setActiveTab} className="w-full" id="edit-form">
             <div className="relative w-full">
-                <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-8">
+                <TabsList className="w-full bg-transparent border-b border-neutral-700 rounded-none p-0 h-auto grid grid-cols-10">
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
                         value="details"
@@ -2448,15 +2748,30 @@ export default function OrganizationPage()
                     </TabsTrigger>
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
-                        value="taxonomy"
+                        value="org-profile"
+                        title={t('tabs.orgProfile')}
                     >
-                        {t('tabs.taxonomy')}
+                        {t('tabs.orgProfileShort')}
                     </TabsTrigger>
                     <TabsTrigger
                         className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
-                        value="classification"
+                        value="sector-regulatory"
+                        title={t('tabs.sectorRegulatory')}
                     >
-                        {t('tabs.classification')}
+                        {t('tabs.sectorRegulatoryShort')}
+                    </TabsTrigger>
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                        value="ops-security"
+                        title={t('tabs.opsSecurity')}
+                    >
+                        {t('tabs.opsSecurityShort')}
+                    </TabsTrigger>
+                    <TabsTrigger
+                        className="bg-transparent! rounded-none border-b-2 border-r-0 border-l-0 border-t-0 border-transparent data-[state=active]:bg-transparent relative z-10"
+                        value="third-party"
+                    >
+                        {t('tabs.thirdParty', { count: thirdParties.length })}
                     </TabsTrigger>
                     {user.role === 'SUPER_ADMIN' && (
                     <TabsTrigger
@@ -2494,14 +2809,16 @@ export default function OrganizationPage()
                 <div
                     className="absolute bottom-0 h-0.5 bg-white transition-all duration-300 ease-in-out z-0"
                     style={{
-                        width: '12.5%',
-                        left: activeTab === 'taxonomy' ? '12.5%' :
-                             activeTab === 'classification' ? '25%' :
-                             activeTab === 'settings' ? '37.5%' :
-                             activeTab === 'profiles' ? '50%' :
-                             activeTab === 'tasks' ? '62.5%' :
-                             activeTab === 'audit' ? '75%' :
-                             activeTab === 'actions' ? '87.5%' : '0%'
+                        width: '10%',
+                        left: activeTab === 'org-profile'      ? '10%' :
+                             activeTab === 'sector-regulatory' ? '20%' :
+                             activeTab === 'ops-security'      ? '30%' :
+                             activeTab === 'third-party'       ? '40%' :
+                             activeTab === 'settings'          ? '50%' :
+                             activeTab === 'profiles'          ? '60%' :
+                             activeTab === 'tasks'             ? '70%' :
+                             activeTab === 'audit'             ? '80%' :
+                             activeTab === 'actions'           ? '90%' : '0%'
                     }}
                 />
             </div>
@@ -2585,9 +2902,13 @@ export default function OrganizationPage()
                 </div>
             </TabsContent>
 
-            {/* Taxonomy Tab */}
-            <TabsContent value="taxonomy" className="space-y-6 max-w-2xl mt-6">
+            {/* Organization & Business Profile Tab */}
+            <TabsContent value="org-profile" className="space-y-6 max-w-2xl mt-6">
                 <div className="space-y-6">
+
+                    {/* Section: Company Identity & Structure */}
+                    <h3 className="text-sm font-medium mb-4">{t('labels.companyIdentitySection')}</h3>
+
                     <div>
                         <label className="block text-sm mb-2">{t('labels.organizationSize')}</label>
                         <Select value={size} onValueChange={setSize}>
@@ -2605,80 +2926,6 @@ export default function OrganizationPage()
                         <p className="text-xs text-muted-foreground mt-1">
                             {t('helpers.organizationSizeHelp')}
                         </p>
-                    </div>
-
-                    {/* NACE Section */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.naceSection')}</label>
-                        <Select value={naceSection || ""} onValueChange={(v) => setNaceSection(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectNaceSection')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none max-h-[300px]">
-                                <SelectItem value="A">{t('nace.A')}</SelectItem>
-                                <SelectItem value="B">{t('nace.B')}</SelectItem>
-                                <SelectItem value="C">{t('nace.C')}</SelectItem>
-                                <SelectItem value="D">{t('nace.D')}</SelectItem>
-                                <SelectItem value="E">{t('nace.E')}</SelectItem>
-                                <SelectItem value="F">{t('nace.F')}</SelectItem>
-                                <SelectItem value="G">{t('nace.G')}</SelectItem>
-                                <SelectItem value="H">{t('nace.H')}</SelectItem>
-                                <SelectItem value="I">{t('nace.I')}</SelectItem>
-                                <SelectItem value="J">{t('nace.J')}</SelectItem>
-                                <SelectItem value="K">{t('nace.K')}</SelectItem>
-                                <SelectItem value="L">{t('nace.L')}</SelectItem>
-                                <SelectItem value="M">{t('nace.M')}</SelectItem>
-                                <SelectItem value="N">{t('nace.N')}</SelectItem>
-                                <SelectItem value="O">{t('nace.O')}</SelectItem>
-                                <SelectItem value="P">{t('nace.P')}</SelectItem>
-                                <SelectItem value="Q">{t('nace.Q')}</SelectItem>
-                                <SelectItem value="R">{t('nace.R')}</SelectItem>
-                                <SelectItem value="S">{t('nace.S')}</SelectItem>
-                                <SelectItem value="OTHER">{t('nace.OTHER')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {t('helpers.naceSectionHelp')}
-                        </p>
-                    </div>
-
-                    {/* Legal Form */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.legalForm')}</label>
-                        <Select value={legalForm || ""} onValueChange={(v) => setLegalForm(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectLegalForm')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="SOLE_PROPRIETOR">{t('legalForms.soleProprietor')}</SelectItem>
-                                <SelectItem value="PARTNERSHIP">{t('legalForms.partnership')}</SelectItem>
-                                <SelectItem value="PRIVATE_LIMITED">{t('legalForms.privateLimited')}</SelectItem>
-                                <SelectItem value="PUBLIC_LIMITED">{t('legalForms.publicLimited')}</SelectItem>
-                                <SelectItem value="COOPERATIVE">{t('legalForms.cooperative')}</SelectItem>
-                                <SelectItem value="FOUNDATION">{t('legalForms.foundation')}</SelectItem>
-                                <SelectItem value="BRANCH_FOREIGN">{t('legalForms.branchForeign')}</SelectItem>
-                                <SelectItem value="PUBLIC_BODY">{t('legalForms.publicBody')}</SelectItem>
-                                <SelectItem value="OTHER">{t('legalForms.other')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* Revenue Range */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.revenueRange')}</label>
-                        <Select value={revenueRange || ""} onValueChange={(v) => setRevenueRange(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectRevenueRange')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="UNDER_2M">{t('revenueRanges.under2m')}</SelectItem>
-                                <SelectItem value="FROM_2M_10M">{t('revenueRanges.from2mTo10m')}</SelectItem>
-                                <SelectItem value="FROM_10M_50M">{t('revenueRanges.from10mTo50m')}</SelectItem>
-                                <SelectItem value="FROM_50M_250M">{t('revenueRanges.from50mTo250m')}</SelectItem>
-                                <SelectItem value="FROM_250M_1B">{t('revenueRanges.from250mTo1b')}</SelectItem>
-                                <SelectItem value="OVER_1B">{t('revenueRanges.over1b')}</SelectItem>
-                            </SelectContent>
-                        </Select>
                     </div>
 
                     {/* Organization Maturity */}
@@ -2733,6 +2980,77 @@ export default function OrganizationPage()
                         </Select>
                     </div>
 
+                    {/* Legal Form */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.legalForm')}</label>
+                        <Select value={legalForm || ""} onValueChange={(v) => setLegalForm(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectLegalForm')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="SOLE_PROPRIETOR">{t('legalForms.soleProprietor')}</SelectItem>
+                                <SelectItem value="PARTNERSHIP">{t('legalForms.partnership')}</SelectItem>
+                                <SelectItem value="PRIVATE_LIMITED">{t('legalForms.privateLimited')}</SelectItem>
+                                <SelectItem value="PUBLIC_LIMITED">{t('legalForms.publicLimited')}</SelectItem>
+                                <SelectItem value="COOPERATIVE">{t('legalForms.cooperative')}</SelectItem>
+                                <SelectItem value="FOUNDATION">{t('legalForms.foundation')}</SelectItem>
+                                <SelectItem value="BRANCH_FOREIGN">{t('legalForms.branchForeign')}</SelectItem>
+                                <SelectItem value="PUBLIC_BODY">{t('legalForms.publicBody')}</SelectItem>
+                                <SelectItem value="OTHER">{t('legalForms.other')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Section: Financial Structure */}
+                    <div className="border-t border-neutral-700 pt-4 mt-6">
+                        <h3 className="text-sm font-medium mb-4">{t('labels.financialStructureSection')}</h3>
+                    </div>
+
+                    {/* Revenue Range */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.revenueRange')}</label>
+                        <Select value={revenueRange || ""} onValueChange={(v) => setRevenueRange(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectRevenueRange')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="UNDER_2M">{t('revenueRanges.under2m')}</SelectItem>
+                                <SelectItem value="FROM_2M_10M">{t('revenueRanges.from2mTo10m')}</SelectItem>
+                                <SelectItem value="FROM_10M_50M">{t('revenueRanges.from10mTo50m')}</SelectItem>
+                                <SelectItem value="FROM_50M_250M">{t('revenueRanges.from50mTo250m')}</SelectItem>
+                                <SelectItem value="FROM_250M_1B">{t('revenueRanges.from250mTo1b')}</SelectItem>
+                                <SelectItem value="OVER_1B">{t('revenueRanges.over1b')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Business Days per Year */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.businessDaysPerYear')}</label>
+                        <input
+                            type="number"
+                            value={businessDaysPerYear}
+                            onChange={(e) => setBusinessDaysPerYear(e.target.value)}
+                            placeholder={t('placeholders.enterBusinessDaysPerYear')}
+                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-3 py-2 text-sm"
+                        />
+                    </div>
+
+                    {/* Revenue Concentration */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.revenueConcentration')}</label>
+                        <Select value={revenueConcentration || ""} onValueChange={(v) => setRevenueConcentration(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectRevenueConcentration')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="LOW">{t('revenueConcentration.low')}</SelectItem>
+                                <SelectItem value="MEDIUM">{t('revenueConcentration.medium')}</SelectItem>
+                                <SelectItem value="HIGH">{t('revenueConcentration.high')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
                     {/* Business Orientation */}
                     <div>
                         <label className="block text-sm mb-2">{t('labels.businessOrientation')}</label>
@@ -2748,6 +3066,190 @@ export default function OrganizationPage()
                             </SelectContent>
                         </Select>
                     </div>
+
+                    {/* Section: Market & Exposure Profile */}
+                    <div className="border-t border-neutral-700 pt-4 mt-6">
+                        <h3 className="text-sm font-medium mb-4">{t('labels.marketExposureSection')}</h3>
+                    </div>
+
+                    {/* Risk Profile */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.riskProfile')}</label>
+                        <Select value={riskProfile || ""} onValueChange={(v) => setRiskProfile(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectRiskProfile')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="LOW">{t('riskProfiles.low')}</SelectItem>
+                                <SelectItem value="MEDIUM">{t('riskProfiles.medium')}</SelectItem>
+                                <SelectItem value="HIGH">{t('riskProfiles.high')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Public Facing Services */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.publicFacingServices')}</label>
+                        <Select value={publicFacingServices || ""} onValueChange={(v) => setPublicFacingServices(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectPublicFacingServices')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="MINIMAL">{t('publicFacingServices.minimal')}</SelectItem>
+                                <SelectItem value="STANDARD_WEB">{t('publicFacingServices.standardWeb')}</SelectItem>
+                                <SelectItem value="ECOMMERCE">{t('publicFacingServices.ecommerce')}</SelectItem>
+                                <SelectItem value="CRITICAL_SERVICES">{t('publicFacingServices.criticalServices')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.publicFacingServicesHelp')}
+                        </p>
+                    </div>
+
+                    {/* Targeted Attack Likelihood */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.targetedAttackLikelihood')}</label>
+                        <Select value={targetedAttackLikelihood || ""} onValueChange={(v) => setTargetedAttackLikelihood(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectTargetedAttackLikelihood')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="LOW">{t('targetedAttackLikelihood.low')}</SelectItem>
+                                <SelectItem value="MEDIUM">{t('targetedAttackLikelihood.medium')}</SelectItem>
+                                <SelectItem value="HIGH">{t('targetedAttackLikelihood.high')}</SelectItem>
+                                <SelectItem value="CRITICAL">{t('targetedAttackLikelihood.critical')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.targetedAttackLikelihoodHelp')}
+                        </p>
+                    </div>
+                </div>
+            </TabsContent>
+
+            {/* Sector, Regulatory & Taxonomy Tab */}
+            <TabsContent value="sector-regulatory" className="space-y-6 max-w-2xl mt-6">
+                <div className="space-y-6">
+
+                    {/* Section: Sector & Regulatory Context */}
+                    <h3 className="text-sm font-medium mb-4">{t('labels.sectorRegulatorySection')}</h3>
+
+                    {/* NACE Section */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.naceSection')}</label>
+                        <Select value={naceSection || ""} onValueChange={(v) => setNaceSection(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectNaceSection')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none max-h-[300px]">
+                                <SelectItem value="A">{t('nace.A')}</SelectItem>
+                                <SelectItem value="B">{t('nace.B')}</SelectItem>
+                                <SelectItem value="C">{t('nace.C')}</SelectItem>
+                                <SelectItem value="D">{t('nace.D')}</SelectItem>
+                                <SelectItem value="E">{t('nace.E')}</SelectItem>
+                                <SelectItem value="F">{t('nace.F')}</SelectItem>
+                                <SelectItem value="G">{t('nace.G')}</SelectItem>
+                                <SelectItem value="H">{t('nace.H')}</SelectItem>
+                                <SelectItem value="I">{t('nace.I')}</SelectItem>
+                                <SelectItem value="J">{t('nace.J')}</SelectItem>
+                                <SelectItem value="K">{t('nace.K')}</SelectItem>
+                                <SelectItem value="L">{t('nace.L')}</SelectItem>
+                                <SelectItem value="M">{t('nace.M')}</SelectItem>
+                                <SelectItem value="N">{t('nace.N')}</SelectItem>
+                                <SelectItem value="O">{t('nace.O')}</SelectItem>
+                                <SelectItem value="P">{t('nace.P')}</SelectItem>
+                                <SelectItem value="Q">{t('nace.Q')}</SelectItem>
+                                <SelectItem value="R">{t('nace.R')}</SelectItem>
+                                <SelectItem value="S">{t('nace.S')}</SelectItem>
+                                <SelectItem value="OTHER">{t('nace.OTHER')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.naceSectionHelp')}
+                        </p>
+                    </div>
+
+                    {/* Entity Type */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.entityType')}</label>
+                        <Select value={entityType || ""} onValueChange={(v) => setEntityType(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectEntityType')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="IMPORTANT">{t('entityType.important')}</SelectItem>
+                                <SelectItem value="ESSENTIAL">{t('entityType.essential')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                    </div>
+
+                    {/* Regulatory Obligations (Multi-select) */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.regulatoryObligations')}</label>
+                        <div className="space-y-2 bg-neutral-800 border border-neutral-700 p-3">
+                            {[
+                                { value: 'GDPR', label: t('regulatoryObligations.gdpr') },
+                                { value: 'NIS2', label: t('regulatoryObligations.nis2') },
+                                { value: 'DORA', label: t('regulatoryObligations.dora') },
+                                { value: 'PCI_DSS', label: t('regulatoryObligations.pciDss') },
+                                { value: 'HIPAA', label: t('regulatoryObligations.hipaa') },
+                                { value: 'SOX', label: t('regulatoryObligations.sox') },
+                                { value: 'ISO_27001', label: t('regulatoryObligations.iso27001') },
+                                { value: 'CRITICAL_INFRASTRUCTURE', label: t('regulatoryObligations.criticalInfrastructure') },
+                                { value: 'SECTOR_SPECIFIC', label: t('regulatoryObligations.sectorSpecific') },
+                                { value: 'NONE_IDENTIFIED', label: t('regulatoryObligations.noneIdentified') },
+                            ].map((item) => (
+                                <div key={item.value} className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={`regulatoryObligations-${item.value}`}
+                                        checked={regulatoryObligations.includes(item.value)}
+                                        onCheckedChange={(checked) => {
+                                            if (checked) {
+                                                setRegulatoryObligations([...regulatoryObligations, item.value]);
+                                            } else {
+                                                setRegulatoryObligations(regulatoryObligations.filter(v => v !== item.value));
+                                            }
+                                        }}
+                                    />
+                                    <label htmlFor={`regulatoryObligations-${item.value}`} className="text-sm cursor-pointer">
+                                        {item.label}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.regulatoryObligationsHelp')}
+                        </p>
+                    </div>
+
+                    {/* EU Taxonomy Aligned */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.euTaxonomyAligned')}</label>
+                        <Select
+                            value={euTaxonomyAligned === null ? "" : euTaxonomyAligned ? "true" : "false"}
+                            onValueChange={(v) => setEuTaxonomyAligned(v === "" ? null : v === "true")}
+                        >
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectEuTaxonomyAligned')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="true">{t('euTaxonomy.yes')}</SelectItem>
+                                <SelectItem value="false">{t('euTaxonomy.no')}</SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <p className="text-xs text-muted-foreground mt-1">
+                            {t('helpers.euTaxonomyHelp')}
+                        </p>
+                    </div>
+                </div>
+            </TabsContent>
+
+            {/* Operations, Security & Resilience Tab */}
+            <TabsContent value="ops-security" className="space-y-6 max-w-2xl mt-6">
+                <div className="space-y-6">
+
+                    {/* Section: Security & Control Environment */}
+                    <h3 className="text-sm font-medium mb-4">{t('labels.securityControlSection')}</h3>
 
                     {/* Digital Maturity */}
                     <div>
@@ -2779,64 +3281,6 @@ export default function OrganizationPage()
                             </SelectContent>
                         </Select>
                     </div>
-
-                    {/* Supply Chain Role */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.supplyChainRole')}</label>
-                        <Select value={supplyChainRole || ""} onValueChange={(v) => setSupplyChainRole(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectSupplyChainRole')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="MANUFACTURER">{t('supplyChainRoles.manufacturer')}</SelectItem>
-                                <SelectItem value="DISTRIBUTOR">{t('supplyChainRoles.distributor')}</SelectItem>
-                                <SelectItem value="RETAILER">{t('supplyChainRoles.retailer')}</SelectItem>
-                                <SelectItem value="SERVICE_PROVIDER">{t('supplyChainRoles.serviceProvider')}</SelectItem>
-                                <SelectItem value="PLATFORM">{t('supplyChainRoles.platform')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* Risk Profile */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.riskProfile')}</label>
-                        <Select value={riskProfile || ""} onValueChange={(v) => setRiskProfile(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectRiskProfile')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="LOW">{t('riskProfiles.low')}</SelectItem>
-                                <SelectItem value="MEDIUM">{t('riskProfiles.medium')}</SelectItem>
-                                <SelectItem value="HIGH">{t('riskProfiles.high')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                    </div>
-
-                    {/* EU Taxonomy Aligned */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.euTaxonomyAligned')}</label>
-                        <Select
-                            value={euTaxonomyAligned === null ? "" : euTaxonomyAligned ? "true" : "false"}
-                            onValueChange={(v) => setEuTaxonomyAligned(v === "" ? null : v === "true")}
-                        >
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectEuTaxonomyAligned')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="true">{t('euTaxonomy.yes')}</SelectItem>
-                                <SelectItem value="false">{t('euTaxonomy.no')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {t('helpers.euTaxonomyHelp')}
-                        </p>
-                    </div>
-                </div>
-            </TabsContent>
-
-            {/* Classification Tab - IT & Security */}
-            <TabsContent value="classification" className="space-y-6 max-w-2xl mt-6">
-                <div className="space-y-6">
 
                     {/* IT Security Staff */}
                     <div>
@@ -2910,45 +3354,6 @@ export default function OrganizationPage()
                         </div>
                         <p className="text-xs text-muted-foreground mt-1">
                             {t('helpers.dataSensitivityHelp')}
-                        </p>
-                    </div>
-
-                    {/* Regulatory Obligations (Multi-select) */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.regulatoryObligations')}</label>
-                        <div className="space-y-2 bg-neutral-800 border border-neutral-700 p-3">
-                            {[
-                                { value: 'GDPR', label: t('regulatoryObligations.gdpr') },
-                                { value: 'NIS2', label: t('regulatoryObligations.nis2') },
-                                { value: 'DORA', label: t('regulatoryObligations.dora') },
-                                { value: 'PCI_DSS', label: t('regulatoryObligations.pciDss') },
-                                { value: 'HIPAA', label: t('regulatoryObligations.hipaa') },
-                                { value: 'SOX', label: t('regulatoryObligations.sox') },
-                                { value: 'ISO_27001', label: t('regulatoryObligations.iso27001') },
-                                { value: 'CRITICAL_INFRASTRUCTURE', label: t('regulatoryObligations.criticalInfrastructure') },
-                                { value: 'SECTOR_SPECIFIC', label: t('regulatoryObligations.sectorSpecific') },
-                                { value: 'NONE_IDENTIFIED', label: t('regulatoryObligations.noneIdentified') },
-                            ].map((item) => (
-                                <div key={item.value} className="flex items-center space-x-2">
-                                    <Checkbox
-                                        id={`regulatoryObligations-${item.value}`}
-                                        checked={regulatoryObligations.includes(item.value)}
-                                        onCheckedChange={(checked) => {
-                                            if (checked) {
-                                                setRegulatoryObligations([...regulatoryObligations, item.value]);
-                                            } else {
-                                                setRegulatoryObligations(regulatoryObligations.filter(v => v !== item.value));
-                                            }
-                                        }}
-                                    />
-                                    <label htmlFor={`regulatoryObligations-${item.value}`} className="text-sm cursor-pointer">
-                                        {item.label}
-                                    </label>
-                                </div>
-                            ))}
-                        </div>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {t('helpers.regulatoryObligationsHelp')}
                         </p>
                     </div>
 
@@ -3027,42 +3432,29 @@ export default function OrganizationPage()
                         </p>
                     </div>
 
-                    {/* Public Facing Services */}
+                    {/* Security Budget Range */}
                     <div>
-                        <label className="block text-sm mb-2">{t('labels.publicFacingServices')}</label>
-                        <Select value={publicFacingServices || ""} onValueChange={(v) => setPublicFacingServices(v || null)}>
+                        <label className="block text-sm mb-2">{t('labels.securityBudgetRange')}</label>
+                        <Select value={securityBudgetRange || ""} onValueChange={(v) => setSecurityBudgetRange(v || null)}>
                             <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectPublicFacingServices')} />
+                                <SelectValue placeholder={t('placeholders.selectSecurityBudgetRange')} />
                             </SelectTrigger>
                             <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="MINIMAL">{t('publicFacingServices.minimal')}</SelectItem>
-                                <SelectItem value="STANDARD_WEB">{t('publicFacingServices.standardWeb')}</SelectItem>
-                                <SelectItem value="ECOMMERCE">{t('publicFacingServices.ecommerce')}</SelectItem>
-                                <SelectItem value="CRITICAL_SERVICES">{t('publicFacingServices.criticalServices')}</SelectItem>
+                                <SelectItem value="MINIMAL">{t('securityBudgetRange.minimal')}</SelectItem>
+                                <SelectItem value="LIMITED">{t('securityBudgetRange.limited')}</SelectItem>
+                                <SelectItem value="MODERATE">{t('securityBudgetRange.moderate')}</SelectItem>
+                                <SelectItem value="SUBSTANTIAL">{t('securityBudgetRange.substantial')}</SelectItem>
+                                <SelectItem value="ENTERPRISE">{t('securityBudgetRange.enterprise')}</SelectItem>
                             </SelectContent>
                         </Select>
                         <p className="text-xs text-muted-foreground mt-1">
-                            {t('helpers.publicFacingServicesHelp')}
+                            {t('helpers.securityBudgetRangeHelp')}
                         </p>
                     </div>
 
-                    {/* Targeted Attack Likelihood */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.targetedAttackLikelihood')}</label>
-                        <Select value={targetedAttackLikelihood || ""} onValueChange={(v) => setTargetedAttackLikelihood(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectTargetedAttackLikelihood')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="LOW">{t('targetedAttackLikelihood.low')}</SelectItem>
-                                <SelectItem value="MEDIUM">{t('targetedAttackLikelihood.medium')}</SelectItem>
-                                <SelectItem value="HIGH">{t('targetedAttackLikelihood.high')}</SelectItem>
-                                <SelectItem value="CRITICAL">{t('targetedAttackLikelihood.critical')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {t('helpers.targetedAttackLikelihoodHelp')}
-                        </p>
+                    {/* Section: IT & Operational Dependency */}
+                    <div className="border-t border-neutral-700 pt-4 mt-6">
+                        <h3 className="text-sm font-medium mb-4">{t('labels.itOperationalDependencySection')}</h3>
                     </div>
 
                     {/* Downtime Tolerance */}
@@ -3082,6 +3474,28 @@ export default function OrganizationPage()
                         <p className="text-xs text-muted-foreground mt-1">
                             {t('helpers.downtimeToleranceHelp')}
                         </p>
+                    </div>
+
+                    {/* Section: Supply Chain Position */}
+                    <div className="border-t border-neutral-700 pt-4 mt-6">
+                        <h3 className="text-sm font-medium mb-4">{t('labels.supplyChainSection')}</h3>
+                    </div>
+
+                    {/* Supply Chain Role */}
+                    <div>
+                        <label className="block text-sm mb-2">{t('labels.supplyChainRole')}</label>
+                        <Select value={supplyChainRole || ""} onValueChange={(v) => setSupplyChainRole(v || null)}>
+                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectValue placeholder={t('placeholders.selectSupplyChainRole')} />
+                            </SelectTrigger>
+                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
+                                <SelectItem value="MANUFACTURER">{t('supplyChainRoles.manufacturer')}</SelectItem>
+                                <SelectItem value="DISTRIBUTOR">{t('supplyChainRoles.distributor')}</SelectItem>
+                                <SelectItem value="RETAILER">{t('supplyChainRoles.retailer')}</SelectItem>
+                                <SelectItem value="SERVICE_PROVIDER">{t('supplyChainRoles.serviceProvider')}</SelectItem>
+                                <SelectItem value="PLATFORM">{t('supplyChainRoles.platform')}</SelectItem>
+                            </SelectContent>
+                        </Select>
                     </div>
 
                     {/* Supply Chain Position */}
@@ -3104,27 +3518,7 @@ export default function OrganizationPage()
                         </p>
                     </div>
 
-                    {/* Security Budget Range */}
-                    <div>
-                        <label className="block text-sm mb-2">{t('labels.securityBudgetRange')}</label>
-                        <Select value={securityBudgetRange || ""} onValueChange={(v) => setSecurityBudgetRange(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectSecurityBudgetRange')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="MINIMAL">{t('securityBudgetRange.minimal')}</SelectItem>
-                                <SelectItem value="LIMITED">{t('securityBudgetRange.limited')}</SelectItem>
-                                <SelectItem value="MODERATE">{t('securityBudgetRange.moderate')}</SelectItem>
-                                <SelectItem value="SUBSTANTIAL">{t('securityBudgetRange.substantial')}</SelectItem>
-                                <SelectItem value="ENTERPRISE">{t('securityBudgetRange.enterprise')}</SelectItem>
-                            </SelectContent>
-                        </Select>
-                        <p className="text-xs text-muted-foreground mt-1">
-                            {t('helpers.securityBudgetRangeHelp')}
-                        </p>
-                    </div>
-
-                    {/* Business Continuity Section Header */}
+                    {/* Section: Business Continuity */}
                     <div className="border-t border-neutral-700 pt-4 mt-6">
                         <h3 className="text-sm font-medium mb-4">{t('labels.businessContinuitySection')}</h3>
                     </div>
@@ -3183,6 +3577,253 @@ export default function OrganizationPage()
                         </p>
                     </div>
                 </div>
+            </TabsContent>
+
+            {/* Third Party Tab */}
+            <TabsContent value="third-party" className="mt-6">
+                <div className="flex gap-0" style={{ minHeight: '520px' }}>
+
+                    {/* Left: Table */}
+                    <div className={selectedThirdParty ? 'w-[45%] pr-4 flex flex-col' : 'w-full flex flex-col'}>
+                        <div className="flex justify-between items-center mb-4">
+                            <span className="text-sm text-muted-foreground">
+                                {thirdPartiesLoading ? 'Loading...' : `${thirdParties.length} ${thirdParties.length === 1 ? 'company' : 'companies'}`}
+                            </span>
+                            <Button size="sm" onClick={() => setIsAddThirdPartyOpen(true)}>
+                                <Plus className="h-3 w-3 mr-1" /> Add Third Party
+                            </Button>
+                        </div>
+
+                        {!thirdPartiesLoading && thirdParties.length === 0 && (
+                            <p className="text-sm text-muted-foreground italic mt-4">{t('empty.noThirdParties')}</p>
+                        )}
+
+                        {thirdParties.length > 0 && (
+                            <div className="overflow-auto">
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Name</TableHead>
+                                            <TableHead>Description</TableHead>
+                                            <TableHead className="w-10"></TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {thirdParties.map(company => (
+                                            <TableRow
+                                                key={company.id}
+                                                className={`cursor-pointer ${selectedThirdParty?.id === company.id ? 'bg-neutral-800/60' : 'hover:bg-neutral-800/30'}`}
+                                                onClick={() => handleSelectThirdParty(company)}
+                                            >
+                                                <TableCell className="font-medium">{company.name}</TableCell>
+                                                <TableCell className="text-muted-foreground text-sm max-w-[200px] truncate">{company.description || '—'}</TableCell>
+                                                <TableCell>
+                                                    <button
+                                                        className="opacity-50 hover:opacity-100 transition-opacity"
+                                                        onClick={(e) => { e.stopPropagation(); setThirdPartyToDelete(company.id); }}
+                                                    >
+                                                        <Trash2 className="h-4 w-4 hover:text-red-400" />
+                                                    </button>
+                                                </TableCell>
+                                            </TableRow>
+                                        ))}
+                                    </TableBody>
+                                </Table>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Right: Detail pane */}
+                    {selectedThirdParty && tpDraft && (
+                        <div className="flex-1 min-w-0 max-w-[560px] border-l border-neutral-700 pl-6 overflow-auto">
+                            <div className="flex justify-between items-center mb-5">
+                                <div className="flex items-center gap-3">
+                                    <h3 className="font-medium text-sm">{selectedThirdParty.name}</h3>
+                                    {tpIsSaving && <span className="text-xs text-muted-foreground">Saving...</span>}
+                                </div>
+                                <button onClick={() => setSelectedThirdParty(null)}>
+                                    <X className="h-4 w-4 text-muted-foreground hover:text-white" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-7">
+
+                                {/* Company Identity */}
+                                <div className="space-y-3">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-neutral-700 pb-1">Company Identity</h4>
+                                    <div className="space-y-1">
+                                        <label className="text-xs text-muted-foreground">Name</label>
+                                        <Input value={tpDraft.name} onChange={(e) => updateTpDraft('name', e.target.value)} className="h-8 text-sm" />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs text-muted-foreground">Description</label>
+                                        <Textarea value={tpDraft.description} onChange={(e) => updateTpDraft('description', e.target.value)} className="text-sm resize-none" rows={2} />
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs text-muted-foreground">Regulatory Framework</label>
+                                        <Select value={tpDraft.regulatoryFramework || ''} onValueChange={(v) => updateTpDraft('regulatoryFramework', v || null)}>
+                                            <SelectTrigger className="h-8 text-sm w-full"><SelectValue placeholder="Select framework..." /></SelectTrigger>
+                                            <SelectContent>
+                                                <SelectItem value="NIS2_ESSENTIAL">NIS2 Essential</SelectItem>
+                                                <SelectItem value="NIS2_IMPORTANT">NIS2 Important</SelectItem>
+                                                <SelectItem value="FINANCIAL">Financial</SelectItem>
+                                                <SelectItem value="HEALTH">Health</SelectItem>
+                                                <SelectItem value="PUBLIC">Public</SelectItem>
+                                                <SelectItem value="LISTED">Listed</SelectItem>
+                                                <SelectItem value="ENTERPRISE">Enterprise</SelectItem>
+                                                <SelectItem value="DATACENTER">Datacenter</SelectItem>
+                                                <SelectItem value="SAAS">SaaS</SelectItem>
+                                                <SelectItem value="NON_REG_SME">Non-reg SME</SelectItem>
+                                            </SelectContent>
+                                        </Select>
+                                    </div>
+                                    <div className="space-y-1">
+                                        <label className="text-xs text-muted-foreground">Customer Sector</label>
+                                        <Input value={tpDraft.customerSector || ''} onChange={(e) => updateTpDraft('customerSector', e.target.value)} className="h-8 text-sm" placeholder="e.g. Manufacturing, Finance..." />
+                                    </div>
+                                </div>
+
+                                {/* Governance & Contracts */}
+                                <div className="space-y-3">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-neutral-700 pb-1">Governance & Contracts</h4>
+                                    {[
+                                        { key: 'dedicatedCompliance',     label: 'Dedicated compliance/security function?' },
+                                        { key: 'partOfGroup',             label: 'Part of group?' },
+                                        { key: 'listedOrPeOwned',         label: 'Listed or PE-owned?' },
+                                        { key: 'standardContract',        label: 'Standard contract?' },
+                                        { key: 'slaIncluded',             label: 'SLA included?' },
+                                        { key: 'professionalProcurement', label: 'Professional procurement?' },
+                                    ].map(({ key, label }) => (
+                                        <div key={key} className="flex items-center justify-between">
+                                            <label className="text-sm">{label}</label>
+                                            <Switch checked={tpDraft[key] === true} onCheckedChange={(v) => updateTpDraft(key, v)} />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Business Reach */}
+                                <div className="space-y-3">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-neutral-700 pb-1">Business Reach</h4>
+                                    <div className="space-y-1">
+                                        <label className="text-sm">Delivers to regulated sectors?</label>
+                                        <div className="flex gap-1 mt-1">
+                                            {[['YES', 'Yes'], ['PARTLY', 'Partly'], ['NO', 'No']].map(([val, lbl]) => (
+                                                <button key={val} onClick={() => updateTpDraft('deliversToRegulated', val)}
+                                                    className={`px-3 py-1 text-xs rounded border transition-colors ${tpDraft.deliversToRegulated === val ? 'bg-white text-black border-white' : 'border-neutral-600 hover:border-neutral-400'}`}>
+                                                    {lbl}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    {[
+                                        { key: 'deliversToPublicInfra', label: 'Delivers to public/critical infra?' },
+                                        { key: 'internationalOps',      label: 'International operations?' },
+                                    ].map(({ key, label }) => (
+                                        <div key={key} className="flex items-center justify-between">
+                                            <label className="text-sm">{label}</label>
+                                            <Switch checked={tpDraft[key] === true} onCheckedChange={(v) => updateTpDraft(key, v)} />
+                                        </div>
+                                    ))}
+                                    <div className="space-y-1">
+                                        <label className="text-sm">Core business digitally driven?</label>
+                                        <div className="flex gap-1 mt-1">
+                                            {[['YES', 'Yes'], ['PARTLY', 'Partly'], ['NO', 'No']].map(([val, lbl]) => (
+                                                <button key={val} onClick={() => updateTpDraft('coreDigital', val)}
+                                                    className={`px-3 py-1 text-xs rounded border transition-colors ${tpDraft.coreDigital === val ? 'bg-white text-black border-white' : 'border-neutral-600 hover:border-neutral-400'}`}>
+                                                    {lbl}
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Visibility & Society */}
+                                <div className="space-y-3">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-neutral-700 pb-1">Visibility & Society</h4>
+                                    {[
+                                        { key: 'publicBrand',         label: 'Public visible brand?' },
+                                        { key: 'criticalSocietalRole', label: 'Critical societal role?' },
+                                        { key: 'mediaExposure',       label: 'Media exposure?' },
+                                    ].map(({ key, label }) => (
+                                        <div key={key} className="flex items-center justify-between">
+                                            <label className="text-sm">{label}</label>
+                                            <Switch checked={tpDraft[key] === true} onCheckedChange={(v) => updateTpDraft(key, v)} />
+                                        </div>
+                                    ))}
+                                </div>
+
+                                {/* Technical Exposure */}
+                                <div className="space-y-3">
+                                    <h4 className="text-xs font-semibold uppercase tracking-wider text-muted-foreground border-b border-neutral-700 pb-1">Technical Exposure</h4>
+                                    {[
+                                        { key: 'itDependency',     label: 'IT dependency level',   options: [['LOW','Low'],['MODERATE','Moderate'],['HIGH','High']] },
+                                        { key: 'deliveryRole',     label: 'Delivery role',          options: [['ADVISORY','Advisory'],['SOFTWARE','Software'],['HOSTING','Hosting'],['MANAGED_IT','Managed IT'],['OPERATE_CRITICAL_SYSTEM','Operate critical system'],['SUBSUPPLIER','Subsupplier']] },
+                                        { key: 'accessLevel',      label: 'Access level',           options: [['NONE','None'],['READ_ONLY','Read-only'],['REMOTE','Remote'],['PRIVILEGED','Privileged'],['FULL_CONTROL','Full control']] },
+                                        { key: 'dataHandled',      label: 'Data handled',           options: [['NONE','None'],['PERSONAL','Personal'],['SENSITIVE','Sensitive'],['BUSINESS_CRITICAL','Business-critical'],['SOCIETAL_CRITICAL','Societal-critical']] },
+                                        { key: 'disruptionImpact', label: '48h disruption impact', options: [['NONE','None'],['TEMPORARY','Temporary'],['OPERATIONAL_DISRUPTION','Operational disruption'],['PRODUCTION_STOP','Production stop'],['SOCIETAL_CRITICAL','Societal critical']] },
+                                        { key: 'supplyChainRole',  label: 'Supply chain role',      options: [['DIRECT','Direct'],['SUBSUPPLIER','Subsupplier'],['CRITICAL_SUBSUPPLIER','Critical subsupplier'],['INTEGRATED','Integrated']] },
+                                    ].map(({ key, label, options }) => (
+                                        <div key={key} className="space-y-1">
+                                            <label className="text-xs text-muted-foreground">{label}</label>
+                                            <Select value={tpDraft[key] || ''} onValueChange={(v) => updateTpDraft(key, v || null)}>
+                                                <SelectTrigger className="h-8 text-sm w-full"><SelectValue placeholder="Select..." /></SelectTrigger>
+                                                <SelectContent>
+                                                    {options.map(([val, lbl]) => (
+                                                        <SelectItem key={val} value={val}>{lbl}</SelectItem>
+                                                    ))}
+                                                </SelectContent>
+                                            </Select>
+                                        </div>
+                                    ))}
+                                </div>
+
+                            </div>
+                        </div>
+                    )}
+                </div>
+
+                {/* Add Third Party Dialog */}
+                <Dialog open={isAddThirdPartyOpen} onOpenChange={setIsAddThirdPartyOpen}>
+                    <DialogContent>
+                        <DialogHeader>
+                            <DialogTitle>Add Third-Party Company</DialogTitle>
+                            <DialogDescription>Add a third-party company to this organization.</DialogDescription>
+                        </DialogHeader>
+                        <div className="space-y-4 mt-2">
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Name <span className="text-red-400">*</span></label>
+                                <Input value={newTpName} onChange={(e) => setNewTpName(e.target.value)} placeholder="Company name..." onKeyDown={(e) => e.key === 'Enter' && handleAddThirdParty()} />
+                            </div>
+                            <div className="space-y-2">
+                                <label className="text-sm font-medium">Description</label>
+                                <Textarea value={newTpDescription} onChange={(e) => setNewTpDescription(e.target.value)} placeholder="Brief description..." rows={3} />
+                            </div>
+                        </div>
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button variant="outline" onClick={() => { setIsAddThirdPartyOpen(false); setNewTpName(""); setNewTpDescription(""); }}>Cancel</Button>
+                            <Button onClick={handleAddThirdParty} disabled={!newTpName.trim() || isAddingThirdParty}>
+                                {isAddingThirdParty ? 'Adding...' : 'Add Company'}
+                            </Button>
+                        </div>
+                    </DialogContent>
+                </Dialog>
+
+                {/* Delete Confirmation */}
+                <AlertDialog open={!!thirdPartyToDelete} onOpenChange={(open) => !open && setThirdPartyToDelete(null)}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Third-Party Company</AlertDialogTitle>
+                            <AlertDialogDescription>Are you sure you want to delete this company? This cannot be undone.</AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel disabled={isDeletingThirdParty}>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDeleteThirdParty} disabled={isDeletingThirdParty}>
+                                {isDeletingThirdParty ? 'Deleting...' : 'Delete'}
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
+
             </TabsContent>
 
             {/* Settings Tab - SUPER_ADMIN only */}
@@ -3569,6 +4210,78 @@ export default function OrganizationPage()
                             {t('sections.organizationActionsDescription')}
                         </p>
                     </div>
+
+                    {/* Company registry lookup — only shown when at least one registry is configured */}
+                    {supportedCountries.length > 0 && (
+                    <div className="border border-input rounded-lg p-4 space-y-3">
+                        <div>
+                            <h4 className="font-medium mb-1 flex items-center gap-2">
+                                <Building2 className="w-4 h-4 text-muted-foreground" />
+                                {t('companyLookup.searchLabel')}
+                            </h4>
+                            <p className="text-sm text-muted-foreground">{t('companyLookup.actionsHelper')}</p>
+                        </div>
+                        <div className="flex gap-2">
+                            {supportedCountries.length > 1 && (
+                            <Select value={lookupCountry} onValueChange={setLookupCountry}>
+                                <SelectTrigger className="w-24 shrink-0 dark:!bg-transparent">
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {supportedCountries.includes('DK') && <SelectItem value="DK">🇩🇰 DK</SelectItem>}
+                                    {supportedCountries.includes('NO') && <SelectItem value="NO">🇳🇴 NO</SelectItem>}
+                                </SelectContent>
+                            </Select>
+                            )}
+                            <div className="relative flex-1">
+                                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
+                                <Input
+                                    value={lookupQuery}
+                                    onChange={(e) => setLookupQuery(e.target.value)}
+                                    placeholder={t('companyLookup.searchPlaceholder')}
+                                    className="pl-9 dark:!bg-transparent"
+                                />
+                                {lookupLoading && (
+                                    <Loader2 className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 animate-spin text-muted-foreground" />
+                                )}
+                            </div>
+                        </div>
+
+                        {lookupOpen && lookupResults.length > 0 && (
+                            <div className="border border-input rounded-md bg-background shadow-md max-h-56 overflow-y-auto">
+                                {lookupResults.map((company) => (
+                                    <button
+                                        key={`${company.source}-${company.id}`}
+                                        type="button"
+                                        className="w-full flex flex-col px-4 py-3 text-left hover:bg-muted/60 transition-colors border-b border-muted last:border-b-0"
+                                        onClick={() => handleCompanySelect(company)}
+                                    >
+                                        <span className="font-medium text-sm">{company.name}</span>
+                                        <span className="text-xs text-muted-foreground">
+                                            {[company.registrationNumber, company.address, company.industryDescription]
+                                                .filter(Boolean).join(' · ')}
+                                        </span>
+                                        <span className="text-xs text-muted-foreground/60 mt-0.5">{company.source}</span>
+                                    </button>
+                                ))}
+                            </div>
+                        )}
+                        {lookupOpen && !lookupLoading && lookupResults.length === 0 && (
+                            <p className="text-xs text-muted-foreground">
+                                {t('companyLookup.noResults')}
+                            </p>
+                        )}
+
+                        {Object.keys(autoFilledFields).length > 0 && (
+                            <div className="text-xs text-amber-500 flex items-center gap-1.5 pt-1">
+                                <CheckCircle2 className="w-3.5 h-3.5 shrink-0" />
+                                {t('companyLookup.pendingFields', {
+                                    count: Object.values(autoFilledFields).filter(f => f.confirmedAt === null).length
+                                })}
+                            </div>
+                        )}
+                    </div>
+                    )}
 
                     <div className="border border-destructive/30 rounded-lg p-4 bg-destructive/5">
                         <div className="flex items-start gap-4">

@@ -1,3 +1,38 @@
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+DESIGN
+https://www.midjourney.com/@370ecd07-f237-499b-a7ef-ef06b4775c52?tab=archive
+
+https://community.vercel.com/guidelines
+
+https://better-auth.com/docs/adapters/mssql
+
+https://grok.com/imagine
+
+https://claude.ai/
+
+https://ghostty.org/
+
+https://app.localstack.cloud/pricing/trial-expired
+
+https://community.vercel.com/categories
+
+─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+LINKS:
+To Do doc:
+https://docs.proton.me/doc?mode=open&volumeId=b-I71vTKWAyInrrIKB2p5fr44t9sTpUH5TOaeLnoGYWc_YP8XzB0QcKfrcy-VkDB1qWJZxgScCgLxXWVdFU50g%3D%3D&linkId=vSZLftHFfe6wy3WHaQ08C7OLpSQal39IapEQvStt6QpxcwU5dQIcalO17pQ73mPE3ZYdShLsjZp7M0U57ywtuw%3D%3D
+
+Current Risc Evaluation model:
+https://docs.proton.me/sheet?mode=open-url&token=2S5VN0FNX4&linkId=s41KQV2tT7Qmu7I9ITgHm19AKkLKoMXvGBbv144Y0fC4NBErz2BwXjwZ9aIvzRqrl9W-HngdQxHhaJdwcgh4aA%3D%3D#RnAxbO5VmfGn
+
+Meeting room:
+https://meet.jit.si/ComplianceCircle8800
+
+Zoom:
+https://zoom.us/j/91667468629?pwd=T2hGQVloWExQcDFBVEZYNEEvUjRWQT09
+
+
+--------
+
 ── Partially Done ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
 * Tech Stack (React, Nextjs, Tailwind, Prisma, Postgres, Git)
@@ -136,9 +171,10 @@
 ── Small Fixes / Errors ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
   ── To Do:
-  * ARTIFACT: Move delete button from master table to action tab in detail pane (too dangerous to have it in the master table).
   * Clean up colour schemas (globals.css)
   * Restyle Login
+  * Make work on smaller devices
+
 
   ── Fixed:
   * New Profile button on Profile page is not "default" style
@@ -163,6 +199,748 @@
   * Incomming files page: Currently it only looks for uploaded files on the server directory, I need to also look for files on Amazon S3. Can you create an Amazon S3 login and the S3 instance, and the code here to access it.
 
 ────────────────────
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+
+1) Can you remove the black background to the input fields, so it has the same look as the GAP page. 
+2) Also the same width.
+The GAP page defines the width with this I think:
+<div class="max-w-4xl mx-auto"><div class="space-y-6">
+
+3) All the input fields, drop downs etc. should be of the same width
+4) The exit button should be variant="secondary"
+
+The background is still black (attached image)
+The previous / next buttons should also be 
+
+In case some of the information has already been given, the inputs should be prefilled with this.
+
+
+1) The background is still black. It is set on the "bg-card border rounded-lg p-6 space-y-6" element with this css:
+.bg-card {
+    background-color: var(--card);
+}
+
+2) Data is still not being prefilled (attached image)
+
+
+1) Data is still not being prefilled
+
+2) Can we put "Ownership Type" on the same page as "Legal Form"
+and "Annual Revenue" on the same page as "Organization Maturity"
+
+Can you create a new sidemenu Menu called Workflow, above the the Reports. It should have a submenu called: Customer Onboarding 
+
+Looking in the browser DOM structure, I think the background color is set with:
+.gantt-wrapper .wx-row:hover, .gantt-wrapper [class*="wx-row"]:hover, .gantt-wrapper .wx-reorder-task:hover, .gantt-wrapper [data-id]:hover
+background-color: 80808026 !important
+
+
+
+GAP: Priotizxering
+Road Map
+
+
+
+
+
+
+Same answers and design.
+
+The results o 
+
+
+
+RISC: Score not inactive
+
+CMMI (config) => Gap score => Versionering
+Expected Evidence (config)
+Upload Evidence (config)
+Profile (config)
+
+
+
+Page CIS Risc Analysis:
+  The report 
+
+1) Onboarding. Inset 3rd party onboarding
+
+CIS Risc Analysis => Structural Risc Profile
+
+
+2)  Structural Financial Risc Assesment (CONC without GAP)
+
+3) CEA
+
+
+
+
+
+
+
+
+
+-----------------
+-----------------
+-----------------
+-----------------
+HERETO
+
+Rememebr ADD conc parameters to step 1 (if not already there) e.g. business days, ..
+
+1. Onboaring
+2- Risk profile => Structural Risc Profile
+3 Strunctual financial exposure (pre-GAP-CONC)
+
+Third Party Risk Exposure => Customer Exposure Assesment (CEA) 
+4    CEA Input
+5    CEA Report
+6. Define GAP analysis
+7 GAP
+8 CONC
+
+-----------------
+-----------------
+-----------------
+-----------------
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Thursday 12 Mar
+
+* Workflow, Edit Organization Profile:
+    1) Fixed EU Taxonomy Alignment.
+* Workflow, GAP:
+    1) Put "Finalize" as a separate item on the index menu.
+* Workflow, CONC
+    1) Created CONC.
+    2) First attempt at populating the three first numbers of CONC.
+            Intermediate steps:
+
+            1) Get "ibm-industry" by mapping EU sector (table: organization.nace_section) to IBM nomenclature:
+                EU Sector                   Mapped IBM Industry
+                A – Agriculture             Industrial
+                B – Mining                  Industrial
+                C – Manufacturing           Industrial
+                D – Energy/Utilities        Energy
+                E – Water/Waste             Energy
+                F – Construction            Industrial
+                G – Wholesale/Retail        Retail
+                H – Transportation          Transportation
+                I – Hospitality             Hospitality
+                J – IT/Telecom              Technology
+                K – Financial Services      Financial
+                L – Real Estate             Services
+                M – Professional Services   Services
+                N – Administrative Services Services
+                O – Public Administration   Public
+                P – Education               Education
+                Q – Healthcare              Healthcare
+                R – Entertainment           Entertainment
+                S – Other Services          Services
+
+            2) "Daily Revenue" = Annual Revenue (table: organization.revenue_range) / Business days per year (table: organization.business_days_per_year)
+                Annual Revenue is in a range. 
+                    < euro 2M
+                    2-10
+                    20-50
+                    50-250
+                    250-1bil
+                    > 1bil
+
+                Take the midpoint in the range. For > 1bil, take 1bil
+
+            3) "IT dependency level" = SUM(organization.manual_operation, organization.production_dependency, organization.customer_access)
+
+            4) IT factor = 
+                if "IT dependency level" <= 1 -> 0.30 (Low)
+                if "IT dependency level" <= 3 -> 0.60 (Medium)
+                if "IT dependency level" > 3 -> 0.90 (High)
+
+            5) "Sector Factor" = 
+                (IBM Industry   -> value)
+                Healthcare      ->  1.1
+                Financial       ->  1.01842105263158
+                Industrial      ->  0.993859649122807
+                Energy          ->  0.98640350877193
+                Technology      ->  0.984649122807018
+                Pharmaceuticals ->  0.976754385964912
+                Services        ->  0.974561403508772
+                Entertainment   ->  0.968859649122807
+                Media           ->  0.959649122807018
+                Hospitality     ->  0.951315789473684
+                Transportation  ->  0.949122807017544
+                Education       ->  0.941228070175439
+                Research        ->  0.940789473684211
+                Communications  ->  0.939035087719298
+                Consumer        ->  0.937719298245614
+                Retail          ->  0.929824561403509
+                Public          ->  0.9
+
+            6) "Adjusted Daily Loss" = "Daily revenue" * "IT factor" * "sector factor"
+
+            7) "Downtime GAP score" = 
+                    ((AVERAGE(
+                        Daily Backups
+                        Offsite / Immutable Backups
+                        Restore Testing
+                        Incident Response Plan
+                        Defined Roles
+                        Incident Exercises
+                        Infrastructure Resilience
+                        Monitoring
+                    ) - 1)/4)*100
+
+                    These maps to:
+                    ┌─────────────────────────────┬────────────────────────────────────────────────────────────────────────────────────────┐
+                    │            Item             │                                     CIS Safeguard                                      │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Daily Backups               │ 11.2 — Perform Automated Backups                                                       │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Offsite / Immutable Backups │ 11.4 — Establish and Maintain an Isolated Instance of Recovery Data                    │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Restore Testing             │ 11.5 — Test Data Recovery                                                              │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Incident Response Plan      │ 17.2 — Establish and Maintain Incident Response Process                                │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Defined Roles               │ 17.1 — Designate Personnel to Manage Incident Handling                                 │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Incident Exercises          │ 17.5 — Test Incident Response                                                          │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Infrastructure Resilience   │ 11.1 — Establish and Maintain a Data Recovery Process (closest match under Control 11) │
+                    ├─────────────────────────────┼────────────────────────────────────────────────────────────────────────────────────────┤
+                    │ Monitoring                  │ 8.11 — Conduct Audit Log Reviews (or 8.2 Collect Audit Logs, depending on scope)       │
+                    └─────────────────────────────┴────────────────────────────────────────────────────────────────────────────────────────┘
+
+            8) "Downtime Days" =
+                if "Downtime GAP score" = 80 => 0.5 (High resilience)
+                if "Downtime GAP score" = 65 => 1.0 (Medium resilience)
+                if "Downtime GAP score" = 45 => 2.0 (Low resilience)
+                if "Downtime GAP score" = 9 => 3.0 (Very low resilience)
+
+            9) Finally =>
+                "Downtime cost (mid)" = "Adjusted Daily Loss" * "Downtime Days"
+                "Downtime cost (low)" = "Downtime cost (mid)" * 0.7
+                "Downtime cost (high)" = "Downtime cost (high)" * 1.3
+
+            10) If any value in the intermediate step is missing, list missing values, instead.
+
+            11) Summary / Calculation logic:
+                  1. NACE section → IBM industry → sector factor
+                  2. Revenue range → annual revenue midpoint ÷ business days = daily revenue
+                  3. manualOperation + productionDependency + customerAccess → IT dependency level → IT factor (0.30 / 0.60 / 0.90)
+                  4. Adjusted daily loss = daily revenue × IT factor × sector factor
+                  5. Downtime GAP score = ((avg currentCmmi of 8 safeguards − 1) / 4) × 100 → downtime days (0.5 / 1.0 / 2.0 / 3.0)
+                  6. Mid = adjusted daily loss × downtime days; Low = mid × 0.7; High = mid × 1.3
+    3) Redesigned CONC page:
+        A) Results in a table.
+        B) Make results unediable, human readable.
+        C) Added currency to results.
+* Database:
+    1) New table: currency. Filled out with all currencies under ISO 4217.
+
+
+On the CONC page:
+1) Create a table for the results on the CONC page, 
+2) The three downtime costs: make not editable, make numbers human readable. 
+
+
+Add column to organization_settings: currency_id FK to table currency, set default to USD
+On the CONC page:
+Add currency synbols from the table currency over the table organisation_settings to the three downtime costs.
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Tuesday 10 Mar
+* Workflow & Cis Controls:
+    1) Rename "Risk profile" => "Structural Risc Profile".
+* Workflow
+    1) Rename "Third Party Risk Exposure" => "Customer Exposure Assesment (CEA)"
+    2) Reorganized and added steps (but now it is very long!):
+        1) Organization Profile
+        2) Structural Risc Profile
+        3) Strunctual financial exposure (pre-GAP-CONC)         <= NEW
+        4) Customer Exposure Assesment (CEA) preparation
+        5) CEA Report                                           <= NEW
+        6) Define GAP analysis                                  <= NEW
+        7) GAP
+        8) CONC                                                 <= NEW
+* Database:
+    1) Added columns to table: organization
+        A) Business Days per Year
+        B) Revenue Concentration
+        C) Entity Type
+* Organization page:
+    1) Business Days per Year added to the tab "Profile"
+    2) Revenue Concentration added to the tab "Profile"
+    3) Entity Type added to the tab "Sector"
+* Workflow -> customer onboarding -> Organization Profile:
+    1) Business Days per Year added to the "Geography & Revenue" slide.
+    2) Revenue Concentration added to the "Geography & Revenue" slide.
+    3) Entity Type added to the "Sector & Regulatory" slide.
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Saturday 07 Mar
+
+* Organized Organization data into groups (updated Proton sheet):
+    -> Company Identity & Structure
+    -> Sector & Regulatory Context
+    -> Financial Structure
+    -> Security & Control Environment
+    -> Supply Chain Position
+    -> Market & Exposure Profile
+    -> Sector & Regulatory Context
+    -> IT & Operational Dependency
+    -> Supply Chain Position
+    -> Business Continuity
+
+    -> Company Identity & Structure:
+        1 Organization Size
+        2 Organization Maturity
+        3 Ownership Type
+        4 Geographic Scope
+
+    -> Sector & Regulatory Context
+        1 Industry Sector (NACE)
+        2 Regulatory Obligations
+
+    -> Company Identity & Structure
+        1 Legal Form
+
+    -> Financial Structure
+        1 Annual Revenue
+        2 Business Orientation
+
+    -> Security & Control Environment
+        1 Digital Maturity
+        2 ESG Reporting Status
+        3 IT & Security Staffing
+        4 Security Maturity Level
+        5 Data Sensitivity Profile
+        6 IT Endpoints
+        7 Infrastructure Types
+        8 Software Development
+        9 Security Budget
+
+    -> Supply Chain Position
+        1 Supply Chain Role
+        2 Supply Chain Position
+
+    -> Market & Exposure Profile
+        1 Risk Profile
+        2 Public-Facing Services
+        3 Targeted Attack Likelihood
+
+    -> Sector & Regulatory Context
+        1 EU Taxonomy Alignment
+
+    -> IT & Operational Dependency:
+        1 Downtime Tolerance
+
+    -> Business Continuity
+        1 Manual Operation
+        2 Production Dependency
+        3 Customer Access.
+
+* Organization Page
+    1) Reorganized the information tabs: Taxonomy & Classification => 
+        A) Organization & Business Profile => Tab-name too long, reduce to: Profile
+        B) Sector, Regulatory & Taxonomy =>  Tab-name too long, reduce to: Sector
+        C) Operations, Security & Resilience =>  Tab-name too long, reduce to: Operations
+    2) Reorganized the Onboarding wizard after the same principles.
+    3) Added counter to 3rd Party tab header.
+    4) Restyled 3rd Party detail view.
+* Workflow
+    1) Reorganized the Customer Onboarding workflow after the same principles.
+    2) Added Third Party Onboadring workflow.
+* Agents
+    1) Automatically gather organization data from public sources and prefill forms.
+        -> Sources:
+            Denmark: 
+                1) CVR API (api.virk.dk or cvrapi.dk)
+                    * name, legalForm, NACE code, employee interval, address, status
+                    * Access Time: Immediate
+            Norway:
+                1) Brreg API (data.brreg.no)
+                    * name, organisasjonsform (→ legalForm), NACE, address
+                    * Access Time: Immediate
+            UK:
+                1) Companies House
+                    * Access Time: 1–2 days (free API key signup)
+            Global:
+                1) OpenCorporates — Free tier for public benefit / low-volume; excellent for EU/global registry basics (legal form, status, officers, filings, sometimes NACE/industry)
+                    * Access Time: 1-2 days (free tier key)
+                    * Price: lowest tier: £225 per month (https://opencorporates.com/pricing/)
+                2) HitHorizons / CompanyData.com
+                    * Access Time: ~1 week (contact form → trial key)
+                3) Coresignal / Global Database / CompanyData.com — Modern APIs pulling fresh public web + registry data (revenue, size, industry)
+                    * Access Time: 1–2 weeks (contact sales → onboarding)
+                4) Moody's Orbis / Bureau van Dijk — Gold standard for EU/deep financials, NACE, ownership, revenue (commercial, but widely used in risk apps)
+        -> Flag information which has been automatically gathered untill confirmed. In database and in forms.
+    2) Contacted Erhvervstyrelsen (https://datacvr.virk.dk/artikel/system-til-system-adgang-til-cvr-data) for access to API for CVR-data / waiting for answer.
+* Organization Page:
+    1) Added Look-Up in Onboarding Wizard + under action tab.
+
+
+
+Workflow: Customer onboarding:
+1) Can you create a new block. Between Organization Profile & CIS Risc Analysis. Should be called: Third Party Risc Exposure
+2) The first page of the Third Party Risc Exposure workflow should show currently created third party organisations. Not in a ususal table.
+More like a block for each organisation. Much like the block for each step in the first page of the workflow.
+There should also be a button to create new Third Party => popup.
+3) Rename "CIS Risc Analysis" to "Risc Profile"
+
+
+1) There shouldn't be a timeline (1, 2) and no text: "IT:LOW". The should be a button in the block: "onboard"
+2) After having selected (clicked onboard) / created new third party organisation, then the following pages should be for inputting the information. The layout should be very similar to the onboarding organisation workflow. Same information as on the Organisation/3rd party tab/detail pane. About 3 inputs per page. With an index to the right side of the page.
+
+The blocks should not fill the whole width. Should have a maximum width, but otherwise all be the same width & height. If there is space for more than one block, put more than one on the same line.
+
+
+
+
+
+
+
+Organization Page:
+Can you add a counter to the Third Party tab to show how many third parties have been defined.
+
+
+Does S&P Global have an API which can be used? (https://www.spglobal.com/)
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Friday 06 Mar
+* Organization page:
+    1) New tab: "Third Party"
+    2) Table of existing 3rd Party organizations
+    3) Create new 3rd Party button & popup + functionality
+    4) 3rd Party detail pane + database functionality fo:
+        -- Regulatory Framework: Multiple choice: 1) NIS2 Essential; 2) NIS2 Important; 3) Financial; 4) Health; 5) Public; 6) Listed; 7) Enterprise; 8) Datacenter; 9) SaaS: 10) Non-reg SME
+        -- Customer Sector: A list, not sure what yet
+        -- Dedicated compliance/security function? : Boolean / Use Slider
+        -- Part of group? : Boolean Yes/No, Use Slider
+        -- Listed or PE-owned? : Boolean Yes/No, Use Slider
+        -- Standard contract? : Boolean Yes/No, Use Slider
+        -- SLA included? : Boolean Yes/No, Use Slider
+        -- Professional procurement? : Boolean Yes/No, Use Slider
+        -- Delivers to regulated sectors?: A) Yes, B) Partly, C) No
+        -- Delivers to public/critical infra? : Boolean Yes/No, Use Slider
+        -- International operations? : Boolean Yes/No, Use Slider
+        -- Core business digitally driven?: A) Yes, B) Partly, C) No
+        -- IT dependency level: A) Low, B) Moderate, C) High
+        -- Public visible brand? : Boolean Yes/No, Use Slider
+        -- Critical societal role? : Boolean Yes/No, Use Slider
+        -- Media exposure? : Boolean Yes/No, Use Slider
+        -- Delivery role: 1) Advisory; 2) Software; 3) Hosting; 4) Managed IT; 5) Operate critical system; 6) Subsupplier
+        -- Access level: 1) None; 2) Read-only; 3) Remote; 4) Privileged; 5) Full control
+        -- Data handled: 1) None; 2) Personal; 3) Sensitive; 4) Business-critical; 5) Societal-critical
+        -- 48h disruption impact: 1) None; 2) Temporary; 3) Operational disruption; 4) Production stop; 5) Societal critical
+        -- Supply chain role: 1) Direct; 2)  Subsupplier; 3) Critical subsupplier; 4) Integrated
+1) On the tab should be a table of companies (3rd party companies) which are customers of the selected company. Table should have name, description, trash icon. Trash icon => delete, ask permissions
+2) A button to add 3rd Party => pop up window, to create new 3rd party
+3) Clicking on a 3rd pary in the table, should show detail pane.
+4) The detail pane has the ability to set information for the following fields:
+
+-- Regulatory Framework: Multiple choice: 1) NIS2 Essential; 2) NIS2 Important; 3) Financial; 4) Health; 5) Public; 6) Listed; 7) Enterprise; 8) Datacenter; 9) SaaS: 10) Non-reg SME
+-- Customer Sector: A list, not sure what yet
+-- Dedicated compliance/security function? : Boolean / Use Slider
+-- Part of group? : Boolean Yes/No, Use Slider
+-- Listed or PE-owned? : Boolean Yes/No, Use Slider
+-- Standard contract? : Boolean Yes/No, Use Slider
+-- SLA included? : Boolean Yes/No, Use Slider
+-- Professional procurement? : Boolean Yes/No, Use Slider
+-- Delivers to regulated sectors?: A) Yes, B) Partly, C) No
+-- Delivers to public/critical infra? : Boolean Yes/No, Use Slider
+-- International operations? : Boolean Yes/No, Use Slider
+-- Core business digitally driven?: A) Yes, B) Partly, C) No
+-- IT dependency level: A) Low, B) Moderate, C) High
+-- Public visible brand? : Boolean Yes/No, Use Slider
+-- Critical societal role? : Boolean Yes/No, Use Slider
+-- Media exposure? : Boolean Yes/No, Use Slider
+-- Delivery role: 1) Advisory; 2) Software; 3) Hosting; 4) Managed IT; 5) Operate critical system; 6) Subsupplier
+-- Access level: 1) None; 2) Read-only; 3) Remote; 4) Privileged; 5) Full control
+-- Data handled: 1) None; 2) Personal; 3) Sensitive; 4) Business-critical; 5) Societal-critical
+-- 48h disruption impact: 1) None; 2) Temporary; 3) Operational disruption; 4) Production stop; 5) Societal critical
+-- Supply chain role: 1) Direct; 2)  Subsupplier; 3) Critical subsupplier; 4) Integrated
+* Database
+    1) 
+New table: organization_third_party
+-- FK: organization_id
+-- Regulatory Framework
+-- Customer Sector
+-- Dedicated compliance/security function?
+-- Part of group?
+-- Listed or PE-owned?
+-- Standard contract?
+-- SLA included?
+-- Professional procurement?
+-- Delivers to regulated sectors?
+-- Delivers to public/critical infra?
+-- International operations?
+-- Core business digitally driven?
+-- IT dependency level
+-- Public visible brand?
+-- Critical societal role?
+-- Media exposure?
+-- Delivery role
+-- Access level
+-- Data handled
+-- 48h disruption impact
+-- Supply chain role
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Thursday 05 Mar
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Wednesday 04 Mar
+
+* CES report Page:
+    1) Created
+    2) Table for existing 3rd party customers.
+    3) Add new 3rd customer
+    4) Add information to 3rd customer using a wizard
+    5) Button for generating CES report.
+    6) Tweaked table. Removed all unnessary data.
+    7) Moved report to separate page.
+    8) Download options for PDF, Word.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Tuesday 03 Mar
+* Organization Page:
+    1) Added "Manual Operation", "Production Dependency", and "Customer Access" to the Organization page (Classification Tab), and to the database.
+    2) Added the three new Organization classification options to the Organization Wizard, and to the Workflow Organization Onboard. 
+    3) Extended the CIS Risc Analysis with the three parametres.
+* Sidemenu/Reports Submenu:
+    1) Changed "CONQ" to "CONC"
+    2) Added "CES"
+* CIS Risc Analysis Page:
+    1 New button "Summary & recommendation" => direct to CIS Risc Analysis Summary
+    2) "Back to controls" => button secondary
+    3) Wrapped "Summary & Recommendations" and "implement" in a frame, and moved down below current button row. "Summary & Recommendations" => "Summary"
+* CIS Risc Analysis Summary:
+    1) New report, with four sections:
+        1A) "Structural Exposure Indicators"
+            Table with five rows:
+                1) IT Dependency High
+                2) Regulatory Pressure Elevated
+                3) Customer Criticality High
+                4) Downtime Sensitivity
+                5) Threat Targeting
+            Each row given an assesment: low -> moderate -> elevated -> high -> severe
+        2A) "Structural Risk Interpretation"
+            General description of the organization based on the organization data under Detail, Taxonomy and classification
+        3A) "Expected Priority Control Domains"
+            Advice on the top concerns the organization should focus on first
+        4A) Next Step Consideration
+            Fixed text for now.
+    2) Functionality to export to PDF, JSON.
+    3) Changed colours for the five assesment badges.
+        -> Low      : #335c8c
+        -> Moderate : #335c8c
+        -> Elevated : #25693e
+        -> High     : #ad423f
+        -> Severe   : #ad423f
+    4) Adapt/Save button to edit report
+    5) In adapt mode: each segment has a remove/restore icon + an edit icon.
+    6) Clicking on edit icon, moved to edit mode where the segment can be manually changed.
+    7) Assessment buttons of equal size.
+    8) Adapt button to the left of the export buttons.
+    9) Changed colours of Edit/Save Changes icons + changed background colours.
+    10) Cursor=hover on minus/plus signs.
+    11) Added support for export to Word/DOCX.
+    12) Export buttons changed to a single button/drop down.
+    13) "Back to CIS Risk Analysis" => button secondary
+* Workflow -> Customer Onboarding -> Cis Analysis:
+    -> Duplicated changes made to CIS Risc Analysis Summary
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Monday 02 Mar
+
+* Workspace/Customer Onboarding:
+  1) Colours changed on the progress indicators and step icons.
+  2) Step icons changed.
+  3) Open steps, even if prior steps have not completed.
+  4) Add buton "Adapt" / "Save" to adapt workspace.
+  5) Add functionality to adapt workspace: Remove/Add steps. => Save in database.
+  6) Changed icons on Remove/Add step to animated icons.
+  7) Remove Step progress / completion functionality. It is not clear when a step has been completed.
+  8) Back to Workspace buttons on "Organization Profile", "CIS Risk Analysis", "GAP Report" changed from "previous" to "Workflow" + made button="secondary" + hover=pointer.
+  9) Make each step hoverable and clickable. Clicking on one makes it the active one + Clicking on the progress icon, makes the step active.
+  10) Removed Organization selector dropdowḿ; added Organization name to title line.
+* Workflow/Organization Profile:
+  1) New Page: Summary. With link back to workflow.
+  2) Page 14: next buttons continues to Summary Page.
+* External
+  1) Created Amazon AWS account to upload files to.
+      ** 1) Create S3 Bucket
+          -> Amazon AWS: cc-2@predictioninstitute.com / cc / Zx81sjdsy!!
+          -> Region: Europe (eu-north-1 / Stockholm)
+          -> Block all public access : keep enabled.
+          -> Bucket Versioning: Enabled (recommended for compliance)
+          -> Server-side encryption: Enable with SSE-S3 or SSE-KMS
+      ** 2) Configure CORS (for browser uploads) 
+          -> COORS permission:
+          [
+            {
+              "AllowedHeaders": ["*"],
+              "AllowedMethods": ["GET", "PUT", "POST"],
+              "AllowedOrigins": ["https://cc.predictioninstitute.com/", "http://localhost:3000"],
+              "ExposeHeaders": ["ETag"],
+              "MaxAgeSeconds": 3600
+            }
+          ]
+      ** 3) Create IAM User for Your Application
+          IAM → Users → Create user
+          compliance-circle-app (console access not enabled)
+          List : ListBucket
+          Read                   │ GetObject
+          Write                  │ PutObject, DeleteObject, AbortMultipartUpload
+          Permissions management │ None
+          Tagging                │ None
+
+          Resource Scope:
+            - Bucket: arn:aws:s3:::YOUR-BUCKET-NAME
+            - Object: arn:aws:s3:::YOUR-BUCKET-NAME/*
+
+      ** 4) Security credentials. New Access Keys: 
+          -> Application running outside AWS
+          -> Access Key: [REDACTED]
+          -> Secret access key: [REDACTED]
+          -> Console sign-in link: [REDACTED]
+* New Page: Upload Files
+  1) Upload files to Amazon AWS S3
+  2) Use Drag and Drop to select files.
+  3) Browse files button.
+* Incomming files page:
+  1) New column: source (local filesystem, S3)
+  2) Include files from S3 in the list.
+  3) Add sort functionality to source column.
+  4) Change table header "Modified" to "Date".
+  5) Sort table by date default.
+  6) Right align "Size" column header.
+  7) Right align "Date" column header.
+  8) Delete files from S3.
+  9) Remove S3 timestamp from files.
+  10) "Assign As Artifact" button changed to an and moved to the action column.
+  11) Fixed Assign As Artifact for S3 files (download first -> then assign).
+  12) Set cursor=pointer on hover over "Assign", "Delete" and star.
+  13) When assigning files to an asset, give an educated guess as to the type: PDF, EXCEL, IMAGE, etc.
+  14) Changed colours of Assign and Delete icons, as well as the date column + --foreground for hover over icons.
+* Organization, Profile, Tasks, Assets, Incomming files, messages - pages
+  -> Fixed a bug related to show only selected rows when all rows had been deselected.
+* Assets page:
+  1) Added column to table: Date = date of asset created + Sort functionality to column.
+  2) Default sort order: by date, most recent on top.
+* Side menu
+  -> Changed "Current Task" to not unfolded by default.
+* Workspace/Customer Onboarding:
+  1) The title page icon changed to a rocket.
+* General design
+  -> Changed background colour of primary (-> #4A5759)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Sunday 01 Mar
+
+* Sidemenu
+  1) Changed colour scheme to match rest of application (dark grey background).
+  2) Added muted-foreground border to right border.
+* Task Page/Gantt Chart:
+  1) Hover functionality/design on Tasks
+  2) Select functionality/design on Tasks (impossible!!)
+  3) Horizontal scroll, only on timeline. Tasks stay fixed.
+  4) Made the Table/Gantt view selection stable across page changes.
+  5) Added icons + cursor=pointer to Gantt headers. That can be used to sort.
+  6) Added star column from Gantt view.
+  7) Dragging the end-points of the horizontal bars will update the start/end dates. If the Save changes button is clicked.
+  8) Removed progress indicator from bars. We don't track progress.
+  9) Changed backgrou
+* Task Page:
+  1) Changed table header "Name" to "Task Name" to match the Gantt chart naming.
+* Organization Page, User page, Profile page, Task page, Asset page, Incomming file page:
+  -> Added extra layer of confirmation to delete actions (have to click checkbox + type in "delete")
+* Organization Page:
+  1) Created Onboarding flow.
+    -> Styled following the GAP page.
+    -> Exit button -> Secondary
+    -> All input fields of same width.
+    -> Background colour not black.
+    -> Prefill existing data.
+    -> Rearranged Ownership Type" with "Legal Form" & "Annual Revenue" with "Organization Maturity"
+    -> Fixed background colour.
+* Organization Page, Profile page, Task page, Asset page, Incomming file page, Messages page:
+  1) Icon button added to the select tasks action section: "hide others" => only display selected tasks. 
+* GAP report
+  1) Fixed background colour.
+* New Menu/Submenu: Workflows -> Customer Onboarding
+* Page Customer Onboarding:
+    1) Workflow Sandbox
+    2) Create Timeline steps:
+      a) Organization Wizard
+      b) CIS18 Risc Analysis
+      c) GAP report
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Saturday 28 Feb
+* External:
+  1) Created am Excel sheet documentating the CIS Risc Analysis basis (continued)
+* CIS Control:
+  1) Changed the "CIS Risc Analysis" button, and added a frame.
+  2) Wrapped the "Combined Groups" segment in a frame.
+  3) Wrapped the "Inactive" switch in a frame, and added a description.
+  4) Saved the state of the inactive switch, so it doesn't revert back to "no"
+  5) Safeguards on Inactive Controls are displayed in a muted colour.
+  6) Text "Risc Analysis Composition" changed to "Risc Analysis"
+* CIS Safeguard:
+  1 New Tab: Notes.
+    -> Display/Edit user notes regarding this Safeguard. Same notes will appear in the GAP report.
+* CIS Risc Analysis page:
+  1) Added "Back to controls" back arrow
+  2) Controls and Safeguards are no longer automatically set as inactive based on score.
+* New Page: Reports -> GAP (major)
+  -> Rightside index.
+  -> Control Slides.
+    --> Description of Control
+    --> List of all Safeguards. Set IG, Activation.
+    --> Notes area.
+  -> Safeguard Slide.
+    --> Description of Safeguard.
+    --> Description of Safeguard with regard to Implementation Group.
+    --> Change Implementation Group.
+    --> Notes are (same notes as on the CIS/Safeguard page).
+* Task Page:
+  1) New tabs & views: A) Table (current); B) Gantt
+  2) Gantt view based on SVAR React Gantt (major)
+    -> Used Tasks
+    -> Changes theme (dark/light) with CC theme changes.
+      --> Styled to match the Compliance Circle theme.
+* Page Organization:
+  1) New Organization automatically creates upload, download and Artifact directories, with unique naming convention based on ID.
+  2) Tab: "Settings" only visible for SUPER ADMINS + only SUPER ADMINS can update Organization settings. (upload/download/artifact directories)
+* GAP report:
+  1) Added input fields to Safeguards pages: "Current CMMI"
+  2) Added input fields to Safeguards pages: "Target CMMI"
+  3) Summary field: GAP Score.
+  4) Added Ending page, with Average GAP score and a finalize button. Finalize button saves CMMI values in the database in a version form, so a progress report can be made at a later time
+  5) CMMI selectors set to cursor = pointer on hover.
+  6) Cannot set a Target CMMI that is lower than the Current CMMI. If the Current CMMI is set to a value higher than the Target CMMI, Target CMMI is updated to the Current CMMI. 
+* External
+  1) Risc Analysis Sheet:
+    https://docs.proton.me/sheet?mode=open-url&token=2S5VN0FNX4&linkId=s41KQV2tT7Qmu7I9ITgHm19AKkLKoMXvGBbv144Y0fC4NBErz2BwXjwZ9aIvzRqrl9W-HngdQxHhaJdwcgh4aA%3D%3D#RnAxbO5VmfGn
+  2) To Do Doc:
+    https://docs.proton.me/doc?mode=open&volumeId=b-I71vTKWAyInrrIKB2p5fr44t9sTpUH5TOaeLnoGYWc_YP8XzB0QcKfrcy-VkDB1qWJZxgScCgLxXWVdFU50g%3D%3D&linkId=vSZLftHFfe6wy3WHaQ08C7OLpSQal39IapEQvStt6QpxcwU5dQIcalO17pQ73mPE3ZYdShLsjZp7M0U57ywtuw%3D%3D
+  3) Online meeting room:
+    https://meet.jit.si/ComplianceCircle8800
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Friday 27 Feb
@@ -222,25 +1000,8 @@ CIS Risc Analysis page
       * Score < 30 → automatically mark as inactive;                                                                                                                   
       * Score < 50 → suggest as inactive (but not forced)
       * Score ≥ 50 → active
-
-
-
-
-
-To Do:
-Message page:
-  Some changes that resemble those we just did on the Profile, Task & Safeguard pages.
-    1) New leftmost column: checkbox to select
-    2) New rightmost column: stars. Make the starred permanent, like on the Profile, Task, pages,
-    3) Header row over new ckeckbox column, a checkbox to select all and a dropdown menu to 1) select all, 2) select starred
-    4) Remove ID column
-    5) Enable sorting of columns.
-
-    4) If one or more users have been selected, show action bar below table:
-      Display something like: "Selected 2 of 28 users" And action icons: 
-      Icon (lucide-react: Trash2) delete all selected users => confirm modal, have to check box, and write "delete" in an input box, in their selected langguage to delete them.
-
-Audit Trail Page: Enable sorting on columns Date, User, Importance, Message, Enity, Stars
+* External:
+  1) Created am Excel sheet documentating the CIS Risc Analysis basis.
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Thursday 26 Feb
@@ -414,17 +1175,6 @@ Audit Trail Page: Enable sorting on columns Date, User, Importance, Message, Eni
 * Sidemenu : Change theme not just on the sun/moon icon. Also the Theme menu text.
 * Sidemenu : Profile Settings / Account : "Enable Two-Factor Authentication" -> <Button variant="defaut" + button text non selectable.
 
-
-
-
-Do the same with the icon under Learn More -> Blog. Use this icon (https://animate-ui.com/docs/icons?search=link&icon=square-arrow-out-up-right) I already installed it with npx shadcn@latest add @animate-ui/icons-square-arrow-out-up-right
-
-
-General Sidemenu is black, rest is dark grey. This is not the same as grok, www.better-auth.com
-But dark grey is the color used by claude
-
-
-
 ── Tuesday 24 Feb
 * Page Assets: New Tab: Action. Delete Asset moved from master table to Action tab.
 * Remember selected organization between refresh
@@ -473,21 +1223,6 @@ But dark grey is the color used by claude
   -> Use Social Media login. Microsoft Azure & Google.
   -> Added 2FA functionality. Optional, per user.
 
-
-
-Find products made in Cambodia or Laos, for a website selling products made locally in Cambodia and Laos. I'll the products, and contact information to the company making them.
-
-It could be Kampot Pebber or Mondulkiri Coffee, silk, etc.
-
-
-
-products made locally in Cambodia and Laos
-
-, producers, sellers.
-
-
-
-
 ── Monday 23 Feb
 💀 (27 Feb/5PM)
 💀 Max Plan
@@ -500,81 +1235,6 @@ products made locally in Cambodia and Laos
 * Page Dashboard. Max length on tables + pagination + search/filter
 * Sidebar collapse functionality was a mess. 1) Fixed header/logo; 2) fixed organization logo/drop down; 3) fixed task menuss; 4) fixed bottom menu pop-up.
 * Dashboard Page: new table Audit Trail.
-
----
-
-Here is a list of task I'd like done. Please complete di everything nessecary without stopping for confirmation.
-
-* All on the Page CIS18/Controls
-    1) Some space between Risk Score legends and Show Inactive.
-    2) A short confirm modal popup to accept rendering a segment inactive.
-    3) It is currenty only possible to combine segments into a single group. Must be able to have multiple groups. 
-    4) Groups should be able to be labeled with a name. And each group should have their own colors in the outer ring.
-    5) Group labels & combination/uncombintion buttons to be displayed on the legends side, below Risk Score. 
-
-    . 
-    * Segments in same group given colours in the outer ring. Inactive supersedes groups.
-
-
-
-
-
-Jeg skrev en kommentar til hver link, for netop at beskrive hvad der dokumenteres.
-
-1+2) "Her fra USA: republikanske vælgere og regioner (stater, byer, counties, etc.) med republikansk flertal får flere børn end demokratiske vælgere og regioner med demokratisk flertal."
-
-& 3) "Generelt vægter republikanske vælgere bare familie (ægteskab, børn) meget højere end demokratiske vælgere. Så det er ganske naturligt det bliver afspejlet i flere børn."
-
-Det er i det hele taget trivielt at lave en opgørelse over hvor start lagde deres stemme og fødselsraten i starterne.
-
-Spørgsmålet er måske mere hvad der er den underliggende faktor der bestemmer dette udfald. Måske republikanere bare værdsætter familie og børn højere. Kan også være at demokrater er mere urbane, og byer har lavere fødselsrate end forstæder og landområder.
-
-
-Vi ved fra andre kilder at republikanske vælgere generelt er mere konservative og mere religiøse.
-
-
-Det er en selv-rapportering.
-
-Også en udvikling der ses i Europa:
-
-
-
-
-
-
-
-
-
-
-
-
-AI slop her og AI slop der. Som du kan se er det mest fra kilder som:
-
-Family Studies,
-CDC Wonder (officielle US statestikker), Bureau of Labor Statiscs, US Census, og andre officielle amerikansk statestikbanker.
-Center for Disease Control and Prevention
-National Center for Health Statistics
-Statista
-Financial Times
-National Survey of Family Growth
-
-- det er ikke svært at finde, hvis du gider bruge 2 sek. Hvilke du nok ikke gider, siden du ikke har posted en eneste kilde selv.
-
-
-[url=https://elementalenergy.substack.com/p/world-first-thorium-molten-salt-reactor]World First: Thorium Molten Salt Reactor in China confirmed[/url]
-
-Påstanden om Molten Salt Nuclear Reactor er fra Financial Times (How China wants to create a 'Polar Silk Road' through the Arctic). Det er kun rygter, af hvilke grund jeg skriver "angiveligt"
-
-
-https://zoom.us/j/91667468629?pwd=T2hGQVloWExQcDFBVEZYNEEvUjRWQT09
-
-Sydkorea (Korea Atomic Energy Research Institute (KAERI) og Samsung Heavy Industries) siger også (i 2025) de har et design på en 174,000m³ LNG drevet af en lille modular molten salt reactor. [url=https://www.imarine.cn/199460.html]The world's first nuclear-powered LNG carrier has received certification (Mandarin)[/url]. Omend det vil tage nogle år at få den færdig.
-
-Der er i øvrigt et dansk firma der arbejder på det: [url=https://www.copenhagenatomics.com/]Copenhagen Atomics[/url]. De har dog vist aldrig produceret noget.
-
-
-Du har et link til en pay site, som du sender uden kommentar. 
-
 
 ── Sunday 22 Feb
 💀 (12PM)
@@ -766,115 +1426,3 @@ Du har et link til en pay site, som du sender uden kommentar.
     --> Page: Tasks
   -> Better Status Badge colours/design.
   -> Sidebar restyle
-
-
-
-
-
-
-
-
-----------
-The Events table should also have an "importance" column, with values: LOW, MIDDLE, HIGH. Which should also be included in the Audit Trail table.
-
-
-------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-Page Task: The Artifact tab. There should be a button to add an artifact to the task. This should open a pop-up. similar to the one of the Artifact page under Task/Add to Task.
-A Search field, and a list of current tasks to select from.
-
-Page Profile: The events generated when making changes to a task, should be connected to the task, not the profile
-
-Page Organization: The events generated when making changes to a task, should be connected to the task, not the organization
-
-Page Organization: The events generated when making changes to a profile, should be connected to the profile, not the organization
-
-
-Page Organization: I get this error when trying to add a task
-Runtime TypeError
-
-
-
-Cannot read properties of undefined (reading 'id')
-src/app/(authorized)/organization/page.tsx (2059:99) @ <unknown>
-
-
-  2057 |                                         onClick={() => handleTaskRowClick(task)}
-  2058 |                                     >
-> 2059 |                                         <TableCell className="w-20 text-right tabular-nums">{task.id}</TableCell>
-       |                                                                                                   ^
-  2060 |                                         <TableCell>{task.name}</TableCell>
-  2061 |                                         <TableCell>{task.description || '-'}</TableCell>
-  2062 |                                         <TableCell className="w-32">
-
-
-* Page Artifact : When creating a new Artifact, it should create an Audit Event with LOW importance.
-
-* Page Audit Trail: the table is too wide. It exceeds the screen's width. Possible because the message column and entity columns have no width restrictions.
-
-* Page Incomming Files. The table needs pagination. Maximum 10 rows per page.
-
-* Create three new pages: 1) About Compliance Circle; 2) Privacy Policy; 3) Terms of Service
-
-Create content for Privacy Policy and Terms of Service
-
-The company is Compliace Circle
-Based in and under legislatio nof Denmark, EU
-The business is in compliance.
-
-
---- 
-
-
-* The Sidebar Menu is no longer being minimzed correctly. When minimized the Compliance Circle logo on the top should be displayed.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
------------------
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
-
--------
-
-

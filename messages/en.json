@@ -746,7 +746,7 @@
       "digitalMaturity": "Digital Maturity",
       "esgStatus": "ESG Reporting Status",
       "supplyChainRole": "Supply Chain Role",
-      "riskProfile": "Risk Profile",
+      "riskProfile": "Structural Risc Profile",
       "euTaxonomyAligned": "EU Taxonomy Alignment",
       "itSecuritySection": "IT & Security Classification",
       "itSecurityStaff": "IT & Security Staffing",
@@ -761,10 +761,20 @@
       "downtimeTolerance": "Downtime Tolerance",
       "supplyChainPosition": "Supply Chain Position",
       "securityBudgetRange": "Security Budget",
+      "companyIdentitySection": "Company Identity & Structure",
+      "financialStructureSection": "Financial Structure",
+      "marketExposureSection": "Market & Exposure Profile",
+      "sectorRegulatorySection": "Sector & Regulatory Context",
+      "securityControlSection": "Security & Control Environment",
+      "itOperationalDependencySection": "IT & Operational Dependency",
+      "supplyChainSection": "Supply Chain Position",
       "businessContinuitySection": "Business Continuity",
       "manualOperation": "Manual Operation",
       "productionDependency": "Production Dependency",
-      "customerAccess": "Customer Access"
+      "customerAccess": "Customer Access",
+      "businessDaysPerYear": "Business Days per Year",
+      "revenueConcentration": "Revenue Concentration",
+      "entityType": "Entity Type"
     },
     "sizes": {
       "micro": "Micro (0-9 employees)",
@@ -797,7 +807,7 @@
       "selectDigitalMaturity": "Select digital maturity",
       "selectEsgStatus": "Select ESG status",
       "selectSupplyChainRole": "Select supply chain role",
-      "selectRiskProfile": "Select risk profile",
+      "selectRiskProfile": "Select structural risc profile",
       "selectEuTaxonomyAligned": "Select EU taxonomy alignment",
       "selectItSecurityStaff": "Select IT & security staffing level",
       "selectSecurityMaturity": "Select security maturity level",
@@ -810,12 +820,20 @@
       "selectSecurityBudgetRange": "Select security budget range",
       "selectManualOperation": "Select manual operation capability",
       "selectProductionDependency": "Select production dependency level",
-      "selectCustomerAccess": "Select customer access requirement"
+      "selectCustomerAccess": "Select customer access requirement",
+      "enterBusinessDaysPerYear": "e.g. 220",
+      "selectRevenueConcentration": "Select revenue concentration",
+      "selectEntityType": "Select entity type"
     },
     "tabs": {
       "details": "Details",
-      "taxonomy": "Taxonomy",
-      "classification": "Classification",
+      "orgProfile": "Organization & Business Profile",
+      "orgProfileShort": "Profile",
+      "sectorRegulatory": "Sector, Regulatory & Taxonomy",
+      "sectorRegulatoryShort": "Sector",
+      "opsSecurity": "Operations, Security & Resilience",
+      "opsSecurityShort": "Operations",
+      "thirdParty": "Third Party ({count})",
       "settings": "Settings",
       "profiles": "Profiles ({count})",
       "tasks": "Tasks ({count})",
@@ -830,7 +848,8 @@
       "noAvailableProfiles": "No available profiles found",
       "noAvailableTasks": "No available tasks found",
       "noEvents": "No events for this organization",
-      "noSettings": "No settings configured for this organization yet. Enter the directory paths above and save."
+      "noSettings": "No settings configured for this organization yet. Enter the directory paths above and save.",
+      "noThirdParties": "No third-party companies configured for this organization yet."
     },
     "pagination": {
       "showingOrganizations": "Showing {start} to {end} of {total} organizations",
@@ -993,6 +1012,15 @@
       "low": "Low risk",
       "medium": "Medium risk",
       "high": "High risk"
+    },
+    "revenueConcentration": {
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "entityType": {
+      "important": "Important",
+      "essential": "Essential"
     },
     "euTaxonomy": {
       "yes": "Yes - Aligned",
@@ -1186,6 +1214,18 @@
       "partial": "Partial - Some functions depend on customer access",
       "essential": "Yes - Customer access is essential for revenue generation"
     },
+    "companyLookup": {
+      "searchLabel": "Look up company from registry",
+      "searchPlaceholder": "Search by company name or registration number...",
+      "searchHelper": "Automatically prefills organization details from CVR (Denmark) or Brreg (Norway). Fields prefilled from a registry will be marked for your confirmation.",
+      "actionsHelper": "Search a public company registry to prefill or update organization fields (size, industry, legal form, etc.). Fields will be flagged for your confirmation before saving.",
+      "noResults": "No companies found. Try a different search term.",
+      "notConfigured": "Danish registry lookup requires Virk API credentials. Add VIRK_CVR_USER and VIRK_CVR_PASSWORD to your environment — registration is free at datacvr.virk.dk.",
+      "autoFilledFrom": "Auto-filled from {source}",
+      "confirm": "Confirm",
+      "applied": "Fields prefilled from {name} — review and save to confirm.",
+      "pendingFields": "{count} auto-filled field(s) pending confirmation"
+    },
     "onboard": {
       "title": "Set Up Your Organization",
       "titleEdit": "Edit Organization Profile",
@@ -1195,19 +1235,19 @@
       "steps": {
         "title": "Steps",
         "basics": "Name & Description",
-        "sizeIndustry": "Size & Industry",
+        "sizeMaturity": "Size & Maturity",
         "legalOwnership": "Legal & Ownership",
-        "maturityRevenue": "Maturity & Revenue",
-        "geographyOrientation": "Geography & Orientation",
-        "digitalEsg": "Digital & ESG",
-        "supplyChainRisk": "Supply Chain & Risk",
+        "geographyRevenue": "Geography & Revenue",
+        "businessExposure": "Business Orientation & Risk",
+        "marketServices": "Market Exposure",
+        "sectorRegulatory": "Sector & Regulatory",
         "euTaxonomy": "EU Taxonomy",
+        "digitalEsg": "Digital & ESG",
         "itSecurityStaff": "IT & Security Staff",
+        "dataSensitivity": "Data Sensitivity",
         "itInfrastructure": "IT Infrastructure",
-        "softwareServices": "Software & Services",
-        "dataCompliance": "Data & Compliance",
-        "riskTolerance": "Risk & Tolerance",
-        "supplyChainBudget": "Position & Budget",
+        "softwareBudget": "Software & Security Budget",
+        "supplyChainDowntime": "Supply Chain & Downtime",
         "businessContinuity": "Business Continuity"
       }
     },
@@ -1236,7 +1276,7 @@
       "digitalMaturity": "Digital Maturity",
       "esgStatus": "ESG Status",
       "supplyChainRole": "Supply Chain Role",
-      "riskProfile": "Risk Profile",
+      "riskProfile": "Structural Risc Profile",
       "euTaxonomyAligned": "EU Taxonomy Aligned",
       "itSecurityStaff": "IT Security Staff",
       "securityMaturity": "Security Maturity",
@@ -1769,19 +1809,95 @@
         "description": "Set up your organization's basic information, industry classification, and compliance requirements. This information will be used to tailor recommendations to your specific needs."
       },
       "cisRiscAnalysis": {
-        "title": "CIS Risk Analysis",
-        "description": "Analyze your organization's risk profile and receive tailored recommendations for CIS Controls implementation based on your organization's characteristics."
+        "title": "Structural Risc Profile",
+        "description": "Analyze your organization's structural risc profile and receive tailored recommendations for CIS Controls implementation based on your organization's characteristics."
+      },
+      "structuralFinancialExposure": {
+        "title": "Structural Financial Exposure",
+        "description": "Assess the structural financial exposure of your organization prior to GAP and CONC analysis."
+      },
+      "thirdPartyRiskExposure": {
+        "title": "Customer Exposure Assesment (CEA) Preparation",
+        "description": "Register and assess all third-party suppliers, vendors, and partners. Evaluate their access levels, data handling, and potential impact on your organization's risk posture."
+      },
+      "ceaReport": {
+        "title": "CEA Report",
+        "description": "Review and export the Customer Exposure Assessment report summarizing third-party risk scores and recommendations."
+      },
+      "defineGapAnalysis": {
+        "title": "Define GAP Analysis",
+        "description": "Define the scope and parameters for the GAP analysis before proceeding to the full assessment."
       },
       "gapReport": {
-        "title": "GAP Report",
+        "title": "GAP",
         "description": "Review and assess your current security posture against the recommended CIS Controls. Set current and target CMMI levels for each safeguard."
+      },
+      "conc": {
+        "title": "CONC",
+        "description": "Consolidate and conclude the analysis, summarizing findings and producing the final compliance conclusions."
+      }
+    },
+    "conc": {
+      "title": "CONC",
+      "description": "Enter the estimated downtime costs for this organisation.",
+      "downtimeCostsTitle": "Estimated Downtime Costs",
+      "downtimeCostsSubtitle": "Calculated from the organisation profile and GAP report CMMI scores.",
+      "downtimeCostMid": "Mid estimate",
+      "downtimeCostLow": "Low estimate",
+      "downtimeCostHigh": "High estimate",
+      "backToWorkflow": "Back to Workflow"
+    },
+    "thirdPartyRiskExposure": {
+      "title": "Customer Exposure Assesment (CEA)",
+      "description": "Register all third-party organisations and assess their risk exposure.",
+      "addNew": "Add Third Party",
+      "onboard": "Onboard",
+      "noThirdParties": "No third-party organisations registered yet.",
+      "noThirdPartiesHint": "Add your first third party to begin assessing supplier and vendor risk.",
+      "createDialog": {
+        "title": "Add Third Party Organisation",
+        "nameLabel": "Organisation Name",
+        "namePlaceholder": "e.g. Acme Cloud Services",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Briefly describe what this organisation provides...",
+        "create": "Add Organisation",
+        "cancel": "Cancel"
+      },
+      "continueToRiskProfile": "Continue to Structural Risc Profile",
+      "backToWorkflow": "Back to Workflow",
+      "wizard": {
+        "title": "Third Party Onboarding",
+        "saving": "Saving...",
+        "loading": "Loading...",
+        "backToList": "Back to Third Parties",
+        "steps": {
+          "sidebar": "Steps",
+          "basics": "Basics",
+          "ownership": "Ownership & Governance",
+          "contractual": "Contractual",
+          "marketReach": "Market Reach",
+          "operations": "Operations",
+          "exposure": "Exposure & Impact",
+          "technical": "Technical Profile"
+        },
+        "labels": {
+          "name": "Organisation Name",
+          "description": "Description",
+          "customerSector": "Customer Sector"
+        },
+        "placeholders": {
+          "name": "Enter organisation name",
+          "description": "Briefly describe what this organisation provides...",
+          "customerSector": "e.g. Healthcare, Finance, Manufacturing"
+        }
       }
     }
   },
   "GapReport": {
     "title": "GAP Report",
     "catalog": {
-      "title": "CIS Controls Catalog"
+      "title": "CIS Controls Catalog",
+      "finalize": "Finalize Report"
     },
     "labels": {
       "control": "Control",
@@ -1850,6 +1966,175 @@
       "finalizeButton": "Finalize GAP Report",
       "finalizing": "Finalizing...",
       "finalized": "This GAP report has been finalized"
+    }
+  },
+  "CES": {
+    "page": {
+      "title": "Customer Exposure Score",
+      "subtitle": "Assess and document the structural risk exposure your customers face",
+      "newCompany": "New company",
+      "noCompanies": "No third-party companies yet",
+      "noCompaniesDescription": "Add your first customer to start assessing exposure.",
+      "viewReport": "View Report",
+      "edit": "Edit",
+      "delete": "Delete",
+      "deleteConfirmTitle": "Delete company?",
+      "deleteConfirmDescription": "This will permanently remove the company and all associated data. This action cannot be undone.",
+      "deleteSuccess": "Company deleted",
+      "deleteError": "Failed to delete company"
+    },
+    "table": {
+      "name": "Company Name",
+      "regulatoryFramework": "Regulatory Framework",
+      "sector": "Sector",
+      "riskScore": "Risk Score",
+      "created": "Created",
+      "actions": "Actions"
+    },
+    "report": {
+      "title": "Customer Exposure Score Report",
+      "generated": "Generated",
+      "overallScore": "Overall Score",
+      "categories": "Risk Categories",
+      "recommendations": "Recommendations",
+      "downloadPdf": "Download PDF",
+      "downloadWord": "Download Word",
+      "score": "Score",
+      "riskLevel": "Risk Level",
+      "keyFindings": "Key Findings",
+      "noFindings": "No notable findings for this category.",
+      "close": "Close Report",
+      "backToList": "Back to CES",
+      "export": "Export",
+      "footer": {
+        "confidential": "Confidential — For internal use only.",
+        "generatedBy": "Generated by Compliance Circle",
+        "version": "CES Report v1.0"
+      }
+    },
+    "wizard": {
+      "title": "New Company",
+      "titleEdit": "Edit Company",
+      "subtitle": "Fill in the classification fields to generate a CES report",
+      "saving": "Saving...",
+      "loading": "Loading...",
+      "steps": {
+        "title": "Steps",
+        "companyProfile": "Company Profile",
+        "contractual": "Contractual & Procurement",
+        "operations": "Operations & Digital Footprint",
+        "technical": "Technical Exposure"
+      },
+      "labels": {
+        "name": "Company Name",
+        "regulatoryFramework": "Regulatory Framework",
+        "customerSector": "Customer Sector",
+        "dedicatedCompliance": "Dedicated Compliance Function",
+        "partOfGroup": "Part of a Corporate Group",
+        "listedOrPeOwned": "Listed or PE/VC-Owned",
+        "standardContract": "Standard Contract in Place",
+        "slaIncluded": "SLA Included",
+        "professionalProcurement": "Professional Procurement Process",
+        "deliversToRegulated": "Delivers to Regulated Entities",
+        "deliversToPublicInfra": "Delivers to Public Infrastructure",
+        "internationalOps": "International Operations",
+        "coreDigital": "Core Business is Digital",
+        "itDependency": "IT Dependency Level",
+        "publicBrand": "Strong Public Brand",
+        "criticalSocietalRole": "Critical Societal Role",
+        "mediaExposure": "High Media Exposure",
+        "deliveryRole": "Delivery Role",
+        "accessLevel": "Access Level",
+        "dataHandled": "Data Handled",
+        "disruptionImpact": "Disruption Impact",
+        "supplyChainRole": "Supply Chain Role"
+      },
+      "placeholders": {
+        "name": "Enter company name",
+        "customerSector": "e.g. Healthcare, Finance, Manufacturing",
+        "selectRegulatoryFramework": "Select framework",
+        "selectBoolean": "Select answer",
+        "selectTriState": "Select level",
+        "selectDependency": "Select level",
+        "selectDeliveryRole": "Select role",
+        "selectAccessLevel": "Select access level",
+        "selectDataHandled": "Select data type",
+        "selectDisruptionImpact": "Select impact level",
+        "selectSupplyChainRole": "Select role"
+      },
+      "toast": {
+        "saveError": "Failed to save"
+      }
+    },
+    "riskLevels": {
+      "Low": "Low",
+      "Moderate": "Moderate",
+      "Elevated": "Elevated",
+      "High": "High",
+      "Severe": "Severe"
+    },
+    "enums": {
+      "regulatoryFramework": {
+        "NIS2_ESSENTIAL": "NIS2 Essential",
+        "NIS2_IMPORTANT": "NIS2 Important",
+        "FINANCIAL": "Financial Services",
+        "HEALTH": "Healthcare",
+        "PUBLIC": "Public Sector",
+        "LISTED": "Listed Company",
+        "ENTERPRISE": "Large Enterprise",
+        "DATACENTER": "Data Center",
+        "SAAS": "SaaS / Cloud Provider",
+        "NON_REG_SME": "Non-Regulated SME"
+      },
+      "triState": {
+        "NO": "No",
+        "PARTLY": "Partly",
+        "YES": "Yes"
+      },
+      "dependencyLevel": {
+        "LOW": "Low",
+        "MODERATE": "Moderate",
+        "HIGH": "High"
+      },
+      "deliveryRole": {
+        "ADVISORY": "Advisory",
+        "SOFTWARE": "Software Provider",
+        "HOSTING": "Hosting",
+        "MANAGED_IT": "Managed IT Services",
+        "OPERATE_CRITICAL_SYSTEM": "Operate Critical System",
+        "SUBSUPPLIER": "Sub-supplier"
+      },
+      "accessLevel": {
+        "NONE": "None",
+        "READ_ONLY": "Read Only",
+        "REMOTE": "Remote Access",
+        "PRIVILEGED": "Privileged Access",
+        "FULL_CONTROL": "Full Control"
+      },
+      "dataHandled": {
+        "NONE": "None",
+        "PERSONAL": "Personal Data",
+        "SENSITIVE": "Sensitive Data",
+        "BUSINESS_CRITICAL": "Business Critical",
+        "SOCIETAL_CRITICAL": "Societal Critical"
+      },
+      "disruptionImpact": {
+        "NONE": "None",
+        "TEMPORARY": "Temporary Disruption",
+        "OPERATIONAL_DISRUPTION": "Operational Disruption",
+        "PRODUCTION_STOP": "Production Stop",
+        "SOCIETAL_CRITICAL": "Societal Critical"
+      },
+      "supplyChainRole": {
+        "DIRECT": "Direct Supplier",
+        "SUBSUPPLIER": "Sub-supplier",
+        "CRITICAL_SUBSUPPLIER": "Critical Sub-supplier",
+        "INTEGRATED": "Integrated"
+      },
+      "boolean": {
+        "true": "Yes",
+        "false": "No"
+      }
     }
   }
 }

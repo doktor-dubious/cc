@@ -63,8 +63,7 @@ const NACE_SECTION_NAMES: Record<NaceSection, string> = {
   Q: 'Human Health and Social Work',
   R: 'Arts, Entertainment and Recreation',
   S: 'Other Service Activities',
-  T: 'Household Activities',
-  U: 'Extraterritorial Organizations',
+  OTHER: 'Other / Not Classified',
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -83,10 +82,10 @@ function assessItDependency(profile: OrganizationProfile): { level: RiskLevel; r
   if (profile.digitalMaturity === 'DIGITAL_NATIVE') {
     score += 3;
     reasons.push('digital-native operations');
-  } else if (profile.digitalMaturity === 'DIGITALLY_ADVANCED') {
+  } else if (profile.digitalMaturity === 'MATURE') {
     score += 2;
     reasons.push('digitally advanced infrastructure');
-  } else if (profile.digitalMaturity === 'DIGITIZING') {
+  } else if (profile.digitalMaturity === 'DEVELOPING') {
     score += 1;
   }
 
@@ -99,19 +98,19 @@ function assessItDependency(profile: OrganizationProfile): { level: RiskLevel; r
   }
 
   // Production dependency
-  if (profile.productionDependency === 'FULL_DEPENDENCY') {
+  if (profile.productionDependency === 'DIRECT') {
     score += 3;
     reasons.push('full production dependency on IT systems');
-  } else if (profile.productionDependency === 'HIGH_DEPENDENCY') {
+  } else if (profile.productionDependency === 'PARTIAL') {
     score += 2;
     reasons.push('high production dependency');
   }
 
   // Customer access
-  if (profile.customerAccess === 'DIGITAL_ONLY') {
+  if (profile.customerAccess === 'ESSENTIAL') {
     score += 2;
     reasons.push('digital-only customer access');
-  } else if (profile.customerAccess === 'PRIMARILY_DIGITAL') {
+  } else if (profile.customerAccess === 'PARTIAL') {
     score += 1;
   }
 
@@ -195,16 +194,16 @@ function assessCustomerCriticality(profile: OrganizationProfile): { level: RiskL
   if (profile.supplyChainPosition === 'CRITICAL_SUPPLIER') {
     score += 3;
     reasons.push('critical supplier to essential services');
-  } else if (profile.supplyChainPosition === 'TIER_1_SUPPLIER') {
+  } else if (profile.supplyChainPosition === 'B2B_PROVIDER') {
     score += 2;
     reasons.push('tier-1 supplier position');
   }
 
   // Customer access requirements
-  if (profile.customerAccess === 'DIGITAL_ONLY') {
+  if (profile.customerAccess === 'ESSENTIAL') {
     score += 2;
     reasons.push('no alternative access channels');
-  } else if (profile.customerAccess === 'PRIMARILY_DIGITAL') {
+  } else if (profile.customerAccess === 'PARTIAL') {
     score += 1;
     reasons.push('primary digital customer interface');
   }
@@ -240,29 +239,26 @@ function assessDowntimeSensitivity(profile: OrganizationProfile): { level: RiskL
   const reasons: string[] = [];
 
   // Downtime tolerance (primary factor)
-  if (profile.downtimeTolerance === 'ZERO_TOLERANCE') {
+  if (profile.downtimeTolerance === 'NEAR_ZERO') {
     score += 4;
     reasons.push('<1 hour disruption tolerance');
-  } else if (profile.downtimeTolerance === 'LESS_THAN_4_HOURS') {
-    score += 3;
-    reasons.push('<4 hours disruption tolerance');
-  } else if (profile.downtimeTolerance === 'LESS_THAN_24_HOURS') {
+  } else if (profile.downtimeTolerance === 'HOURS') {
     score += 2;
     reasons.push('<24 hours disruption tolerance');
-  } else if (profile.downtimeTolerance === 'LESS_THAN_1_WEEK') {
+  } else if (profile.downtimeTolerance === 'DAYS') {
     score += 1;
   }
 
   // Production dependency amplifies sensitivity
-  if (profile.productionDependency === 'FULL_DEPENDENCY') {
+  if (profile.productionDependency === 'DIRECT') {
     score += 2;
     reasons.push('full operational dependency');
-  } else if (profile.productionDependency === 'HIGH_DEPENDENCY') {
+  } else if (profile.productionDependency === 'PARTIAL') {
     score += 1;
   }
 
   // Customer access
-  if (profile.customerAccess === 'DIGITAL_ONLY') {
+  if (profile.customerAccess === 'ESSENTIAL') {
     score += 1;
     reasons.push('no fallback channels');
   }
@@ -291,13 +287,10 @@ function assessThreatTargeting(profile: OrganizationProfile): { level: RiskLevel
   const reasons: string[] = [];
 
   // Targeted attack likelihood
-  if (profile.targetedAttackLikelihood === 'VERY_HIGH') {
+  if (profile.targetedAttackLikelihood === 'HIGH') {
     score += 4;
     reasons.push('known targeted threat profile');
-  } else if (profile.targetedAttackLikelihood === 'HIGH') {
-    score += 3;
-    reasons.push('elevated threat targeting');
-  } else if (profile.targetedAttackLikelihood === 'MODERATE') {
+  } else if (profile.targetedAttackLikelihood === 'MEDIUM') {
     score += 2;
     reasons.push('moderate threat exposure');
   } else if (profile.targetedAttackLikelihood === 'LOW') {
@@ -305,10 +298,10 @@ function assessThreatTargeting(profile: OrganizationProfile): { level: RiskLevel
   }
 
   // Public-facing services
-  if (profile.publicFacingServices === 'EXTENSIVE') {
+  if (profile.publicFacingServices === 'CRITICAL_SERVICES') {
     score += 2;
     reasons.push('extensive public attack surface');
-  } else if (profile.publicFacingServices === 'MODERATE') {
+  } else if (profile.publicFacingServices === 'ECOMMERCE_PORTALS') {
     score += 1;
     reasons.push('public-facing services');
   }
@@ -348,8 +341,8 @@ function generateStructuralInterpretation(
   const sectorName = profile.naceSection ? NACE_SECTION_NAMES[profile.naceSection] : 'business';
   const digitalContext =
     profile.digitalMaturity === 'DIGITAL_NATIVE' ? 'operates as a digital-native organization' :
-    profile.digitalMaturity === 'DIGITALLY_ADVANCED' ? 'maintains digitally advanced operations' :
-    profile.digitalMaturity === 'DIGITIZING' ? 'is actively digitizing operations' :
+    profile.digitalMaturity === 'MATURE' ? 'maintains digitally advanced operations' :
+    profile.digitalMaturity === 'DEVELOPING' ? 'is actively digitizing operations' :
     'operates with traditional infrastructure';
 
   let businessModel = `${organizationName} ${digitalContext}`;
@@ -363,15 +356,15 @@ function generateStructuralInterpretation(
   // Revenue and criticality
   const criticalityFactors: string[] = [];
 
-  if (profile.productionDependency === 'FULL_DEPENDENCY') {
+  if (profile.productionDependency === 'DIRECT') {
     criticalityFactors.push('Core revenue generation is fully dependent on digital service availability');
-  } else if (profile.productionDependency === 'HIGH_DEPENDENCY') {
+  } else if (profile.productionDependency === 'PARTIAL') {
     criticalityFactors.push('Revenue generation has high dependency on operational IT systems');
   }
 
   if (profile.supplyChainPosition === 'CRITICAL_SUPPLIER') {
     criticalityFactors.push('The company is positioned as a critical supplier within essential service value chains');
-  } else if (profile.supplyChainPosition === 'TIER_1_SUPPLIER') {
+  } else if (profile.supplyChainPosition === 'B2B_PROVIDER') {
     criticalityFactors.push('The organization holds a tier-1 supplier position');
   }
 
@@ -388,8 +381,8 @@ function generateStructuralInterpretation(
     regulatoryFactors.push(`The company is subject to ${regList} compliance requirements`);
   }
 
-  if (profile.downtimeTolerance === 'ZERO_TOLERANCE' || profile.downtimeTolerance === 'LESS_THAN_4_HOURS') {
-    const hours = profile.downtimeTolerance === 'ZERO_TOLERANCE' ? '<1' : '<4';
+  if (profile.downtimeTolerance === 'NEAR_ZERO' || profile.downtimeTolerance === 'HOURS') {
+    const hours = profile.downtimeTolerance === 'NEAR_ZERO' ? '<1' : '<24';
     regulatoryFactors.push(`Operational tolerance for disruption is low (${hours} hours), increasing structural exposure to service interruption risk`);
   }
 
@@ -399,7 +392,7 @@ function generateStructuralInterpretation(
 
   // Security maturity assessment
   let maturityAssessment = '';
-  if (profile.securityMaturity === 'ADVANCED' || profile.securityMaturity === 'OPTIMIZED') {
+  if (profile.securityMaturity === 'OPTIMIZING') {
     maturityAssessment = 'A mature security program is in place with established controls and processes.';
   } else if (profile.securityMaturity === 'DEFINED' || profile.securityMaturity === 'MANAGED') {
     maturityAssessment = 'While a defined security program is in place, current organizational setup indicates limited operational buffer in the event of prolonged disruption.';
@@ -412,7 +405,7 @@ function generateStructuralInterpretation(
   const exposureFactors: string[] = [];
 
   // IT dependency
-  if (profile.digitalMaturity === 'DIGITAL_NATIVE' || profile.digitalMaturity === 'DIGITALLY_ADVANCED') {
+  if (profile.digitalMaturity === 'DIGITAL_NATIVE' || profile.digitalMaturity === 'MATURE') {
     exposureFactors.push('high IT dependency');
   }
 
@@ -422,17 +415,17 @@ function generateStructuralInterpretation(
   }
 
   // Supply chain
-  if (profile.supplyChainPosition === 'CRITICAL_SUPPLIER' || profile.supplyChainPosition === 'TIER_1_SUPPLIER') {
+  if (profile.supplyChainPosition === 'CRITICAL_SUPPLIER' || profile.supplyChainPosition === 'B2B_PROVIDER') {
     exposureFactors.push('critical supply chain position');
   }
 
   // Downtime
-  if (profile.downtimeTolerance === 'ZERO_TOLERANCE' || profile.downtimeTolerance === 'LESS_THAN_4_HOURS') {
+  if (profile.downtimeTolerance === 'NEAR_ZERO' || profile.downtimeTolerance === 'HOURS') {
     exposureFactors.push('low downtime tolerance');
   }
 
   // Public services
-  if (profile.publicFacingServices === 'EXTENSIVE' || profile.publicFacingServices === 'MODERATE') {
+  if (profile.publicFacingServices === 'CRITICAL_SERVICES' || profile.publicFacingServices === 'ECOMMERCE_PORTALS') {
     exposureFactors.push('public-facing digital services');
   }
 
@@ -489,7 +482,7 @@ function determinePriorityControlDomains(
   const riskAdjustments: Record<string, number> = {};
 
   // High downtime sensitivity → prioritize backup & incident response
-  if (profile.downtimeTolerance === 'ZERO_TOLERANCE' || profile.downtimeTolerance === 'LESS_THAN_4_HOURS') {
+  if (profile.downtimeTolerance === 'NEAR_ZERO' || profile.downtimeTolerance === 'HOURS') {
     riskAdjustments['Data Recovery'] = 20;
     riskAdjustments['Incident Response'] = 20;
     riskAdjustments['Network Infrastructure Management'] = 15;
@@ -509,14 +502,14 @@ function determinePriorityControlDomains(
   }
 
   // High threat targeting → prioritize monitoring & defense
-  if (profile.targetedAttackLikelihood === 'HIGH' || profile.targetedAttackLikelihood === 'VERY_HIGH') {
+  if (profile.targetedAttackLikelihood === 'HIGH') {
     riskAdjustments['Network Monitoring & Defense'] = 20;
     riskAdjustments['Malware Defense'] = 15;
     riskAdjustments['Incident Response'] = 15;
   }
 
   // Public-facing services → prioritize web/email protection
-  if (profile.publicFacingServices === 'EXTENSIVE') {
+  if (profile.publicFacingServices === 'CRITICAL_SERVICES') {
     riskAdjustments['Email & Web Browser Protection'] = 15;
     riskAdjustments['Application Software Security'] = 15;
   }
@@ -534,7 +527,7 @@ function determinePriorityControlDomains(
 
   // Ensure we always include certain critical domains if conditions are met
   const mustInclude: string[] = [];
-  if (profile.downtimeTolerance === 'ZERO_TOLERANCE' || profile.downtimeTolerance === 'LESS_THAN_4_HOURS') {
+  if (profile.downtimeTolerance === 'NEAR_ZERO' || profile.downtimeTolerance === 'HOURS') {
     if (!topDomains.includes('Data Recovery')) mustInclude.push('Data Recovery');
     if (!topDomains.includes('Incident Response')) mustInclude.push('Incident Response');
   }

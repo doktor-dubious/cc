@@ -229,10 +229,9 @@ export default function RiskReportPage() {
             // Section 1: Structural Exposure Indicators
             ...(sectionConfigs.exposureIndicators ? [
               new Paragraph({
-                text: t('section1.title'),
+                children: [new TextRun({ text: t('section1.title'), italics: true })],
                 heading: HeadingLevel.HEADING_3,
                 spacing: { before: 400, after: 200 },
-                italics: true,
               }),
               new Table({
                 width: { size: 100, type: WidthType.PERCENTAGE },
@@ -241,12 +240,12 @@ export default function RiskReportPage() {
                   new TableRow({
                     children: [
                       new TableCell({
-                        children: [new Paragraph({ text: t('section1.exposureDriver'), bold: true })],
+                        children: [new Paragraph({ children: [new TextRun({ text: t('section1.exposureDriver'), bold: true })] })],
                         width: { size: 50, type: WidthType.PERCENTAGE },
                         shading: { fill: 'E5E7EB' },
                       }),
                       new TableCell({
-                        children: [new Paragraph({ text: t('section1.assessment'), bold: true })],
+                        children: [new Paragraph({ children: [new TextRun({ text: t('section1.assessment'), bold: true })] })],
                         width: { size: 50, type: WidthType.PERCENTAGE },
                         shading: { fill: 'E5E7EB' },
                       }),
@@ -282,10 +281,9 @@ export default function RiskReportPage() {
             // Section 2: Structural Risk Interpretation
             ...(sectionConfigs.structuralInterpretation ? [
               new Paragraph({
-                text: t('section2.title'),
+                children: [new TextRun({ text: t('section2.title'), italics: true })],
                 heading: HeadingLevel.HEADING_3,
                 spacing: { before: 400, after: 200 },
-                italics: true,
               }),
               ...report.structuralInterpretation.split('\n\n').map(para =>
                 new Paragraph({
@@ -298,10 +296,9 @@ export default function RiskReportPage() {
             // Section 3: Expected Priority Control Domains
             ...(sectionConfigs.priorityControlDomains ? [
               new Paragraph({
-                text: t('section3.title'),
+                children: [new TextRun({ text: t('section3.title'), italics: true })],
                 heading: HeadingLevel.HEADING_3,
                 spacing: { before: 400, after: 200 },
-                italics: true,
               }),
               ...report.priorityControlDomains.map(domain =>
                 new Paragraph({
@@ -315,10 +312,9 @@ export default function RiskReportPage() {
             // Section 4: Next Step Consideration
             ...(sectionConfigs.nextSteps ? [
               new Paragraph({
-                text: t('section4.title'),
+                children: [new TextRun({ text: t('section4.title'), italics: true })],
                 heading: HeadingLevel.HEADING_3,
                 spacing: { before: 400, after: 200 },
-                italics: true,
               }),
               new Paragraph({
                 text: report.nextSteps,

@@ -172,6 +172,12 @@ export function canDeleteArtifacts(role: UserRole | string): boolean
     return true;
 }
 
+// ── Third-Party Companies (CES) ───────────────────────────────────────
+export function canManageThirdParties(role: UserRole | string): boolean
+{
+    return role === 'SUPER_ADMIN' || role === 'ADMIN';
+}
+
 // ── Artifact File Handling ───────────────────────────────────────
 export function canUploadToArtifacts(role: UserRole | string): boolean 
 {

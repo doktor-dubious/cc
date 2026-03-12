@@ -33,6 +33,10 @@ export interface Organization
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
+    manualOperation          : string | null;
+    productionDependency     : string | null;
+    customerAccess           : string | null;
+    businessDaysPerYear      : number | null;
 }
 
 interface OrganizationContextValue

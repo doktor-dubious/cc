@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { ChevronRight, ChevronDown } from 'lucide-react';
+import { ChevronRight, ChevronDown, CheckSquare } from 'lucide-react';
 import { CIS_CONTROLS } from '@/lib/constants/cis-controls';
 
 type CurrentItem = {
@@ -18,6 +18,7 @@ type GapCatalogProps = {
   onSelectControl: (controlId: number) => void;
   onSelectSafeguard: (controlId: number, safeguardId: string) => void;
   onToggleExpand: (controlId: number) => void;
+  onSelectSummary: () => void;
 };
 
 export function GapCatalog({
@@ -28,6 +29,7 @@ export function GapCatalog({
   onSelectControl,
   onSelectSafeguard,
   onToggleExpand,
+  onSelectSummary,
 }: GapCatalogProps) {
   const t = useTranslations('GapReport');
 
@@ -109,6 +111,23 @@ export function GapCatalog({
             </div>
           );
         })}
+      </div>
+
+      {/* Finalize row */}
+      <div className="border-t border-muted-foreground/30 mt-2 pt-2 pb-2 px-2">
+        <div
+          className={`
+            flex items-center gap-2 pl-4 pr-2 py-1.5 cursor-pointer text-sm rounded
+            border-l-2 transition-colors
+            ${currentItem.type === 'summary'
+              ? 'border-l-primary text-foreground font-medium'
+              : 'border-l-transparent hover:border-l-muted-foreground/30 text-muted-foreground hover:text-foreground'}
+          `}
+          onClick={onSelectSummary}
+        >
+          <CheckSquare className="w-3.5 h-3.5 shrink-0" />
+          <span>{t('catalog.finalize')}</span>
+        </div>
       </div>
     </div>
   );
