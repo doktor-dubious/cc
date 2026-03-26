@@ -11,7 +11,7 @@
 import { CompanyAdapter, CompanySearchResult } from '../types';
 import { naceCodeToSection, employeesToSize }  from '../nace-mapper';
 
-const API_URL = 'https://api.virk.dk/cvr-permanent/virksomhed/_search';
+const API_URL = 'http://distribution.virk.dk/cvr-permanent/virksomhed/_search';
 
 /**
  * Maps the CVR virksomhedsform kortBeskrivelse (e.g. "ApS", "A/S", "ENK") to our LegalForm enum.
@@ -25,8 +25,9 @@ function mapLegalForm(kortBeskrivelse: string | null | undefined): string | null
     if (k === 'APS' || k === 'ApS')         return 'PRIVATE_LIMITED';
     if (k === 'A/S' || k === 'ASA')         return 'PUBLIC_LIMITED';
     if (k === 'AMBA' || k === 'A.M.B.A.')   return 'COOPERATIVE';
-    if (k === 'FOND')                        return 'FOUNDATION';
+    if (k === 'FOND' || k === 'EFO' || k === 'FON') return 'FOUNDATION';
     if (k === 'FONDEN')                      return 'FOUNDATION';
+    if (k === 'FOR' || k === 'FFO')         return 'ASSOCIATION';
     if (k === 'UDL')                         return 'BRANCH_FOREIGN';
     if (k === 'STAT' || k === 'KOMP' || k === 'KOM') return 'PUBLIC_BODY';
     return 'OTHER';
@@ -50,7 +51,8 @@ function employeeIntervalToCount(code: string | null | undefined): number | null
         ANTAL_200_499   :  350,
         ANTAL_500_999   :  750,
         ANTAL_1000_1999 : 1500,
-        ANTAL_2000_MORE : 2000,
+        ANTAL_2000_MORE    : 2000,
+        ANTAL_1000_999999  : 5000,
     };
     return midpoints[code] ?? null;
 }
@@ -69,7 +71,7 @@ interface VirkNavn {
 }
 
 interface VirkBranche {
-    brancheKode?  : string;
+    branchekode?  : string;
     branchetekst? : string;
 }
 
@@ -78,18 +80,21 @@ interface VirkVirksomhedsform {
     langBeskrivelse? : string;
 }
 
-interface VirkAarsvaerk {
-    intervalKodeAntalAnsatteInterval?: string;
-    aar?: number;
+interface VirkAarsbeskaeftigelse {
+    intervalKodeAntalAnsatte?: string;
+    intervalKodeAntalAarsvaerk?: string;
+    antalAnsatte?  : number;
+    antalAarsvaerk?: number;
+    aar?           : number;
 }
 
 interface VirkMetadata {
-    nyesteNavn?            : VirkNavn;
-    nyesteHovedbranche?    : VirkBranche;
-    nyesteAdresse?         : VirkAdresse;
-    nyesteVirksomhedsform? : VirkVirksomhedsform;
-    sammensatStatus?       : string;
-    sammenlagtAarligeAnsatte? : VirkAarsvaerk[];
+    nyesteNavn?                  : VirkNavn;
+    nyesteHovedbranche?          : VirkBranche;
+    nyesteBeliggenhedsadresse?   : VirkAdresse;
+    nyesteVirksomhedsform?       : VirkVirksomhedsform;
+    sammensatStatus?             : string;
+    nyesteAarsbeskaeftigelse?    : VirkAarsbeskaeftigelse;
 }
 
 interface VirkVirksomhed {
@@ -126,9 +131,9 @@ export const virkCvrAdapter: CompanyAdapter = {
                 'Vrvirksomhed.virksomhedMetadata.nyesteNavn',
                 'Vrvirksomhed.virksomhedMetadata.nyesteHovedbranche',
                 'Vrvirksomhed.virksomhedMetadata.nyesteVirksomhedsform',
-                'Vrvirksomhed.virksomhedMetadata.nyesteAdresse',
+                'Vrvirksomhed.virksomhedMetadata.nyesteBeliggenhedsadresse',
                 'Vrvirksomhed.virksomhedMetadata.sammensatStatus',
-                'Vrvirksomhed.virksomhedMetadata.sammenlagtAarligeAnsatte',
+                'Vrvirksomhed.virksomhedMetadata.nyesteAarsbeskaeftigelse',
             ],
             query: {
                 bool: {
@@ -140,9 +145,9 @@ export const virkCvrAdapter: CompanyAdapter = {
                             },
                         },
                     },
-                    filter: {
-                        term: {
-                            'Vrvirksomhed.virksomhedMetadata.sammensatStatus': 'NORMAL',
+                    must_not: {
+                        match: {
+                            'Vrvirksomhed.virksomhedMetadata.sammensatStatus': 'Ophørt',
                         },
                     },
                 },
@@ -168,15 +173,14 @@ export const virkCvrAdapter: CompanyAdapter = {
         return hits.map((hit): CompanySearchResult => {
             const vr       = hit._source?.Vrvirksomhed;
             const meta     = vr?.virksomhedMetadata;
-            const adresse  = meta?.nyesteAdresse;
+            const adresse  = meta?.nyesteBeliggenhedsadresse;
             const branche  = meta?.nyesteHovedbranche;
             const form     = meta?.nyesteVirksomhedsform;
 
-            // Pick most recent annual employee count (highest aar value)
-            const ansatte = (meta?.sammenlagtAarligeAnsatte ?? [])
-                .sort((a, b) => (b.aar ?? 0) - (a.aar ?? 0))[0];
-
-            const employeeCount = employeeIntervalToCount(ansatte?.intervalKodeAntalAnsatteInterval ?? null);
+            // Use the pre-computed latest annual employee figure
+            const empData = meta?.nyesteAarsbeskaeftigelse;
+            const employeeCount = empData?.antalAnsatte
+                ?? employeeIntervalToCount(empData?.intervalKodeAntalAnsatte ?? null);
 
             const addressParts = [
                 adresse?.vejnavn && adresse.husnummerFra
@@ -198,7 +202,7 @@ export const virkCvrAdapter: CompanyAdapter = {
                 employees          : employeeCount !== null ? String(employeeCount) : undefined,
                 industryDescription: branche?.branchetekst,
                 legalForm          : mapLegalForm(form?.kortBeskrivelse),
-                naceSection        : naceCodeToSection(branche?.brancheKode),
+                naceSection        : naceCodeToSection(branche?.branchekode),
                 size               : employeesToSize(employeeCount),
                 geographicScope    : null,
                 ownershipType      : null,

@@ -102,6 +102,8 @@ export default async function AuthorizedLayout({children,}:
         softwareDevelopment      : org.softwareDevelopment,
         publicFacingServices     : org.publicFacingServices,
         targetedAttackLikelihood : org.targetedAttackLikelihood,
+        remoteWorkforce          : org.remoteWorkforce,
+        previousBreachHistory    : org.previousBreachHistory,
         downtimeTolerance        : org.downtimeTolerance,
         supplyChainPosition      : org.supplyChainPosition,
         securityBudgetRange      : org.securityBudgetRange,

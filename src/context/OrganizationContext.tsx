@@ -11,7 +11,7 @@ export interface Organization
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -30,6 +30,8 @@ export interface Organization
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -37,6 +39,8 @@ export interface Organization
     productionDependency     : string | null;
     customerAccess           : string | null;
     businessDaysPerYear      : number | null;
+    revenueConcentration     : string | null;
+    entityType               : string | null;
 }
 
 interface OrganizationContextValue

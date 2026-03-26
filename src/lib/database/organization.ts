@@ -67,7 +67,7 @@ type OrganizationWithProfiles =
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -86,6 +86,8 @@ type OrganizationWithProfiles =
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -108,7 +110,7 @@ type OrganizationWithTasks =
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -127,6 +129,8 @@ type OrganizationWithTasks =
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -149,7 +153,7 @@ type OrganizationWithProfilesAndTasks =
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -168,6 +172,8 @@ type OrganizationWithProfilesAndTasks =
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -191,7 +197,7 @@ export type organizationData =
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -210,6 +216,8 @@ export type organizationData =
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -224,11 +232,12 @@ export type organizationData =
 
 export type OrganisationSettingsData =
 {
-    id                : string;
-    organizationId    : string;
-    uploadDirectory   : string;
-    downloadDirectory : string;
-    artifactDirectory : string;
+    id                   : string;
+    organizationId       : string;
+    uploadDirectory      : string;
+    downloadDirectory    : string;
+    artifactDirectory    : string;
+    enabledLookupSources : string[];
 };
 
 type OrganizationWithSettings =
@@ -240,7 +249,7 @@ type OrganizationWithSettings =
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -259,6 +268,8 @@ type OrganizationWithSettings =
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -281,7 +292,7 @@ export type OrganizationWithAll =
     size                     : string;
     naceSection              : string | null;
     legalForm                : string | null;
-    revenueRange             : string | null;
+    revenueRange             : number | null;
     maturity                 : string | null;
     ownershipType            : string | null;
     geographicScope          : string | null;
@@ -300,6 +311,8 @@ export type OrganizationWithAll =
     softwareDevelopment      : string | null;
     publicFacingServices     : string | null;
     targetedAttackLikelihood : string | null;
+    remoteWorkforce          : string | null;
+    previousBreachHistory    : string | null;
     downtimeTolerance        : string | null;
     supplyChainPosition      : string | null;
     securityBudgetRange      : string | null;
@@ -326,11 +339,12 @@ const selectSettings =
     where   : { active: true },
     select  :
     {
-        id                : true,
-        organizationId    : true,
-        uploadDirectory   : true,
-        downloadDirectory : true,
-        artifactDirectory : true,
+        id                   : true,
+        organizationId       : true,
+        uploadDirectory      : true,
+        downloadDirectory    : true,
+        artifactDirectory    : true,
+        enabledLookupSources : true,
     }
 } as const;
 
@@ -362,6 +376,8 @@ const selectFields =
     softwareDevelopment      : true,
     publicFacingServices     : true,
     targetedAttackLikelihood : true,
+    remoteWorkforce          : true,
+    previousBreachHistory    : true,
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
@@ -402,6 +418,8 @@ const selectFieldsWithProfiles =
     softwareDevelopment      : true,
     publicFacingServices     : true,
     targetedAttackLikelihood : true,
+    remoteWorkforce          : true,
+    previousBreachHistory    : true,
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
@@ -451,6 +469,8 @@ const selectFieldsWithTasks =
     softwareDevelopment      : true,
     publicFacingServices     : true,
     targetedAttackLikelihood : true,
+    remoteWorkforce          : true,
+    previousBreachHistory    : true,
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
@@ -504,6 +524,8 @@ const selectFieldsWithProfilesAndTasks =
     softwareDevelopment      : true,
     publicFacingServices     : true,
     targetedAttackLikelihood : true,
+    remoteWorkforce          : true,
+    previousBreachHistory    : true,
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
@@ -566,6 +588,8 @@ const selectFieldsWithSettings =
     softwareDevelopment      : true,
     publicFacingServices     : true,
     targetedAttackLikelihood : true,
+    remoteWorkforce          : true,
+    previousBreachHistory    : true,
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
@@ -607,6 +631,8 @@ const selectFieldsWithProfilesTasksAndSettings =
     softwareDevelopment      : true,
     publicFacingServices     : true,
     targetedAttackLikelihood : true,
+    remoteWorkforce          : true,
+    previousBreachHistory    : true,
     downtimeTolerance        : true,
     supplyChainPosition      : true,
     securityBudgetRange      : true,
@@ -773,7 +799,7 @@ export const organizationRepository =
         size?: string;
         naceSection?: string | null;
         legalForm?: string | null;
-        revenueRange?: string | null;
+        revenueRange?: number | null;
         maturity?: string | null;
         ownershipType?: string | null;
         geographicScope?: string | null;
@@ -792,6 +818,8 @@ export const organizationRepository =
         softwareDevelopment?: string | null;
         publicFacingServices?: string | null;
         targetedAttackLikelihood?: string | null;
+        remoteWorkforce?: string | null;
+        previousBreachHistory?: string | null;
         downtimeTolerance?: string | null;
         supplyChainPosition?: string | null;
         securityBudgetRange?: string | null;
@@ -818,9 +846,10 @@ export const organizationRepository =
     async updateSettings(organizationId: string,
         data:
         {
-            uploadDirectory   : string;
-            downloadDirectory : string;
-            artifactDirectory : string;
+            uploadDirectory      : string;
+            downloadDirectory    : string;
+            artifactDirectory    : string;
+            enabledLookupSources?: string[];
         }
     ): Promise<OrganisationSettingsData>
     {
@@ -837,13 +866,27 @@ export const organizationRepository =
             },
             select  :
             {
-                id                : true,
-                organizationId    : true,
-                uploadDirectory   : true,
-                downloadDirectory : true,
-                artifactDirectory : true,
+                id                   : true,
+                organizationId       : true,
+                uploadDirectory      : true,
+                downloadDirectory    : true,
+                artifactDirectory    : true,
+                enabledLookupSources : true,
             }
         });
+    },
+
+    async getEnabledLookupSources(organizationId: string): Promise<string[]>
+    {
+        log.info({ ID: organizationId }, 'SQL - organization: getEnabledLookupSources');
+
+        const settings = await prisma.organisationSettings.findUnique(
+        {
+            where  : { organizationId },
+            select : { enabledLookupSources: true },
+        });
+
+        return settings?.enabledLookupSources ?? [];
     },
 
     async create(data: { name: string; description: string | null }): Promise<organizationData>

@@ -90,7 +90,7 @@ export default function OrganizationSummaryPage() {
             <Field label={t('fields.size')} value={getLabel(org.size, 'sizes')} />
             <Field label={t('fields.naceSection')} value={getLabel(org.naceSection, 'nace')} />
             <Field label={t('fields.legalForm')} value={getLabel(org.legalForm, 'legalForms')} />
-            <Field label={t('fields.revenueRange')} value={getLabel(org.revenueRange, 'revenueRanges')} />
+            <Field label={t('fields.revenueRange')} value={org.revenueRange !== null ? `€${org.revenueRange.toLocaleString()}` : null} />
             <Field label={t('fields.maturity')} value={getLabel(org.maturity, 'maturities')} />
             <Field label={t('fields.ownershipType')} value={getLabel(org.ownershipType, 'ownershipTypes')} />
           </Section>

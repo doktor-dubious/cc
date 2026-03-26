@@ -79,6 +79,8 @@ export default async function WorkflowLayout({
     softwareDevelopment: org.softwareDevelopment,
     publicFacingServices: org.publicFacingServices,
     targetedAttackLikelihood: org.targetedAttackLikelihood,
+    remoteWorkforce: org.remoteWorkforce,
+    previousBreachHistory: org.previousBreachHistory,
     downtimeTolerance: org.downtimeTolerance,
     supplyChainPosition: org.supplyChainPosition,
     securityBudgetRange: org.securityBudgetRange,
@@ -86,6 +88,8 @@ export default async function WorkflowLayout({
     productionDependency: org.productionDependency,
     customerAccess: org.customerAccess,
     businessDaysPerYear: org.businessDaysPerYear,
+    revenueConcentration: org.revenueConcentration,
+    entityType: org.entityType,
   }));
 
   return (

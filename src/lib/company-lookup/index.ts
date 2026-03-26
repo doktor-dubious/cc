@@ -63,7 +63,9 @@ export async function searchCompanies(
         .flatMap(r => r.value);
 }
 
-/** List of countries supported by the lookup service */
-export function getSupportedCountries(): string[] {
-    return Object.keys(getAdapters());
+/** List of countries supported by the lookup service, optionally filtered by org-enabled sources */
+export function getSupportedCountries(enabledSources?: string[]): string[] {
+    const all = Object.keys(getAdapters());
+    if (!enabledSources || enabledSources.length === 0) return all;
+    return all.filter(c => enabledSources.includes(c));
 }

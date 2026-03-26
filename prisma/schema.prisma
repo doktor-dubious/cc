@@ -141,7 +141,7 @@ model Organization {
   /// Classification fields
   naceSection         NaceSection?         @map("nace_section")
   legalForm           LegalForm?           @map("legal_form")
-  revenueRange        RevenueRange?        @map("revenue_range")
+  revenueRange        Int?                 @map("revenue_range")
   maturity            OrgMaturity?
   ownershipType       OwnershipType?       @map("ownership_type")
   geographicScope     GeographicScope?     @map("geographic_scope")
@@ -162,6 +162,8 @@ model Organization {
   softwareDevelopment      SoftwareDevelopment?      @map("software_development")
   publicFacingServices     PublicFacingServices?     @map("public_facing_services")
   targetedAttackLikelihood TargetedAttackLikelihood? @map("targeted_attack_likelihood")
+  remoteWorkforce          RemoteWorkforce?          @map("remote_workforce")
+  previousBreachHistory    PreviousBreachHistory?    @map("previous_breach_history")
   downtimeTolerance        DowntimeTolerance?        @map("downtime_tolerance")
   supplyChainPosition      SupplyChainPosition?      @map("supply_chain_position")
   securityBudgetRange      SecurityBudgetRange?      @map("security_budget_range")
@@ -217,8 +219,9 @@ model OrganisationSettings {
   organizationId    String       @unique @map("organization_id") @db.Uuid
   uploadDirectory   String       @map("upload_directory")
   downloadDirectory String       @map("download_directory")
-  artifactDirectory String       @map("artifact_directory")
-  active            Boolean      @default(true)
+  artifactDirectory    String       @map("artifact_directory")
+  enabledLookupSources String[]    @default([]) @map("enabled_lookup_sources")
+  active               Boolean     @default(true)
   createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
   updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
   organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
@@ -759,16 +762,6 @@ enum LegalForm {
   OTHER
 }
 
-/// Revenue Range - EU SME-aligned turnover ranges
-enum RevenueRange {
-  UNDER_2M      /// < €2 million
-  FROM_2M_10M   /// €2–10 million
-  FROM_10M_50M  /// €10–50 million
-  FROM_50M_250M /// €50–250 million
-  FROM_250M_1B  /// €250 million – €1 billion
-  OVER_1B       /// > €1 billion
-}
-
 /// Organization Age / Maturity
 enum OrgMaturity {
   STARTUP      /// 0-3 years
@@ -915,6 +908,22 @@ enum TargetedAttackLikelihood {
   LOW                     /// Small, non-strategic, no valuable data to attackers
   MEDIUM                  /// Some value to attackers, sector sometimes targeted
   HIGH                    /// Known brand, critical infrastructure, high-value IP, politically exposed
+}
+
+/// Remote Workforce — percentage of workforce primarily working remotely
+enum RemoteWorkforce {
+  NONE                    /// 0% — fully on-site
+  UNDER_25                /// < 25% remote
+  FROM_25_50              /// 25–50% remote
+  FROM_50_75              /// 50–75% remote
+  OVER_75                 /// > 75% remote / fully distributed
+}
+
+/// Previous Breach History — material cyber incidents in the last 3 years
+enum PreviousBreachHistory {
+  NONE                    /// No known material breaches
+  ONE                     /// One material breach
+  MULTIPLE                /// Two or more material breaches
 }
 
 /// Downtime Tolerance

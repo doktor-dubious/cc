@@ -30,8 +30,14 @@ https://meet.jit.si/ComplianceCircle8800
 Zoom:
 https://zoom.us/j/91667468629?pwd=T2hGQVloWExQcDFBVEZYNEEvUjRWQT09
 
-
 --------
+
+Animated Icons:
+https://animate-ui.com/docs/icons
+https://lucide-animated.com/
+
+Icons:
+https://lucide.dev/icons/?search=info
 
 ── Partially Done ─────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 
@@ -276,8 +282,54 @@ CIS Risc Analysis => Structural Risc Profile
 
 
 
+Maturity Level 20% or 80%
+┌──────────────┬───────────────────────────┬────────────────────┐
+│ Safeguard ID │        Description        │ Used in sub-score  │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 11.2         │ Daily Backups             │ Downtime + Restore │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 11.4         │ Offsite/Immutable Backups │ Downtime + Restore │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 11.5         │ Restore Testing           │ Downtime + Restore │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 17.2         │ Incident Response Plan    │ Downtime + IR      │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 17.1         │ Defined Roles             │ Downtime + IR      │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 17.5         │ Incident Exercises        │ Downtime + IR      │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 11.1         │ Infrastructure Resilience │ Downtime only      │
+├──────────────┼───────────────────────────┼────────────────────┤
+│ 8.11         │ Monitoring/Detection      │ Downtime + IR      │
+└──────────────┴───────────────────────────┴────────────────────┘
 
 
+Sytructural Financial Exposure:
+Ijnput
+1 downtime day
+5 downtime day
+
+Workflow -> Structural Financial Exposure
+This should be the same as the CONC, but without the Safeguard CMMI scores.
+
+So for this purpose of this report we'll work with two scenarios:
+1) Where Downtime Days = 1, and all safeguard inputs to IR are set to 1 (minimum).
+2) Where Downtime Days = 5, and all safeguard inputs to IR are set to 5 (maximum).
+
+The results will be in a range (scenario 1 -> scenario 2), so in the results write this range in the three low estimate, mid estimate, high estimate.
+
+
+
+the results of each calculation should have a range,
+from where we assume 1 downtime day
+
+
+
+
+
+
+CEA Report
+List 5 focus areas. Controls or Safeguards.
 
 
 -----------------
@@ -303,6 +355,362 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
 -----------------
 -----------------
 -----------------
+
+ULTRATHINK: Do you know of any research papers, industry standards, best practise, or other things that we can lean on to enhance the trustworthiness and 
+credibility of our calculations when presenting them to potential clients?
+The calculations are mainly to be targetted towards small and mid-sized companies.
+315
+
+ULTRATHINK.
+In line with the other calculations on the CONC page:
+can you suggest a realistic calculation of the likelyhood of a data breach of small and mid-sized companies.
+Using whatever existing data is availale on the company, and the contrals and safeguards.
+Suggest additional information parameters if it would improve the calculation. 
+What scientific papers, business standards are you basing the calculation on?
+
+
+Hvis det ikke bruger for mange tokens må du gerne bede Claude komme med en strategi for en realistisk beregning af sandsynlighed for data breach for små og mellemstore virksomheder
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Tuesday 17 Mar
+
+* Workflow: Organization Profile
+    1) When a data element has been prefilled by "lookup company from registry" the box is overflowing to other elements, below and above.
+* Workflow: Organization Profile / Organization Onboarding
+    1) Make Lookup Registry configurable, such that sources can be turned on/off.
+
+
+The prefilled box still overflows into other elements. In the attached image, it overflows onto "description"
+
+The lookup registry being used by workflow organization onboarding and the onboarding wizard should be configurable. Such that sources can be turned on/off for individual organizations. Currently there are only Norwegian and Danish sources implemented I think.
+On the frontend, clicking sources on/off should be under the settings tab.
+
+
+Add table:
+"-ookup_registry"
+-- ID
+-- Name
+-- Description
+
+Add to organisation column: FK: lookup_registry_id
+
+
+* Workflow: Organization Profile
+When a data element has been prefilled by "lookup company from registry" the prefilled infor box is overflowing to other elements, below and above. See attached image.
+
+Fix lookup: boxes too big; no danish cvr?, make look src config (turn off norwigian)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Monday 16 Mar
+* Claude, Ultrathink
+    1) Report of how each CONC calculations is being made
+    2) Report of where each Organization parameter is being used.
+
+Ultrathink. 
+1) Can you make a report of how each calculation in the CONC report is being done.
+2) And a seperate report going through each parameter on the organization (Profile, Sector, Operations) and list where they're being used in the CONC calculations.
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Sunday 15 Mar
+* Redicted / => dashboard
+* Recreated Production / Development environments, so they can co-exist. Development: 3001, Production: 3002.
+* Organization:
+    1) Added parameter: "remote workforce percentage". To database, organization page, onboard wizard, and CONC calculations.
+        NONE
+        UNDER_25
+        FROM_25_50
+        FROM_50_75
+        OVER_75
+        —> "IT & Security" section
+    2) Added parameter: "previous breach history". To database, organization page, onboard wizard, and CONC calculations.
+        NONE
+        ONE
+        MULTIPLE
+        —> "IT & Security" section
+  1. Internet-facing service count — not added (but publicFacingServices is used as a proxy: NONE / BASIC_WEB / ECOMMERCE_PORTALS / CRITICAL_SERVICES)                                                                                
+  2. Remote workforce percentage — not added, no equivalent field exists
+  3. Third-party vendor count with system access — not added (but supplyChainPosition is used as a proxy)                                                                                                                             
+  4. Previous breach history — not added, no equivalent field exists
+  5. Dedicated security personnel — not added as a separate field (but itSecurityStaff covers this: NO_DEDICATED_IT through SPECIALIZED_SECURITY)
+* CONC:
+    1) Adjusted "Breach"
+        +0.30 beta (one breach) / +0.55 beta (multiple) — strongest single factor, calibrated from Cyentia IRIS ~2× odds
+    2) Adjusted: "Regulatory costs"
+        1.25× (one) / 1.50× (multiple) — GDPR Art 83(2)(e) recidivism factor
+    3) Adjusted "Reputational costs"
+        1.20× (one) / 1.40× (multiple) — second breach generates disproportionate media reaction
+
+
+
+
+
+
+  So 3 of the 5 have reasonable proxies already in use. The two with no coverage are remote workforce percentage and previous breach history — both would require new fields on the Organization model and new UI inputs on the
+  onboarding wizard.
+
+
+
+I had to edit the .env file when I made deployment to production.
+The production is on https://cc.predictioninstitute.com
+But I don't want to have to run the deploy script every time I make some changes while developing.
+Is it possible to hot reload the production: https://cc.predictioninstitute.com
+Or can I set it up so I can use both http://localhost:3001 and https://cc.predictioninstitute.com
+Or how do I structure my environment so I can keep on developing without having to run ./deploy every time I have made some changes?
+
+
+BETTER_AUTH_URL=http://localhost:3001
+# -- BETTER_AUTH_URL=https://cc.predictioninstitute.com
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Saturday 14 Mar
+* Claude ULTRATHINK
+    1) CONC - data breach
+* Workflow, CONC:
+    1) Added Cost of Data Breach calculation and section.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Saturday 14 Mar
+* Workflow, CONC:
+    1) Added Methodology and Sources section.
+    2) Added Methodology and Sources Word export.
+    3) CONC 1 - Operational Downtime:
+        A) Widened downtime range:
+            Widened downtime range: 0.5-3.0 days -> 1.0-5.0 days
+                - Old: Math.max(0.5, 3 - (gapScore / 100) * 2.5)
+                - New: Math.max(1.0, 5.0 - (gapScore / 100) * 4.0)
+              ┌──────────────────────┬────────────┬────────────┬────────────────┐
+              │      CMMI Level      │ Old (days) │ New (days) │ With ±30% band │
+              ├──────────────────────┼────────────┼────────────┼────────────────┤
+              │ All CMMI 1 (GAP=0)   │ 3.0        │ 5.0        │ 3.5 - 6.5      │
+              ├──────────────────────┼────────────┼────────────┼────────────────┤
+              │ All CMMI 3 (GAP=50)  │ 1.75       │ 3.0        │ 2.1 - 3.9      │
+              ├──────────────────────┼────────────┼────────────┼────────────────┤
+              │ All CMMI 5 (GAP=100) │ 0.5        │ 1.0        │ 0.7 - 1.3      │
+              └──────────────────────┴────────────┴────────────┴────────────────┘
+
+              The 5.0-day ceiling for unprepared orgs is grounded in ransomware incident data (median operational downtime ~5 days). The 1.0-day floor acknowledges that even well-prepared organisations need at least a day for a significant incident.
+
+              Applied to calculation, methodology document and DOCX export.
+
+        B) Organisation size multiplier on adjusted daily loss:
+              ┌────────────┬───────────┬──────────────────┐
+              │  OrgSize   │ Employees │    Multiplier    │
+              ├────────────┼───────────┼──────────────────┤
+              │ MICRO      │ 0-9       │ 0.90x            │
+              ├────────────┼───────────┼──────────────────┤
+              │ SMALL      │ 10-49     │ 0.95x            │
+              ├────────────┼───────────┼──────────────────┤
+              │ MEDIUM     │ 50-249    │ 1.00x (baseline) │
+              ├────────────┼───────────┼──────────────────┤
+              │ LARGE      │ 250-999   │ 1.10x            │
+              ├────────────┼───────────┼──────────────────┤
+              │ ENTERPRISE │ 1000+     │ 1.15x            │
+              └────────────┴───────────┴──────────────────┘
+
+              Applied to adjustedDailyLoss, so it cascades to all downstream cost categories proportionally. The size field from the organisation profile (already in the schema and context) is now passed through as orgSize. The calculation step is visible in the UI as "Org Size Factor."
+
+              Applied to calculation, methodology document and DOCX export.
+
+    4) CONC 2 - Incident Response & Forensics (IR):
+        A) Administrative Fine Ceiling:
+                Replaced lookupRevenueTier() (step function) with interpolateByRevenue() (piecewise linear). The anchor points are the same values, but now revenue linearly interpolates between them instead of jumping.
+
+              IR base example at key revenue points:
+
+              ┌─────────┬────────────┬────────────────────┐
+              │ Revenue │ Old (step) │ New (interpolated) │
+              ├─────────┼────────────┼────────────────────┤
+              │ €25M    │ €500K      │ €850K              │
+              ├─────────┼────────────┼────────────────────┤
+              │ €49.9M  │ €500K      │ €1.19M             │
+              ├─────────┼────────────┼────────────────────┤
+              │ €50.1M  │ €1.2M      │ €1.20M             │
+              ├─────────┼────────────┼────────────────────┤
+              │ €100M   │ €1.2M      │ €1.55M             │
+              ├─────────┼────────────┼────────────────────┤
+              │ €200M   │ €1.2M      │ €2.55M             │
+              └─────────┴────────────┴────────────────────┘
+
+              The same interpolation now applies to Restore, Regulatory, and Governance base costs.
+
+              Applied to calculation, methodology document and DOCX export.
+
+        B) Added safeguard 8.11 (Monitoring/Detection) to IR scoring:
+
+                IR_SAFEGUARD_IDS now includes '8.11' alongside 17.2, 17.1, 17.5. The IR score is now the average of 4 safeguards instead of 3. This is justified because detection capability directly affects IR cost and duration — IBM's 2024 report found that security AI/automation (dependent on monitoring maturity) saved $2.22M per breach, primarily through faster detection.
+
+                Applied to calculation, methodology document and DOCX export.
+
+    5) CONC 3 - System Restoration & Rebuild:
+        A) Infrastructure type multiplier on restore cost:
+
+              ┌────────────────────────┬────────────┬───────────────────────────────────────────────────────────────┐
+              │  Infrastructure Type   │ Multiplier │                           Rationale                           │
+              ├────────────────────────┼────────────┼───────────────────────────────────────────────────────────────┤
+              │ CLOUD_ONLY             │ 0.75x      │ IaC, immutable infra, fast re-provisioning                    │
+              ├────────────────────────┼────────────┼───────────────────────────────────────────────────────────────┤
+              │ MULTI_CLOUD            │ 0.85x      │ Fast restore but cross-cloud coordination overhead            │
+              ├────────────────────────┼────────────┼───────────────────────────────────────────────────────────────┤
+              │ HYBRID                 │ 1.00x      │ Baseline                                                      │
+              ├────────────────────────┼────────────┼───────────────────────────────────────────────────────────────┤
+              │ ON_PREMISES            │ 1.20x      │ Physical hardware, manual rebuild, procurement delays         │
+              ├────────────────────────┼────────────┼───────────────────────────────────────────────────────────────┤
+              │ OPERATIONAL_TECHNOLOGY │ 1.35x      │ Specialised equipment, safety validation, vendor dependencies │
+              └────────────────────────┴────────────┴───────────────────────────────────────────────────────────────┘
+
+              When multiple infrastructure types are present (the field is an array), the highest multiplier wins — restore cost is bottlenecked by the slowest-to-recover layer. The infrastructureTypes field from the organisation context is now passed through to the calculator and the step is visible in the UI.
+        
+              Applied to calculation, methodology document and DOCX export.
+
+        B) Steeper restore maturity slope:
+
+              Changed the restore maturity multiplier formula from identical-to-IR to a steeper slope:
+
+              ┌───────────┬───────────────────────────┬───────────────────────────┐
+              │           │        IR formula         │   Restore formula (new)   │
+              ├───────────┼───────────────────────────┼───────────────────────────┤
+              │ Formula   │ 1.3 − ((score−1)/4) × 0.5 │ 1.4 − ((score−1)/4) × 0.7 │
+              ├───────────┼───────────────────────────┼───────────────────────────┤
+              │ At CMMI 1 │ 1.30x                     │ 1.40x                     │
+              ├───────────┼───────────────────────────┼───────────────────────────┤
+              │ At CMMI 3 │ 1.05x                     │ 1.05x                     │
+              ├───────────┼───────────────────────────┼───────────────────────────┤
+              │ At CMMI 5 │ 0.80x                     │ 0.70x                     │
+              └───────────┴───────────────────────────┴───────────────────────────┘
+
+              This reflects that well-tested, automated backup regimes have a stronger cost-reduction effect on restoration than IR process maturity has on forensics. A mature backup regime can eliminate the most expensive component of rebuild entirely.
+        
+              Applied to calculation, methodology document and DOCX export.
+
+    6) CONC 4 - Extended Business Interruption (EBI):
+        A) Non-linear EBI recovery friction:
+
+              Replaced the linear formula downtimeDays × 0.5 with the quadratic 0.15 × downtimeDays²:
+
+              ┌──────────┬────────────────────┬─────────────────┬──────────────────────────┐
+              │ Downtime │    Old (linear)    │ New (quadratic) │          Effect          │
+              ├──────────┼────────────────────┼─────────────────┼──────────────────────────┤
+              │ 1 day    │ 0.50 friction days │ 0.15            │ Staff absorb the backlog │
+              ├──────────┼────────────────────┼─────────────────┼──────────────────────────┤
+              │ 2 days   │ 1.00               │ 0.60            │ Moderate accumulation    │
+              ├──────────┼────────────────────┼─────────────────┼──────────────────────────┤
+              │ 3 days   │ 1.50               │ 1.35            │ Similar to old model     │
+              ├──────────┼────────────────────┼─────────────────┼──────────────────────────┤
+              │ 4 days   │ 2.00               │ 2.40            │ Backlogs compound        │
+              ├──────────┼────────────────────┼─────────────────┼──────────────────────────┤
+              │ 5 days   │ 2.50               │ 3.75            │ Cascading disruption     │
+              └──────────┴────────────────────┴─────────────────┴──────────────────────────┘
+
+              The quadratic relationship captures that short outages have negligible post-recovery friction (people just catch up), while longer outages cause super-linear EBI as backlogs cascade, work context is lost, and processes break down. The crossover point is around 3 days, so moderate-maturity organizations see similar estimates while the extremes are better differentiated.
+
+              The step label in the UI now shows Recovery Friction (0.15 × d²) with the computed value in days. Methodology document updated with a new "Extended Business Interruption (EBI) Model" section explaining the quadratic relationship and its grounding in queueing theory.
+
+    7) CONC 5 - Customer & Contract Loss (CCL):
+              SKIPPED FOR NOW.
+
+    8) CONC 6 - Regulatory & Supervisory Cost:
+        A) Multi-framework regulatory multiplier:
+              Uses the regulatoryObligations array from the organisation profile. Excludes NONE_NOT_SURE and CYBER_INSURANCE (no supervisory obligations). Each additional framework beyond the first adds 0.25x:
+
+              ┌────────────┬────────────┬──────────────────────────────┐
+              │ Frameworks │ Multiplier │           Example            │
+              ├────────────┼────────────┼──────────────────────────────┤
+              │ 0 or 1     │ 1.00x      │ GDPR only                    │
+              ├────────────┼────────────┼──────────────────────────────┤
+              │ 2          │ 1.25x      │ NIS2 + GDPR                  │
+              ├────────────┼────────────┼──────────────────────────────┤
+              │ 3          │ 1.50x      │ NIS2 + GDPR + DORA           │
+              ├────────────┼────────────┼──────────────────────────────┤
+              │ 4          │ 1.75x      │ NIS2 + GDPR + DORA + PCI DSS │
+              └────────────┴────────────┴──────────────────────────────┘
+
+              The 0.25x increment (not 1.0x) reflects that compliance processes partially overlap — an incident response documented for NIS2 substantially satisfies GDPR requirements, but not entirely.
+
+        B) Geographic scope multiplier:
+              Uses geographicScope from the organisation profile:
+
+              ┌─────────────────────────────┬────────────┬─────────────────────────────────────────────────────┐
+              │            Scope            │ Multiplier │                      Rationale                      │
+              ├─────────────────────────────┼────────────┼─────────────────────────────────────────────────────┤
+              │ LOCAL / REGIONAL / NATIONAL │ 1.00x      │ Single supervisory authority                        │
+              ├─────────────────────────────┼────────────┼─────────────────────────────────────────────────────┤
+              │ EUROPEAN                    │ 1.20x      │ Multiple EU member state authorities                │
+              ├─────────────────────────────┼────────────┼─────────────────────────────────────────────────────┤
+              │ GLOBAL                      │ 1.35x      │ EU + non-EU regulators (UK ICO, US state AGs, etc.) │
+              └─────────────────────────────┴────────────┴─────────────────────────────────────────────────────┘
+
+              Both multipliers are visible in the Regulatory calculation steps and documented in a new "Multi-Framework & Cross-Border Regulatory Exposure" methodology section.
+
+    9) CONC 7 - Reputational Impact:
+        A) Data sensitivity multiplier on reputational impact:
+              Uses the dataSensitivity array from the organisation profile. When multiple data types are present, the highest multiplier wins — reputational damage is driven by the most sensitive data exposed.
+
+              ┌─────────────────────────┬────────────┬──────────────────────────────────────────────────────┐
+              │        Data Type        │ Multiplier │                      Rationale                       │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ BASIC_BUSINESS          │ 0.80x      │ Internal records, low public interest                │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ INTELLECTUAL_PROPERTY   │ 0.90x      │ Industry concern, limited public outrage             │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ CRITICAL_INFRASTRUCTURE │ 1.00x      │ Serious but narrow audience                          │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ CUSTOMER_PII            │ 1.00x      │ Standard GDPR breach (baseline)                      │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ PAYMENT_CARD            │ 1.30x      │ High media coverage, direct consumer harm            │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ SPECIAL_CATEGORY        │ 1.50x      │ Health, biometric, children's data — maximum outrage │
+              ├─────────────────────────┼────────────┼──────────────────────────────────────────────────────┤
+              │ CLASSIFIED_GOVERNMENT   │ 1.50x      │ National media, political fallout                    │
+              └─────────────────────────┴────────────┴──────────────────────────────────────────────────────┘
+
+              The step is visible in the UI as "Data Sensitivity Multiplier" under the Reputational Impact block. Methodology document updated with a new "Data Sensitivity Factor" section, and the limitations section no longer lists data sensitivity as a gap.
+    10) CONC 8 - Management & Governance Cost:
+    11) CONC 9 - Administrative Fine Ceiling:
+        1) Channged the calculation method from GDPR to CIS2.
+    12) New CONC 10: Notification Costs
+* Workflow -> Structural Financial Exposure
+    1) Created
+        -> Scenario 1: Downtime Days = 1, and all safeguard inputs to IR are set to 1 (minimum)
+        -> Scenario 2: Downtime Days = 5, and all safeguard inputs to IR are set to 5 (maximum)
+* Workflow -> CEA report
+    1) Created
+        -> Select third party customer.
+* Claude ULTRATHINK
+    1) CONC - evaluation
+    2) CONC - credibility
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Friday 13 Mar
+
+* Workflow, CONC:
+    1) Recalculate "Downtime Days" = MAX(0.5, 3 - ("Downtime GAP score"/100)*2.5)
+        Was: 
+            if "Downtime GAP score" = 80 => 0.5 (High resilience)
+            if "Downtime GAP score" = 65 => 1.0 (Medium resilience)
+            if "Downtime GAP score" = 45 => 2.0 (Low resilience)
+            if "Downtime GAP score" = 9 => 3.0 (Very low resilience)
+    2) Added blocks and calculations for:
+        1) Incident Response & Forensics (IR)
+            irBase × irMaturityMult × irDepMult (IR maturity from safeguards 17.2, 17.1, 17.5)
+        2) System Restoration & Rebuild
+            restoreBase × restoreMatMult × restoreDepMult (backup maturity from 11.2, 11.4, 11.5)
+        3) Extended Business Interruption (EBI)
+            dailyRevenue × downtimeDays × 0.5 × ebiSectorAdj × ebiDepMult × ebiRestoreAdj
+        4) Customer & Contract Loss (CCL)
+            annualRevenue × basePct × cclSectorAdj × cclSeverityAdj × cclIrAdj
+        5) Regulatory & Supervisory Cost
+            regBase × regSectorAdj × regSeverityAdj × regIrAdj
+        6) Reputational Impact
+            annualRevenue × basePct × severityAdj × sectorAdj × irAdj × visibilityMult
+        7) Management & Governance Cost
+            govBase × severityAdj × sectorAdj
+        8) Legal Exposure – Administrative Fine Ceiling
+            MAX(fixedCap, annualRevenue × pctCap) — displayed separately, not in total
+    3) Generated an ULTRATHINK CONC evaluation-report.
+    5) Optimized code on CONC report.
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Thursday 12 Mar
@@ -337,7 +745,6 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
                 Q – Healthcare              Healthcare
                 R – Entertainment           Entertainment
                 S – Other Services          Services
-
             2) "Daily Revenue" = Annual Revenue (table: organization.revenue_range) / Business days per year (table: organization.business_days_per_year)
                 Annual Revenue is in a range. 
                     < euro 2M
@@ -351,7 +758,7 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
 
             3) "IT dependency level" = SUM(organization.manual_operation, organization.production_dependency, organization.customer_access)
 
-            4) IT factor = 
+            4) "IT factor" = 
                 if "IT dependency level" <= 1 -> 0.30 (Low)
                 if "IT dependency level" <= 3 -> 0.60 (Medium)
                 if "IT dependency level" > 3 -> 0.90 (High)
@@ -435,22 +842,29 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
         A) Results in a table.
         B) Make results unediable, human readable.
         C) Added currency to results.
+    4) Display intermediate steps:
+        1 "ibm-industry"
+        2 "Daily Revenue"
+        3 "IT dependency level"
+        4 "IT factor"
+        5 "Sector Factor"
+        6 "Adjusted Daily Loss"
+        7 "Yotal GAP score"
+        8 "Downtime GAP score"
+        9 "Downtime Days"
 * Database:
     1) New table: currency. Filled out with all currencies under ISO 4217.
-
-
-On the CONC page:
-1) Create a table for the results on the CONC page, 
-2) The three downtime costs: make not editable, make numbers human readable. 
-
-
-Add column to organization_settings: currency_id FK to table currency, set default to USD
-On the CONC page:
-Add currency synbols from the table currency over the table organisation_settings to the three downtime costs.
-
-
-
-
+    2) Changed EU SME-aligned turnover ranges to an input field.
+            EU SME-aligned turnover ranges were:
+                UNDER_2M million 
+                FROM_2M_10M
+                FROM_10M_50M
+                FROM_50M_250M
+                FROM_250M_1B
+                OVER_1B
+* Organization page:
+    1) Annual Revenue => Input field
+    2) Fixed bug where "public-facing services" was not being saved in the database.
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Tuesday 10 Mar
@@ -813,11 +1227,11 @@ New table: organization_third_party
             - Bucket: arn:aws:s3:::YOUR-BUCKET-NAME
             - Object: arn:aws:s3:::YOUR-BUCKET-NAME/*
 
-      ** 4) Security credentials. New Access Keys: 
+      ** 4) Security credentials. New Access Keys:
           -> Application running outside AWS
-          -> Access Key: [REDACTED]
-          -> Secret access key: [REDACTED]
-          -> Console sign-in link: [REDACTED]
+          -> Access Key: [REMOVED - see AWS console]
+          -> Secret access key: [REMOVED - see AWS console]
+          -> Console sign-in link: [REMOVED]
 * New Page: Upload Files
   1) Upload files to Amazon AWS S3
   2) Use Drag and Drop to select files.

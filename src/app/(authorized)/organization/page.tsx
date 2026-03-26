@@ -94,7 +94,7 @@ export default function OrganizationPage()
     // Classification fields
     const [naceSection, setNaceSection] = useState<string | null>(null);
     const [legalForm, setLegalForm] = useState<string | null>(null);
-    const [revenueRange, setRevenueRange] = useState<string | null>(null);
+    const [revenueRange, setRevenueRange] = useState<number | null>(null);
     const [maturity, setMaturity] = useState<string | null>(null);
     const [ownershipType, setOwnershipType] = useState<string | null>(null);
     const [geographicScope, setGeographicScope] = useState<string | null>(null);
@@ -166,6 +166,12 @@ export default function OrganizationPage()
     const [downloadDirectory, setDownloadDirectory] = useState("");
     const [artifactDirectory, setArtifactDirectory] = useState("");
     const [settingsHasChanges, setSettingsHasChanges] = useState(false);
+
+    // Lookup sources settings
+    const [allLookupSources, setAllLookupSources] = useState<string[]>([]);
+    const [enabledLookupSources, setEnabledLookupSources] = useState<string[]>([]);
+    const [originalEnabledLookupSources, setOriginalEnabledLookupSources] = useState<string[]>([]);
+    const [lookupSourcesSaving, setLookupSourcesSaving] = useState(false);
 
     // Delete Profile.
     const [profileToDelete, setProfileToDelete] = useState<number | null>(null);
@@ -861,6 +867,11 @@ export default function OrganizationPage()
             setDownloadDirectory(selectedOrg.settings?.downloadDirectory || "");
             setArtifactDirectory(selectedOrg.settings?.artifactDirectory || "");
 
+            // Load lookup sources
+            const orgSources = (selectedOrg.settings as any)?.enabledLookupSources ?? [];
+            setEnabledLookupSources(orgSources);
+            setOriginalEnabledLookupSources(orgSources);
+
             // Fetch events for this organization
             fetchEvents(selectedOrg.id);
 
@@ -876,6 +887,8 @@ export default function OrganizationPage()
             setUploadDirectory("");
             setDownloadDirectory("");
             setArtifactDirectory("");
+            setEnabledLookupSources([]);
+            setOriginalEnabledLookupSources([]);
             setEvents([]);
         }
     }, [selectedOrg]);
@@ -984,8 +997,62 @@ export default function OrganizationPage()
     };
 
     // ----------------------------------------------------------------------------------------------------------------
-    // 
+    // LOOKUP SOURCES
 
+    const lookupSourceLabels: Record<string, string> = {
+        NO: 'Brreg (Norway)',
+        DK: 'Virk CVR (Denmark)',
+    };
+
+    const toggleLookupSource = (code: string) => {
+        setEnabledLookupSources(prev => {
+            if (prev.includes(code)) return prev.filter(c => c !== code);
+            return [...prev, code];
+        });
+    };
+
+    const lookupSourcesChanged = JSON.stringify([...enabledLookupSources].sort()) !== JSON.stringify([...originalEnabledLookupSources].sort());
+
+    const handleLookupSourcesSave = async () => {
+        if (!selectedOrg) return;
+        setLookupSourcesSaving(true);
+        try {
+            const res = await fetch(`/api/organization/${selectedOrg.id}/settings`, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ enabledLookupSources }),
+            });
+            const data = await res.json();
+            if (!res.ok || !data.success) throw new Error(data.error || 'Save failed');
+
+            // Update local state
+            setOrganizations(prev =>
+                prev.map(o =>
+                    o.id === selectedOrg.id
+                        ? { ...o, settings: data.data }
+                        : o
+                )
+            );
+            setSelectedOrg((prev: any) => ({ ...prev!, settings: data.data }));
+            setOriginalEnabledLookupSources(enabledLookupSources);
+
+            // Update filtered countries for the lookup dropdown
+            const filtered = enabledLookupSources.length > 0
+                ? allLookupSources.filter(c => enabledLookupSources.includes(c))
+                : allLookupSources;
+            setSupportedCountries(filtered);
+            if (filtered.length > 0 && !filtered.includes(lookupCountry)) {
+                setLookupCountry(filtered[0]);
+            }
+
+            toast.success(t('labels.lookupSourcesSaved'));
+        } catch (err: any) {
+            console.error(err);
+            toast.error(t('labels.lookupSourcesSaveError'));
+        } finally {
+            setLookupSourcesSaving(false);
+        }
+    };
 
     // Protect the route
     useEffect(() =>
@@ -1383,17 +1450,37 @@ export default function OrganizationPage()
         setIsNewDialogOpen(false); // Close Dialog.
     };
 
-    // Fetch supported countries on mount
+    // Fetch supported countries on mount (unfiltered = all available sources for settings)
     useEffect(() => {
         fetch('/api/company-lookup/countries')
             .then(res => res.json())
             .then(json => {
                 const countries: string[] = json.countries ?? [];
+                setAllLookupSources(countries);
                 setSupportedCountries(countries);
                 if (countries.length > 0) setLookupCountry(countries[0]);
             })
             .catch(() => {});
     }, []);
+
+    // When org changes, re-fetch filtered countries for the lookup dropdown
+    useEffect(() => {
+        if (!selectedOrg) return;
+        const orgSources = (selectedOrg.settings as any)?.enabledLookupSources ?? [];
+        if (orgSources.length === 0) {
+            // No filter — use all sources
+            setSupportedCountries(allLookupSources);
+            if (allLookupSources.length > 0 && !allLookupSources.includes(lookupCountry)) {
+                setLookupCountry(allLookupSources[0]);
+            }
+            return;
+        }
+        const filtered = allLookupSources.filter((c: string) => orgSources.includes(c));
+        setSupportedCountries(filtered);
+        if (filtered.length > 0 && !filtered.includes(lookupCountry)) {
+            setLookupCountry(filtered[0]);
+        }
+    }, [selectedOrg, allLookupSources]);
 
     // ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
     // SAVE ORGANIZATION
@@ -3009,19 +3096,14 @@ export default function OrganizationPage()
                     {/* Revenue Range */}
                     <div>
                         <label className="block text-sm mb-2">{t('labels.revenueRange')}</label>
-                        <Select value={revenueRange || ""} onValueChange={(v) => setRevenueRange(v || null)}>
-                            <SelectTrigger className="w-full bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectValue placeholder={t('placeholders.selectRevenueRange')} />
-                            </SelectTrigger>
-                            <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="UNDER_2M">{t('revenueRanges.under2m')}</SelectItem>
-                                <SelectItem value="FROM_2M_10M">{t('revenueRanges.from2mTo10m')}</SelectItem>
-                                <SelectItem value="FROM_10M_50M">{t('revenueRanges.from10mTo50m')}</SelectItem>
-                                <SelectItem value="FROM_50M_250M">{t('revenueRanges.from50mTo250m')}</SelectItem>
-                                <SelectItem value="FROM_250M_1B">{t('revenueRanges.from250mTo1b')}</SelectItem>
-                                <SelectItem value="OVER_1B">{t('revenueRanges.over1b')}</SelectItem>
-                            </SelectContent>
-                        </Select>
+                        <input
+                            type="number"
+                            min={0}
+                            className="w-full bg-neutral-800 border border-neutral-700 rounded-none px-3 py-2 text-sm text-white placeholder-neutral-500 focus:outline-none focus:ring-1 focus:ring-neutral-500"
+                            placeholder={t('placeholders.enterRevenue')}
+                            value={revenueRange !== null ? revenueRange : ''}
+                            onChange={(e) => setRevenueRange(e.target.value !== '' ? Number(e.target.value) : null)}
+                        />
                     </div>
 
                     {/* Business Days per Year */}
@@ -3095,9 +3177,9 @@ export default function OrganizationPage()
                                 <SelectValue placeholder={t('placeholders.selectPublicFacingServices')} />
                             </SelectTrigger>
                             <SelectContent className="bg-neutral-800 border border-neutral-700 rounded-none">
-                                <SelectItem value="MINIMAL">{t('publicFacingServices.minimal')}</SelectItem>
-                                <SelectItem value="STANDARD_WEB">{t('publicFacingServices.standardWeb')}</SelectItem>
-                                <SelectItem value="ECOMMERCE">{t('publicFacingServices.ecommerce')}</SelectItem>
+                                <SelectItem value="NONE">{t('publicFacingServices.none')}</SelectItem>
+                                <SelectItem value="BASIC_WEB">{t('publicFacingServices.basicWeb')}</SelectItem>
+                                <SelectItem value="ECOMMERCE_PORTALS">{t('publicFacingServices.ecommercePortals')}</SelectItem>
                                 <SelectItem value="CRITICAL_SERVICES">{t('publicFacingServices.criticalServices')}</SelectItem>
                             </SelectContent>
                         </Select>
@@ -3874,6 +3956,63 @@ export default function OrganizationPage()
                         {t('empty.noSettings')}
                     </div>
                     )}
+
+                    {/* Lookup Sources */}
+                    <div className="border-t border-border pt-6">
+                        <label className="block text-sm font-medium mb-1">{t('labels.lookupSources')}</label>
+                        <p className="text-xs text-muted-foreground mb-4">
+                            {t('labels.lookupSourcesHelper')}
+                        </p>
+                        {allLookupSources.length === 0 ? (
+                            <p className="text-sm text-muted-foreground italic">No lookup sources available on this server.</p>
+                        ) : (
+                            <div className="space-y-3">
+                                {allLookupSources.map(code => (
+                                    <label key={code} className="flex items-center gap-3 cursor-pointer">
+                                        <button
+                                            type="button"
+                                            role="switch"
+                                            aria-checked={enabledLookupSources.includes(code)}
+                                            onClick={() => toggleLookupSource(code)}
+                                            className={`
+                                                relative inline-flex h-5 w-9 shrink-0 cursor-pointer rounded-full border-2 border-transparent
+                                                transition-colors duration-200 ease-in-out focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+                                                ${enabledLookupSources.includes(code) ? 'bg-primary' : 'bg-muted'}
+                                            `}
+                                        >
+                                            <span
+                                                className={`
+                                                    pointer-events-none inline-block h-4 w-4 rounded-full bg-background shadow-lg ring-0
+                                                    transition-transform duration-200 ease-in-out
+                                                    ${enabledLookupSources.includes(code) ? 'translate-x-4' : 'translate-x-0'}
+                                                `}
+                                            />
+                                        </button>
+                                        <span className="text-sm">{lookupSourceLabels[code] ?? code}</span>
+                                    </label>
+                                ))}
+                            </div>
+                        )}
+                        {lookupSourcesChanged && (
+                            <div className="flex gap-2 mt-4">
+                                <Button
+                                    size="sm"
+                                    onClick={handleLookupSourcesSave}
+                                    disabled={lookupSourcesSaving}
+                                >
+                                    {lookupSourcesSaving ? t('onboard.saving') : t('buttons.save')}
+                                </Button>
+                                <Button
+                                    size="sm"
+                                    variant="outline"
+                                    onClick={() => setEnabledLookupSources(originalEnabledLookupSources)}
+                                    disabled={lookupSourcesSaving}
+                                >
+                                    {t('buttons.cancel')}
+                                </Button>
+                            </div>
+                        )}
+                    </div>
                 </div>
             </TabsContent>
             )}

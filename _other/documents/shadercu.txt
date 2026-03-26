@@ -119,6 +119,7 @@ https://taki-ui.com/docs/ai-elements/message
 
 Notification Center (Toast), Messenger
 https://ui.tripled.work/components/notification-center
+https://ui.tripled.work/components/messenger (CC notes)
 
 Spotlight Cards, Media Modals, Linear Modal, Password
 https://www.ui-layouts.com/components/spotlight-cards

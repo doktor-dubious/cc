@@ -83,16 +83,6 @@ const LEGAL_FORM_OPTIONS = [
   { value: 'OTHER', labelKey: 'legalForms.other' },
 ];
 
-// Revenue range options
-const REVENUE_RANGE_OPTIONS = [
-  { value: 'UNDER_2M', labelKey: 'revenueRanges.under2m' },
-  { value: 'FROM_2M_TO_10M', labelKey: 'revenueRanges.from2mTo10m' },
-  { value: 'FROM_10M_TO_50M', labelKey: 'revenueRanges.from10mTo50m' },
-  { value: 'FROM_50M_TO_250M', labelKey: 'revenueRanges.from50mTo250m' },
-  { value: 'FROM_250M_TO_1B', labelKey: 'revenueRanges.from250mTo1b' },
-  { value: 'OVER_1B', labelKey: 'revenueRanges.over1b' },
-];
-
 // Maturity options
 const MATURITY_OPTIONS = [
   { value: 'STARTUP', labelKey: 'maturities.startup' },
@@ -381,10 +371,9 @@ const WIZARD_STEPS: WizardStep[] = [
       },
       {
         key: 'revenueRange',
-        type: 'select',
+        type: 'number',
         labelKey: 'labels.revenueRange',
-        placeholderKey: 'placeholders.selectRevenueRange',
-        options: REVENUE_RANGE_OPTIONS,
+        placeholderKey: 'placeholders.enterRevenue',
       },
       {
         key: 'businessDaysPerYear',
@@ -774,7 +763,7 @@ function OrganizationOnboardContent() {
               size: org.size || 'MICRO',
               naceSection: org.naceSection || null,
               legalForm: org.legalForm || null,
-              revenueRange: org.revenueRange || null,
+              revenueRange: org.revenueRange !== null && org.revenueRange !== undefined ? String(org.revenueRange) : null,
               maturity: org.maturity || null,
               ownershipType: org.ownershipType || null,
               geographicScope: org.geographicScope || null,
@@ -822,9 +811,12 @@ function OrganizationOnboardContent() {
   }, [organizationId, t]);
 
   // Company lookup search
-  // Fetch supported countries on mount
+  // Fetch supported countries (filtered by org's enabled sources)
   useEffect(() => {
-    fetch('/api/company-lookup/countries')
+    const url = organizationId
+      ? `/api/company-lookup/countries?orgId=${organizationId}`
+      : '/api/company-lookup/countries';
+    fetch(url)
       .then(res => res.json())
       .then(json => {
         const countries: string[] = json.countries ?? [];
@@ -832,7 +824,7 @@ function OrganizationOnboardContent() {
         if (countries.length > 0) setLookupCountry(countries[0]);
       })
       .catch(() => {});
-  }, []);
+  }, [organizationId]);
 
   useEffect(() => {
     if (!lookupQuery.trim() || lookupQuery.length < 2) {
@@ -912,7 +904,7 @@ function OrganizationOnboardContent() {
             size: data.size,
             naceSection: data.naceSection,
             legalForm: data.legalForm,
-            revenueRange: data.revenueRange,
+            revenueRange: data.revenueRange !== null ? parseInt(data.revenueRange, 10) : null,
             maturity: data.maturity,
             ownershipType: data.ownershipType,
             geographicScope: data.geographicScope,
@@ -1185,7 +1177,7 @@ function OrganizationOnboardContent() {
 
     if (isUnconfirmed) {
       return (
-        <div key={field.key} className="rounded-md ring-2 ring-amber-400/60 ring-offset-2 ring-offset-background p-3 -m-3 relative">
+        <div key={field.key} className="rounded-md border-2 border-amber-400/60 px-3 pt-3 pb-5 relative">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-amber-500 font-medium flex items-center gap-1">
               <Building2 className="w-3 h-3" />

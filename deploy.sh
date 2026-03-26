@@ -14,33 +14,36 @@ if [ ! -f .env ]; then
     exit 1
 fi
 
-# Check JWT_SECRET is set
-if grep -q "change-me" .env 2>/dev/null; then
-    echo "WARNING: JWT_SECRET looks like a placeholder."
-    echo "Generate a proper secret with: openssl rand -hex 32"
+# Check secrets are not placeholders
+has_placeholder=false
+for var in JWT_SECRET BETTER_AUTH_SECRET; do
+    if grep -qE "^${var}=change-me" .env 2>/dev/null; then
+        echo "WARNING: ${var} looks like a placeholder."
+        has_placeholder=true
+    fi
+done
+
+if [ "$has_placeholder" = true ]; then
+    echo "Generate proper secrets with: openssl rand -hex 32"
     echo ""
     read -p "Continue anyway? (y/N) " -n 1 -r
     echo ""
     [[ $REPLY =~ ^[Yy]$ ]] || exit 1
 fi
 
-echo "1/5  Installing dependencies..."
-npm ci
-
-echo ""
-echo "2/5  Pulling latest base images..."
+echo "1/4  Pulling latest base images..."
 docker compose pull db
 
 echo ""
-echo "3/5  Building application image..."
+echo "2/4  Building application image..."
 docker compose build --no-cache app
 
 echo ""
-echo "4/5  Restarting services..."
-docker compose up -d
+echo "3/4  Restarting services..."
+docker compose --profile prod up -d
 
 echo ""
-echo "5/5  Waiting for services to be healthy..."
+echo "4/4  Waiting for services to be healthy..."
 # Wait for db health check
 timeout=60
 elapsed=0
@@ -52,17 +55,17 @@ while [ $elapsed -lt $timeout ]; do
     elapsed=$((elapsed + 2))
 done
 
-# Wait a few more seconds for the app to start and run migrations
+# Wait for the app to start and run prisma db push
 sleep 5
 
 # Check app is running
 if docker compose ps app --format '{{.Status}}' 2>/dev/null | grep -q "Up"; then
     echo ""
     echo "================================================"
-    APP_PORT=$(grep -E "^APP_PORT=" .env 2>/dev/null | cut -d= -f2)
-    APP_PORT=${APP_PORT:-3000}
+    PROD_PORT=$(grep -E "^PROD_PORT=" .env 2>/dev/null | cut -d= -f2)
+    PROD_PORT=${PROD_PORT:-3000}
     echo "  Deploy complete!"
-    echo "  App running at http://localhost:${APP_PORT}"
+    echo "  App running at http://localhost:${PROD_PORT}"
     echo "================================================"
 else
     echo ""

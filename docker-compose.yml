@@ -2,17 +2,37 @@ services:
   app:
     build: .
     ports:
-      - "${APP_PORT:-3000}:3000"
+      - "${PROD_PORT:-3000}:3000"
     environment:
       - DATABASE_URL=postgresql://${POSTGRES_USER:-compliance}:${POSTGRES_PASSWORD:-compliance}@db:5432/${POSTGRES_DB:-compliance}?schema=public
       - NODE_ENV=production
       - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET in .env}
       - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env}
-      - BETTER_AUTH_URL=${BETTER_AUTH_URL:-http://localhost:3000}
+      - BETTER_AUTH_URL=${PROD_AUTH_URL:-https://cc.predictioninstitute.com}
     depends_on:
       db:
         condition: service_healthy
     restart: unless-stopped
+    profiles: [prod]
+
+  app-dev:
+    image: node:22-alpine
+    working_dir: /app
+    volumes:
+      - .:/app
+    ports:
+      - "${DEV_PORT:-3001}:3001"
+    environment:
+      - DATABASE_URL=postgresql://${POSTGRES_USER:-compliance}:${POSTGRES_PASSWORD:-compliance}@db:5432/${POSTGRES_DB:-compliance}?schema=public
+      - NODE_ENV=development
+      - JWT_SECRET=${JWT_SECRET:?Set JWT_SECRET in .env}
+      - BETTER_AUTH_SECRET=${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET in .env}
+      - BETTER_AUTH_URL=${DEV_AUTH_URL:-http://localhost:3001}
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "./node_modules/.bin/prisma db push --accept-data-loss && npm run dev"
+    profiles: [dev]
 
   db:
     image: postgres:17-alpine

@@ -260,6 +260,22 @@ const TARGETED_ATTACK_LIKELIHOOD_OPTIONS = [
   { value: 'HIGH', labelKey: 'targetedAttackLikelihood.high' },
 ];
 
+// Remote workforce options
+const REMOTE_WORKFORCE_OPTIONS = [
+  { value: 'NONE', labelKey: 'remoteWorkforce.none' },
+  { value: 'UNDER_25', labelKey: 'remoteWorkforce.under25' },
+  { value: 'FROM_25_50', labelKey: 'remoteWorkforce.from25to50' },
+  { value: 'FROM_50_75', labelKey: 'remoteWorkforce.from50to75' },
+  { value: 'OVER_75', labelKey: 'remoteWorkforce.over75' },
+];
+
+// Previous breach history options
+const PREVIOUS_BREACH_HISTORY_OPTIONS = [
+  { value: 'NONE', labelKey: 'previousBreachHistory.none' },
+  { value: 'ONE', labelKey: 'previousBreachHistory.one' },
+  { value: 'MULTIPLE', labelKey: 'previousBreachHistory.multiple' },
+];
+
 // Downtime tolerance options
 const DOWNTIME_TOLERANCE_OPTIONS = [
   { value: 'DAYS', labelKey: 'downtimeTolerance.days' },
@@ -564,6 +580,28 @@ const WIZARD_STEPS: WizardStep[] = [
     ],
   },
   {
+    id: 'workforce-incident-history',
+    titleKey: 'onboard.steps.workforceIncidentHistory',
+    fields: [
+      {
+        key: 'remoteWorkforce',
+        type: 'select',
+        labelKey: 'labels.remoteWorkforce',
+        placeholderKey: 'placeholders.selectRemoteWorkforce',
+        helperKey: 'helpers.remoteWorkforceHelp',
+        options: REMOTE_WORKFORCE_OPTIONS,
+      },
+      {
+        key: 'previousBreachHistory',
+        type: 'select',
+        labelKey: 'labels.previousBreachHistory',
+        placeholderKey: 'placeholders.selectPreviousBreachHistory',
+        helperKey: 'helpers.previousBreachHistoryHelp',
+        options: PREVIOUS_BREACH_HISTORY_OPTIONS,
+      },
+    ],
+  },
+  {
     id: 'software-budget',
     titleKey: 'onboard.steps.softwareBudget',
     fields: [
@@ -672,6 +710,8 @@ type FormData = {
   softwareDevelopment: string | null;
   publicFacingServices: string | null;
   targetedAttackLikelihood: string | null;
+  remoteWorkforce: string | null;
+  previousBreachHistory: string | null;
   downtimeTolerance: string | null;
   supplyChainPosition: string | null;
   securityBudgetRange: string | null;
@@ -708,6 +748,8 @@ const initialFormData: FormData = {
   softwareDevelopment: null,
   publicFacingServices: null,
   targetedAttackLikelihood: null,
+  remoteWorkforce: null,
+  previousBreachHistory: null,
   downtimeTolerance: null,
   supplyChainPosition: null,
   securityBudgetRange: null,
@@ -795,6 +837,8 @@ function OrganizationOnboardContent() {
               softwareDevelopment: org.softwareDevelopment || null,
               publicFacingServices: org.publicFacingServices || null,
               targetedAttackLikelihood: org.targetedAttackLikelihood || null,
+              remoteWorkforce: org.remoteWorkforce || null,
+              previousBreachHistory: org.previousBreachHistory || null,
               downtimeTolerance: org.downtimeTolerance || null,
               supplyChainPosition: org.supplyChainPosition || null,
               securityBudgetRange: org.securityBudgetRange || null,
@@ -823,9 +867,12 @@ function OrganizationOnboardContent() {
     }
   }, [organizationId, t]);
 
-  // Fetch supported countries on mount
+  // Fetch supported countries (filtered by org's enabled sources)
   useEffect(() => {
-    fetch('/api/company-lookup/countries')
+    const url = organizationId
+      ? `/api/company-lookup/countries?orgId=${organizationId}`
+      : '/api/company-lookup/countries';
+    fetch(url)
       .then(res => res.json())
       .then(json => {
         const countries: string[] = json.countries ?? [];
@@ -833,7 +880,7 @@ function OrganizationOnboardContent() {
         if (countries.length > 0) setLookupCountry(countries[0]);
       })
       .catch(() => {});
-  }, []);
+  }, [organizationId]);
 
   // Company lookup search
   useEffect(() => {
@@ -942,6 +989,8 @@ function OrganizationOnboardContent() {
             softwareDevelopment: data.softwareDevelopment,
             publicFacingServices: data.publicFacingServices,
             targetedAttackLikelihood: data.targetedAttackLikelihood,
+            remoteWorkforce: data.remoteWorkforce,
+            previousBreachHistory: data.previousBreachHistory,
             downtimeTolerance: data.downtimeTolerance,
             supplyChainPosition: data.supplyChainPosition,
             securityBudgetRange: data.securityBudgetRange,
@@ -1202,7 +1251,7 @@ function OrganizationOnboardContent() {
 
     if (isUnconfirmed) {
       return (
-        <div key={field.key} className="rounded-md ring-2 ring-amber-400/60 ring-offset-2 ring-offset-background p-3 -m-3 relative">
+        <div key={field.key} className="rounded-md border-2 border-amber-400/60 px-3 pt-3 pb-5 relative">
           <div className="flex items-center justify-between mb-2">
             <span className="text-xs text-amber-500 font-medium flex items-center gap-1">
               <Building2 className="w-3 h-3" />
