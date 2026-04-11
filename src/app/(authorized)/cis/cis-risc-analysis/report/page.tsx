@@ -882,7 +882,7 @@ function ReportSection({
               title={isActive ? 'Remove section' : 'Restore section'}
             >
               {isActive ? (
-                <XIcon ref={xIconRef} size={14} />
+                <XIcon size={14} />
               ) : (
                 <PlusIcon ref={plusIconRef} size={14} />
               )}

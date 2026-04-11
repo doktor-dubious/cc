@@ -399,7 +399,7 @@ export default function UserPage()
         if (!user) return;
         if (user.role !== 'SUPER_ADMIN')
         {
-            router.push('/dashboard');
+            router.push('/home');
         }
     }, [user, router]);
 

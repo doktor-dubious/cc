@@ -20,7 +20,7 @@ export default function ApplicationSettingsPage()
     useEffect(() => {
         if (user.role !== 'SUPER_ADMIN') {
             toast.error(t('toast.accessDenied'));
-            router.push('/dashboard');
+            router.push('/home');
         }
     }, [user.role, router]);
 

@@ -236,7 +236,7 @@ export function TimelineStepCard({
               title={isActive ? 'Remove step' : 'Add step'}
             >
               {isActive ? (
-                <XIcon ref={xIconRef} size={16} />
+                <XIcon size={16} />
               ) : (
                 <PlusIcon ref={plusIconRef} size={16} />
               )}

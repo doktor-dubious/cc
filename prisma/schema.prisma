@@ -198,6 +198,7 @@ model Organization {
   fileStars            FileStar[]
   workflowConfigs      WorkflowConfig[]
   thirdPartyCompanies  ThirdPartyCompany[]
+  evidences            Evidence[]
 
   @@map("organization")
 }
@@ -250,6 +251,9 @@ model Profile {
   user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
   taskProfiles          TaskProfile[]
   profileStar           ProfileStar?
+  messages              Message[]
+  evidencesCreated      Evidence[]   @relation("EvidenceCreatedBy")
+  evidencesApproved     Evidence[]   @relation("EvidenceApprovedBy")
 
   @@index([organizationId])
   @@index([userId])
@@ -277,6 +281,7 @@ model Artifact {
   events         Event[]
   taskArtifacts  TaskArtifact[]
   artifactStar   ArtifactStar?
+  evidences      Evidence[]
 
   @@index([organizationId])
   @@map("artifact")
@@ -303,6 +308,7 @@ model Task {
   taskProfiles     TaskProfile[]
   taskSafeguards   TaskSafeguard[]
   taskStar         TaskStar?
+  evidences        Evidence[]
 
   @@index([organizationId])
   @@index([startAt])
@@ -334,6 +340,35 @@ model TaskArtifact {
   @@index([taskId])
   @@index([artifactId])
   @@map("task_artifact")
+}
+
+/// Evidence submitted for a Task, optionally linked to an Artifact and/or Message
+model Evidence {
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int       @default(autoincrement())
+  organizationId String    @map("organization_id") @db.Uuid
+  taskId         String    @map("task_id") @db.Uuid
+  artifactId     String?   @map("artifact_id") @db.Uuid
+  createdById    String    @map("created_by") @db.Uuid
+  approved       Boolean   @default(false)
+  resubmit       Boolean   @default(false)
+  approvedById   String?   @map("approved_by") @db.Uuid
+  approvedAt     DateTime? @map("approved_at") @db.Timestamptz(3)
+  active         Boolean   @default(true)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
+
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  task         Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  artifact     Artifact?    @relation(fields: [artifactId], references: [id])
+  messages     Message[]
+  createdBy    Profile      @relation("EvidenceCreatedBy", fields: [createdById], references: [id])
+  approvedBy   Profile?     @relation("EvidenceApprovedBy", fields: [approvedById], references: [id])
+
+  @@index([organizationId])
+  @@index([taskId])
+  @@index([artifactId])
+  @@map("evidence")
 }
 
 /// Tracks which CIS 18 Controls are active/inactive per Organization.
@@ -586,24 +621,36 @@ model MessageStar {
 
 /// Messages tied to Tasks - can be system-generated or from users
 model Message {
-  id        String      @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq       Int         @default(autoincrement())
-  taskId    String      @map("task_id") @db.Uuid
-  /// If type is USER, senderId should be set. If SYSTEM, it can be null
-  senderId  String?     @map("sender_id") @db.Uuid
-  type      MessageType @default(USER)
-  content   String
-  isRead    Boolean     @default(false) @map("is_read")
-  active    Boolean     @default(true)
-  createdAt DateTime    @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt DateTime    @updatedAt @map("updated_at") @db.Timestamptz(3)
+  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq         Int                 @default(autoincrement())
+  taskId      String              @map("task_id") @db.Uuid
+  /// If origin is USER, senderId should be set. If SYSTEM, it can be null
+  senderId    String?             @map("sender_id") @db.Uuid
+  origin      MessageOrigin       @default(USER)
+  type        MessageKind         @default(NOTE)
+  replyId     String?             @map("reply_id") @db.Uuid
+  requestType MessageRequestType? @map("request_type")
+  replyTo     String?             @map("reply_to") @db.Uuid
+  assetName   String?             @map("asset_name")
+  evidenceId  String?             @map("evidence_id") @db.Uuid
+  content     String
+  isRead      Boolean             @default(false) @map("is_read")
+  active      Boolean             @default(true)
+  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt   DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
   sender       User?        @relation(fields: [senderId], references: [id])
   task         Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  reply        Message?     @relation("MessageReply", fields: [replyId], references: [id])
+  replies      Message[]    @relation("MessageReply")
+  replyToProfile Profile?   @relation(fields: [replyTo], references: [id])
   messageStars MessageStar[]
+  evidence     Evidence?    @relation(fields: [evidenceId], references: [id])
 
   @@index([taskId])
+  @@index([evidenceId])
   @@index([senderId])
   @@index([isRead])
+  @@index([replyId])
   @@index([createdAt])
   @@map("message")
 }
@@ -698,11 +745,30 @@ enum ArtifactType {
   OTHER
 }
 
-enum MessageType {
+enum MessageOrigin {
   /// System-generated message
   SYSTEM
   /// Message from a user
   USER
+
+  @@map("MessageType")
+}
+
+enum MessageKind {
+  NOTE
+  REPLY
+  REQUEST
+  ASSET
+  EVIDENCE
+  EVIDENCE_APPROVED
+  EVIDENCE_CHANGES
+}
+
+enum MessageRequestType {
+  CLOSE
+  PAUSE
+  POSTPONE
+  REOPEN
 }
 
 enum EventImportance {

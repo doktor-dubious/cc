@@ -64,7 +64,7 @@ const Login = () =>
         {
             // Only navigate if not being redirected to 2FA
             // (the twoFactorClient plugin handles the redirect via onTwoFactorRedirect)
-            router.push('/dashboard');
+            router.push('/home');
         }
     };
 
@@ -219,7 +219,7 @@ const Login = () =>
               className="cursor-pointer rounded-none flex-1"
               onClick={() => {
                 setLoading(true);
-                authClient.signIn.social({ provider: 'google', callbackURL: '/dashboard' });
+                authClient.signIn.social({ provider: 'google', callbackURL: '/home' });
               }}
             >
               <svg className="h-4 w-4 mr-2" viewBox="0 0 24 24">
@@ -238,7 +238,7 @@ const Login = () =>
               className="cursor-pointer rounded-none flex-1"
               onClick={() => {
                 setLoading(true);
-                authClient.signIn.social({ provider: 'microsoft', callbackURL: '/dashboard' });
+                authClient.signIn.social({ provider: 'microsoft', callbackURL: '/home' });
               }}
             >
               <svg className="h-4 w-4 mr-2" viewBox="0 0 23 23">

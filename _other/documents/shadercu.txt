@@ -10,6 +10,12 @@ Icons:
 lucide-react
 https://lucide.dev/icons/
 
+React Wheel Picker:
+https://chanhdai.com/components/react-wheel-picker
+
+Sounds:
+https://www.soundcn.xyz/
+
 Morphic Navbar, Background Paths, Toolbar, Dynamic Text
 https://kokonutui.com/docs/components/morphic-navbar
 

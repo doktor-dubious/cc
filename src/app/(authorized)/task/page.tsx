@@ -562,7 +562,8 @@ export default function TaskPage()
                 body: JSON.stringify({
                     taskId: selectedTask.id,
                     content: newMessageContent.trim(),
-                    type: 'USER',
+                    origin: 'USER',
+                    type: 'NOTE',
                 }),
             });
 
@@ -1954,7 +1955,7 @@ useEffect(() => {
   <DialogContent className="max-w-2xl">
     <DialogHeader>
       <DialogTitle className="flex items-center gap-2">
-        {selectedMessage?.type === 'SYSTEM' ? (
+        {selectedMessage?.origin === 'SYSTEM' ? (
           <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
             {t('badges.system')}
           </Badge>
@@ -1987,7 +1988,7 @@ useEffect(() => {
         {t('buttons.delete')}
       </Button>
       <div className="flex gap-2">
-        {selectedMessage?.type !== 'SYSTEM' && selectedMessage?.sender?.email === user?.email && (
+        {selectedMessage?.origin !== 'SYSTEM' && selectedMessage?.sender?.email === user?.email && (
           isEditingMessage ? (
             <>
               <Button
@@ -3168,7 +3169,7 @@ useEffect(() => {
                               onClick={() => handleViewMessage(message)}
                               className={`
                                 p-4 rounded-lg border relative cursor-pointer
-                                ${message.type === 'SYSTEM'
+                                ${message.origin === 'SYSTEM'
                                   ? 'bg-blue-500/10 border-blue-500/30'
                                   : 'bg-muted/50 border-border'
                                 }
@@ -3186,7 +3187,7 @@ useEffect(() => {
                                       NEW
                                     </Badge>
                                   )}
-                                  {message.type === 'SYSTEM' ? (
+                                  {message.origin === 'SYSTEM' ? (
                                     <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
                                       {t('badges.system')}
                                     </Badge>

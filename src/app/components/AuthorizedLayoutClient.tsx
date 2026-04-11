@@ -101,6 +101,10 @@ import { SquarePlusIcon } from "@/components/animate-ui/icons/square-plus"
 import { ClipboardListIcon } from "@/components/animate-ui/icons/clipboard-list"
 import { ClockIcon } from "@/components/animate-ui/icons/clock"
 import { BellIcon } from "@/components/animate-ui/icons/bell"
+import { LayersIcon } from "@/components/animate-ui/icons/layers"
+import { BetweenHorizontalStartIcon } from "@/components/animate-ui/icons/between-horizontal-start"
+import { MapPinIcon } from "@/components/animate-ui/icons/map-pin"
+import { FingerprintIcon } from "@/components/animate-ui/icons/fingerprint"
 import { BlocksIcon } from "@/components/animate-ui/icons/blocks"
 import { SunIcon } from "@/components/animate-ui/icons/sun"
 import { MoonIcon } from "@/components/animate-ui/icons/moon"
@@ -179,9 +183,7 @@ const getPageTitle = () =>
     if (pathname.includes('/reports/ces'))          return t('ces');
     if (pathname.includes('/reports/conc'))         return t('conc');
     if (pathname.includes('/turk'))                 return t('mechanicalTurk');
-    if (pathname.includes('/dashboard'))            return t('home');
-
-    return 'Dashboard';
+    return t('home');
 };
 
 // ── Change Organization Drop Down ───────────────────────────────────────
@@ -403,17 +405,27 @@ function TaskSidebarSections({
                   <AnimateIcon animateOnHover asChild>
                     <SidebarMenuButton
                       tooltip={label}
-                      className="flex w-full items-center justify-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
+                      className="relative flex w-full items-center justify-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
                     >
                       <Icon size={16} />
+                      {tasks.length > 0 && (
+                        <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-4 px-1 flex items-center justify-center pointer-events-none">
+                          {tasks.length}
+                        </span>
+                      )}
                     </SidebarMenuButton>
                   </AnimateIcon>
                 ) : (
                   <SidebarMenuButton
                     tooltip={label}
-                    className="flex w-full items-center justify-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
+                    className="relative flex w-full items-center justify-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
                   >
                     <Icon size={16} />
+                    {tasks.length > 0 && (
+                      <span className="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-4 px-1 flex items-center justify-center pointer-events-none">
+                        {tasks.length}
+                      </span>
+                    )}
                   </SidebarMenuButton>
                 )}
               </PopoverTrigger>
@@ -468,14 +480,24 @@ function TaskSidebarSections({
                   <SidebarMenuButton className="flex w-full items-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
                     <Icon size={16} />
                     <span className="whitespace-nowrap overflow-hidden">{label}</span>
-                    <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
+                    {tasks.length > 0 && (
+                      <span className="bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-4 px-1 flex items-center justify-center ml-auto mr-1">
+                        {tasks.length}
+                      </span>
+                    )}
+                    <ChevronDownIcon size={16} className={`${tasks.length > 0 ? '' : 'ml-auto'} transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180`} />
                   </SidebarMenuButton>
                 </AnimateIcon>
               ) : (
                 <SidebarMenuButton className="flex w-full items-center cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none">
                   <Icon size={16} />
                   <span className="whitespace-nowrap overflow-hidden">{label}</span>
-                  <ChevronDownIcon size={16} className="ml-auto transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180" />
+                  {tasks.length > 0 && (
+                    <span className="bg-red-500 text-white text-[10px] font-semibold rounded-full h-4 min-w-4 px-1 flex items-center justify-center ml-auto mr-1">
+                      {tasks.length}
+                    </span>
+                  )}
+                  <ChevronDownIcon size={16} className={`${tasks.length > 0 ? '' : 'ml-auto'} transition-transform duration-200 ease-in-out group-data-[state=open]/collapsible:rotate-180`} />
                 </SidebarMenuButton>
               )}
             </CollapsibleTrigger>
@@ -640,28 +662,30 @@ function TaskSidebarSections({
               <OrganizationSwitcher />
             </div>
 
-            <AnimateIcon animateOnHover asChild>
-              <Button
-                variant="ghost"
-                className="cursor-pointer rounded-none mt-2 pl-4 justify-start overflow-hidden"
-                onClick={() => router.push('/task?new=1')}
-              >
-                <div className="flex items-center gap-3 min-w-0">
-                  <SquarePlusIcon size={16} className="shrink-0" />
-                  <span className="whitespace-nowrap overflow-hidden group-data-[collapsible=icon]:opacity-0 group-data-[collapsible=icon]:w-0 transition-[opacity,width] duration-200 ease-in-out">{t('newTask')}</span>
-                </div>
-              </Button>
-            </AnimateIcon>
-            <SidebarSeparator />
-
-            <TaskSidebarSections
-              openSubmenu={openSubmenu}
-              handleSubmenuToggle={handleSubmenuToggle}
-              openTasks={openTasks}
-              waitingTasks={waitingTasks}
-              urgentTasks={urgentTasks}
-              t={t}
-            />
+            <SidebarGroup>
+              {[
+                { href: '/risk-foundation', label: 'Risk Foundation', Icon: LayersIcon },
+                { href: '/gap-analysis', label: 'GAP Analysis', Icon: BetweenHorizontalStartIcon },
+                { href: '/roadmap', label: 'Roadmap', Icon: MapPinIcon },
+                { href: '/task', label: 'Tasks', Icon: ClipboardListIcon },
+                { href: '/assurance', label: 'Assurance', Icon: FingerprintIcon },
+              ].map(({ href, label, Icon }) => (
+                <SidebarMenuItem key={href}>
+                  <AnimateIcon animateOnHover asChild>
+                    <SidebarMenuButton
+                      asChild
+                      tooltip={label}
+                      className="cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
+                    >
+                      <Link href={href}>
+                        <Icon size={16} />
+                        <span className="whitespace-nowrap overflow-hidden">{label}</span>
+                      </Link>
+                    </SidebarMenuButton>
+                  </AnimateIcon>
+                </SidebarMenuItem>
+              ))}
+            </SidebarGroup>
 
             {/* Empty area: click to toggle sidebar */}
             <SidebarToggleFill />

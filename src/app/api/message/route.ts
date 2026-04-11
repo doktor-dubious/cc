@@ -131,7 +131,7 @@ export async function POST(request: Request)
 
         // ── Parse body ────────────────────────────────────────────────────────────────────
         const body = await request.json();
-        const { taskId, content, type = 'USER' } = body;
+        const { taskId, content, origin = 'USER', type = 'NOTE', replyId, requestType, evidenceId, isRead = false } = body;
 
         if (!taskId || !content)
         {
@@ -149,8 +149,13 @@ export async function POST(request: Request)
             data: {
                 taskId: taskId,
                 content: content.trim(),
+                origin: origin,
                 type: type,
-                senderId: type === 'USER' ? userId : null,
+                senderId: origin === 'USER' ? userId : null,
+                replyId: replyId || null,
+                requestType: requestType || null,
+                evidenceId: evidenceId || null,
+                isRead: !!isRead,
             },
             include: {
                 sender: {
@@ -162,6 +167,34 @@ export async function POST(request: Request)
                 },
             },
         });
+
+        // ── Update evidence if this is an approval or change request ────────────────────
+        if (evidenceId && (type === 'EVIDENCE_APPROVED' || type === 'EVIDENCE_CHANGES'))
+        {
+            const profile = await prisma.profile.findUnique({
+                where: { userId },
+                select: { id: true },
+            });
+
+            if (type === 'EVIDENCE_APPROVED')
+            {
+                await prisma.evidence.update({
+                    where: { id: evidenceId },
+                    data: {
+                        approved: true,
+                        approvedById: profile?.id || null,
+                        approvedAt: new Date(),
+                    },
+                });
+            }
+            else
+            {
+                await prisma.evidence.update({
+                    where: { id: evidenceId },
+                    data: { resubmit: true },
+                });
+            }
+        }
 
         return NextResponse.json<ApiResponse>(
             {

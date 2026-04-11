@@ -63,6 +63,7 @@ export async function GET()
                 id: true,
                 content: true,
                 isRead: true,
+                origin: true,
                 type: true,
                 createdAt: true,
                 sender: {

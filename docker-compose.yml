@@ -20,6 +20,7 @@ services:
     working_dir: /app
     volumes:
       - .:/app
+      - /compliance:/compliance
     ports:
       - "${DEV_PORT:-3001}:3001"
     environment:

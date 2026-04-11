@@ -233,7 +233,7 @@
 
 
     --radius                    : 0.625rem;
-    --background                : #fafafa;
+    --background                : #F9FAFB; /* #fafafa; */
     --foreground                : #262626; /* rgb(38 38 38) */
     --foreground-inverse        : #fafafa;
     --card                      : oklch(1 0 0);
@@ -687,6 +687,13 @@ input:-webkit-autofill:active
 
 @layer components
 {
+    table
+    {
+        background-color: white;
+    }
+
+
+
     /*  ── Default Button ───────────────────────────────────────*/
     button[data-variant="default"], [role="button"][data-variant="default"] 
     {

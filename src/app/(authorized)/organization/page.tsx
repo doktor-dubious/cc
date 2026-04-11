@@ -1064,7 +1064,7 @@ export default function OrganizationPage()
         
         if (user.role !== 'SUPER_ADMIN')
         {
-            router.push('/dashboard');
+            router.push('/home');
         }
     }, [user, router]);
 

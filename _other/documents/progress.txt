@@ -29,6 +29,8 @@ https://meet.jit.si/ComplianceCircle8800
 
 Zoom:
 https://zoom.us/j/91667468629?pwd=T2hGQVloWExQcDFBVEZYNEEvUjRWQT09
+https://meet.jit.si/FollowingSubmissionsAdvocateForever
+
 
 --------
 
@@ -351,25 +353,146 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
 7 GAP
 8 CONC
 
+
+
+
 -----------------
 -----------------
 -----------------
 -----------------
 
-ULTRATHINK: Do you know of any research papers, industry standards, best practise, or other things that we can lean on to enhance the trustworthiness and 
-credibility of our calculations when presenting them to potential clients?
-The calculations are mainly to be targetted towards small and mid-sized companies.
-315
 
-ULTRATHINK.
-In line with the other calculations on the CONC page:
-can you suggest a realistic calculation of the likelyhood of a data breach of small and mid-sized companies.
-Using whatever existing data is availale on the company, and the contrals and safeguards.
-Suggest additional information parameters if it would improve the calculation. 
-What scientific papers, business standards are you basing the calculation on?
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Friday 10 Apr
+* Sidemenu
+    1) Remove items:
+        - "New Task"
+        - "Current Tasks"
+        - "Waiting Tasks"
+        - "Urgent Tasks"
+    2) Add items:
+        A) Risk Foundation
+        B) GAP Analysis
+        C) Roadmap
+        D) Tasks
+        E) Assurance
+* PAGE: Risk Foundation
+    1) Created
+        - Copy "Organization Profile" section from page: workflows -> customer-onboarding
+            * Badge: "Finished", "In progress", "Not started"
+            * Button: "Edit", "Continue", "Start" 
+        - Copy third party exposure from page: workflows -> customer-onboarding -> third-party-risk-exposure
+    2) Added section: Current Insights
+* PAGE: risk-foundation -> organization-profile
+    1) Created.
+        - Copied from page: workflows -> customer-onboarding -> organization
+        - Removed <- Workflow buttons.
+* PAGE: risk-foundation -> organization-profile -> summary
+    1) Created
+        - Copied from workflows -> customer-onboarding -> organization -> summary
+        - Removed <- Workflow buttons.
+* PAGE: risk-foundation -> structural-risk-profile
+    1) Created
+        - Copied from workflows -> customer-onboarding -> cis-analysis
+        - Removed Exit buttons.
+* PAGE: risk-foundation -> financial-exposure
+    1) Created.
+        - Copied from workflows -> customer-onboarding -> structural-financial-exposure
+* PAGE: risk-foundation -> customer-exposure
+    1) Created
+        - Copied from workflows -> customer-onboarding -> third-party-risk-exposure
 
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Friday 27 Mar
+* Incomming-files
+    1) Fixed Docker issue accessing files.
+* Home
+    1) Evidence drawer
+        A) Removed Convo section, kept input but made twich the height.
+        B) Removed send icon from message input.
+        C) Created message in table message, with type either "evidence-approved" / "evidence-changes" depending on which button was clicked
+        D) On click on "Approve" button: set approved = true, approved by = profile id of logged in user, approved at = now
+        E) On click on "Request Changes" button: set resubmit = true.
+    2) "Needs Attention" section
+        A) Only show evidence which have both approved = false & resubmit = false.
+        B) Chat & Requests: only display (and count) messages where is_read = false
+        C) Chat should be message where type=note or reply
+        D) Request should be message where type=request
+        E) Request type set to depend on Request Type:
+                - close
+                    Close Request
+                - pause
+                    Pause Request
+                - postpone
+                    Postponement Request
+                - reopen
+                    Reopen Request
+    3) Chat drawer:
+        A) Unput field: twice as high.
+        B) New button "Mark message(s) as read" => Clicking on it sets is_read = true on all messages in the thread.
+        C) Messages that are added in the dialog itself, or the modal chat dialog => is_read when created.
+        D) "Mark message(s) as read", variant=default
+    4) Request Drawer
+        A) Created
+        B) Title & Button depend on the request type.
+* Database
+    1) New table: evidence
+        -- id
+        -- FK: organization id
+        -- FK: task id (not null)
+        -- FK: artifact id (nullable)
+        -- message id (FK: message.id) (nullable)
+        -- created-by (FK: profile.id)
+        -- approved (boolean)
+        -- approved by (FK: profile.id) (nullable)
+        -- approved at (datetime)
+        -- created_at
+        -- updated_at
+    2) Removed column: message id
+    3) On table message: added column: evidence id
+    4) Table: message, added new types:
+        - Evidence
+        - Evidence-approved
+        - Evidence-changes
+    5) Table evidence: added column resubmit (boolean, default false)
 
-Hvis det ikke bruger for mange tokens må du gerne bede Claude komme med en strategi for en realistisk beregning af sandsynlighed for data breach for små og mellemstore virksomheder
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Thursday 26 Mar
+* Database
+    1) Table: message:
+        A) Renamed "type" => "origin"
+        B) New columns:
+            - type; Possible values: note, reply, request, asset
+            - reply-id: FK: message.id
+            - request-type; Possible values: close, pause, postpone, reopen
+            - asset-name: string
+            - reply-to, FK: profile.id
+    2) Create test data for new home page
+* General frontend design
+    1) Home & Dashboard pointed to same page. Rename Dashboard to Home
+    2) Save home page as home2
+* Home
+    1) Recreated
+    2) Fixed drawer of request tasks:
+        A) Status => badge
+        B) Added Task Requirements section
+        C) Added "Activity" section
+    3) Changed badge over the three section texts: "Needs Attention", "Overdue", "Due soon"
+    4) If more than one message (chat) per type per taks, only display latest message. With a number badge for message count.
+    5) Bug: all types suddenly type "chat"
+    6) Changed Description (on "Needs Attention") to Task.name.
+    7) Chat drawer
+        A) Change title to Task title (was latest chat message)
+        B) Rename Activity to Convo
+        C) Format chat history
+        D) Maximimze Icon
+        E) Chat modal.
+        F) Changed close icon on chat modal.
+        G) Under task requirement, removed labels: "Description" and "Expected Evidence"
+        H) Removed buttons Approve and Request Changes
+    8) Color/font/style of chat badge counter, same as on the Task page/Messages tab.
+    9) Color/font/style of section counter, same as on the Task page/Messages tab.
+    10) Fixed (nuked) multiple chat histories for same task.
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Tuesday 17 Mar

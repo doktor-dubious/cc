@@ -73,7 +73,7 @@ export default function TwoFactorPage()
                 }
             }
 
-            router.push('/dashboard');
+            router.push('/home');
         }
         catch
         {

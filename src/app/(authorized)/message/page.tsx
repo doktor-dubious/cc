@@ -356,8 +356,8 @@ export default function MessagePage()
                 return multiplier * aTask.localeCompare(bTask);
             }
             if (key === 'sender') {
-                const aSender = a.type === 'SYSTEM' ? 'System' : (a.sender?.name || 'Unknown');
-                const bSender = b.type === 'SYSTEM' ? 'System' : (b.sender?.name || 'Unknown');
+                const aSender = a.origin === 'SYSTEM' ? 'System' : (a.sender?.name || 'Unknown');
+                const bSender = b.origin === 'SYSTEM' ? 'System' : (b.sender?.name || 'Unknown');
                 return multiplier * aSender.localeCompare(bSender);
             }
             if (key === 'date') {
@@ -425,7 +425,7 @@ export default function MessagePage()
   <DialogContent className="max-w-2xl">
     <DialogHeader>
       <DialogTitle className="flex items-center gap-2">
-        {selectedMessage?.type === 'SYSTEM' ? (
+        {selectedMessage?.origin === 'SYSTEM' ? (
           <Badge variant="secondary" className="bg-blue-500/20 text-blue-400">
             {t('badges.system')}
           </Badge>
@@ -616,7 +616,7 @@ export default function MessagePage()
                       {!message.isRead && (
                         <div className="w-2 h-2 bg-blue-500 rounded-full shrink-0"></div>
                       )}
-                      {message.type === 'SYSTEM' && (
+                      {message.origin === 'SYSTEM' && (
                         <Badge variant="secondary" className="bg-blue-500/20 text-blue-400 shrink-0">
                           {t('badges.system')}
                         </Badge>
@@ -628,7 +628,7 @@ export default function MessagePage()
                   <TableCell className="w-48 truncate">{message.task?.name || '-'}</TableCell>
                   {/* Sender cell */}
                   <TableCell className="w-40 truncate">
-                    {message.type === 'SYSTEM' ? t('badges.system') : (message.sender?.name || 'Unknown')}
+                    {message.origin === 'SYSTEM' ? t('badges.system') : (message.sender?.name || 'Unknown')}
                   </TableCell>
                   {/* Date cell */}
                   <TableCell className="w-44 text-muted-foreground text-sm">
