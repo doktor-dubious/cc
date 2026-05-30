@@ -85,7 +85,6 @@ export async function GET(request: Request) {
       size: organization.size,
       ig: organization.ig,
       naceSection: organization.naceSection,
-      riskProfile: organization.riskProfile,
       geographicScope: organization.geographicScope,
       digitalMaturity: organization.digitalMaturity,
       itSecurityStaff: organization.itSecurityStaff,

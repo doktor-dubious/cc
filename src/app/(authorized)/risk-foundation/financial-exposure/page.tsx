@@ -1,693 +1,635 @@
 'use client';
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { useTranslations } from 'next-intl';
-import { ArrowLeft, LogOut, Loader2, ChevronDown, Download, BookOpen } from 'lucide-react';
-import { toast } from 'sonner';
-import { RocketIcon } from '@/components/animate-ui/icons/rocket';
-import { Button } from '@/components/ui/button';
+import { useState, useEffect, useMemo } from 'react';
+import { useRouter }                    from 'next/navigation';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+    BookOpen, ChevronDown, Check, Download, Edit2, FileText,
+    Loader2, Save, X,
+}                                       from 'lucide-react';
 import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from '@/components/ui/collapsible';
-import { useOrganization } from '@/context/OrganizationContext';
+    Document, Packer, Paragraph, TextRun, HeadingLevel,
+    Table as DocxTable, TableRow as DocxRow, TableCell as DocxCell,
+    WidthType,
+}                                       from 'docx';
+import { saveAs }                       from 'file-saver';
+import { toast }                        from 'sonner';
+
+import { Button }                       from '@/components/ui/button';
+import { Separator }                    from '@/components/ui/separator';
+import { Tabs, TabsList, TabsTrigger,
+         TabsContent }                  from '@/components/ui/tabs';
 import {
-  calculateConcDowntimeCosts,
-  type ConcResult,
-  type CostBand,
-  type ConcInputs,
-} from '@/lib/conc/conc-calculator';
+    Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
+}                                       from '@/components/ui/dialog';
 import {
-  METHODOLOGY_SECTIONS,
-  FAIR_MAPPING,
-  REFERENCES,
-  exportMethodologyDocx,
-} from '@/lib/conc/conc-methodology-doc';
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+}                                       from '@/components/ui/dropdown-menu';
+import { cn }                           from '@/lib/utils';
+import { useOrganization }              from '@/context/OrganizationContext';
+import { useUser }                      from '@/context/UserContext';
+import {
+    calculateConcDowntimeCosts,
+    type ConcResult,
+    type ConcInputs,
+    type CostBand,
+}                                       from '@/lib/conc/conc-calculator';
+import {
+    METHODOLOGY_SECTIONS, FAIR_MAPPING, REFERENCES,
+}                                       from '@/lib/conc/conc-methodology-doc';
+
+// ── Types ─────────────────────────────────────────────────────────────────────
 
 type OkResult = Extract<ConcResult, { ok: true }>;
+type ScenarioId = 'scenario1' | 'scenario2';
 
-function formatCurrency(value: number): string {
-  return new Intl.NumberFormat('en-EU', {
-    style: 'currency',
-    currency: 'EUR',
-    maximumFractionDigits: 0,
-  }).format(value);
+type CostRowKey =
+    | 'downtime' | 'ir' | 'restore' | 'ebi' | 'ccl'
+    | 'reg' | 'reputation' | 'governance' | 'notification'
+    | 'adminFineCeiling';
+
+type CostRowDef = {
+    key:    CostRowKey;
+    label:  string;
+    /** When true, value is a single ceiling (not a band) and not summed into ALE. */
+    ceiling?: boolean;
+};
+
+const COST_ROWS: CostRowDef[] = [
+    { key: 'downtime',          label: 'Estimated Downtime Costs' },
+    { key: 'ir',                label: 'Incident Response & Forensics (IR)' },
+    { key: 'restore',           label: 'System Restoration & Rebuild' },
+    { key: 'ebi',               label: 'Extended Business Interruption (EBI)' },
+    { key: 'ccl',               label: 'Customer & Contract Loss (CCL)' },
+    { key: 'reg',               label: 'Regulatory & Supervisory Cost' },
+    { key: 'reputation',        label: 'Reputational Impact' },
+    { key: 'governance',        label: 'Management & Governance Cost' },
+    { key: 'notification',      label: 'Notification Costs' },
+    { key: 'adminFineCeiling',  label: 'Legal Exposure – Administrative Fine Ceiling', ceiling: true },
+];
+
+const DEFAULT_VISIBILITY: Record<CostRowKey, boolean> =
+    Object.fromEntries(COST_ROWS.map(r => [r.key, true])) as Record<CostRowKey, boolean>;
+
+// Menu-button styling: pointer cursor + underline-on-hover, matching the
+// tab-pane indicator on /financial-exposure-detailed.
+const MENU_BTN_CLASS =
+    'cursor-pointer rounded-none border-b-2 border-transparent ' +
+    'hover:border-foreground hover:bg-transparent';
+
+// ── Helpers ───────────────────────────────────────────────────────────────────
+
+function formatCurrency(value: number): string
+{
+    return new Intl.NumberFormat('en-EU', {
+        style:                'currency',
+        currency:             'EUR',
+        maximumFractionDigits: 0,
+    }).format(value);
 }
 
-function formatPct(value: number): string {
-  return `${(value * 100).toFixed(2)}%`;
+/** Pull the band/ceiling value for a row from a scenario result. */
+function getRowValue(result: OkResult, row: CostRowDef): { low: number; high: number }
+{
+    if (row.ceiling)
+    {
+        const v = result.costs.adminFineCeiling;
+        return { low: v, high: v };
+    }
+    const band: CostBand = result.costs[row.key as Exclude<CostRowKey, 'adminFineCeiling'>];
+    return { low: band.low, high: band.high };
 }
 
-// ── Range cost block — shows scenario 1 → scenario 2 range ─────────────────
-
-function RangeCostBlock({
-  title,
-  subtitle,
-  band1,
-  band2,
-  labelLow,
-  labelMid,
-  labelHigh,
-  steps1,
-  steps2,
-  scenario1Label,
-  scenario2Label,
-  note,
-}: {
-  title: string;
-  subtitle: string;
-  band1: CostBand;
-  band2: CostBand;
-  labelLow: string;
-  labelMid: string;
-  labelHigh: string;
-  steps1: { label: string; value: string }[];
-  steps2: { label: string; value: string }[];
-  scenario1Label: string;
-  scenario2Label: string;
-  note?: string;
-}) {
-  return (
-    <div className="space-y-2">
-      <div className="rounded-lg border bg-card p-5">
-        <p className="font-semibold text-sm mb-1">{title}</p>
-        <p className="text-sm text-muted-foreground mb-4">{subtitle}</p>
-        <div className="grid grid-cols-3 divide-x divide-border">
-          <div className="pr-4">
-            <p className="text-xs text-muted-foreground mb-1">{labelLow}</p>
-            <p className="font-mono tabular-nums font-medium text-sm">
-              {formatCurrency(Math.min(band1.low, band2.low))}
-            </p>
-            <p className="font-mono tabular-nums font-medium text-sm text-muted-foreground">
-              {formatCurrency(Math.max(band1.low, band2.low))}
-            </p>
-          </div>
-          <div className="px-4">
-            <p className="text-xs text-muted-foreground mb-1">{labelMid}</p>
-            <p className="font-mono tabular-nums font-semibold text-sm">
-              {formatCurrency(Math.min(band1.mid, band2.mid))}
-            </p>
-            <p className="font-mono tabular-nums font-semibold text-sm text-muted-foreground">
-              {formatCurrency(Math.max(band1.mid, band2.mid))}
-            </p>
-          </div>
-          <div className="pl-4">
-            <p className="text-xs text-muted-foreground mb-1">{labelHigh}</p>
-            <p className="font-mono tabular-nums font-medium text-sm">
-              {formatCurrency(Math.min(band1.high, band2.high))}
-            </p>
-            <p className="font-mono tabular-nums font-medium text-sm text-muted-foreground">
-              {formatCurrency(Math.max(band1.high, band2.high))}
-            </p>
-          </div>
-        </div>
-      </div>
-
-      {/* Intermediate steps for both scenarios */}
-      <div className="rounded-lg border bg-card">
-        <div className="px-5 py-3 border-b">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {scenario1Label}
-          </p>
-        </div>
-        <div className="divide-y">
-          {steps1.map(({ label, value }, i) => (
-            <div key={i} className="flex items-center justify-between px-5 py-2.5">
-              <div className="flex items-center gap-3">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
-                  {i + 1}
-                </span>
-                <span className="text-sm text-muted-foreground">{label}</span>
-              </div>
-              <span className="font-mono text-sm tabular-nums">{value}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="px-5 py-3 border-b border-t">
-          <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            {scenario2Label}
-          </p>
-        </div>
-        <div className="divide-y">
-          {steps2.map(({ label, value }, i) => (
-            <div key={i} className="flex items-center justify-between px-5 py-2.5">
-              <div className="flex items-center gap-3">
-                <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
-                  {i + 1}
-                </span>
-                <span className="text-sm text-muted-foreground">{label}</span>
-              </div>
-              <span className="font-mono text-sm tabular-nums">{value}</span>
-            </div>
-          ))}
-        </div>
-        {note && (
-          <div className="px-5 py-3 border-t">
-            <p className="text-xs text-muted-foreground italic">{note}</p>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+/** Sum low/high across all visible non-ceiling rows for one scenario. */
+function totalAle(result: OkResult, visibility: Record<CostRowKey, boolean>): { low: number; high: number }
+{
+    let low = 0, high = 0;
+    for (const row of COST_ROWS)
+    {
+        if (row.ceiling)            continue;
+        if (!visibility[row.key])   continue;
+        const v = getRowValue(result, row);
+        low  += v.low;
+        high += v.high;
+    }
+    return { low, high };
 }
 
-// ── Page ─────────────────────────────────────────────────────────────────────
+// ── Page ──────────────────────────────────────────────────────────────────────
 
-export default function StructuralFinancialExposurePage() {
-  const t = useTranslations('Workflow.sfe');
-  const tw = useTranslations('Workflow.customerOnboarding');
-  const tc = useTranslations('Common');
-  const router = useRouter();
-  const { activeOrganization } = useOrganization();
+export default function FinancialExposureSummaryPage()
+{
+    const router                 = useRouter();
+    const { activeOrganization } = useOrganization();
+    const user                   = useUser();
 
-  const [isExporting, setIsExporting] = useState(false);
-  const [showExitDialog, setShowExitDialog] = useState(false);
+    const [result1,         setResult1]         = useState<OkResult | null>(null);
+    const [result2,         setResult2]         = useState<OkResult | null>(null);
+    const [missingFields,   setMissingFields]   = useState<string[]>([]);
+    const [isLoading,       setIsLoading]       = useState(true);
+    const [isExporting,     setIsExporting]     = useState(false);
+    const [isMethodologyOpen, setIsMethodologyOpen] = useState(false);
 
-  const [missingFields, setMissingFields] = useState<string[]>([]);
-  const [result1, setResult1] = useState<OkResult | null>(null);
-  const [result2, setResult2] = useState<OkResult | null>(null);
+    // Adapt-mode state — mirrors structural-risk-profile UX
+    const [isAdaptMode, setIsAdaptMode] = useState(false);
+    const [isSaving,    setIsSaving]    = useState(false);
+    const [visibility,  setVisibility]  = useState<Record<CostRowKey, boolean>>(DEFAULT_VISIBILITY);
 
-  useEffect(() => {
-    if (!activeOrganization?.id) return;
+    // ── Calculate both scenarios from the org profile ────────────────────────
+    useEffect(() =>
+    {
+        if (!activeOrganization?.id)
+        {
+            setIsLoading(false);
+            return;
+        }
+        setIsLoading(true);
 
-    // Build base inputs from organization profile (no GAP report needed)
-    const baseInputs: Omit<ConcInputs, 'cmmiValues' | 'overrideDowntimeDays'> = {
-      naceSection: activeOrganization.naceSection,
-      revenueRange: activeOrganization.revenueRange,
-      businessDaysPerYear: activeOrganization.businessDaysPerYear,
-      manualOperation: activeOrganization.manualOperation,
-      productionDependency: activeOrganization.productionDependency,
-      customerAccess: activeOrganization.customerAccess,
-      orgSize: activeOrganization.size,
-      infrastructureTypes: activeOrganization.infrastructureTypes ?? [],
-      dataSensitivity: activeOrganization.dataSensitivity ?? [],
-      regulatoryObligations: activeOrganization.regulatoryObligations ?? [],
-      geographicScope: activeOrganization.geographicScope,
-      businessOrientation: activeOrganization.businessOrientation,
-      revenueConcentration: activeOrganization.revenueConcentration,
-      entityType: activeOrganization.entityType,
-      previousBreachHistory: activeOrganization.previousBreachHistory,
+        const baseInputs: Omit<ConcInputs, 'cmmiValues' | 'overrideDowntimeDays'> = {
+            naceSection:           activeOrganization.naceSection,
+            revenueRange:          activeOrganization.revenueRange,
+            businessDaysPerYear:   activeOrganization.businessDaysPerYear,
+            manualOperation:       activeOrganization.manualOperation,
+            productionDependency:  activeOrganization.productionDependency,
+            customerAccess:        activeOrganization.customerAccess,
+            orgSize:               activeOrganization.size,
+            infrastructureTypes:   activeOrganization.infrastructureTypes ?? [],
+            dataSensitivity:       activeOrganization.dataSensitivity ?? [],
+            regulatoryObligations: activeOrganization.regulatoryObligations ?? [],
+            geographicScope:       activeOrganization.geographicScope,
+            businessOrientation:   activeOrganization.businessOrientation,
+            revenueConcentration:  activeOrganization.revenueConcentration,
+            entityType:            activeOrganization.entityType,
+            previousBreachHistory: activeOrganization.previousBreachHistory,
+        };
+
+        // Match the detailed page: scenario 1 = 1 day @ CMMI=1, scenario 2 = 5 days @ CMMI=5
+        const safeguardIds = ['11.1', '11.2', '11.4', '11.5', '17.1', '17.2', '17.5', '8.11'];
+        const cmmiAll1: Record<string, number> = {};
+        const cmmiAll5: Record<string, number> = {};
+        for (const id of safeguardIds) { cmmiAll1[id] = 1; cmmiAll5[id] = 5; }
+
+        const calc1 = calculateConcDowntimeCosts({ ...baseInputs, cmmiValues: cmmiAll1, overrideDowntimeDays: 1 });
+        const calc2 = calculateConcDowntimeCosts({ ...baseInputs, cmmiValues: cmmiAll5, overrideDowntimeDays: 5 });
+
+        if (calc1.ok && calc2.ok)
+        {
+            setResult1(calc1);
+            setResult2(calc2);
+            setMissingFields([]);
+        }
+        else
+        {
+            setResult1(null);
+            setResult2(null);
+            setMissingFields(!calc1.ok ? calc1.missing : !calc2.ok ? calc2.missing : []);
+        }
+
+        // Restore saved visibility config
+        const saved = localStorage.getItem(`financial-exposure-${activeOrganization.id}`);
+        if (saved)
+        {
+            try
+            {
+                const parsed = JSON.parse(saved);
+                setVisibility({ ...DEFAULT_VISIBILITY, ...(parsed.visibility ?? {}) });
+            }
+            catch { /* ignore */ }
+        }
+
+        setIsLoading(false);
+    }, [activeOrganization]);
+
+    // ── Aggregate ALE across scenarios (range = min low, max high) ───────────
+    const ale = useMemo(() =>
+    {
+        if (!result1 || !result2) return null;
+        const t1 = totalAle(result1, visibility);
+        const t2 = totalAle(result2, visibility);
+        return {
+            low:  Math.min(t1.low,  t2.low),
+            high: Math.max(t1.high, t2.high),
+        };
+    }, [result1, result2, visibility]);
+
+    // ── Adapt-mode handlers ──────────────────────────────────────────────────
+    const handleSaveAdaptations = () =>
+    {
+        if (!activeOrganization) return;
+        setIsSaving(true);
+        try
+        {
+            localStorage.setItem(
+                `financial-exposure-${activeOrganization.id}`,
+                JSON.stringify({ visibility }),
+            );
+            setIsAdaptMode(false);
+            toast.success('Customizations saved');
+        }
+        catch
+        {
+            toast.error('Failed to save customizations');
+        }
+        finally { setIsSaving(false); }
     };
 
-    // Build CMMI maps: all safeguards set to 1 or 5
-    const allSafeguardIds = ['11.1', '11.2', '11.4', '11.5', '17.1', '17.2', '17.5', '8.11'];
-    const cmmiAll1: Record<string, number> = {};
-    const cmmiAll5: Record<string, number> = {};
-    for (const id of allSafeguardIds) {
-      cmmiAll1[id] = 1;
-      cmmiAll5[id] = 5;
-    }
+    const toggleRow = (key: CostRowKey) =>
+        setVisibility(prev => ({ ...prev, [key]: !prev[key] }));
 
-    // Scenario 1: Downtime = 1 day, all CMMI = 1 (minimum maturity)
-    const calc1 = calculateConcDowntimeCosts({
-      ...baseInputs,
-      cmmiValues: cmmiAll1,
-      overrideDowntimeDays: 1,
-    });
+    // ── Exports ──────────────────────────────────────────────────────────────
+    const handleExportPdf = () =>
+    {
+        setIsExporting(true);
+        try { window.print(); }
+        finally { setIsExporting(false); }
+    };
 
-    // Scenario 2: Downtime = 5 days, all CMMI = 5 (maximum maturity)
-    const calc2 = calculateConcDowntimeCosts({
-      ...baseInputs,
-      cmmiValues: cmmiAll5,
-      overrideDowntimeDays: 5,
-    });
+    const handleExportDocx = async () =>
+    {
+        if (!result1 || !result2 || !ale || !activeOrganization) return;
+        setIsExporting(true);
+        try
+        {
+            const preparedLine = `Prepared by ${user.name}`;
+            const visibleRows  = COST_ROWS.filter(r => visibility[r.key]);
 
-    if (calc1.ok && calc2.ok) {
-      setResult1(calc1);
-      setResult2(calc2);
-      setMissingFields([]);
-    } else {
-      setResult1(null);
-      setResult2(null);
-      const missing = !calc1.ok ? calc1.missing : !calc2.ok ? calc2.missing : [];
-      setMissingFields(missing);
-    }
-  }, [activeOrganization]);
+            const scenarioTable = (label: string, result: OkResult) => new DocxTable({
+                width: { size: 100, type: WidthType.PERCENTAGE },
+                rows: [
+                    new DocxRow({
+                        children: [
+                            new DocxCell({
+                                children: [new Paragraph({ children: [new TextRun({ text: 'Cost Category',  bold: true })] })],
+                                width:    { size: 60, type: WidthType.PERCENTAGE },
+                                shading:  { fill: 'E5E7EB' },
+                            }),
+                            new DocxCell({
+                                children: [new Paragraph({ children: [new TextRun({ text: 'Low estimate',  bold: true })] })],
+                                width:    { size: 20, type: WidthType.PERCENTAGE },
+                                shading:  { fill: 'E5E7EB' },
+                            }),
+                            new DocxCell({
+                                children: [new Paragraph({ children: [new TextRun({ text: 'High estimate', bold: true })] })],
+                                width:    { size: 20, type: WidthType.PERCENTAGE },
+                                shading:  { fill: 'E5E7EB' },
+                            }),
+                        ],
+                    }),
+                    ...visibleRows.map(row => {
+                        const v = getRowValue(result, row);
+                        return new DocxRow({
+                            children: [
+                                new DocxCell({ children: [new Paragraph({ text: row.label })] }),
+                                new DocxCell({ children: [new Paragraph({ text: formatCurrency(v.low) })] }),
+                                new DocxCell({ children: [new Paragraph({ text: formatCurrency(v.high) })] }),
+                            ],
+                        });
+                    }),
+                ],
+            });
 
-  const s1Label = t('scenario1Label');
-  const s2Label = t('scenario2Label');
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new Paragraph({ text: activeOrganization.name, heading: HeadingLevel.HEADING_1, spacing: { after: 200 } }),
+                        new Paragraph({ text: 'Financial Exposure',  heading: HeadingLevel.HEADING_2, spacing: { after: 100 } }),
+                        new Paragraph({ text: preparedLine,           spacing: { after: 400 } }),
 
-  return (
-    <div className="min-h-screen bg-gradient-to-b from-background to-muted/20">
-      {/* Header */}
-      <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto flex h-16 items-center justify-between px-4">
-          <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-              <RocketIcon size={20} />
-            </div>
-            <div className="flex items-center gap-3">
-              <h1 className="text-lg font-semibold">{t('title')}</h1>
-              {activeOrganization && (
-                <>
-                  <div className="h-5 w-px bg-border" />
-                  <span className="text-base text-muted-foreground">
-                    {activeOrganization.name}
-                  </span>
-                </>
-              )}
-            </div>
-          </div>
-        </div>
-      </header>
+                        new Paragraph({
+                            children: [new TextRun({ text: 'Estimated Annual Loss (ALE)', bold: true })],
+                            heading: HeadingLevel.HEADING_3,
+                            spacing: { before: 400, after: 200 },
+                        }),
+                        new Paragraph({ text: `${formatCurrency(ale.low)}  –  ${formatCurrency(ale.high)}`, spacing: { after: 100 } }),
+                        new Paragraph({ text: 'The range reflects uncertainty in incident severity and operational impact.', spacing: { after: 400 } }),
 
-      {/* Main Content */}
-      <main className="container mx-auto px-4 py-12">
-        <div className="mx-auto max-w-xl">
-          {/* Intro */}
-          <div className="mb-10 text-center">
-            <h2 className="text-3xl font-bold tracking-tight">{t('title')}</h2>
-            <p className="mt-4 text-lg text-muted-foreground">{t('description')}</p>
-          </div>
+                        new Paragraph({
+                            children: [new TextRun({ text: 'Scenario 1 — Best Case', bold: true })],
+                            heading: HeadingLevel.HEADING_3,
+                            spacing: { before: 400, after: 200 },
+                        }),
+                        scenarioTable('Scenario 1', result1),
 
-          {missingFields.length > 0 ? (
-            <div className="rounded-lg border border-yellow-500/50 bg-yellow-500/10 p-6">
-              <p className="font-semibold text-yellow-700 dark:text-yellow-400 mb-3">
-                Cannot calculate structural exposure — missing data:
-              </p>
-              <ul className="list-disc list-inside space-y-1 text-sm text-yellow-600 dark:text-yellow-300">
-                {missingFields.map((f) => (
-                  <li key={f}>{f}</li>
-                ))}
-              </ul>
-            </div>
-          ) : result1 && result2 ? (
-            <div className="space-y-8">
+                        new Paragraph({
+                            children: [new TextRun({ text: 'Scenario 2 — Worst Case', bold: true })],
+                            heading: HeadingLevel.HEADING_3,
+                            spacing: { before: 400, after: 200 },
+                        }),
+                        scenarioTable('Scenario 2', result2),
+                    ],
+                }],
+            });
 
-              {/* 1 – Downtime Costs */}
-              <RangeCostBlock
-                title={t('downtimeCostsTitle')}
-                subtitle={t('downtimeCostsSubtitle')}
-                band1={result1.costs.downtime}
-                band2={result2.costs.downtime}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'IBM Industry',        value: result1.steps.ibmIndustry },
-                  { label: 'Daily Revenue',        value: formatCurrency(result1.steps.dailyRevenue) },
-                  { label: 'IT Dependency Level',  value: String(result1.steps.itDependencyLevel) },
-                  { label: 'IT Factor',            value: `${(result1.steps.itFactor * 100).toFixed(0)}%` },
-                  { label: 'Sector Factor',        value: result1.steps.sectorFactor.toFixed(4) },
-                  { label: 'Org Size Factor',      value: `${result1.steps.orgSize} (${result1.steps.orgSizeMult.toFixed(2)}\u00d7)` },
-                  { label: 'Adjusted Daily Loss',  value: formatCurrency(result1.steps.adjustedDailyLoss) },
-                  { label: 'Downtime Days',        value: `${result1.steps.downtimeDays.toFixed(2)} days` },
-                ]}
-                steps2={[
-                  { label: 'Adjusted Daily Loss',  value: formatCurrency(result2.steps.adjustedDailyLoss) },
-                  { label: 'Downtime Days',        value: `${result2.steps.downtimeDays.toFixed(2)} days` },
-                ]}
-              />
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `${activeOrganization.name.replace(/\s+/g, '_')}_Financial_Exposure.docx`);
+            toast.success('Word document exported');
+        }
+        catch (error)
+        {
+            console.error('Export failed:', error);
+            toast.error('Failed to export Word document');
+        }
+        finally { setIsExporting(false); }
+    };
 
-              {/* 2 – IR */}
-              <RangeCostBlock
-                title={t('irTitle')}
-                subtitle={t('irSubtitle')}
-                band1={result1.costs.ir}
-                band2={result2.costs.ir}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'IR Base (revenue benchmark)',  value: formatCurrency(result1.irSteps.irBase) },
-                  { label: 'IR Score (avg safeguards)',     value: result1.irSteps.irScore.toFixed(2) },
-                  { label: 'IR Maturity Multiplier',       value: result1.irSteps.irMaturityMult.toFixed(4) },
-                  { label: 'IR Dependency Multiplier',     value: result1.irSteps.irDepMult.toFixed(2) },
-                ]}
-                steps2={[
-                  { label: 'IR Base (revenue benchmark)',  value: formatCurrency(result2.irSteps.irBase) },
-                  { label: 'IR Score (avg safeguards)',     value: result2.irSteps.irScore.toFixed(2) },
-                  { label: 'IR Maturity Multiplier',       value: result2.irSteps.irMaturityMult.toFixed(4) },
-                  { label: 'IR Dependency Multiplier',     value: result2.irSteps.irDepMult.toFixed(2) },
-                ]}
-              />
-
-              {/* 3 – Restore */}
-              <RangeCostBlock
-                title={t('restoreTitle')}
-                subtitle={t('restoreSubtitle')}
-                band1={result1.costs.restore}
-                band2={result2.costs.restore}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Restore Base (revenue benchmark)',    value: formatCurrency(result1.restoreSteps.restoreBase) },
-                  { label: 'Restore Score (avg safeguards)',       value: result1.restoreSteps.restoreScore.toFixed(2) },
-                  { label: 'Restore Maturity Multiplier',         value: result1.restoreSteps.restoreMaturityMult.toFixed(4) },
-                  { label: 'Restore Dependency Multiplier',       value: result1.restoreSteps.restoreDepMult.toFixed(2) },
-                  { label: 'Infrastructure Type Multiplier',       value: `${result1.restoreSteps.infraMult.toFixed(2)}\u00d7` },
-                ]}
-                steps2={[
-                  { label: 'Restore Score (avg safeguards)',       value: result2.restoreSteps.restoreScore.toFixed(2) },
-                  { label: 'Restore Maturity Multiplier',         value: result2.restoreSteps.restoreMaturityMult.toFixed(4) },
-                ]}
-              />
-
-              {/* 4 – EBI */}
-              <RangeCostBlock
-                title={t('ebiTitle')}
-                subtitle={t('ebiSubtitle')}
-                band1={result1.costs.ebi}
-                band2={result2.costs.ebi}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Daily Revenue',             value: formatCurrency(result1.steps.dailyRevenue) },
-                  { label: 'Downtime Days',             value: `${result1.steps.downtimeDays.toFixed(2)} days` },
-                  { label: 'Recovery Friction (0.15 \u00d7 d\u00b2)', value: `${result1.ebiSteps.ebiRecoveryFriction.toFixed(2)} days` },
-                  { label: 'EBI Sector Adjustment',     value: result1.ebiSteps.ebiSectorAdj.toFixed(4) },
-                  { label: 'EBI Dependency Multiplier', value: result1.ebiSteps.ebiDepMult.toFixed(2) },
-                  { label: 'EBI Restore Adjustment',    value: result1.ebiSteps.ebiRestoreAdj.toFixed(4) },
-                ]}
-                steps2={[
-                  { label: 'Downtime Days',             value: `${result2.steps.downtimeDays.toFixed(2)} days` },
-                  { label: 'Recovery Friction (0.15 \u00d7 d\u00b2)', value: `${result2.ebiSteps.ebiRecoveryFriction.toFixed(2)} days` },
-                  { label: 'EBI Restore Adjustment',    value: result2.ebiSteps.ebiRestoreAdj.toFixed(4) },
-                ]}
-              />
-
-              {/* 5 – CCL */}
-              <RangeCostBlock
-                title={t('cclTitle')}
-                subtitle={t('cclSubtitle')}
-                band1={result1.costs.ccl}
-                band2={result2.costs.ccl}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Customer Model',           value: result1.cclSteps.customerModel },
-                  { label: 'Revenue Concentration',    value: result1.cclSteps.revenueConcentration },
-                  { label: 'Base % of Annual Revenue', value: formatPct(result1.cclSteps.basePct) },
-                  { label: 'CCL Sector Adjustment',    value: result1.cclSteps.cclSectorAdj.toFixed(4) },
-                  { label: 'CCL Severity Adjustment',  value: result1.cclSteps.cclSeverityAdj.toFixed(4) },
-                  { label: 'CCL IR Adjustment',        value: result1.cclSteps.cclIrAdj.toFixed(4) },
-                ]}
-                steps2={[
-                  { label: 'CCL Severity Adjustment',  value: result2.cclSteps.cclSeverityAdj.toFixed(4) },
-                  { label: 'CCL IR Adjustment',        value: result2.cclSteps.cclIrAdj.toFixed(4) },
-                ]}
-              />
-
-              {/* 6 – Regulatory */}
-              <RangeCostBlock
-                title={t('regTitle')}
-                subtitle={t('regSubtitle')}
-                band1={result1.costs.reg}
-                band2={result2.costs.reg}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Reg Base (revenue benchmark)', value: formatCurrency(result1.regSteps.regBase) },
-                  { label: 'Reg Sector Adjustment',        value: result1.regSteps.regSectorAdj.toFixed(4) },
-                  { label: 'Reg Severity Adjustment',      value: result1.regSteps.regSeverityAdj.toFixed(4) },
-                  { label: 'Reg IR Adjustment',            value: result1.regSteps.regIrAdj.toFixed(4) },
-                  { label: 'Framework Multiplier',         value: `${result1.regSteps.regFrameworkCount} framework${result1.regSteps.regFrameworkCount !== 1 ? 's' : ''} (${result1.regSteps.regFrameworkMult.toFixed(2)}\u00d7)` },
-                  { label: 'Geographic Scope Multiplier',  value: `${result1.regSteps.regGeoMult.toFixed(2)}\u00d7` },
-                ]}
-                steps2={[
-                  { label: 'Reg Severity Adjustment',      value: result2.regSteps.regSeverityAdj.toFixed(4) },
-                  { label: 'Reg IR Adjustment',            value: result2.regSteps.regIrAdj.toFixed(4) },
-                ]}
-              />
-
-              {/* 7 – Reputational */}
-              <RangeCostBlock
-                title={t('repTitle')}
-                subtitle={t('repSubtitle')}
-                band1={result1.costs.reputation}
-                band2={result2.costs.reputation}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Customer Model',       value: result1.reputationSteps.customerModel },
-                  { label: 'Base % of Revenue',    value: formatPct(result1.reputationSteps.basePct) },
-                  { label: 'Severity Adjustment',  value: result1.reputationSteps.severityAdj.toFixed(4) },
-                  { label: 'Sector Adjustment',    value: result1.reputationSteps.sectorAdj.toFixed(4) },
-                  { label: 'IR Adjustment',        value: result1.reputationSteps.irAdj.toFixed(4) },
-                  { label: 'Visibility Multiplier (B2C)', value: result1.reputationSteps.visibilityMult.toFixed(2) },
-                  { label: 'Data Sensitivity Multiplier', value: `${result1.reputationSteps.dataSensitivityMult.toFixed(2)}\u00d7` },
-                ]}
-                steps2={[
-                  { label: 'Severity Adjustment',  value: result2.reputationSteps.severityAdj.toFixed(4) },
-                  { label: 'IR Adjustment',        value: result2.reputationSteps.irAdj.toFixed(4) },
-                ]}
-              />
-
-              {/* 8 – Governance */}
-              <RangeCostBlock
-                title={t('govTitle')}
-                subtitle={t('govSubtitle')}
-                band1={result1.costs.governance}
-                band2={result2.costs.governance}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Governance Base (revenue benchmark)', value: formatCurrency(result1.govSteps.govBase) },
-                  { label: 'Severity Adjustment',                  value: result1.govSteps.severityAdj.toFixed(4) },
-                  { label: 'Sector Adjustment',                    value: result1.govSteps.sectorAdj.toFixed(4) },
-                ]}
-                steps2={[
-                  { label: 'Severity Adjustment',                  value: result2.govSteps.severityAdj.toFixed(4) },
-                  { label: 'Sector Adjustment',                    value: result2.govSteps.sectorAdj.toFixed(4) },
-                ]}
-              />
-
-              {/* 9 – Notification Costs */}
-              <RangeCostBlock
-                title={t('notifyTitle')}
-                subtitle={t('notifySubtitle')}
-                band1={result1.costs.notification}
-                band2={result2.costs.notification}
-                labelLow={t('bandLow')}
-                labelMid={t('bandMid')}
-                labelHigh={t('bandHigh')}
-                scenario1Label={s1Label}
-                scenario2Label={s2Label}
-                steps1={[
-                  { label: 'Notification Base (revenue benchmark)', value: formatCurrency(result1.notificationSteps.notifyBase) },
-                  { label: 'Data Sensitivity Multiplier',            value: `${result1.notificationSteps.dataSensitivityMult.toFixed(2)}\u00d7` },
-                  { label: 'Org Size Multiplier',                    value: `${result1.notificationSteps.orgSizeMult.toFixed(2)}\u00d7` },
-                  { label: 'Geographic Scope Multiplier',            value: `${result1.notificationSteps.geoMult.toFixed(2)}\u00d7` },
-                  { label: 'Framework Multiplier',                   value: `${result1.notificationSteps.frameworkMult.toFixed(2)}\u00d7` },
-                ]}
-                steps2={[
-                  { label: 'Notification Base (revenue benchmark)', value: formatCurrency(result2.notificationSteps.notifyBase) },
-                  { label: 'Data Sensitivity Multiplier',            value: `${result2.notificationSteps.dataSensitivityMult.toFixed(2)}\u00d7` },
-                  { label: 'Org Size Multiplier',                    value: `${result2.notificationSteps.orgSizeMult.toFixed(2)}\u00d7` },
-                  { label: 'Geographic Scope Multiplier',            value: `${result2.notificationSteps.geoMult.toFixed(2)}\u00d7` },
-                  { label: 'Framework Multiplier',                   value: `${result2.notificationSteps.frameworkMult.toFixed(2)}\u00d7` },
-                ]}
-              />
-
-              {/* 10 – Administrative Fine Ceiling (same for both scenarios) */}
-              <div className="space-y-2">
-                <div className="rounded-lg border border-amber-500/40 bg-amber-500/5 p-5">
-                  <p className="font-semibold text-sm mb-1">{t('fineTitle')}</p>
-                  <p className="text-sm text-muted-foreground mb-4">
-                    {t('fineSubtitle')}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">{t('fineCeilingLabel')}</span>
-                    <span className="font-mono tabular-nums font-semibold text-sm">
-                      {formatCurrency(result1.costs.adminFineCeiling)}
-                    </span>
-                  </div>
+    // ── Loading / empty states ───────────────────────────────────────────────
+    if (isLoading)
+    {
+        return (
+            <div className="flex flex-col min-h-screen bg-background">
+                <div className="flex-1 flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
                 </div>
+            </div>
+        );
+    }
 
-                <div className="rounded-lg border bg-card">
-                  <div className="px-5 py-3 border-b">
-                    <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                      Calculation Steps
-                    </p>
-                  </div>
-                  <div className="divide-y">
-                    {[
-                      { label: 'Entity Type',             value: result1.fineSteps.entityType },
-                      { label: 'Percent Cap',             value: formatPct(result1.fineSteps.pctCap) },
-                      { label: 'Fixed Cap',               value: formatCurrency(result1.fineSteps.fixedCap) },
-                      { label: 'Percent-based Amount',    value: formatCurrency(result1.fineSteps.pctAmount) },
-                      { label: 'Fine Ceiling (MAX)',       value: formatCurrency(result1.costs.adminFineCeiling) },
-                    ].map(({ label, value }, i) => (
-                      <div key={i} className="flex items-center justify-between px-5 py-2.5">
-                        <div className="flex items-center gap-3">
-                          <span className="flex h-5 w-5 items-center justify-center rounded-full bg-muted text-xs font-medium text-muted-foreground shrink-0">
-                            {i + 1}
-                          </span>
-                          <span className="text-sm text-muted-foreground">{label}</span>
+    if (!activeOrganization || (missingFields.length > 0))
+    {
+        return (
+            <div className="flex flex-col min-h-screen bg-background">
+                <div className="flex-1 p-6">
+                    <div className="border rounded-lg p-12 text-center text-muted-foreground max-w-4xl mx-auto bg-panel">
+                        {!activeOrganization ? (
+                            <p className="text-lg font-medium">Please select an organization first</p>
+                        ) : (
+                            <>
+                                <p className="text-lg font-medium">Cannot calculate financial exposure</p>
+                                <p className="text-sm mt-1 mb-4">Missing data:</p>
+                                <ul className="list-disc list-inside space-y-1 text-sm text-left max-w-md mx-auto">
+                                    {missingFields.map(f => <li key={f}>{f}</li>)}
+                                </ul>
+                            </>
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+    }
+
+    if (!result1 || !result2 || !ale) return null;
+
+    // ── Main render ──────────────────────────────────────────────────────────
+    return (
+        <div className="flex flex-col min-h-screen bg-background">
+            <div className="flex-1 overflow-y-auto p-8 print:p-4">
+                <div className="max-w-4xl mx-auto">
+
+                    {/* ── Title row with right-aligned menu ─────────────────── */}
+                    <div className="flex items-start justify-between gap-6 mb-2">
+                        <h1 className="text-2xl font-bold">Financial Exposure</h1>
+
+                        <div className="flex items-center gap-2 print:hidden shrink-0">
+                            {isAdaptMode ? (
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={handleSaveAdaptations}
+                                    disabled={isSaving}
+                                >
+                                    {isSaving
+                                        ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                        : <Save className="w-4 h-4 mr-1" />}
+                                    {isSaving ? 'Saving' : 'Save'}
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className={MENU_BTN_CLASS}
+                                        onClick={() => router.push('/risk-foundation/financial-exposure-detailed')}
+                                    >
+                                        Details
+                                    </Button>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className={MENU_BTN_CLASS}
+                                        onClick={() => setIsAdaptMode(true)}
+                                    >
+                                        <Edit2 className="w-4 h-4 mr-1" />
+                                        Edit
+                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="ghost" size="sm" className={MENU_BTN_CLASS} disabled={isExporting}>
+                                                {isExporting
+                                                    ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                                    : <Download className="w-4 h-4 mr-1" />}
+                                                Export
+                                                <ChevronDown className="w-4 h-4 ml-1 opacity-50" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={handleExportPdf} className="cursor-pointer">
+                                                <Download className="w-4 h-4 mr-2" />
+                                                PDF
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={handleExportDocx} className="cursor-pointer">
+                                                <FileText className="w-4 h-4 mr-2" />
+                                                Word
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                    <Button
+                                        variant="ghost"
+                                        size="sm"
+                                        className={MENU_BTN_CLASS}
+                                        onClick={() => setIsMethodologyOpen(true)}
+                                    >
+                                        <BookOpen className="w-4 h-4 mr-1" />
+                                        Methodology &amp; Sources
+                                    </Button>
+                                </>
+                            )}
                         </div>
-                        <span className="font-mono text-sm tabular-nums">{value}</span>
-                      </div>
-                    ))}
-                  </div>
+                    </div>
+
+                    {/* ── Description + prepared-by ─────────────────────────── */}
+                    <p className="text-sm text-muted-foreground mb-2">
+                        Estimated annual loss based on operational, regulatory, and reputational risk
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                        Prepared by {user.name}
+                    </p>
+
+                    <Separator className="my-6" />
+
+                    {/* ── Estimated Annual Loss (ALE) hero ──────────────────── */}
+                    <section className="mb-8">
+                        <div className="rounded-lg border bg-panel p-6 text-center">
+                            <p className="text-sm text-muted-foreground mb-2">Estimated Annual Loss (ALE)</p>
+                            <p className="text-3xl font-semibold tabular-nums tracking-tight">
+                                {formatCurrency(ale.low)}
+                                <span className="mx-3 text-muted-foreground">–</span>
+                                {formatCurrency(ale.high)}
+                            </p>
+                            <p className="text-xs text-muted-foreground mt-3">
+                                The range reflects uncertainty in incident severity and operational impact.
+                            </p>
+                        </div>
+                    </section>
+
+                    {/* ── Scenario tabs ─────────────────────────────────────── */}
+                    <Tabs defaultValue={'scenario1' satisfies ScenarioId} className="w-full">
+                        <TabsList className="mb-4">
+                            <TabsTrigger value="scenario1">Scenario 1</TabsTrigger>
+                            <TabsTrigger value="scenario2">Scenario 2</TabsTrigger>
+                        </TabsList>
+
+                        <TabsContent value="scenario1">
+                            <ScenarioCostList
+                                result={result1}
+                                visibility={visibility}
+                                isAdaptMode={isAdaptMode}
+                                onToggle={toggleRow}
+                            />
+                        </TabsContent>
+                        <TabsContent value="scenario2">
+                            <ScenarioCostList
+                                result={result2}
+                                visibility={visibility}
+                                isAdaptMode={isAdaptMode}
+                                onToggle={toggleRow}
+                            />
+                        </TabsContent>
+                    </Tabs>
                 </div>
-              </div>
-
             </div>
-          ) : null}
 
-          {/* Export button */}
-          {result1 && result2 && (
-            <div className="mt-8 flex justify-end">
-              <Button
-                variant="outline"
-                size="sm"
-                className="gap-2"
-                disabled={isExporting}
-                onClick={async () => {
-                  setIsExporting(true);
-                  try {
-                    await exportMethodologyDocx(activeOrganization?.name);
-                    toast.success(t('exportSuccess'));
-                  } catch {
-                    toast.error(t('exportError'));
-                  } finally {
-                    setIsExporting(false);
-                  }
-                }}
-              >
-                {isExporting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <Download className="h-4 w-4" />
-                )}
-                {t('exportMethodology')}
-              </Button>
-            </div>
-          )}
+            {/* ── Methodology dialog ──────────────────────────────────────── */}
+            <Dialog open={isMethodologyOpen} onOpenChange={setIsMethodologyOpen}>
+                <DialogContent className="max-w-3xl max-h-[85vh] overflow-y-auto">
+                    <DialogHeader>
+                        <DialogTitle>Methodology &amp; Sources</DialogTitle>
+                        <DialogDescription>
+                            How these figures are derived, with references to source studies and frameworks.
+                        </DialogDescription>
+                    </DialogHeader>
 
-          {/* Methodology & Sources */}
-          {result1 && result2 && (
-            <div className="mt-8">
-              <Collapsible>
-                <CollapsibleTrigger asChild>
-                  <button className="flex w-full items-center justify-between rounded-lg border bg-card px-5 py-4 text-left hover:bg-muted/50 transition-colors">
-                    <div className="flex items-center gap-3">
-                      <BookOpen className="h-4 w-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-sm font-semibold">{t('methodologyTitle')}</p>
-                        <p className="text-xs text-muted-foreground">{t('methodologySubtitle')}</p>
-                      </div>
-                    </div>
-                    <ChevronDown className="h-4 w-4 text-muted-foreground transition-transform [[data-state=open]_&]:rotate-180" />
-                  </button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <div className="mt-2 space-y-6 rounded-lg border bg-card px-5 py-6">
-                    {METHODOLOGY_SECTIONS.map((section) => (
-                      <div key={section.id}>
-                        <h4 className="text-sm font-semibold mb-2">{section.title}</h4>
-                        {section.paragraphs.map((para, i) => (
-                          <p key={i} className="text-sm text-muted-foreground mb-2 leading-relaxed">
-                            {para}
-                          </p>
+                    <div className="space-y-6 mt-2">
+                        {METHODOLOGY_SECTIONS.map(section => (
+                            <div key={section.id}>
+                                <h4 className="text-sm font-semibold mb-2">{section.title}</h4>
+                                {section.paragraphs.map((para, i) => (
+                                    <p key={i} className="text-sm text-muted-foreground mb-2 leading-relaxed">{para}</p>
+                                ))}
+                            </div>
                         ))}
-                      </div>
-                    ))}
 
-                    {/* FAIR mapping table */}
-                    <div>
-                      <h4 className="text-sm font-semibold mb-2">{t('fairMappingTitle')}</h4>
-                      <div className="rounded-md border overflow-hidden">
-                        <table className="w-full text-sm">
-                          <thead>
-                            <tr className="bg-muted/50">
-                              <th className="px-3 py-2 text-left font-medium text-muted-foreground">{t('fairLossForm')}</th>
-                              <th className="px-3 py-2 text-left font-medium text-muted-foreground">{t('sfeCategory')}</th>
-                            </tr>
-                          </thead>
-                          <tbody className="divide-y">
-                            {FAIR_MAPPING.map((row, i) => (
-                              <tr key={i}>
-                                <td className="px-3 py-2 text-muted-foreground">{row.fair}</td>
-                                <td className="px-3 py-2 text-muted-foreground">{row.conc}</td>
-                              </tr>
-                            ))}
-                          </tbody>
-                        </table>
-                      </div>
+                        <div>
+                            <h4 className="text-sm font-semibold mb-2">FAIR mapping</h4>
+                            <div className="rounded-md border overflow-hidden">
+                                <table className="w-full text-sm">
+                                    <thead>
+                                        <tr className="bg-muted/50">
+                                            <th className="px-3 py-2 text-left font-medium text-muted-foreground">FAIR loss form</th>
+                                            <th className="px-3 py-2 text-left font-medium text-muted-foreground">SFE category</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody className="divide-y">
+                                        {FAIR_MAPPING.map((row, i) => (
+                                            <tr key={i}>
+                                                <td className="px-3 py-2 text-muted-foreground">{row.fair}</td>
+                                                <td className="px-3 py-2 text-muted-foreground">{row.conc}</td>
+                                            </tr>
+                                        ))}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
+                        <div>
+                            <h4 className="text-sm font-semibold mb-2">References</h4>
+                            <ul className="space-y-1">
+                                {REFERENCES.map((ref, i) => (
+                                    <li key={i} className="text-xs text-muted-foreground leading-relaxed pl-4 relative before:content-['•'] before:absolute before:left-0 before:text-muted-foreground/50">
+                                        {ref}
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
                     </div>
+                </DialogContent>
+            </Dialog>
 
-                    {/* References */}
-                    <div>
-                      <h4 className="text-sm font-semibold mb-2">{t('referencesTitle')}</h4>
-                      <ul className="space-y-1">
-                        {REFERENCES.map((ref, i) => (
-                          <li key={i} className="text-xs text-muted-foreground leading-relaxed pl-4 relative before:content-['\2022'] before:absolute before:left-0 before:text-muted-foreground/50">
-                            {ref}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-                  </div>
-                </CollapsibleContent>
-              </Collapsible>
-            </div>
-          )}
-
-          {/* Navigation */}
-          <div className="mt-8">
-            <Button
-              variant="outline"
-              onClick={() => router.push('/risk-foundation')}
-              className="gap-2"
-            >
-              <ArrowLeft className="h-4 w-4" />
-              {t('backToWorkflow')}
-            </Button>
-          </div>
+            <style jsx global>{`
+                @media print {
+                    @page { margin: 2cm; }
+                    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+                    .print\\:hidden { display: none !important; }
+                    .print\\:p-4 { padding: 1rem !important; }
+                    section { page-break-inside: avoid; }
+                }
+            `}</style>
         </div>
-      </main>
+    );
+}
 
-      {/* Exit Dialog */}
-      <AlertDialog open={showExitDialog} onOpenChange={setShowExitDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{tw('exitDialog.title')}</AlertDialogTitle>
-            <AlertDialogDescription>{tw('exitDialog.description')}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{tc('buttons.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={() => router.push('/home')}>
-              {tc('navigation.exit')}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
-  );
+// ── ScenarioCostList ─────────────────────────────────────────────────────────
+// Renders the 10 cost rows as a label / range table for one scenario. In adapt
+// mode each row shows an X / + button to hide / restore that row from the
+// summary (and from the ALE total).
+
+type ScenarioCostListProps = {
+    result:      OkResult;
+    visibility:  Record<CostRowKey, boolean>;
+    isAdaptMode: boolean;
+    onToggle:    (key: CostRowKey) => void;
+};
+
+function ScenarioCostList({ result, visibility, isAdaptMode, onToggle }: ScenarioCostListProps)
+{
+    return (
+        <div className="rounded-lg border bg-panel divide-y">
+            {COST_ROWS.map(row =>
+            {
+                const isActive = visibility[row.key];
+                if (!isAdaptMode && !isActive) return null;
+
+                const v = getRowValue(result, row);
+
+                return (
+                    <div
+                        key={row.key}
+                        className={cn(
+                            'flex items-center justify-between gap-4 px-5 py-3',
+                            !isActive && 'opacity-50',
+                        )}
+                    >
+                        <div className="flex items-center gap-3 min-w-0">
+                            {isAdaptMode && (
+                                <button
+                                    onClick={() => onToggle(row.key)}
+                                    className="flex h-6 w-6 items-center justify-center rounded border-2 border-foreground/40 bg-foreground/5 text-foreground hover:bg-foreground/15 transition-colors cursor-pointer shrink-0"
+                                    title={isActive ? 'Hide row' : 'Restore row'}
+                                >
+                                    {isActive ? <X size={12} /> : <Check size={12} />}
+                                </button>
+                            )}
+                            <span className={cn(
+                                'text-sm',
+                                !isActive && 'line-through text-muted-foreground',
+                            )}>
+                                {row.label}
+                            </span>
+                        </div>
+
+                        <div className="flex items-baseline gap-2 font-mono tabular-nums shrink-0">
+                            {row.ceiling ? (
+                                <span className="text-sm font-medium">{formatCurrency(v.low)}</span>
+                            ) : (
+                                <>
+                                    <span className="text-sm">{formatCurrency(v.low)}</span>
+                                    <span className="text-muted-foreground">–</span>
+                                    <span className="text-sm">{formatCurrency(v.high)}</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                );
+            })}
+        </div>
+    );
 }

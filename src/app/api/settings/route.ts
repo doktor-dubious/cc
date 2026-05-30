@@ -192,7 +192,7 @@ export async function PATCH(request: NextRequest)
 
         // Parse request body
         const body = await request.json();
-        const { id, applicationName, homeDirectory, pollingInterval } = body;
+        const { id, applicationName, homeDirectory, pollingInterval, enableLlmTaskSpecialization } = body;
 
         // Validate ID
         if (!id || typeof id !== 'string')
@@ -226,6 +226,18 @@ export async function PATCH(request: NextRequest)
                 );
             }
             updateData.pollingInterval = pollingInterval;
+        }
+
+        if (enableLlmTaskSpecialization !== undefined)
+        {
+            if (typeof enableLlmTaskSpecialization !== 'boolean')
+            {
+                return NextResponse.json(
+                    { success: false, message: 'enableLlmTaskSpecialization must be a boolean' },
+                    { status: 400 }
+                );
+            }
+            updateData.enableLlmTaskSpecialization = enableLlmTaskSpecialization;
         }
 
         // Update settings

@@ -79,6 +79,8 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 
+import { GenerateFromRoadmapDialog } from "@/components/tasks/GenerateFromRoadmapDialog"
+
 export default function TaskPage()
 {
     const user = useUser();
@@ -110,6 +112,7 @@ export default function TaskPage()
     const [ganttResetKey, setGanttResetKey] = useState(0);
 
     const [isNewDialogOpen, setIsNewDialogOpen] = useState(false);
+    const [isGenerateOpen, setIsGenerateOpen]   = useState(false);
 
     const [taskToDelete, setTaskToDelete] = useState<number | null>(null);
     const [isDeleting, setIsDeleting] = useState(false);
@@ -2752,8 +2755,15 @@ useEffect(() => {
   </DialogContent>
 </Dialog>
 
+      <GenerateFromRoadmapDialog
+        organizationId={activeOrganization?.id}
+        open={isGenerateOpen}
+        onOpenChange={setIsGenerateOpen}
+        onCommitted={fetchTasks}
+      />
+
       <div className="space-y-8 p-6 overflow-x-hidden">
-        <div className="flex justify-center">
+        <div className="flex justify-center gap-2">
           <Button
             variant="default"
             size="sm"
@@ -2761,6 +2771,15 @@ useEffect(() => {
           >
             {t('buttons.newTask')}
           </Button>
+          {(user.role === 'ADMIN' || user.role === 'SUPER_ADMIN') && activeOrganization && (
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsGenerateOpen(true)}
+            >
+              Generate from roadmap
+            </Button>
+          )}
         </div>
 
         <div className="flex justify-between items-center gap-4">

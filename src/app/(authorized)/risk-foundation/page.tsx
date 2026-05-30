@@ -212,7 +212,7 @@ export default function RiskFoundationPage() {
       </div>
 
       {/* ── Organization Profile Section ─────────────────────────────────── */}
-      <div className="rounded-xl border bg-card p-6">
+      <div className="rounded-xl border bg-panel p-6">
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Organization Profile</h2>
           <p className="text-sm text-muted-foreground mt-1">
@@ -267,7 +267,7 @@ export default function RiskFoundationPage() {
       </div>
 
       {/* ── Client Exposure Section ──────────────────────────────────────── */}
-      <div className="rounded-xl border bg-card p-6">
+      <div className="rounded-xl border bg-panel p-6">
         <div className="mb-4">
           <h2 className="text-lg font-semibold">Client Exposure</h2>
           <p className="text-sm text-muted-foreground mt-1">
@@ -317,7 +317,7 @@ export default function RiskFoundationPage() {
                         variant="ghost"
                         size="sm"
                         className="cursor-pointer"
-                        onClick={() => router.push(`/reports/ces`)}
+                        onClick={() => router.push(`/risk-foundation/client-exposure-report?id=${tp.id}`)}
                       >
                         <Eye className="h-4 w-4 mr-1" />
                         View
@@ -360,7 +360,7 @@ export default function RiskFoundationPage() {
       </div>
 
       {/* ── Current Insights Section ────────────────────────────────────── */}
-      <div className="rounded-xl border bg-card p-6">
+      <div className="rounded-xl border bg-panel p-6">
         <div className="mb-2">
           <h2 className="text-lg font-semibold">Current Insights</h2>
         </div>
@@ -408,10 +408,31 @@ export default function RiskFoundationPage() {
             )}
           </div>
 
-          {/* Customer Exposure */}
+          {/* Per-Safeguard Financial Exposure (new model) */}
+          <div className="flex items-center justify-between py-4">
+            <span className="text-sm font-medium text-amber-700 dark:text-amber-400">
+              Per-Safeguard Financial Exposure
+            </span>
+            {orgStatus === 'finished' ? (
+              <Button
+                variant="link"
+                size="sm"
+                className="cursor-pointer text-blue-600 dark:text-blue-400"
+                onClick={() => router.push('/risk-foundation/per-safeguard-exposure')}
+              >
+                View
+              </Button>
+            ) : (
+              <span className="text-sm text-muted-foreground">
+                Complete Organization Profile to unlock
+              </span>
+            )}
+          </div>
+
+          {/* Client Exposure */}
           <div className="flex items-center justify-between py-4">
             <span className="text-sm font-medium text-emerald-700 dark:text-emerald-400">
-              Customer Exposure
+              Client Exposure
             </span>
             <Button
               variant="link"

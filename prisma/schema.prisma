@@ -9,42 +9,49 @@ datasource db {
 
 /// Global Settings
 model Settings {
-  id              String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq             Int      @default(autoincrement())
-  applicationName String   @map("application_name")
-  homeDirectory   String   @map("home_directory")
+  id                          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq                         Int      @default(autoincrement())
+  applicationName             String   @map("application_name")
+  homeDirectory               String   @map("home_directory")
   /// Refresh interval in milliseconds
-  pollingInterval Int      @default(30000) @map("polling_interval")
-  active          Boolean  @default(true)
-  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  pollingInterval             Int      @default(30000) @map("polling_interval")
+  /// When true, the Roadmap → Tasks preview calls Anthropic to specialise each
+  /// baseline task to the organisation (Step 2). Off by default; the engine
+  /// still ships deterministic Step-1 baselines either way.
+  enableLlmTaskSpecialization Boolean  @default(false) @map("enable_llm_task_specialization")
+  active                      Boolean  @default(true)
+  createdAt                   DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                   DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@map("settings")
 }
 
 model User {
-  id            String       @id(map: "user_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq           Int          @default(autoincrement())
-  email         String       @unique(map: "user_email_key") @db.VarChar(255)
-  emailVerified Boolean      @default(false) @map("email_verified")
-  role          UserRole     @default(USER)
-  name          String       @db.VarChar(100)
-  nickname      String       @default("") @db.VarChar(50)
-  workFunction  WorkFunction @default(OTHER) @map("work_function")
-  passwordHash  String       @default("") @map("password_hash") @db.VarChar(255)
-  image            String?
-  active           Boolean      @default(true)
-  twoFactorEnabled Boolean      @default(false) @map("two_factor_enabled")
-  createdAt        DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt        DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  events           Event[]
-  messages         Message[]
-  profile          Profile?
-  sessions         Session[]
-  accounts         Account[]
-  twoFactors       TwoFactor[]
-  userStars        UserStar[]
-  loginHistory     LoginHistory[]
+  id                    String         @id(map: "user_pkey") @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq                   Int            @default(autoincrement())
+  email                 String         @unique(map: "user_email_key") @db.VarChar(255)
+  emailVerified         Boolean        @default(false) @map("email_verified")
+  role                  UserRole       @default(USER)
+  name                  String         @db.VarChar(100)
+  nickname              String         @default("") @db.VarChar(50)
+  workFunction          WorkFunction   @default(OTHER) @map("work_function")
+  passwordHash          String         @default("") @map("password_hash") @db.VarChar(255)
+  image                 String?
+  active                Boolean        @default(true)
+  twoFactorEnabled      Boolean        @default(false) @map("two_factor_enabled")
+  /// The user's currently selected organization. Independent of profile so that
+  /// SUPER_ADMINs (who may have no profile) can also persist a selection.
+  currentOrganizationId String?        @map("current_organization_id") @db.Uuid
+  createdAt             DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt             DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events                Event[]
+  messages              Message[]
+  profile               Profile?
+  sessions              Session[]
+  accounts              Account[]
+  twoFactors            TwoFactor[]
+  userStars             UserStar[]
+  loginHistory          LoginHistory[]
 
   @@map("login")
 }
@@ -62,9 +69,9 @@ model Session {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   // Location fields (populated via IP geolocation)
-  city      String?
-  region    String?
-  country   String?
+  city    String?
+  region  String?
+  country String?
 
   @@map("session")
 }
@@ -131,12 +138,12 @@ model TwoFactor {
 }
 
 model Organization {
-  id          String                @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq         Int                   @default(autoincrement())
+  id          String  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq         Int     @default(autoincrement())
   name        String
   description String?
-  ig          Int                   @default(1)
-  size        OrgSize               @default(MICRO)
+  ig          Int     @default(1)
+  size        OrgSize @default(MICRO)
 
   /// Classification fields
   naceSection         NaceSection?         @map("nace_section")
@@ -169,36 +176,44 @@ model Organization {
   securityBudgetRange      SecurityBudgetRange?      @map("security_budget_range")
 
   /// Business Continuity Classification fields
-  manualOperation          ManualOperation?          @map("manual_operation")
-  productionDependency     ProductionDependency?     @map("production_dependency")
-  customerAccess           CustomerAccess?           @map("customer_access")
+  manualOperation      ManualOperation?      @map("manual_operation")
+  productionDependency ProductionDependency? @map("production_dependency")
+  customerAccess       CustomerAccess?       @map("customer_access")
 
   /// Additional classification fields
-  businessDaysPerYear      Int?                      @map("business_days_per_year")
-  revenueConcentration     RevenueConcentration?     @map("revenue_concentration")
-  entityType               EntityType?               @map("entity_type")
+  businessDaysPerYear  Int?                  @map("business_days_per_year")
+  revenueConcentration RevenueConcentration? @map("revenue_concentration")
+  entityType           EntityType?           @map("entity_type")
+
+  /// Threat-profile signals — fed into the derived targetedAttackLikelihood
+  mediaExposure        Boolean? @map("media_exposure")
+  criticalSocietalRole Boolean? @map("critical_societal_role")
 
   /// Auto-filled fields from company registries — JSON map of fieldName → { source, confirmedAt }
-  autoFilledFields         Json?                     @map("auto_filled_fields")
+  autoFilledFields Json? @map("auto_filled_fields")
 
-  active      Boolean               @default(true)
-  createdAt   DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
-  artifacts   Artifact[]
-  cisControls          OrganizationCisControl[]
-  cisControlGroups     CisControlGroup[]
-  inactiveSafeguards   OrganizationInactiveSafeguard[]
-  cisNotes             OrganizationCisNote[]
-  gapReports           GapReport[]
-  events               Event[]
-  settings             OrganisationSettings?
-  profiles             Profile[]
-  tasks                Task[]
-  organizationStar     OrganizationStar?
-  fileStars            FileStar[]
-  workflowConfigs      WorkflowConfig[]
-  thirdPartyCompanies  ThirdPartyCompany[]
-  evidences            Evidence[]
+  active                   Boolean                               @default(true)
+  createdAt                DateTime                              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt                DateTime                              @updatedAt @map("updated_at") @db.Timestamptz(3)
+  artifacts                Artifact[]
+  cisControls              OrganizationCisControl[]
+  cisControlGroups         CisControlGroup[]
+  inactiveSafeguards       OrganizationInactiveSafeguard[]
+  safeguardClassifications OrganizationSafeguardClassification[]
+  safeguardCmmis           OrganizationSafeguardCmmi[]
+  cisNotes                 OrganizationCisNote[]
+  gapReports               GapReport[]
+  roadmapItems             OrganizationRoadmapItem[]
+  events                   Event[]
+  settings                 OrganisationSettings?
+  profiles                 Profile[]
+  tasks                    Task[]
+  organizationStar         OrganizationStar?
+  fileStars                FileStar[]
+  workflowConfigs          WorkflowConfig[]
+  thirdPartyCompanies      ThirdPartyCompany[]
+  evidences                Evidence[]
+  structuralRiskReport     StructuralRiskReport?
 
   @@map("organization")
 }
@@ -215,17 +230,17 @@ model OrganizationStar {
 }
 
 model OrganisationSettings {
-  id                String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq               Int          @default(autoincrement())
-  organizationId    String       @unique @map("organization_id") @db.Uuid
-  uploadDirectory   String       @map("upload_directory")
-  downloadDirectory String       @map("download_directory")
+  id                   String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq                  Int          @default(autoincrement())
+  organizationId       String       @unique @map("organization_id") @db.Uuid
+  uploadDirectory      String       @map("upload_directory")
+  downloadDirectory    String       @map("download_directory")
   artifactDirectory    String       @map("artifact_directory")
-  enabledLookupSources String[]    @default([]) @map("enabled_lookup_sources")
-  active               Boolean     @default(true)
-  createdAt         DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization      Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  enabledLookupSources String[]     @default([]) @map("enabled_lookup_sources")
+  active               Boolean      @default(true)
+  createdAt            DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization         Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   @@index([organizationId])
   @@map("organization_settings")
@@ -234,26 +249,25 @@ model OrganisationSettings {
 /// Note.
 ///         * Profiles can be detached from Organization (organizationId can be null)
 ///         * organizationId holds the relation to Oranization (Profile 1<->MANY Organization)
-///         * currentOrganizationId is the current selected Organization. Not the only Organizaion the Profile may have access to
+///         * The user's currently selected organization lives on User.currentOrganizationId
 model Profile {
-  id                    String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq                   Int           @default(autoincrement())
-  currentOrganizationId String?       @map("current_organization_id") @db.Uuid
-  organizationId        String?       @map("organization_id") @db.Uuid
-  userId                String        @unique @map("user_id") @db.Uuid
-  name                  String
-  description           String?
-  active                Boolean       @default(true)
-  createdAt             DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt             DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
-  events                Event[]
-  organization          Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  user                  User          @relation(fields: [userId], references: [id], onDelete: Cascade)
-  taskProfiles          TaskProfile[]
-  profileStar           ProfileStar?
-  messages              Message[]
-  evidencesCreated      Evidence[]   @relation("EvidenceCreatedBy")
-  evidencesApproved     Evidence[]   @relation("EvidenceApprovedBy")
+  id                String        @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq               Int           @default(autoincrement())
+  organizationId    String?       @map("organization_id") @db.Uuid
+  userId            String        @unique @map("user_id") @db.Uuid
+  name              String
+  description       String?
+  active            Boolean       @default(true)
+  createdAt         DateTime      @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt         DateTime      @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events            Event[]
+  organization      Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  user              User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+  taskProfiles      TaskProfile[]
+  profileStar       ProfileStar?
+  messages          Message[]
+  evidencesCreated  Evidence[]    @relation("EvidenceCreatedBy")
+  evidencesApproved Evidence[]    @relation("EvidenceApprovedBy")
 
   @@index([organizationId])
   @@index([userId])
@@ -289,26 +303,29 @@ model Artifact {
 
 /// Note. Tasks can be detached from Organization (organizationId can be null)
 model Task {
-  id               String         @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq              Int            @default(autoincrement())
-  organizationId   String?        @map("organization_id") @db.Uuid
-  name             String
-  description      String?
-  expectedEvidence String?        @map("expected_evidence")
-  startAt          DateTime?      @map("start_at") @db.Timestamptz(3)
-  endAt            DateTime?      @map("end_at") @db.Timestamptz(3)
-  status           TaskStatus     @default(NOT_STARTED)
-  active           Boolean        @default(true)
-  createdAt        DateTime       @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt        DateTime       @updatedAt @map("updated_at") @db.Timestamptz(3)
-  events           Event[]
-  messages         Message[]
-  organization     Organization?  @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-  taskArtifacts    TaskArtifact[]
-  taskProfiles     TaskProfile[]
-  taskSafeguards   TaskSafeguard[]
-  taskStar         TaskStar?
-  evidences        Evidence[]
+  id                 String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq                Int             @default(autoincrement())
+  organizationId     String?         @map("organization_id") @db.Uuid
+  name               String
+  description        String?
+  expectedEvidence   String?         @map("expected_evidence")
+  startAt            DateTime?       @map("start_at") @db.Timestamptz(3)
+  endAt              DateTime?       @map("end_at") @db.Timestamptz(3)
+  status             TaskStatus      @default(NOT_STARTED)
+  origin             TaskOrigin      @default(MANUAL)
+  ownerRole          RoadmapOwner?   @map("owner_role")
+  generatedFromPhase Int?            @map("generated_from_phase")
+  active             Boolean         @default(true)
+  createdAt          DateTime        @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt          DateTime        @updatedAt @map("updated_at") @db.Timestamptz(3)
+  events             Event[]
+  messages           Message[]
+  organization       Organization?   @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  taskArtifacts      TaskArtifact[]
+  taskProfiles       TaskProfile[]
+  taskSafeguards     TaskSafeguard[]
+  taskStar           TaskStar?
+  evidences          Evidence[]
 
   @@index([organizationId])
   @@index([startAt])
@@ -453,11 +470,50 @@ model OrganizationInactiveSafeguard {
   @@map("organization_inactive_safeguard")
 }
 
+/// Per-organization GAP scoping classification for CIS Safeguards (include / maybe / exclude).
+/// Drives the catalog filter on the gap/definition page.
+enum SafeguardClassification {
+  INCLUDE
+  MAYBE
+  EXCLUDE
+}
+
+model OrganizationSafeguardClassification {
+  organizationId String                  @map("organization_id") @db.Uuid
+  safeguardId    String                  @map("safeguard_id") @db.VarChar(10)
+  classification SafeguardClassification
+  createdAt      DateTime                @default(now()) @map("created_at")
+  updatedAt      DateTime                @updatedAt @map("updated_at")
+  organization   Organization            @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, safeguardId])
+  @@index([organizationId])
+  @@index([safeguardId])
+  @@map("organization_safeguard_classification")
+}
+
+/// In-progress per-safeguard CMMI selections for the GAP report flow.
+/// targetCmmi = 0 means "Not Assessed".
+model OrganizationSafeguardCmmi {
+  organizationId String       @map("organization_id") @db.Uuid
+  safeguardId    String       @map("safeguard_id") @db.VarChar(10)
+  currentCmmi    Int          @map("current_cmmi")
+  targetCmmi     Int          @map("target_cmmi")
+  createdAt      DateTime     @default(now()) @map("created_at")
+  updatedAt      DateTime     @updatedAt @map("updated_at")
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, safeguardId])
+  @@index([organizationId])
+  @@index([safeguardId])
+  @@map("organization_safeguard_cmmi")
+}
+
 /// Organization-level notes for CIS Controls and Safeguards
 model OrganizationCisNote {
   id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
   organizationId String       @map("organization_id") @db.Uuid
-  itemId         String       @map("item_id") @db.VarChar(10)  // "1" or "1.1"
+  itemId         String       @map("item_id") @db.VarChar(10) // "1" or "1.1"
   itemType       String       @map("item_type") @db.VarChar(20) // "control" | "safeguard"
   content        String       @db.Text
   createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
@@ -467,6 +523,52 @@ model OrganizationCisNote {
   @@unique([organizationId, itemId, itemType])
   @@index([organizationId])
   @@map("organization_cis_note")
+}
+
+enum RoadmapEffort {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum RoadmapOwner {
+  IT
+  MANAGEMENT
+  OPERATIONS
+  SECURITY_COMPLIANCE
+  EXTERNAL_VENDOR
+}
+
+/// Per-safeguard advisor decisions + cached AI insights for the Roadmap page.
+/// One row per (organization, safeguard). Only created when an advisor edits a
+/// field or AI insights are generated; absence = "no decision recorded yet".
+/// `targetCmmi` null = inherit the target from the latest finalized GAP report.
+model OrganizationRoadmapItem {
+  organizationId String @map("organization_id") @db.Uuid
+  safeguardId    String @map("safeguard_id") @db.VarChar(10)
+
+  // Advisor decision
+  targetCmmi        Int?           @map("target_cmmi")
+  phase             Int? // 1..4
+  effort            RoadmapEffort?
+  owner             RoadmapOwner?
+  clientExplanation String?        @map("client_explanation") @db.Text
+  internalNote      String?        @map("internal_note") @db.Text
+
+  // Cached AI insights (generated lazily on first view)
+  aiBusinessRelevance     String?   @map("ai_business_relevance") @db.Text
+  aiCustomerExposure      String?   @map("ai_customer_exposure") @db.Text
+  aiImplementationInsight String?   @map("ai_implementation_insight") @db.Text
+  aiGeneratedAt           DateTime? @map("ai_generated_at") @db.Timestamptz(3)
+
+  createdAt    DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt    DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@id([organizationId, safeguardId])
+  @@index([organizationId])
+  @@index([safeguardId])
+  @@map("organization_roadmap_item")
 }
 
 /// Finalized GAP Report with version tracking
@@ -489,6 +591,28 @@ model GapReport {
   @@map("gap_report")
 }
 
+/// Persisted Structural Risk Profile report (one per organization).
+/// `report` and `sectionConfigs` are stored as JSON blobs that mirror the
+/// shapes used by the structural-risk-profile page so we don't have to
+/// migrate the schema every time the report shape evolves.
+/// `generatedById` / `lastEditedById` reference login.id (User).
+model StructuralRiskReport {
+  id             String       @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  organizationId String       @unique @map("organization_id") @db.Uuid
+  report         Json
+  sectionConfigs Json         @map("section_configs")
+  generatedById  String       @map("generated_by") @db.Uuid
+  generatedAt    DateTime     @default(now()) @map("generated_at") @db.Timestamptz(3)
+  lastEditedById String?      @map("last_edited_by") @db.Uuid
+  lastEditedAt   DateTime?    @map("last_edited_at") @db.Timestamptz(3)
+  createdAt      DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@map("structural_risk_report")
+}
+
 /// Individual CMMI values for each safeguard in a GAP report
 model GapReportCmmi {
   id          String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
@@ -496,7 +620,7 @@ model GapReportCmmi {
   safeguardId String    @map("safeguard_id") @db.VarChar(10)
   currentCmmi Int       @map("current_cmmi")
   targetCmmi  Int       @map("target_cmmi")
-  gap         Int       // target - current
+  gap         Int // target - current
   createdAt   DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
   report      GapReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
 
@@ -507,26 +631,26 @@ model GapReportCmmi {
 
 /// Exploratory GAP Analysis - Stores generated recommendations for an organization
 model ExploratoryGap {
-  id                String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq               Int      @default(autoincrement())
-  organizationId    String   @map("organization_id") @db.Uuid
+  id             String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int       @default(autoincrement())
+  organizationId String    @map("organization_id") @db.Uuid
   /// Recommended Implementation Group (1, 2, or 3)
-  recommendedIg     Int      @map("recommended_ig")
+  recommendedIg  Int       @map("recommended_ig")
   /// JSON array of rationale strings
-  igRationale       Json     @map("ig_rationale")
+  igRationale    Json      @map("ig_rationale")
   /// JSON array of factor objects { factor, value, impact, weight }
-  igFactors         Json     @map("ig_factors")
+  igFactors      Json      @map("ig_factors")
   /// JSON array of control recommendations
-  controlRecs       Json     @map("control_recs")
+  controlRecs    Json      @map("control_recs")
   /// JSON array of safeguard recommendations
-  safeguardRecs     Json     @map("safeguard_recs")
+  safeguardRecs  Json      @map("safeguard_recs")
   /// Summary statistics JSON
-  summary           Json
+  summary        Json
   /// Whether this GAP has been implemented (applied to controls/safeguards)
-  implemented       Boolean  @default(false)
-  implementedAt     DateTime? @map("implemented_at") @db.Timestamptz(3)
-  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt         DateTime @updatedAt @map("updated_at") @db.Timestamptz(3)
+  implemented    Boolean   @default(false)
+  implementedAt  DateTime? @map("implemented_at") @db.Timestamptz(3)
+  createdAt      DateTime  @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime  @updatedAt @map("updated_at") @db.Timestamptz(3)
 
   @@index([organizationId])
   @@index([createdAt])
@@ -621,30 +745,30 @@ model MessageStar {
 
 /// Messages tied to Tasks - can be system-generated or from users
 model Message {
-  id          String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq         Int                 @default(autoincrement())
-  taskId      String              @map("task_id") @db.Uuid
+  id             String              @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int                 @default(autoincrement())
+  taskId         String              @map("task_id") @db.Uuid
   /// If origin is USER, senderId should be set. If SYSTEM, it can be null
-  senderId    String?             @map("sender_id") @db.Uuid
-  origin      MessageOrigin       @default(USER)
-  type        MessageKind         @default(NOTE)
-  replyId     String?             @map("reply_id") @db.Uuid
-  requestType MessageRequestType? @map("request_type")
-  replyTo     String?             @map("reply_to") @db.Uuid
-  assetName   String?             @map("asset_name")
-  evidenceId  String?             @map("evidence_id") @db.Uuid
-  content     String
-  isRead      Boolean             @default(false) @map("is_read")
-  active      Boolean             @default(true)
-  createdAt   DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt   DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
-  sender       User?        @relation(fields: [senderId], references: [id])
-  task         Task         @relation(fields: [taskId], references: [id], onDelete: Cascade)
-  reply        Message?     @relation("MessageReply", fields: [replyId], references: [id])
-  replies      Message[]    @relation("MessageReply")
-  replyToProfile Profile?   @relation(fields: [replyTo], references: [id])
-  messageStars MessageStar[]
-  evidence     Evidence?    @relation(fields: [evidenceId], references: [id])
+  senderId       String?             @map("sender_id") @db.Uuid
+  origin         MessageOrigin       @default(USER)
+  type           MessageKind         @default(NOTE)
+  replyId        String?             @map("reply_id") @db.Uuid
+  requestType    MessageRequestType? @map("request_type")
+  replyTo        String?             @map("reply_to") @db.Uuid
+  assetName      String?             @map("asset_name")
+  evidenceId     String?             @map("evidence_id") @db.Uuid
+  content        String
+  isRead         Boolean             @default(false) @map("is_read")
+  active         Boolean             @default(true)
+  createdAt      DateTime            @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt      DateTime            @updatedAt @map("updated_at") @db.Timestamptz(3)
+  sender         User?               @relation(fields: [senderId], references: [id])
+  task           Task                @relation(fields: [taskId], references: [id], onDelete: Cascade)
+  reply          Message?            @relation("MessageReply", fields: [replyId], references: [id])
+  replies        Message[]           @relation("MessageReply")
+  replyToProfile Profile?            @relation(fields: [replyTo], references: [id])
+  messageStars   MessageStar[]
+  evidence       Evidence?           @relation(fields: [evidenceId], references: [id])
 
   @@index([taskId])
   @@index([evidenceId])
@@ -713,6 +837,12 @@ enum TaskStatus {
   COMPLETED
   /// Stopped without completing
   CLOSED
+}
+
+/// Provenance of a task: created by hand vs generated from the roadmap.
+enum TaskOrigin {
+  MANUAL
+  GENERATED
 }
 
 enum ArtifactType {
@@ -793,25 +923,25 @@ enum OrgSize {
 
 /// NACE Section - EU standard business activity classification
 enum NaceSection {
-  A  /// Agriculture, forestry and fishing
-  B  /// Mining and quarrying
-  C  /// Manufacturing
-  D  /// Electricity, gas, steam and air conditioning supply
-  E  /// Water supply, sewerage, waste management
-  F  /// Construction
-  G  /// Wholesale and retail trade
-  H  /// Transportation and storage
-  I  /// Accommodation and food service
-  J  /// Information and communication
-  K  /// Financial and insurance activities
-  L  /// Real estate activities
-  M  /// Professional, scientific and technical activities
-  N  /// Administrative and support service activities
-  O  /// Public administration and defence
-  P  /// Education
-  Q  /// Human health and social work
-  R  /// Arts, entertainment and recreation
-  S  /// Other service activities
+  A /// Agriculture, forestry and fishing
+  B /// Mining and quarrying
+  C /// Manufacturing
+  D /// Electricity, gas, steam and air conditioning supply
+  E /// Water supply, sewerage, waste management
+  F /// Construction
+  G /// Wholesale and retail trade
+  H /// Transportation and storage
+  I /// Accommodation and food service
+  J /// Information and communication
+  K /// Financial and insurance activities
+  L /// Real estate activities
+  M /// Professional, scientific and technical activities
+  N /// Administrative and support service activities
+  O /// Public administration and defence
+  P /// Education
+  Q /// Human health and social work
+  R /// Arts, entertainment and recreation
+  S /// Other service activities
   OTHER /// Not classified / Other
 }
 
@@ -830,10 +960,10 @@ enum LegalForm {
 
 /// Organization Age / Maturity
 enum OrgMaturity {
-  STARTUP      /// 0-3 years
-  GROWTH       /// 3-7 years
-  ESTABLISHED  /// 7-20 years
-  MATURE       /// 20+ years
+  STARTUP /// 0-3 years
+  GROWTH /// 3-7 years
+  ESTABLISHED /// 7-20 years
+  MATURE /// 20+ years
 }
 
 /// Ownership Type
@@ -897,29 +1027,29 @@ enum RiskProfile {
 
 /// IT & Security Staffing Level
 enum ItSecurityStaff {
-  NO_DEDICATED_IT         /// No dedicated IT staff (outsourced or part-time)
-  IT_NO_SECURITY          /// IT staff but no dedicated security personnel
-  DEDICATED_SECURITY      /// Dedicated security team
-  SPECIALIZED_SECURITY    /// Specialized security team with advanced capabilities (SOC, red team, etc.)
+  NO_DEDICATED_IT /// No dedicated IT staff (outsourced or part-time)
+  IT_NO_SECURITY /// IT staff but no dedicated security personnel
+  DEDICATED_SECURITY /// Dedicated security team
+  SPECIALIZED_SECURITY /// Specialized security team with advanced capabilities (SOC, red team, etc.)
 }
 
 /// Security Program Maturity Level
 enum SecurityMaturity {
-  NO_PROGRAM              /// No formal security program
-  BASIC                   /// Basic / ad-hoc security practices
-  DEFINED                 /// Defined security policies and processes
-  MANAGED                 /// Managed and measured security program
-  OPTIMIZING              /// Continuously optimizing
+  NO_PROGRAM /// No formal security program
+  BASIC /// Basic / ad-hoc security practices
+  DEFINED /// Defined security policies and processes
+  MANAGED /// Managed and measured security program
+  OPTIMIZING /// Continuously optimizing
 }
 
 /// Data Sensitivity Types (for array field)
 enum DataSensitivity {
-  BASIC_BUSINESS          /// Basic business data (financial records, employee info)
-  CUSTOMER_PII            /// Customer personal data (PII under GDPR)
-  SPECIAL_CATEGORY        /// Special category data (health, biometric, political, religious)
-  PAYMENT_CARD            /// Payment card data (PCI DSS scope)
-  INTELLECTUAL_PROPERTY   /// Intellectual property / trade secrets
-  CLASSIFIED_GOVERNMENT   /// Classified or government data
+  BASIC_BUSINESS /// Basic business data (financial records, employee info)
+  CUSTOMER_PII /// Customer personal data (PII under GDPR)
+  SPECIAL_CATEGORY /// Special category data (health, biometric, political, religious)
+  PAYMENT_CARD /// Payment card data (PCI DSS scope)
+  INTELLECTUAL_PROPERTY /// Intellectual property / trade secrets
+  CLASSIFIED_GOVERNMENT /// Classified or government data
   CRITICAL_INFRASTRUCTURE /// Critical infrastructure operational data (OT/SCADA)
 }
 
@@ -930,111 +1060,111 @@ enum RegulatoryObligation {
   DORA
   EU_AI_ACT
   PCI_DSS
-  INDUSTRY_SPECIFIC       /// Industry-specific regulation (medical devices, pharma, energy, etc.)
+  INDUSTRY_SPECIFIC /// Industry-specific regulation (medical devices, pharma, energy, etc.)
   CYBER_INSURANCE
   NONE_NOT_SURE
 }
 
 /// IT Environment - Number of Endpoints
 enum ItEndpointRange {
-  UNDER_25                /// < 25
-  FROM_25_100             /// 25–100
-  FROM_100_500            /// 100–500
-  FROM_500_5000           /// 500–5,000
-  OVER_5000               /// 5,000+
+  UNDER_25 /// < 25
+  FROM_25_100 /// 25–100
+  FROM_100_500 /// 100–500
+  FROM_500_5000 /// 500–5,000
+  OVER_5000 /// 5,000+
 }
 
 /// Infrastructure Type (for array field)
 enum InfrastructureType {
-  ON_PREMISES             /// On-premises only
-  CLOUD_ONLY              /// Cloud only (SaaS-heavy)
-  HYBRID                  /// Hybrid (on-prem + cloud)
-  MULTI_CLOUD             /// Multi-cloud
-  OPERATIONAL_TECHNOLOGY  /// Operational Technology (OT/ICS/SCADA)
+  ON_PREMISES /// On-premises only
+  CLOUD_ONLY /// Cloud only (SaaS-heavy)
+  HYBRID /// Hybrid (on-prem + cloud)
+  MULTI_CLOUD /// Multi-cloud
+  OPERATIONAL_TECHNOLOGY /// Operational Technology (OT/ICS/SCADA)
 }
 
 /// In-house Software Development Level
 enum SoftwareDevelopment {
-  NONE                    /// None
-  SOME_INTERNAL           /// Some (internal tools, websites)
-  CORE_BUSINESS           /// Core business depends on custom software
-  SOFTWARE_IS_PRODUCT     /// Software is the product (SaaS/ISV)
+  NONE /// None
+  SOME_INTERNAL /// Some (internal tools, websites)
+  CORE_BUSINESS /// Core business depends on custom software
+  SOFTWARE_IS_PRODUCT /// Software is the product (SaaS/ISV)
 }
 
 /// Public-facing Services Level
 enum PublicFacingServices {
-  NONE                    /// No internet-facing services
-  BASIC_WEB               /// Basic web presence (website, email)
-  ECOMMERCE_PORTALS       /// E-commerce / customer portals
-  CRITICAL_SERVICES       /// Critical public-facing services (banking, healthcare, government)
+  NONE /// No internet-facing services
+  BASIC_WEB /// Basic web presence (website, email)
+  ECOMMERCE_PORTALS /// E-commerce / customer portals
+  CRITICAL_SERVICES /// Critical public-facing services (banking, healthcare, government)
 }
 
 /// Targeted Attack Likelihood
 enum TargetedAttackLikelihood {
-  LOW                     /// Small, non-strategic, no valuable data to attackers
-  MEDIUM                  /// Some value to attackers, sector sometimes targeted
-  HIGH                    /// Known brand, critical infrastructure, high-value IP, politically exposed
+  LOW /// Small, non-strategic, no valuable data to attackers
+  MEDIUM /// Some value to attackers, sector sometimes targeted
+  HIGH /// Known brand, critical infrastructure, high-value IP, politically exposed
 }
 
 /// Remote Workforce — percentage of workforce primarily working remotely
 enum RemoteWorkforce {
-  NONE                    /// 0% — fully on-site
-  UNDER_25                /// < 25% remote
-  FROM_25_50              /// 25–50% remote
-  FROM_50_75              /// 50–75% remote
-  OVER_75                 /// > 75% remote / fully distributed
+  NONE /// 0% — fully on-site
+  UNDER_25 /// < 25% remote
+  FROM_25_50 /// 25–50% remote
+  FROM_50_75 /// 50–75% remote
+  OVER_75 /// > 75% remote / fully distributed
 }
 
 /// Previous Breach History — material cyber incidents in the last 3 years
 enum PreviousBreachHistory {
-  NONE                    /// No known material breaches
-  ONE                     /// One material breach
-  MULTIPLE                /// Two or more material breaches
+  NONE /// No known material breaches
+  ONE /// One material breach
+  MULTIPLE /// Two or more material breaches
 }
 
 /// Downtime Tolerance
 enum DowntimeTolerance {
-  DAYS                    /// Can tolerate days of downtime
-  HOURS                   /// Can tolerate hours of downtime
-  NEAR_ZERO               /// Near-zero downtime tolerance (24/7 operations)
+  DAYS /// Can tolerate days of downtime
+  HOURS /// Can tolerate hours of downtime
+  NEAR_ZERO /// Near-zero downtime tolerance (24/7 operations)
 }
 
 /// Supply Chain Position (more detailed than SupplyChainRole)
 enum SupplyChainPosition {
-  END_CONSUMER            /// End consumer of IT services
-  B2B_PROVIDER            /// Provides services/products to other businesses
-  CRITICAL_SUPPLIER       /// Part of a critical supply chain (e.g., supplier to essential entities under NIS2)
-  MSP_CLOUD_PROVIDER      /// Service provider handling client data/systems (MSP, cloud provider, etc.)
+  END_CONSUMER /// End consumer of IT services
+  B2B_PROVIDER /// Provides services/products to other businesses
+  CRITICAL_SUPPLIER /// Part of a critical supply chain (e.g., supplier to essential entities under NIS2)
+  MSP_CLOUD_PROVIDER /// Service provider handling client data/systems (MSP, cloud provider, etc.)
 }
 
 /// Annual IT/Security Budget Range
 enum SecurityBudgetRange {
-  MINIMAL                 /// Minimal / no dedicated budget
-  UNDER_50K               /// < €50K
-  FROM_50K_250K           /// €50K–€250K
-  FROM_250K_1M            /// €250K–€1M
-  OVER_1M                 /// > €1M
+  MINIMAL /// Minimal / no dedicated budget
+  UNDER_50K /// < €50K
+  FROM_50K_250K /// €50K–€250K
+  FROM_250K_1M /// €250K–€1M
+  OVER_1M /// > €1M
 }
 
 /// Manual Operation - Can core revenue-generating operations continue manually if IT systems are unavailable?
 enum ManualOperation {
-  YES                     /// 0 = Yes, operations can continue manually without material disruption
-  PARTIAL                 /// 1 = Partially; limited manual fallback possible for a short period
-  NO                      /// 2 = No; core operations stop without IT
+  YES /// 0 = Yes, operations can continue manually without material disruption
+  PARTIAL /// 1 = Partially; limited manual fallback possible for a short period
+  NO /// 2 = No; core operations stop without IT
 }
 
 /// Production Dependency - Does production/delivery depend directly on IT systems?
 enum ProductionDependency {
-  NO_DEPENDENCY           /// 0 = No direct dependency
-  PARTIAL                 /// 1 = Partial or indirect dependency
-  DIRECT                  /// 2 = Yes, direct real-time dependency
+  NO_DEPENDENCY /// 0 = No direct dependency
+  PARTIAL /// 1 = Partial or indirect dependency
+  DIRECT /// 2 = Yes, direct real-time dependency
 }
 
 /// Customer Access - Is customer access required for sales, orders, or service delivery?
 enum CustomerAccess {
-  NOT_REQUIRED            /// 0 = No, sales/delivery can continue without digital access
-  PARTIAL                 /// 1 = Partially; some functions depend on customer access
-  ESSENTIAL               /// 2 = Yes, customer access is essential for revenue generation
+  NOT_REQUIRED /// 0 = No, sales/delivery can continue without digital access
+  PARTIAL /// 1 = Partially; some functions depend on customer access
+  ESSENTIAL /// 2 = Yes, customer access is essential for revenue generation
 }
 
 /// Revenue Concentration - degree of revenue concentration across customers/segments
@@ -1120,47 +1250,69 @@ enum CesSupplyChainRole {
 // ── CES Model ────────────────────────────────────────────────────────────────
 
 model ThirdPartyCompany {
-  id             String                  @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  seq            Int                     @default(autoincrement())
-  organizationId String                  @map("organization_id") @db.Uuid
+  id             String @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  seq            Int    @default(autoincrement())
+  organizationId String @map("organization_id") @db.Uuid
 
   /// Step 1: Company Profile
-  name                  String
-  description           String?                 @map("description")
-  regulatoryFramework   CesRegulatoryFramework? @map("regulatory_framework")
-  customerSector        String?                 @map("customer_sector")
-  dedicatedCompliance   Boolean?                @map("dedicated_compliance")
-  partOfGroup           Boolean?                @map("part_of_group")
-  listedOrPeOwned       Boolean?                @map("listed_or_pe_owned")
+  name                String
+  description         String?                 @map("description")
+  regulatoryFramework CesRegulatoryFramework? @map("regulatory_framework")
+  customerSector      String?                 @map("customer_sector")
+  dedicatedCompliance Boolean?                @map("dedicated_compliance")
+  partOfGroup         Boolean?                @map("part_of_group")
+  listedOrPeOwned     Boolean?                @map("listed_or_pe_owned")
 
   /// Step 2: Contractual & Procurement
-  standardContract      Boolean?    @map("standard_contract")
-  slaIncluded           Boolean?    @map("sla_included")
-  professionalProcurement Boolean?  @map("professional_procurement")
-  deliversToRegulated   CesTriState? @map("delivers_to_regulated")
-  deliversToPublicInfra Boolean?    @map("delivers_to_public_infra")
+  standardContract        Boolean?     @map("standard_contract")
+  slaIncluded             Boolean?     @map("sla_included")
+  professionalProcurement Boolean?     @map("professional_procurement")
+  deliversToRegulated     CesTriState? @map("delivers_to_regulated")
+  deliversToPublicInfra   Boolean?     @map("delivers_to_public_infra")
 
   /// Step 3: Operations & Digital Footprint
-  internationalOps      Boolean?          @map("international_ops")
-  coreDigital           CesTriState?      @map("core_digital")
-  itDependency          CesDependencyLevel? @map("it_dependency")
-  publicBrand           Boolean?          @map("public_brand")
-  criticalSocietalRole  Boolean?          @map("critical_societal_role")
-  mediaExposure         Boolean?          @map("media_exposure")
+  internationalOps     Boolean?            @map("international_ops")
+  coreDigital          CesTriState?        @map("core_digital")
+  itDependency         CesDependencyLevel? @map("it_dependency")
+  publicBrand          Boolean?            @map("public_brand")
+  criticalSocietalRole Boolean?            @map("critical_societal_role")
+  mediaExposure        Boolean?            @map("media_exposure")
 
   /// Step 4: Technical Exposure
-  deliveryRole          CesDeliveryRole?    @map("delivery_role")
-  accessLevel           CesAccessLevel?     @map("access_level")
-  dataHandled           CesDataHandled?     @map("data_handled")
-  disruptionImpact      CesDisruptionImpact? @map("disruption_impact")
-  supplyChainRole       CesSupplyChainRole? @map("supply_chain_role")
+  deliveryRole     CesDeliveryRole?     @map("delivery_role")
+  accessLevel      CesAccessLevel?      @map("access_level")
+  dataHandled      CesDataHandled?      @map("data_handled")
+  disruptionImpact CesDisruptionImpact? @map("disruption_impact")
+  supplyChainRole  CesSupplyChainRole?  @map("supply_chain_role")
 
-  active     Boolean      @default(true)
-  createdAt  DateTime     @default(now()) @map("created_at") @db.Timestamptz(3)
-  updatedAt  DateTime     @updatedAt @map("updated_at") @db.Timestamptz(3)
-  organization Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  active               Boolean               @default(true)
+  createdAt            DateTime              @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt            DateTime              @updatedAt @map("updated_at") @db.Timestamptz(3)
+  organization         Organization          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  clientExposureReport ClientExposureReport?
 
   @@index([organizationId])
   @@map("third_party_company")
 }
 
+/// Persisted Client Exposure (CES) report — one per ThirdPartyCompany.
+/// `report` and `sectionConfigs` are stored as JSON blobs that mirror the
+/// shapes used by the client-exposure-report page so we don't have to
+/// migrate the schema every time the report shape evolves.
+/// `generatedById` / `lastEditedById` reference login.id (User).
+model ClientExposureReport {
+  id                  String            @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  thirdPartyCompanyId String            @unique @map("third_party_company_id") @db.Uuid
+  report              Json
+  sectionConfigs      Json              @map("section_configs")
+  generatedById       String            @map("generated_by") @db.Uuid
+  generatedAt         DateTime          @default(now()) @map("generated_at") @db.Timestamptz(3)
+  lastEditedById      String?           @map("last_edited_by") @db.Uuid
+  lastEditedAt        DateTime?         @map("last_edited_at") @db.Timestamptz(3)
+  createdAt           DateTime          @default(now()) @map("created_at") @db.Timestamptz(3)
+  updatedAt           DateTime          @updatedAt @map("updated_at") @db.Timestamptz(3)
+  thirdPartyCompany   ThirdPartyCompany @relation(fields: [thirdPartyCompanyId], references: [id], onDelete: Cascade)
+
+  @@index([thirdPartyCompanyId])
+  @@map("client_exposure_report")
+}

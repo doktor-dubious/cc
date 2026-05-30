@@ -97,6 +97,8 @@ type OrganizationWithProfiles =
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
     autoFilledFields         : unknown;
     profiles                 : ProfileData[];
 };
@@ -140,6 +142,8 @@ type OrganizationWithTasks =
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
     autoFilledFields         : unknown;
     tasks                    : TaskData[];
 };
@@ -183,6 +187,8 @@ type OrganizationWithProfilesAndTasks =
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
     autoFilledFields         : unknown;
     profiles                 : ProfileData[];
     tasks                    : TaskData[];
@@ -227,6 +233,8 @@ export type organizationData =
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
     autoFilledFields         : unknown;
 };
 
@@ -279,6 +287,8 @@ type OrganizationWithSettings =
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
     autoFilledFields         : unknown;
     settings                 : OrganisationSettingsData | null;
 };
@@ -322,6 +332,8 @@ export type OrganizationWithAll =
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
     autoFilledFields         : unknown;
     profiles                 : ProfileData[];
     tasks                    : TaskData[];
@@ -387,6 +399,8 @@ const selectFields =
     businessDaysPerYear      : true,
     revenueConcentration     : true,
     entityType               : true,
+    mediaExposure            : true,
+    criticalSocietalRole     : true,
     autoFilledFields         : true,
 } as const;
 
@@ -429,6 +443,8 @@ const selectFieldsWithProfiles =
     businessDaysPerYear      : true,
     revenueConcentration     : true,
     entityType               : true,
+    mediaExposure            : true,
+    criticalSocietalRole     : true,
     autoFilledFields         : true,
     profiles        : {
         where: { active: true },
@@ -480,6 +496,8 @@ const selectFieldsWithTasks =
     businessDaysPerYear      : true,
     revenueConcentration     : true,
     entityType               : true,
+    mediaExposure            : true,
+    criticalSocietalRole     : true,
     autoFilledFields         : true,
     tasks           : {
         where: { active: true },
@@ -535,6 +553,8 @@ const selectFieldsWithProfilesAndTasks =
     businessDaysPerYear      : true,
     revenueConcentration     : true,
     entityType               : true,
+    mediaExposure            : true,
+    criticalSocietalRole     : true,
     autoFilledFields         : true,
     profiles        : {
         where: { active: true },
@@ -599,6 +619,8 @@ const selectFieldsWithSettings =
     businessDaysPerYear      : true,
     revenueConcentration     : true,
     entityType               : true,
+    mediaExposure            : true,
+    criticalSocietalRole     : true,
     autoFilledFields         : true,
     settings                 : selectSettings,
 } as const;
@@ -642,6 +664,8 @@ const selectFieldsWithProfilesTasksAndSettings =
     businessDaysPerYear      : true,
     revenueConcentration     : true,
     entityType               : true,
+    mediaExposure            : true,
+    criticalSocietalRole     : true,
     autoFilledFields         : true,
     settings                 : selectSettings,
     profiles    :
@@ -829,6 +853,8 @@ export const organizationRepository =
         businessDaysPerYear?: number | null;
         revenueConcentration?: string | null;
         entityType?: string | null;
+        mediaExposure?: boolean | null;
+        criticalSocietalRole?: boolean | null;
         autoFilledFields?: unknown;
     }): Promise<organizationData>
     {

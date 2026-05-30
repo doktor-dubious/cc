@@ -113,6 +113,8 @@ export default async function AuthorizedLayout({children,}:
         businessDaysPerYear      : org.businessDaysPerYear,
         revenueConcentration     : org.revenueConcentration,
         entityType               : org.entityType,
+        mediaExposure            : org.mediaExposure,
+        criticalSocietalRole     : org.criticalSocietalRole,
         autoFilledFields         : org.autoFilledFields,
     }));
 

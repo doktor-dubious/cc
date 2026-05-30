@@ -4,9 +4,10 @@ import React, { useState, useEffect, useCallback, useRef, Suspense } from 'react
 import { useTranslations } from 'next-intl';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { toast } from 'sonner';
-import { ChevronLeft, ChevronRight, ArrowLeft, Check, Search, Building2, Loader2, CheckCircle2 } from 'lucide-react';
+import { ChevronLeft, ChevronRight, ArrowLeft, Check, Info, Search, Building2, Loader2, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import type { CompanySearchResult, AutoFilledFields } from '@/lib/company-lookup';
 import { Label } from '@/components/ui/label';
@@ -18,12 +19,34 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
 import { useOrganization } from '@/context/OrganizationContext';
+
+// ── Info icon + tooltip (mirrors gorm.ai pattern) ─────────────────────────────
+function InfoIcon({ text }: { text: string }) {
+  return (
+    <Tooltip>
+      <TooltipTrigger asChild>
+        <span className="inline-flex">
+          <Info className="h-3.5 w-3.5 text-muted-foreground cursor-help shrink-0" />
+        </span>
+      </TooltipTrigger>
+      <TooltipContent side="top" className="max-w-xs">
+        {text}
+      </TooltipContent>
+    </Tooltip>
+  );
+}
 
 // Define the wizard steps
 type WizardStep = {
   id: string;
   titleKey: string;
+  descriptionKey: string;
   fields: FieldConfig[];
 };
 
@@ -35,6 +58,9 @@ type FieldConfig = {
   helperKey?: string;
   options?: { value: string; labelKey: string }[];
   required?: boolean;
+  /// When true, the field is excluded from the step-completeness check so an
+  /// empty value does not block the step from being marked done.
+  optional?: boolean;
 };
 
 // Organization size options
@@ -143,13 +169,6 @@ const SUPPLY_CHAIN_ROLE_OPTIONS = [
   { value: 'END_USER', labelKey: 'supplyChainRoles.endUser' },
 ];
 
-// Risk profile options
-const RISK_PROFILE_OPTIONS = [
-  { value: 'LOW', labelKey: 'riskProfiles.low' },
-  { value: 'MEDIUM', labelKey: 'riskProfiles.medium' },
-  { value: 'HIGH', labelKey: 'riskProfiles.high' },
-];
-
 // Revenue concentration options
 const REVENUE_CONCENTRATION_OPTIONS = [
   { value: 'LOW', labelKey: 'revenueConcentration.low' },
@@ -243,12 +262,26 @@ const REGULATORY_OBLIGATIONS_OPTIONS = [
   { value: 'NONE_NOT_SURE', labelKey: 'regulatoryObligations.noneNotSure' },
 ];
 
-// Targeted attack likelihood options
-const TARGETED_ATTACK_LIKELIHOOD_OPTIONS = [
-  { value: 'LOW', labelKey: 'targetedAttackLikelihood.low' },
-  { value: 'MEDIUM', labelKey: 'targetedAttackLikelihood.medium' },
-  { value: 'HIGH', labelKey: 'targetedAttackLikelihood.high' },
+// Previous breach history options
+const PREVIOUS_BREACH_HISTORY_OPTIONS = [
+  { value: 'NONE',     labelKey: 'previousBreachHistory.none' },
+  { value: 'ONE',      labelKey: 'previousBreachHistory.one' },
+  { value: 'MULTIPLE', labelKey: 'previousBreachHistory.multiple' },
 ];
+
+// Yes/no options for boolean fields rendered as a select
+const YES_NO_OPTIONS = [
+  { value: 'true',  labelKey: 'yesNo.yes' },
+  { value: 'false', labelKey: 'yesNo.no' },
+];
+
+// Field keys whose underlying form value is a boolean — the select handler
+// converts the 'true'/'false' string back to the actual boolean.
+const BOOLEAN_FIELDS = new Set<string>([
+  'euTaxonomyAligned',
+  'mediaExposure',
+  'criticalSocietalRole',
+]);
 
 // Downtime tolerance options
 const DOWNTIME_TOLERANCE_OPTIONS = [
@@ -295,31 +328,42 @@ const CUSTOMER_ACCESS_OPTIONS = [
   { value: 'ESSENTIAL', labelKey: 'customerAccess.essential' },
 ];
 
+// Menu-button styling: pointer cursor + underline-on-hover, matching the
+// other risk-foundation pages.
+const MENU_BTN_CLASS =
+  'cursor-pointer rounded-none border-b-2 border-transparent ' +
+  'hover:border-foreground hover:bg-transparent disabled:hover:border-transparent';
+
 // Define all wizard steps
 const WIZARD_STEPS: WizardStep[] = [
   // ── Group 1: Organization & Business Profile ──────────────────────────
   {
     id: 'basics',
     titleKey: 'onboard.steps.basics',
+    descriptionKey: 'onboard.descriptions.basics',
     fields: [
       {
         key: 'name',
         type: 'text',
         labelKey: 'labels.organisationName',
         placeholderKey: 'placeholders.enterOrganizationName',
+        helperKey: 'helpers.organisationNameHelp',
         required: true,
       },
       {
         key: 'description',
         type: 'textarea',
-        labelKey: 'labels.description',
-        placeholderKey: 'placeholders.enterDescription',
+        labelKey: 'labels.notes',
+        placeholderKey: 'placeholders.enterNotes',
+        helperKey: 'helpers.notesHelp',
+        optional: true,
       },
     ],
   },
   {
     id: 'size-maturity',
     titleKey: 'onboard.steps.sizeMaturity',
+    descriptionKey: 'onboard.descriptions.sizeMaturity',
     fields: [
       {
         key: 'size',
@@ -334,6 +378,7 @@ const WIZARD_STEPS: WizardStep[] = [
         type: 'select',
         labelKey: 'labels.maturity',
         placeholderKey: 'placeholders.selectMaturity',
+        helperKey: 'helpers.maturityHelp',
         options: MATURITY_OPTIONS,
       },
     ],
@@ -341,12 +386,14 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'legal-ownership',
     titleKey: 'onboard.steps.legalOwnership',
+    descriptionKey: 'onboard.descriptions.legalOwnership',
     fields: [
       {
         key: 'legalForm',
         type: 'select',
         labelKey: 'labels.legalForm',
         placeholderKey: 'placeholders.selectLegalForm',
+        helperKey: 'helpers.legalFormHelp',
         options: LEGAL_FORM_OPTIONS,
       },
       {
@@ -354,6 +401,7 @@ const WIZARD_STEPS: WizardStep[] = [
         type: 'select',
         labelKey: 'labels.ownershipType',
         placeholderKey: 'placeholders.selectOwnershipType',
+        helperKey: 'helpers.ownershipTypeHelp',
         options: OWNERSHIP_TYPE_OPTIONS,
       },
     ],
@@ -361,31 +409,36 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'geography-revenue',
     titleKey: 'onboard.steps.geographyRevenue',
+    descriptionKey: 'onboard.descriptions.geographyRevenue',
     fields: [
       {
         key: 'geographicScope',
         type: 'select',
         labelKey: 'labels.geographicScope',
         placeholderKey: 'placeholders.selectGeographicScope',
+        helperKey: 'helpers.geographicScopeHelp',
         options: GEOGRAPHIC_SCOPE_OPTIONS,
       },
       {
         key: 'revenueRange',
-        type: 'number',
+        type: 'text',
         labelKey: 'labels.revenueRange',
         placeholderKey: 'placeholders.enterRevenue',
+        helperKey: 'helpers.revenueRangeHelp',
       },
       {
         key: 'businessDaysPerYear',
-        type: 'number',
+        type: 'text',
         labelKey: 'labels.businessDaysPerYear',
         placeholderKey: 'placeholders.enterBusinessDaysPerYear',
+        helperKey: 'helpers.businessDaysPerYearHelp',
       },
       {
         key: 'revenueConcentration',
         type: 'select',
         labelKey: 'labels.revenueConcentration',
         placeholderKey: 'placeholders.selectRevenueConcentration',
+        helperKey: 'helpers.revenueConcentrationHelp',
         options: REVENUE_CONCENTRATION_OPTIONS,
       },
     ],
@@ -393,26 +446,22 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'business-exposure',
     titleKey: 'onboard.steps.businessExposure',
+    descriptionKey: 'onboard.descriptions.businessExposure',
     fields: [
       {
         key: 'businessOrientation',
         type: 'select',
         labelKey: 'labels.businessOrientation',
         placeholderKey: 'placeholders.selectBusinessOrientation',
+        helperKey: 'helpers.businessOrientationHelp',
         options: BUSINESS_ORIENTATION_OPTIONS,
-      },
-      {
-        key: 'riskProfile',
-        type: 'select',
-        labelKey: 'labels.riskProfile',
-        placeholderKey: 'placeholders.selectRiskProfile',
-        options: RISK_PROFILE_OPTIONS,
       },
     ],
   },
   {
     id: 'market-services',
     titleKey: 'onboard.steps.marketServices',
+    descriptionKey: 'onboard.descriptions.marketServices',
     fields: [
       {
         key: 'publicFacingServices',
@@ -422,13 +471,36 @@ const WIZARD_STEPS: WizardStep[] = [
         helperKey: 'helpers.publicFacingServicesHelp',
         options: PUBLIC_FACING_SERVICES_OPTIONS,
       },
+    ],
+  },
+  {
+    id: 'visibility-incident',
+    titleKey: 'onboard.steps.visibilityIncident',
+    descriptionKey: 'onboard.descriptions.visibilityIncident',
+    fields: [
       {
-        key: 'targetedAttackLikelihood',
+        key: 'mediaExposure',
         type: 'select',
-        labelKey: 'labels.targetedAttackLikelihood',
-        placeholderKey: 'placeholders.selectTargetedAttackLikelihood',
-        helperKey: 'helpers.targetedAttackLikelihoodHelp',
-        options: TARGETED_ATTACK_LIKELIHOOD_OPTIONS,
+        labelKey: 'labels.mediaExposure',
+        placeholderKey: 'placeholders.selectMediaExposure',
+        helperKey: 'helpers.mediaExposureHelp',
+        options: YES_NO_OPTIONS,
+      },
+      {
+        key: 'criticalSocietalRole',
+        type: 'select',
+        labelKey: 'labels.criticalSocietalRole',
+        placeholderKey: 'placeholders.selectCriticalSocietalRole',
+        helperKey: 'helpers.criticalSocietalRoleHelp',
+        options: YES_NO_OPTIONS,
+      },
+      {
+        key: 'previousBreachHistory',
+        type: 'select',
+        labelKey: 'labels.previousBreachHistory',
+        placeholderKey: 'placeholders.selectPreviousBreachHistory',
+        helperKey: 'helpers.previousBreachHistoryHelp',
+        options: PREVIOUS_BREACH_HISTORY_OPTIONS,
       },
     ],
   },
@@ -436,6 +508,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'sector-regulatory',
     titleKey: 'onboard.steps.sectorRegulatory',
+    descriptionKey: 'onboard.descriptions.sectorRegulatory',
     fields: [
       {
         key: 'naceSection',
@@ -457,6 +530,7 @@ const WIZARD_STEPS: WizardStep[] = [
         type: 'select',
         labelKey: 'labels.entityType',
         placeholderKey: 'placeholders.selectEntityType',
+        helperKey: 'helpers.entityTypeHelp',
         options: ENTITY_TYPE_OPTIONS,
       },
     ],
@@ -464,6 +538,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'eu-taxonomy',
     titleKey: 'onboard.steps.euTaxonomy',
+    descriptionKey: 'onboard.descriptions.euTaxonomy',
     fields: [
       {
         key: 'euTaxonomyAligned',
@@ -479,12 +554,14 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'digital-esg',
     titleKey: 'onboard.steps.digitalEsg',
+    descriptionKey: 'onboard.descriptions.digitalEsg',
     fields: [
       {
         key: 'digitalMaturity',
         type: 'select',
         labelKey: 'labels.digitalMaturity',
         placeholderKey: 'placeholders.selectDigitalMaturity',
+        helperKey: 'helpers.digitalMaturityHelp',
         options: DIGITAL_MATURITY_OPTIONS,
       },
       {
@@ -492,6 +569,7 @@ const WIZARD_STEPS: WizardStep[] = [
         type: 'select',
         labelKey: 'labels.esgStatus',
         placeholderKey: 'placeholders.selectEsgStatus',
+        helperKey: 'helpers.esgStatusHelp',
         options: ESG_STATUS_OPTIONS,
       },
     ],
@@ -499,6 +577,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'it-security-staff',
     titleKey: 'onboard.steps.itSecurityStaff',
+    descriptionKey: 'onboard.descriptions.itSecurityStaff',
     fields: [
       {
         key: 'itSecurityStaff',
@@ -521,6 +600,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'data-sensitivity',
     titleKey: 'onboard.steps.dataSensitivity',
+    descriptionKey: 'onboard.descriptions.dataSensitivity',
     fields: [
       {
         key: 'dataSensitivity',
@@ -534,6 +614,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'it-infrastructure',
     titleKey: 'onboard.steps.itInfrastructure',
+    descriptionKey: 'onboard.descriptions.itInfrastructure',
     fields: [
       {
         key: 'itEndpointRange',
@@ -555,6 +636,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'software-budget',
     titleKey: 'onboard.steps.softwareBudget',
+    descriptionKey: 'onboard.descriptions.softwareBudget',
     fields: [
       {
         key: 'softwareDevelopment',
@@ -577,6 +659,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'supply-chain-downtime',
     titleKey: 'onboard.steps.supplyChainDowntime',
+    descriptionKey: 'onboard.descriptions.supplyChainDowntime',
     fields: [
       {
         key: 'downtimeTolerance',
@@ -591,6 +674,7 @@ const WIZARD_STEPS: WizardStep[] = [
         type: 'select',
         labelKey: 'labels.supplyChainRole',
         placeholderKey: 'placeholders.selectSupplyChainRole',
+        helperKey: 'helpers.supplyChainRoleHelp',
         options: SUPPLY_CHAIN_ROLE_OPTIONS,
       },
       {
@@ -606,6 +690,7 @@ const WIZARD_STEPS: WizardStep[] = [
   {
     id: 'business-continuity',
     titleKey: 'onboard.steps.businessContinuity',
+    descriptionKey: 'onboard.descriptions.businessContinuity',
     fields: [
       {
         key: 'manualOperation',
@@ -650,7 +735,6 @@ type FormData = {
   digitalMaturity: string | null;
   esgStatus: string | null;
   supplyChainRole: string | null;
-  riskProfile: string | null;
   euTaxonomyAligned: boolean | null;
   itSecurityStaff: string | null;
   securityMaturity: string | null;
@@ -660,7 +744,6 @@ type FormData = {
   infrastructureTypes: string[];
   softwareDevelopment: string | null;
   publicFacingServices: string | null;
-  targetedAttackLikelihood: string | null;
   downtimeTolerance: string | null;
   supplyChainPosition: string | null;
   securityBudgetRange: string | null;
@@ -670,6 +753,9 @@ type FormData = {
   businessDaysPerYear: string | null;
   revenueConcentration: string | null;
   entityType: string | null;
+  mediaExposure: boolean | null;
+  criticalSocietalRole: boolean | null;
+  previousBreachHistory: string | null;
 };
 
 const initialFormData: FormData = {
@@ -686,7 +772,6 @@ const initialFormData: FormData = {
   digitalMaturity: null,
   esgStatus: null,
   supplyChainRole: null,
-  riskProfile: null,
   euTaxonomyAligned: null,
   itSecurityStaff: null,
   securityMaturity: null,
@@ -696,7 +781,6 @@ const initialFormData: FormData = {
   infrastructureTypes: [],
   softwareDevelopment: null,
   publicFacingServices: null,
-  targetedAttackLikelihood: null,
   downtimeTolerance: null,
   supplyChainPosition: null,
   securityBudgetRange: null,
@@ -706,14 +790,22 @@ const initialFormData: FormData = {
   businessDaysPerYear: null,
   revenueConcentration: null,
   entityType: null,
+  mediaExposure: null,
+  criticalSocietalRole: null,
+  previousBreachHistory: null,
 };
+
+// field key → labelKey, so a save can name the field that changed in its toast.
+const FIELD_LABEL_KEYS: Record<string, string> = Object.fromEntries(
+  WIZARD_STEPS.flatMap((step) => step.fields.map((f) => [f.key, f.labelKey])),
+);
 
 function OrganizationOnboardContent() {
   const t = useTranslations('Organization');
   const tc = useTranslations('Common');
   const router = useRouter();
   const searchParams = useSearchParams();
-  const { activeOrganization } = useOrganization();
+  const { activeOrganization, updateOrganization } = useOrganization();
 
   // Get organizationId from URL or active organization
   const organizationId = searchParams.get('id') || activeOrganization?.id;
@@ -737,6 +829,12 @@ function OrganizationOnboardContent() {
   const [lookupOpen, setLookupOpen] = useState(false);
   const [supportedCountries, setSupportedCountries] = useState<string[]>([]);
   const lookupDebounce = useRef<NodeJS.Timeout | null>(null);
+
+  // Label of the field most recently changed by the user. Stays null until a
+  // real edit happens, so the spurious save that the debounced effect fires
+  // right after the initial load doesn't pop a toast. Cleared after each
+  // successful save toast.
+  const lastChangeLabelRef = useRef<string | null>(null);
 
   // Track which fields have been filled (for sidebar progress)
   const [isSaving, setIsSaving] = useState(false);
@@ -771,7 +869,6 @@ function OrganizationOnboardContent() {
               digitalMaturity: org.digitalMaturity || null,
               esgStatus: org.esgStatus || null,
               supplyChainRole: org.supplyChainRole || null,
-              riskProfile: org.riskProfile || null,
               euTaxonomyAligned: org.euTaxonomyAligned ?? null,
               itSecurityStaff: org.itSecurityStaff || null,
               securityMaturity: org.securityMaturity || null,
@@ -781,7 +878,6 @@ function OrganizationOnboardContent() {
               infrastructureTypes: org.infrastructureTypes || [],
               softwareDevelopment: org.softwareDevelopment || null,
               publicFacingServices: org.publicFacingServices || null,
-              targetedAttackLikelihood: org.targetedAttackLikelihood || null,
               downtimeTolerance: org.downtimeTolerance || null,
               supplyChainPosition: org.supplyChainPosition || null,
               securityBudgetRange: org.securityBudgetRange || null,
@@ -791,6 +887,9 @@ function OrganizationOnboardContent() {
               businessDaysPerYear: org.businessDaysPerYear !== null && org.businessDaysPerYear !== undefined ? String(org.businessDaysPerYear) : null,
               revenueConcentration: org.revenueConcentration || null,
               entityType: org.entityType || null,
+              mediaExposure: org.mediaExposure ?? null,
+              criticalSocietalRole: org.criticalSocietalRole ?? null,
+              previousBreachHistory: org.previousBreachHistory || null,
             });
             if (org.autoFilledFields && typeof org.autoFilledFields === 'object') {
               setAutoFilledFields(org.autoFilledFields as AutoFilledFields);
@@ -812,6 +911,9 @@ function OrganizationOnboardContent() {
 
   // Company lookup search
   // Fetch supported countries (filtered by org's enabled sources)
+  // Countries listed here are hidden from the picker but kept supported in the
+  // backend/API/types — remove from this list to re-enable in the UI.
+  const FRONTEND_HIDDEN_COUNTRIES = ['NO'];
   useEffect(() => {
     const url = organizationId
       ? `/api/company-lookup/countries?orgId=${organizationId}`
@@ -819,7 +921,8 @@ function OrganizationOnboardContent() {
     fetch(url)
       .then(res => res.json())
       .then(json => {
-        const countries: string[] = json.countries ?? [];
+        const countries: string[] = (json.countries ?? [])
+          .filter((c: string) => !FRONTEND_HIDDEN_COUNTRIES.includes(c));
         setSupportedCountries(countries);
         if (countries.length > 0) setLookupCountry(countries[0]);
       })
@@ -871,10 +974,11 @@ function OrganizationOnboardContent() {
       ownershipType: company.ownershipType ?? prev.ownershipType,
     }));
     setAutoFilledFields(prev => ({ ...prev, ...newAutoFilled }));
+    lastChangeLabelRef.current = t('toast.organizationUpdated');
     setLookupQuery('');
     setLookupOpen(false);
     setLookupResults([]);
-  }, []);
+  }, [t]);
 
   // Confirm a single auto-filled field
   const confirmAutoFilledField = useCallback((key: string) => {
@@ -895,7 +999,7 @@ function OrganizationOnboardContent() {
         const method = isEditing ? 'PATCH' : 'POST';
         const url = isEditing ? `/api/organization/${organizationId}` : '/api/organization';
 
-        await fetch(url, {
+        const res = await fetch(url, {
           method,
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -912,7 +1016,6 @@ function OrganizationOnboardContent() {
             digitalMaturity: data.digitalMaturity,
             esgStatus: data.esgStatus,
             supplyChainRole: data.supplyChainRole,
-            riskProfile: data.riskProfile,
             euTaxonomyAligned: data.euTaxonomyAligned,
             itSecurityStaff: data.itSecurityStaff,
             securityMaturity: data.securityMaturity,
@@ -922,7 +1025,6 @@ function OrganizationOnboardContent() {
             infrastructureTypes: data.infrastructureTypes,
             softwareDevelopment: data.softwareDevelopment,
             publicFacingServices: data.publicFacingServices,
-            targetedAttackLikelihood: data.targetedAttackLikelihood,
             downtimeTolerance: data.downtimeTolerance,
             supplyChainPosition: data.supplyChainPosition,
             securityBudgetRange: data.securityBudgetRange,
@@ -932,9 +1034,29 @@ function OrganizationOnboardContent() {
             businessDaysPerYear: data.businessDaysPerYear !== null ? parseInt(data.businessDaysPerYear, 10) : null,
             revenueConcentration: data.revenueConcentration,
             entityType: data.entityType,
+            mediaExposure: data.mediaExposure,
+            criticalSocietalRole: data.criticalSocietalRole,
+            previousBreachHistory: data.previousBreachHistory,
             autoFilledFields,
           }),
         });
+
+        if (res.ok) {
+          // Reflect the rename (and other patched fields) in the sidebar switcher immediately.
+          if (isEditing && organizationId) {
+            updateOrganization(organizationId, { name: data.name, description: data.description || null });
+          }
+          // Only toast for a save the user actually triggered — the ref is null
+          // for the spurious post-load save, which we want to stay silent.
+          const label = lastChangeLabelRef.current;
+          if (label) {
+            toast.success(`${label} updated`, { description: data.name });
+            lastChangeLabelRef.current = null;
+          }
+        } else {
+          const body = await res.json().catch(() => null);
+          toast.error(body?.error || t('toast.saveError'));
+        }
       } catch (error) {
         console.error('Failed to save organization:', error);
         toast.error(t('toast.saveError'));
@@ -942,7 +1064,7 @@ function OrganizationOnboardContent() {
         setIsSaving(false);
       }
     },
-    [isEditing, organizationId, t, autoFilledFields]
+    [isEditing, organizationId, t, autoFilledFields, updateOrganization]
   );
 
   // Debounced save effect
@@ -967,6 +1089,8 @@ function OrganizationOnboardContent() {
 
   // Handle field change — auto-confirm auto-filled field on manual edit
   const handleFieldChange = (key: string, value: string | string[] | boolean | null) => {
+    const lk = FIELD_LABEL_KEYS[key];
+    lastChangeLabelRef.current = lk ? t(lk) : t('toast.organizationUpdated');
     setFormData((prev) => ({ ...prev, [key]: value }));
     setAutoFilledFields((prev) => {
       if (!prev[key] || prev[key].confirmedAt !== null) return prev;
@@ -976,6 +1100,8 @@ function OrganizationOnboardContent() {
 
   // Handle multiselect toggle
   const handleMultiselectToggle = (key: string, value: string) => {
+    const lk = FIELD_LABEL_KEYS[key];
+    lastChangeLabelRef.current = lk ? t(lk) : t('toast.organizationUpdated');
     setFormData((prev) => {
       const currentValues = prev[key as keyof FormData] as string[];
       const newValues = currentValues.includes(value)
@@ -1020,24 +1146,54 @@ function OrganizationOnboardContent() {
   }, [goToPrevious, goToNext]);
 
   // Calculate step completion status
-  const getStepStatus = (stepIndex: number): 'complete' | 'current' | 'upcoming' => {
-    if (stepIndex < currentStepIndex) {
-      const step = WIZARD_STEPS[stepIndex];
-      const allFilled = step.fields.every((field) => {
-        if (!field.required) return true;
-        const value = formData[field.key as keyof FormData];
-        if (Array.isArray(value)) return value.length > 0;
-        return value !== null && value !== '';
-      });
-      return allFilled ? 'complete' : 'current';
-    }
-    if (stepIndex === currentStepIndex) return 'current';
-    return 'upcoming';
+  // A step is 'complete' only when every non-optional field on it has a value.
+  // Multi-select needs at least one item; selects/text need a non-null,
+  // non-empty value. Fields flagged `optional: true` are skipped so they
+  // don't block the step from being marked done.
+  // 'current' is the active step (regardless of fill state); other unfilled
+  // steps are 'upcoming'.
+  const isStepFilled = (stepIndex: number): boolean => {
+    const step = WIZARD_STEPS[stepIndex];
+    return step.fields.every((field) => {
+      if (field.optional) return true;
+      const value = formData[field.key as keyof FormData];
+      if (Array.isArray(value))   return value.length > 0;
+      if (typeof value === 'boolean') return true; // explicitly set to true/false
+      return value !== null && value !== '';
+    });
   };
+
+  const getStepStatus = (stepIndex: number): 'complete' | 'current' | 'upcoming' => {
+    if (stepIndex === currentStepIndex) return 'current';
+    return isStepFilled(stepIndex) ? 'complete' : 'upcoming';
+  };
+
+  // Finish is only offered when every step has been completed — the right
+  // sidebar mirrors this by showing a checkmark on a step only once all of
+  // its fields are filled.
+  const allStepsFilled = WIZARD_STEPS.every((_, i) => isStepFilled(i));
 
   // Handle exit - go back to risk foundation
   const handleExit = () => {
     router.push('/risk-foundation');
+  };
+
+  // Label with optional info icon to the right of the title.
+  const fieldLabel = (field: FieldConfig, asLabel = true) => {
+    const labelText = t(field.labelKey);
+    const inner = (
+      <span className="inline-flex items-center gap-1.5">
+        <span>
+          {labelText}
+          {field.required && <span className="text-destructive ml-1">*</span>}
+        </span>
+        {field.helperKey && <InfoIcon text={t(field.helperKey)} />}
+      </span>
+    );
+    if (asLabel) {
+      return <Label htmlFor={field.key}>{inner}</Label>;
+    }
+    return <Label>{inner}</Label>;
   };
 
   // Render field
@@ -1052,10 +1208,7 @@ function OrganizationOnboardContent() {
       case 'number':
         fieldContent = (
           <div className="space-y-2">
-            <Label htmlFor={field.key}>
-              {t(field.labelKey)}
-              {field.required && <span className="text-destructive ml-1">*</span>}
-            </Label>
+            {fieldLabel(field)}
             <Input
               id={field.key}
               type="number"
@@ -1064,9 +1217,6 @@ function OrganizationOnboardContent() {
               placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
               className="w-full dark:!bg-transparent"
             />
-            {field.helperKey && (
-              <p className="text-xs text-muted-foreground">{t(field.helperKey)}</p>
-            )}
           </div>
         );
         break;
@@ -1074,20 +1224,14 @@ function OrganizationOnboardContent() {
       case 'text':
         fieldContent = (
           <div className="space-y-2">
-            <Label htmlFor={field.key}>
-              {t(field.labelKey)}
-              {field.required && <span className="text-destructive ml-1">*</span>}
-            </Label>
+            {fieldLabel(field)}
             <Input
               id={field.key}
-              value={value as string}
-              onChange={(e) => handleFieldChange(field.key, e.target.value)}
+              value={(value as string | null) ?? ''}
+              onChange={(e) => handleFieldChange(field.key, e.target.value === '' ? null : e.target.value)}
               placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
               className="w-full dark:!bg-transparent"
             />
-            {field.helperKey && (
-              <p className="text-xs text-muted-foreground">{t(field.helperKey)}</p>
-            )}
           </div>
         );
         break;
@@ -1095,17 +1239,14 @@ function OrganizationOnboardContent() {
       case 'textarea':
         fieldContent = (
           <div className="space-y-2">
-            <Label htmlFor={field.key}>{t(field.labelKey)}</Label>
+            {fieldLabel(field)}
             <Textarea
               id={field.key}
-              value={value as string}
+              value={(value as string | null) ?? ''}
               onChange={(e) => handleFieldChange(field.key, e.target.value)}
               placeholder={field.placeholderKey ? t(field.placeholderKey) : undefined}
               className="w-full min-h-[100px] dark:!bg-transparent"
             />
-            {field.helperKey && (
-              <p className="text-xs text-muted-foreground">{t(field.helperKey)}</p>
-            )}
           </div>
         );
         break;
@@ -1113,11 +1254,11 @@ function OrganizationOnboardContent() {
       case 'select':
         fieldContent = (
           <div className="space-y-2">
-            <Label htmlFor={field.key}>{t(field.labelKey)}</Label>
+            {fieldLabel(field)}
             <Select
               value={value === true ? 'true' : value === false ? 'false' : (value as string) || ''}
               onValueChange={(v) => {
-                if (field.key === 'euTaxonomyAligned') {
+                if (BOOLEAN_FIELDS.has(field.key)) {
                   handleFieldChange(field.key, v === 'true' ? true : v === 'false' ? false : null);
                 } else {
                   handleFieldChange(field.key, v || null);
@@ -1137,9 +1278,6 @@ function OrganizationOnboardContent() {
                 ))}
               </SelectContent>
             </Select>
-            {field.helperKey && (
-              <p className="text-xs text-muted-foreground">{t(field.helperKey)}</p>
-            )}
           </div>
         );
         break;
@@ -1147,7 +1285,7 @@ function OrganizationOnboardContent() {
       case 'multiselect':
         fieldContent = (
           <div className="space-y-2">
-            <Label>{t(field.labelKey)}</Label>
+            {fieldLabel(field, false)}
             <div className="w-full space-y-2 p-3 border border-input rounded-md">
               {field.options?.map((option) => (
                 <div key={option.value} className="flex items-center space-x-2">
@@ -1165,9 +1303,6 @@ function OrganizationOnboardContent() {
                 </div>
               ))}
             </div>
-            {field.helperKey && (
-              <p className="text-xs text-muted-foreground">{t(field.helperKey)}</p>
-            )}
           </div>
         );
         break;
@@ -1214,18 +1349,55 @@ function OrganizationOnboardContent() {
     <div className="flex flex-col h-screen bg-background">
       <div className="flex flex-1 overflow-hidden">
         {/* Main Content Area */}
-        <div className="flex-1 overflow-y-auto p-6">
-          <div className="max-w-4xl mx-auto">
-            {/* Header */}
-            <div className="mb-8">
-              <h1 className="text-2xl font-semibold text-foreground">
-                {isEditing ? t('onboard.titleEdit') : t('onboard.title')}
-              </h1>
-              <p className="text-sm text-muted-foreground mt-1">{t('onboard.subtitle')}</p>
+        <div className="flex-1 overflow-y-auto">
+          <div className="max-w-4xl mx-auto p-8">
+            {/* Title row — title on the left, navigation on the right */}
+            <div className="flex items-start justify-between gap-6 mb-2">
+              <h1 className="text-2xl font-bold">Risk Profile</h1>
+
+              <div className="flex items-center gap-2 shrink-0 select-none">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={goToPrevious}
+                  disabled={currentStepIndex === 0}
+                  className="cursor-pointer"
+                >
+                  <ChevronLeft className="w-4 h-4 mr-1" />
+                  {tc('navigation.previous')}
+                </Button>
+
+                {currentStepIndex < WIZARD_STEPS.length - 1 ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={goToNext}
+                    className="cursor-pointer"
+                  >
+                    {tc('navigation.next')}
+                    <ChevronRight className="w-4 h-4 ml-1" />
+                  </Button>
+                ) : allStepsFilled ? (
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleFinish}
+                    className="cursor-pointer"
+                  >
+                    <Check className="w-4 h-4 mr-1" />
+                    {tc('navigation.finish')}
+                  </Button>
+                ) : null}
+              </div>
             </div>
 
+            <p className="text-sm text-muted-foreground mb-2">
+              {t(currentStep.descriptionKey)}
+            </p>
+            <Separator className="my-6" />
+
             {/* Step Content */}
-            <div className="border rounded-lg p-6 space-y-6">
+            <div className="border rounded-lg bg-panel p-6 space-y-6">
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-medium text-foreground">{t(currentStep.titleKey)}</h2>
                 {isSaving && (
@@ -1292,46 +1464,6 @@ function OrganizationOnboardContent() {
               )}
 
               <div className="space-y-6">{currentStep.fields.map((field) => renderField(field))}</div>
-            </div>
-
-            {/* Navigation */}
-            <div className="flex items-center justify-between border-t border-muted pt-4 mt-6">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={goToPrevious}
-                disabled={currentStepIndex === 0}
-                className="gap-2"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                {tc('navigation.previous')}
-              </Button>
-
-              <span className="text-sm text-muted-foreground">
-                {currentStepIndex + 1} / {WIZARD_STEPS.length}
-              </span>
-
-              {currentStepIndex === WIZARD_STEPS.length - 1 ? (
-                <Button
-                  variant="default"
-                  size="sm"
-                  onClick={handleFinish}
-                  className="gap-2 cursor-pointer"
-                >
-                  {tc('navigation.finish')}
-                  <Check className="w-4 h-4" />
-                </Button>
-              ) : (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={goToNext}
-                  className="gap-2 cursor-pointer"
-                >
-                  {tc('navigation.next')}
-                  <ChevronRight className="w-4 h-4" />
-                </Button>
-              )}
             </div>
           </div>
         </div>

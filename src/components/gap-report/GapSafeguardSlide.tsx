@@ -1,8 +1,6 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { Switch } from '@/components/ui/switch';
-import { GapIgSelector } from './GapIgSelector';
 import { GapNoteEditor } from './GapNoteEditor';
 import { GapCmmiGroup } from './GapCmmiSelector';
 import type { Safeguard } from '@/lib/constants/cis-controls';
@@ -40,33 +38,34 @@ export function GapSafeguardSlide({
 }: GapSafeguardSlideProps) {
   const t = useTranslations('GapReport');
 
-  const igKey = `ig${effectiveIg}` as IgKey;
-  const igData = safeguard[igKey];
-  const hasIgData = igData.scope && igData.scope !== 'N/A';
+  // Which IGs have real data for this safeguard (scope !== 'N/A')
+  const ig1HasData = safeguard.ig1.scope && safeguard.ig1.scope !== 'N/A';
+  const ig2HasData = safeguard.ig2.scope && safeguard.ig2.scope !== 'N/A';
+
+  // Lowest IG that applies → drives the floor for Current CMMI:
+  //   IG1 available  → min L1
+  //   IG2 only       → min L3
+  //   IG3 only       → min L4
+  const minCurrentLevel = ig1HasData ? 1 : ig2HasData ? 3 : 4;
+
+  // IG is implied by Target CMMI when assessed:
+  //   targetCmmi 0   → not assessed (no IG panel)
+  //   L1, L2         → IG1
+  //   L3             → IG2
+  //   L4, L5         → IG3
+  const targetIg: 1 | 2 | 3 | null =
+    targetCmmi === 0 ? null
+    : targetCmmi <= 2 ? 1
+    : targetCmmi === 3 ? 2
+    : 3;
+
+  const igKey = (targetIg ? `ig${targetIg}` : null) as IgKey | null;
+  const igData = igKey ? safeguard[igKey] : null;
+  const hasIgData = !!(igData && igData.scope && igData.scope !== 'N/A');
 
   return (
     <div className="space-y-6">
-      {/* Header */}
-      <div className="flex items-start justify-between gap-4">
-        <div>
-          <p className="text-sm text-muted-foreground mb-1">
-            {t('labels.control')} {controlId}: {controlTitle}
-          </p>
-          <h1 className="text-2xl font-semibold">
-            {safeguard.id}: {safeguard.title}
-          </h1>
-        </div>
-        <div className="flex items-center gap-4 shrink-0">
-          <GapIgSelector value={effectiveIg} onChange={onIgChange} />
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-muted-foreground">{t('labels.active')}</span>
-            <Switch
-              checked={isActive}
-              onCheckedChange={onToggleActive}
-            />
-          </div>
-        </div>
-      </div>
+      {/* Header — safeguard title is rendered by the page on the navigation row. */}
 
       {/* Core Information */}
       <div className="space-y-4">
@@ -92,11 +91,11 @@ export function GapSafeguardSlide({
         </div>
       </div>
 
-      {/* IG-Specific Details */}
-      {hasIgData ? (
+      {/* IG-Specific Details — only when a Target CMMI has been set */}
+      {targetIg !== null && hasIgData && igData && (
         <div className="border rounded-lg bg-muted/20 p-4 space-y-4">
           <h3 className="font-medium">
-            {t('labels.igDetails', { ig: effectiveIg })}
+            {t('labels.igDetails', { ig: targetIg })}
           </h3>
 
           <div className="grid gap-4">
@@ -135,9 +134,10 @@ export function GapSafeguardSlide({
             )}
           </div>
         </div>
-      ) : (
+      )}
+      {targetIg !== null && !hasIgData && (
         <div className="border rounded-lg bg-muted/20 p-4 text-center text-muted-foreground">
-          <p>{t('messages.noIgData', { ig: effectiveIg })}</p>
+          <p>{t('messages.noIgData', { ig: targetIg })}</p>
         </div>
       )}
 
@@ -146,6 +146,7 @@ export function GapSafeguardSlide({
         currentCmmi={currentCmmi}
         targetCmmi={targetCmmi}
         onChange={onCmmiChange}
+        minCurrentLevel={minCurrentLevel}
       />
 
       {/* Notes */}

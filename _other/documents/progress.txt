@@ -26,6 +26,7 @@ https://docs.proton.me/sheet?mode=open-url&token=2S5VN0FNX4&linkId=s41KQV2tT7Qmu
 
 Meeting room:
 https://meet.jit.si/ComplianceCircle8800
+https://meet.jit.si/hest8800
 
 Zoom:
 https://zoom.us/j/91667468629?pwd=T2hGQVloWExQcDFBVEZYNEEvUjRWQT09
@@ -362,6 +363,822 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
 -----------------
 
 
+1 ´company with data
+2 add Action Center above Risc Foundation
+3 Third Party Onboarding => 
+
+
+
+Structural Risk Profile
+=> Report first. The click for detail. Look figma
+
+Structural Risk Interpretation
+Write Interpretation
+contact Claude
+
+
+
+
+
+
+
+Kvinder bliver ikke slæbt ind i en varevogn og slæbt til fronten for at dø.
+Kvinder kan udsætte mænd for seksuelle overgreb 
+
+
+
+Hvis du tænker på en fremtid hvor AI/robotter laver 99% af alt arbejde. Så kommer ting til at koste stort set ingenting. En bil: 25 øre. Din egen robot-kok: 50 øre. Du kan leve som en konge for 10kr / md. Det ville ikke være UBI, det ville være HBI - High Basic Income.
+
+
+
+
+
+
+
+
+Female privilige:
+https://x.com/Ambar_SIFF_MRA/status/2050058370040942927
+https://x.com/TheTinMenBlog/status/2048048508062634078
+https://x.com/AlternatNews/status/2049900313839112660
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------
+
+
+The prefilled box still overflows into other elements. In the attached image, it overflows onto "description"
+
+The lookup registry being used by workflow organization onboarding and the onboarding wizard should be configurable. Such that sources can be turned on/off for individual organizations. Currently there are only Norwegian and Danish sources implemented I think.
+On the frontend, clicking sources on/off should be under the settings tab.
+
+
+Add table:
+"-ookup_registry"
+-- ID
+-- Name
+-- Description
+
+Add to organisation column: FK: lookup_registry_id
+
+
+* Workflow: Organization Profile
+When a data element has been prefilled by "lookup company from registry" the prefilled infor box is overflowing to other elements, below and above. See attached image.
+
+Fix lookup: boxes too big; no danish cvr?, make look src config (turn off norwigian)
+
+--
+
+So 3 of the 5 have reasonable proxies already in use. The two with no coverage are remote workforce percentage and previous breach history — both would require new fields on the Organization model and new UI inputs on the
+onboarding wizard.
+
+
+
+I had to edit the .env file when I made deployment to production.
+The production is on https://cc.predictioninstitute.com
+But I don't want to have to run the deploy script every time I make some changes while developing.
+Is it possible to hot reload the production: https://cc.predictioninstitute.com
+Or can I set it up so I can use both http://localhost:3001 and https://cc.predictioninstitute.com
+Or how do I structure my environment so I can keep on developing without having to run ./deploy every time I have made some changes?
+
+
+BETTER_AUTH_URL=http://localhost:3001
+# -- BETTER_AUTH_URL=https://cc.predictioninstitute.com
+
+/cassandra/ftp/philly/draw/pni_2026_05_11_270692.csv
+
+
+Can you take the risk score from risk-foundation/structural-risk-profile/detailed and also put on the page gap/definition. Above the "Financial Impact" score.
+
+
+risk-foundation/organization-profile
+
+gap/definition
+
+
+1. Linear, max-anchored: 100 × ale[L1] / max(ale[L1])
+Simplest, but most safeguards end up <10. Comparison with Risk Relevance (which is base-anchored around 80) will feel skewed.
+
+2. Linear, share-anchored: 100 × ale[L1] / sum(ale[L1]) × scaling
+Same problem — the share of a single safeguard out of 153 is tiny.
+
+3. √-transform, max-anchored: 100 × √(ale[L1]) / √(max ale[L1])
+Compresses the tail so mid-tier safeguards land in the 30–60 range. Reads similarly to Risk Relevance. This is what I'd pick. It preserves rank, the top safeguard is still 100, and the visual distribution looks like the Risk Relevance column.
+
+4. Percentile rank: 100 × (rank / 153)
+Perfectly even spread but loses magnitude information — a €500k safeguard and a €5k safeguard separated by one rank look the same. Not recommended.
+
+
+Once both scores are 0–100, the interesting thing is the combination:
+
+- Both high → top priority (financial pain + structurally relevant)
+- Risk high, Financial low → governance/compliance value, low loss exposure (still do it — but maybe at lower IG)
+- Risk low, Financial high → outsized loss leverage in a control your profile doesn't normally flag (often downtime/recovery controls)
+- Both low → defer or inactivate
+
+You could show the two as separate badges and let the user eyeball it, or show a combined score (risk + financial) / 2 and let them expand to see the split. I'd start with two side-by-side badges since they encode different things and combining them too early hides exactly the disagreement that's most useful.
+
+TL;DR recommendation                                         
+
+financialRelevance(s) = round(100 × √(ale_L1(s)) / √(max_s ale_L1(s)))
+
+Compute once in the per-safeguard spectrum (cheap), pass through safeguardBadges (or a parallel map) into GapCatalog, render next to the existing Risk Relevance badge. Two scores, two colors, same scale.
+
+-----------------
+page risk-foundation/per-safeguard-exposure:
+1) Can you make the ranges L4-L1, so we get a smallest to largest, and make the two numbers of the same size.
+2) Remove the "Exposure by cost category" bar graph section,
+3) On the page risk-foundation/structural-risk-profile/detailed, the safeguards are folded out when clicking on the controls. Can you do something like this on the page risk-foundation/per-safeguard-exposure, where the safeguards now displayed on risk-foundation/per-safeguard-exposure-details will be folded out under the controls.
+
+PAGE risk-foundation/per-safeguard-exposure-details:
+1) Like on page risk-foundation/per-safeguard-exposure, make the ranges L4-L1 and of equal size.
+2) Remove the buttons: "All", "Prevent", "Detect", "Recover", "Mitigate", "Govern"
+
+
+
+
+1) L4 -> L1
+2) remove "Exposure by cost category" section
+3) page: risk-foundation/per-safeguard-exposure-details: remove search/fiulter, All, prevent, buttons-
+4) Generate LLM report
+
+--
+
+Agentic Claw, make report to Philly
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Wednesday 13 May
+* Page Gap Report (gap/report):
+    1) Page copied to gap/report.OLD (backup before large changes)
+    2) Removed Safeguard tables (where IG is set) from all Control Overview Slides.
+    3) Removed Active switch from the same overview slides.
+    4) Moved the buttons "Previous", "Next"/"Finish" to top/right on the button row. Same design as on application in general.
+    5) Control Slides: broke title into two line: 1st: Control <NUM>; 2nd: <Control Name>. First line same as the Previous/Next button line.
+    6) Safeguard slides: removed the three IG buttons IG1, IG2, IG3; and the active switch.
+    7) Safeguard slides: the Control name moved up, so it is on the same line as the buttons, Previous/Next.
+    8) Safeguard slides: deleted the Control name title, and moved the Safeguard name title up + max width, so space for buttons.
+    9) Safeguard slides: IG set implicit following the selected CMMI target;
+            L1-L2 = IG1
+            L3 = IG2
+            L4-L5 = IG3
+    10) Safeguard slides: Default Target CMMI set to Not Assessed.
+    11) Safeguard slides: For safeguards which are only relevant for IG2, base Current CMMI set at L3. Cannot be set lower than L3.
+    12) Safeguard slides: For safeguards which are only relevant for IG3, base Current CMMI set at L4. Cannot be set lower than L4.
+    13) Fix bug where notes where not fetched from the database.
+
+page risk-foundation/financial-exposure:
+Links should be buttons
+
+Both scenarios displayed:
+rabge should be low scenario 1 - high scenario 2
+
+
+Can you think of a way I can apply the results from Financial Exposure to individual Control Safeguards on the Gap Definition page?
+
+Ultrathink. Is it possible to apply all control Safeguards to the Financial Exposure calculation. Ideally, I'd want to see what is the theoretical financial impact of each safeguards when assessing if the safeguard is relevant for a customer (under GAP define). What is the cost of being non compliant on a given safeguard if an accident happens.
+
+
+Ok, there is something I didn't take into consideration.
+1) Can you set the default Target CMMI back to "Not Assessed" (nothing selected). Keep the textbox empty untill a target CMMI has been selected.
+2) For safeguards which are only relevant for IG2, the base Current CMMI should be set at L3. Cannot be set lower than L3.
+3) For safeguards which are only relevant for IG3, the base Current CMMI should be set at L4. Cannot be set lower than L4.
+
+
+Liberalism has been taken over by manageralism. The voters are revolting because the managerial class has 
+
+The elected leaders cannot or will not 
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Tuesday 12 May
+* General/Database:
+    1) Fixed issues with columns critical_societal_role & media_exposure from table: organization.
+* Page GAP (dispatcher):
+    1) Created with two sections:
+        A) GAP definition
+        B) GAP Report
+    2) Breadcrumb trail changed to "GAP"
+    3) Renamed page to "gap"
+    4) Fixed progress status badge on defition segment.
+* Page Gap Report:
+    1) Change page from "reports/gap" to "gap/report"
+    2) Breadcrumb trail changed to "GAP > Report"
+    3) Remove duplicate horizontal scrollbar. Only one horizontal scrollbar, on the window.
+* Page Gap definition:
+    1) Created with name: "gap/definition"
+    2) Breadcrumb trail = "GAP > Definition"
+    3) Title: "Define Scope"
+    4) Text under title: "Select safeguards to include in the GAP analysis"
+    5) Below the text, a summary section.
+    6) Below that, a section with four buttons: "All" "Included" "Maybe" "Exclude"
+    7) Rest of page similar to the page "gap/report" but with segment with three buttons: "Include", "Maybe", "Exclude"
+    8) Previous, Next/Finish moved from the bottom to the top/right. To follow general design on application.
+    9) Button section ("All" "Included" "Maybe" "Exclude") moved to catalog index on the right side.
+    10) Moved summary section to catalog index.
+    11) The buttons Include, Maybe, Exclude, moved to the button row, to the left of the Previous button. With a divider dot between.
+    12) Changed default safeguard to Not-Set (was Include).
+    13) Catalog index: "Finalize Report" - removed (hidden).
+* Page risk-foundation/organization-profile:
+    1) Previous, Next/Finish buttons on the bottom removed (duplicate).
+* Page risk-foundation/client-exposure:
+    1) Previous, Next/Finish buttons on the bottom removed (duplicate).
+
+
+Page gap:
+1) Under "GAP Definition": status seems to be "Not started" even when some safeguards have been defined.
+
+
+Also move the section with "Include: <NUMER> Maybe: <NUMBER> Excluded: <NUMBER>" to the right side.
+
+
+
+
+
+
+Page gap/definition:
+Cannot set status by clicking on the Include, Maybe, Exclude buttons.
+
+Move the buttons Include, Maybe, Exclude, up to the button row, to the left of the Previous button. Make a divider dot between the Include, Maybe, Exclude buttons and the Previous, Next buttons.
+
+1) 
+1) Move section with the buttons: "All" "Included" "Maybe" "Exclude" to the top of the catalog index on the right side. Reduce size of buttons if necessary.
+
+
+
+1) Move Previous, Next/Finish from the bottom to the top/right. Similar to for instance on page risk-foundation/organization-profile
+
+
+
+
+Page gap/report:
+1) There are two vertical scroll bars. One to the right side of the section to the right of the index. This should be removed. There should only be one horizontal scroll bar, on the window.
+
+
+
+1) There are two sets of Previous, Next/Finish buttons. The one at the bottom of the page should be removed.
+
+
+
+Page Gap definition:
+1) Page name: "gap/definition"
+2) Breadcrumb trail = "GAP > Definition"
+3) Title: "Define Scope"
+4) Text under title: "Select safeguards to include in the GAP analysis"
+5) Below the text, a section with: Include: <NUMER>         Maybe: <NUMBER>         Excluded: <NUMBER>
+6) Below that, a section with four buttons: "All" "Included" "Maybe" "Exclude"
+7) Rest of page should be similar to the page "gap/report" but instead of the section "Current CMMI & Target CMMI" should be a segment with three buttons: "Include", "Maybe", "Exclude"
+
+
+
+
+
+
+
+
+1) Move page "gap-analysis" to "gap"
+2) Move page "reports/gap" to "gap/report"
+3) Change breadcrumb trail on "gap/report" to "GAP > Report"
+
+1) When clicking on the sidemenu "GAP Analysis" it should open a page (called gap-analysis) much like page risk-foundation.
+2) Put two sections (similar to the Organization Profile section on page risk-foundation) on the page gap-analysis
+A) GAP definition
+B) GAP Report
+3) The 
+
+workflows/customer-onboarding/gap-report
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Thursday 07 May
+* General:
+    1) When the organization is changed in the sidemenu, the opened page should be redirected to Home (Action centre)
+    2) Changed names of test organizations: NordTek Colutions, Arctix Pharma, CargoLink Logistics.
+    3) Added Organization badge on the top-menun, to the left of breadcrumps.
+    4) Changed breadcrumb on page risk-foundation to "Risk Foundation" (was "home")
+    5) Remove "Structural Risc Profile" from application.
+* PAGE risk-foundation/organization-profile:
+    1) Text: "Add organization data to prepare the Risk Foundation" changed to something which is relevant for each slide.
+    2) Info icon + tooltip help description added to all input fields (design/functionality taken from gorm.ai)
+    3) Set a non-choice default to all drop-down input elements.
+    4) Right-side menu, steps/slides only marked as done (checkmark) if all elements on slide have been given a value.
+    5) On slide "Geography & Revenue": set input type=text (so the up/down arrows are removed) on the input fields: Annual Revenue + Business Days per Year.
+    6) On slide "Size & Maturity": Change "Maturity" to "Organization Stage"
+    7) Slide 2 (Size & Maturity). Change title from "Size & Maturity" to "Organization Size & Stage" in slide title.
+    8) Change "Previous", "Mext"/"Finish" buttons from type=ghost to type=outline
+    9) Only display Finish button (slide 15) if all slides have been given a check.
+    10) Remove "Structural Risc Profile" from "Business Orientation & Risk" slide (slide 5).
+    11) Added new slide, with three new elements: 
+        A) Elevated Media Exposuer
+        B) Critical Societal Role
+        C) Previous Material Breaches
+    12) Slide 1 (Name & Description"). 
+        A) "Description" changed to "Notes" + optional, not required for check the slide as finished, 
+        B) Tooltip changed from "A short description of what the organization does." to "Internal notes about this organization — visible only inside Compliance Circle. Use it for context, follow-ups, or anything that doesn't fit the structured fields. Optional."
+    13) Change slide 16 "Business Continuity" to "IT Dependency"
+    14) Title changed from "Organization Profile" to "Risk Profile"
+* PAGE risk-foundation/organization-profile/summary:
+    1) Removed horizontal scrollbar on div section. There should only be one horizontal scrollbar, on the page.
+    2) Moved button "Back to Risc Foundation" to the top-left (where the next/finish button is on the risk-foundation/organization-profile slides), so it follows the design of the other pages.
+* Database:
+    1) Table Organization, added two new columns:
+        A) mediaExposure (Boolean)
+        B) criticalSocietalRole (Boolean)
+* GAP report
+    1) Added functionality for generating Targetted Attack Likelyhood.
+
+
+Add usage to each slide 
+
+
+Change title "Organization Profile" to "Risk Profile"
+
+PAGE risk-foundation/organization-profile:
+
+
+
+Polygamy is an awful model to base a society on. Doubtful if it is possible to build a civilisation of any complexity on top of it. Monogamy is superior to all other forms. But widespread monogamy requires some sort of coercion. Both juridical and societal. If we want monogamy, people cannot just get divorced on a whim. And women will have to be reasonable chaste and marry fairly young. And we want none of those things.
+
+So what we have instead is a Singles Culture. Which is considerable worse than polygamy. 
+
+Best       : Monogamy
+Very bad   : Polygamy
+Much worse : Singles Culture
+
+If we ascend from a singles culture to polygamy: for the leftover men there are no difference. They're already single and will remain so. But at least the women may have the possibility to enter into a semi-stable family form where they can have children and attain some societal respect.
+
+In any case, we already have widespread polygamy. A small percentage of men is having sex with 
+It just 
+goes by a lot of different names: soft-harem, West Elm Caleb, 
+The only difference 
+
+
+
+
+
+https://www.youtube.com/watch?v=dw1xX4FL2w4&t=1s
+
+
+
+
+
+PAGE risk-foundation/organization-profile/summary:
+Remove horizontal scrollbar on div section. There should only be one horizontal scrollbar, on the page.
+
+
+
+
+Only display Finish button (slide 15) if all slides have been given a check.
+
+
+PAGE: risk-foundation/organization-profile:
+        1) Change text: "Add organization data to prepare the Risk Foundation" to something which is relevant for each slide.
+        2) Add an info icon + tooltip help description to all input fields (see the project /home/rune/workspace/projects/gorm.ai/frontend/src/app/(dashboard)/configuration for an example of this)
+        Put the info icon to the right of the title.
+        3) All drop-down elements: the default value (when no value has been given) should be something like "Select Organization Size" (for the Organization Size) 
+        4) On the right side, the steps/slides should only be marked with a checkmark if the fields on it has been given a value,
+        5) On slide "Geography & Revenue": set input type=text (so the up/down arrows are removed) on the input fields: Annual Revenue + Business Days per Year.
+        6) On slide "Size & Maturity": Change "Maturity" to "Organization Stage"
+
+1. Organization Profile, edit
+            A) "Add organization data to prepare the Risk Foundation" => make specific for each slide.
+            B) Add notes to all (most) input fields. See gorm.ai
+            C) A step should only be
+    D) Change buttons from ghost to outline
+            E) Remove default value (select entity type), remove checkbox if value not added.
+            F) Matrity => Organization Statge.
+            G) Annual revenue + Business days per year: remove arrows (number)
+            H) Business Orientation .. : Structural Risc Profile. => What is this, where is it used, can we do without it?
+            I) Targetted Attack Likelyhood => What is this, where is it used, can we do without it?
+    K) Sector & Regulatory: Entity Type skal kun komme frem hvis de vælger NIS2
+    L) Business Continuity => IT Dependency
+            2. Add Organization to the left of breadcrumbs, as a badge.
+
+
+Supply Chain & Downtime 1)Bør vi overveje at skifte Downtime tolerance ud med at de selv udfylder deres tolerance med et timetal?
+Change to hours
+Slide 14
+
+
+Organization Profile => Risk Profile
+
+
+
+Ultrathink. Is there a way to estimate from other parameters (existing or additional) what the Targetted Attack Likelyhood is fpr an organization? The customers cannot really assess this themselves.
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Monday 03 May + Tuesday 04 May
+* PAGE risk-foundation/financial-exposure:
+    1) Changed menu items to variant="ghost"
+    2) Replaced organization name in title with the subtitle below "Financial Exposure" and made the font a little smaller.
+    3) Menu-items: cursor=pointer on hover + a bottom border on hover.
+* PAGE risk-foundation/financial-exposure-detailed
+    1) Added tab pane - same design as in the Gorm project.
+        Tab 1: Estimated Downtime Costs
+        Tab 2: Incident Response & Forensics (IR)
+        Tab 3: System Restoration & Rebuild
+        Tab 4: Extended Business Interruption (EBI)
+        Tab 5: Customer & Contract Loss (CCL)
+        Tab 6: Regulatory & Supervisory Cost
+        Tab 7: Reputational Impact
+        Tab 8: Management & Governance Cost
+        Tab 9: Notification Costs
+        Tab 10: Legal Exposure – Administrative Fine Ceiling
+        Tab 11: Methodology Overview
+    2) Added "Detailed" to breadcrumbs.
+    3) Moved the title: "Structural Financial Exposure" up and to the left, so it follows the same design as on the other pages. Same with the text below: left align and same font as on other pages.
+    4) Removed the Rocket icon in the title, as well as the "Structural Financial Exposure" and organization name,
+    5) Added a divider below the title section (under: "Structural financial exposure range based on organizational profile — independent of safeguard maturity scores.") To follow design on other pages.
+    6) Tab headers too many for width. Set up in multiple rows.
+* PAGE risk-foundation/structural-risk-profile:
+    1) Replaced organization name in title with the subtitle below "Structural Risk Profile" and made the font a little smaller.
+    2) Menu-items: cursor=pointer on hover + a bottom border on hover.
+    3) Save report in the database.
+    4) Add confirm dialog to generate new report (will overwrite existing report)
+    5) Added ID to the report page.
+* PAGE: risk-foundation/structural-risk-profile/detailed:
+    1) Added "Detailed" to breadcrumbs.
+* PAGE home:
+    1) On table "Overdue" and "Due Soon": added type column + removed action" column
+    2) On table "Needs Attention", "Overdue", "Due Soon" in the checkbox dropdown menu, added menuitems (and functionality): select chat, select Evidence, select requests
+    3) Added same functionality to the two table "Overdue" and "Due Soon" as on the table "Need attention". With regard to clicking a row and opening a drawer, which is dependent on which type the row was (chat, evidence, etc.)
+* PAGE reports/ces/report (=> risk-foundation/Client Exposure Report):
+    1) Replaced "Customer Exposure Score Report" with "Client Exposure Report" and moved up to the title area, and the Export button down on the same line + change button variant to ghost so the design follows the other pages.
+    2) Add text to below the title: "Assess regulatory pressure for <organization name>" - organization name in bold
+    3) Moved page (reports/ces/report) to risk-foundation/Client Exposure Report
+    4) Breadcrumbs changed from: "Risk Foundation > Client Exposure > Client Exposure Report" to "Risk Foundation > Client Exposure Report"
+    5) Added 1) Detailed Assessment; 2) Edit; 4) Generate to menu.
+
+* PAGE risk-foundation/client-exposure-detailed:
+    1) Created
+    2) Moved the section Risk Categories from risk-foundation/client-exposure to here.
+
+
+* PAGE risk-foundation/client-exposure:
+    1) Added title: "Client Exposure data" + text "Add organization data to prepare Client Exposure report" + divider below text, so it follows the design on other pages.
+    2) Copy the Previous, Next/Finish buttons from the botton of the container to the menu area on top/right
+    3) Remove page count from menu
+    4) Make Previous, Next/Finish buttons unselectable.
+* PAGE risk-foundation/organization-profile:
+    1) Added title "Organization Profile" + text below: "Add organization data to prepare the Risk Foundation", + Previous, Next/Finish buttons (variant type=ghost) to the button area on the right of the title. So the design follows the design on other pages.
+* General/Data
+    1) Added test data for two more organization (to show up on Action Center) + set all other organization to inactive.
+* Database:
+    1) New table: structural_risk_report
+        - id uuid PK
+        - organization_id uuid, unique (one row per org)
+        - report jsonb — the full StructuralRiskReport object     
+        - section_configs jsonb — which sections are enabled
+        - generated_by uuid → login.id (who hit Generate)
+        - generated_at timestamptz                       
+        - last_edited_by / last_edited_at — set on Adapt-mode Save
+        - created_at / updated_at 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Kære Morten,
+
+Ja, det var del af attraktionen.
+
+Har været i Asien i en 10 års tid nu, og har lidt gået med tanken om at det var på tide at komme hjem. Men har ikke lyst til at tage tilbage til København. Så, så jeg så Vordingborg og tænkte det var lige i min København-goldilock-zone: ikke for tæt på, ikke for langt væk.
+
+Med venlig hilsen,
+Rune Skardhamar
+
+
+
+
+Check Out: reports/ces
+
+
+The page risk-foundation/client-exposure-report should have some kind of summary of the client-exposure-report-detailed. Somewhat comparable to how risk-foundation/structural-risk-profile has a summary of structural-risk-profile-detailed.
+
+Can you suggest content for the client-exposure-report page.
+
+
+
+structural-risk-profile has 
+
+* Structural Risk Interpretation
+
+* Priority Focus Areas
+
+* Key Exposure Drivers
+
+client-exposure-report should have some kind of summary of the 
+
+* Client Exposure Interpretation
+
+
+
+Create a new page risk-foundation/client-exposure-report-detailed and move the Risk Categories section from risk-foundation/client-exposure-report to there.
+
+What is currently on the page risk-foundation/client-exposure-report should be the page: risk-foundation/client-exposure-report-detailed
+
+
+
+
+
+PAGE risk-foundation/structural-risk-profile:
+
+
+PAGE risk-foundation/client-exposure-report:
+1) The breadcrumbs has: "Risk Foundation > Client Exposure > Client Exposure Report" it should be "Risk Foundation > Client Exposure Report"
+2) The menu now has only Export. It should have: 1) Detailed Assessment; 2) Edit; 3) Export; 4) Generate
+
+
+
+
+
+
+There are some data for the organisation ID: fefb1593-0c4f-4a63-97fa-c4995cdbe19a (Vagges Juletræer v/Vagn Ravn Clausen) but not for any other it seems. Only this organization has any data on Action Center (page: home). Can you create some data for two more organizations, and set all other organizations (except these three) to inactive.
+
+PAGE risk-foundation/organization-profile:
+1) Add title "Organization Profile" + text below: "Add organization data to prepare the Risk Foundation", and the Previous, Next/Finish buttons (variant type=ghost) to the button area on the right of the title. So the design follows the design on other pages: risk-foundation/client-exposure
+
+
+PAGE risk-foundation:
+1) Change "Customer Exposure" to "Client Exposure" (under Current Insights)
+
+
+PAGE risk-foundation/client-exposure-report:
+1) The breadcrumb trail includes "Client Exposure"
+
+
+PAGE risk-foundation/client-exposure:
+1) Add title: "Client Exposure data" + text "Add organization data to prepare Client Exposure report" (fix/improve text as needed) + divider below txt, so it follows the design on other pages, e.g.: risk-foundation/client-exposure-report
+
+Copy the Previous, Next/Finish buttons from the botton of the container to the menu area on top/right (keep at bottom for now, I want to see how the new design look)
+
+
+There are some data for the organisation ID: fefb1593-0c4f-4a63-97fa-c4995cdbe19a (Vagges Juletræer v/Vagn Ravn Clausen) but not for any other it seems. Only this organization has any data on Action Center (page: home). Can you create some data for two more organizations, and set all other organizations (except these three) to inactive.
+
+
+
+PAGE home:
+1) Add same functionality to the two table "Overdue" and "Due Soon" as on the table "Need attention". With regard to clicking a row and opening a drawer, which is dependent on which type the row was (chat, evidence, etc.)
+
+PAGE reports/ces/report:
+1) Replace "Customer Exposure Score Report" with "Client Exposure Report" and move up to the title area, and the Export button down on the same line + change button variant to ghost so the design follows the other pages, e.g.: risk-foundation/structural-risk-profile
+2) Add text to below the title: "Assess regulatory pressure for <organization name>" - put organization name in bold
+
+
+
+Remove Organization name in title
+
+PAGE risk-foundation/financial-exposure:
+1) The menu items: Details, Edit, etc: cursor=pointer on hover. Add a bottom border on hover. (Same as on the tab pane on financial-exposure-detailed)
+
+
+risk-foundation/structural-risk-profile
+1) The menu items: Details, Edit, etc: cursor=pointer on hover. Add a bottom border on hover. (Same as on the tab pane on financial-exposure-detailed)
+
+
+PAGE: risk-foundation/structural-risk-profile/detailed
+1) Add "Detailed" to breadcrumbs.
+
+
+PAGE risk-foundation/financial-exposure-detailed:
+1) Remove the Rocket icon in the title, as well as the "Structural Financial Exposure" and organization name,
+2) Add a divider below the title section (under: "Structural financial exposure range based on organizational profile — independent of safeguard maturity scores.")
+So the design follows the one on for instance: risk-foundation/financial-exposure 
+
+
+
+PAGE risk-foundation/financial-exposure-detailed:
+Add tab pane to page:
+
+Use same design as in the project: /home/rune/workspace/projects/gorm.ai
+on for instance the page: configuration
+
+Add these tabs, and populate each tab
+
+
+
+
+
+
+
+PAGE risk-foundation/client-exposure:
+
+PAGE risk-foundation/organization-profile:
+1) Remove title "Edit Organization Profile" and text "Complete the following steps to configure your organization's compliance profile"
+
+
+
+risk-foundation/financial-exposure
+
+
+'
+
+
+1 Estimated Downtime Costs
+2 Incident Response & Forensics (IR)
+3 System Restoration & Rebuild
+4 Extended Business Interruption (EBI)
+5 Customer & Contract Loss (CCL)
+6 Regulatory & Supervisory Cost
+7 Reputational Impact
+8 Management & Governance Cost
+9 Notification Costs
+10 Legal Exposure – Administrative Fine Ceiling
+
+Operational Loss
+    System downtime <- 1
+    Data recovery costs
+    Lost productivity
+Incident Handling
+    Investigation and forensics <- 2
+    External consultants
+    Communication and PR
+Business Impact
+    Revenue loss
+    Customer churn
+    Contractual penalties
+Regulatory & Legal
+    Legal fees <- 10?
+    Compliance costs
+    Notification costs <- 9
+Legal Exposure – Administrative Fine Ceiling <- 10
+
+---------------
+
+Need to make some changes to the page: risk-foundation/financial-exposure. It should be split up into a summary and a deails page.
+
+1) Move the page risk-foundation/financial-exposure to risk-foundation/financial-exposure-detailed
+2) The page risk-foundation/financial-exposure should be a summary
+
+With two tabs: Scenario 1 & Scenario 2
+
+For each tab, there should be a summary of the scenario:
+
+Estimated Downtime Costs                            Low estimate - High estimate
+Incident Response & Forensics (IR)                  Low estimate - High estimate
+System Restoration & Rebuild                        Low estimate - High estimate
+Extended Business Interruption (EBI)                Low estimate - High estimate
+Customer & Contract Loss (CCL)                      Low estimate - High estimate
+Regulatory & Supervisory Cost                       Low estimate - High estimate
+Reputational Impact                                 Low estimate - High estimate
+Management & Governance Cost                        Low estimate - High estimate
+Notification Costs                                  Low estimate - High estimate
+Legal Exposure – Administrative Fine Ceiling        Low estimate - High estimate
+
+3) Above the tab space, should be an overall summary, something like:
+"Estimated Annual Loss (ALE)"
+Low estimate - High estimate
+"The range reflects uncertainty in incident severity and operational impact."
+
+4) On the top of the page should be a menu (similar to the menu on the page: risk-foundation/structural-risk-profile)
+A) Details (link to the detail page: risk-foundation/financial-exposure-detailed)
+B) Edit
+C) Export (drop-down menu with: PDF, Word)
+D) Methodology & Sources
+
+
+
+
+
+
+
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Saturday 02 May
+* Backend:
+    1) Fixed bug wherein the currently selected organization was not replicated to the backend (table: profile)
+* PAGE risk-foundation/organization-profile:
+    1) Remove NO (Norway) from "look up company from registry". Only retain Danish. (Norway is retained in the backend for the time being)
+    2) Added breadcrumbs.
+    3) Removed title "Edit Organization Profile" and text "Complete the following steps to configure your organization's compliance profile"
+    4) Removed p-6 (organization-profile/page.tsx + AuthorizedLayoutClient.tsx)
+* Sidemenu:
+    1) When the organization name is changed on the page risk-foundation/organization-profile, update the name in the organization selector dropdown.
+* PAGE risk-foundation/structural-risk-profile:
+    1) Border removed around the menu buttons: "Detailed Assessment", "Edit", "Export", and "Generate"
+    2) Added breadcrumbs.
+* PAGE risk-foundation/client-exposure:
+    1) Added breadcrumbs.
+    1) Removed title "Client Exposure", the rocket icon and the company name on the same line.
+* PAGE reports/ces/report:
+    1) Added breadcrumbs.
+* General frontend:
+    1) Move breadcrumbs to the top-line, top/left. To the right of the sidemenu.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Sunday 03 May
+* PAGE: risk-foundation/financial-exposure
+    1) Moved to risk-foundation/financial-exposure-detailed
+    2) Created tabs: Scenario 1 + Scenario 2
+    3) Menu: Details, Edit, Export, Methodology & Sources
+    4) Description section:
+        Estimated Annual Loss (ALE)
+            Low estimate - High estimate
+        The range reflects uncertainty in incident severity and operational impact.
+    5) Summary section:
+            Estimated Downtime Costs                            Low estimate - High estimate
+            Incident Response & Forensics (IR)                  Low estimate - High estimate
+            System Restoration & Rebuild                        Low estimate - High estimate
+            Extended Business Interruption (EBI)                Low estimate - High estimate
+            Customer & Contract Loss (CCL)                      Low estimate - High estimate
+            Regulatory & Supervisory Cost                       Low estimate - High estimate
+            Reputational Impact                                 Low estimate - High estimate
+            Management & Governance Cost                        Low estimate - High estimate
+            Notification Costs                                  Low estimate - High estimate
+            Legal Exposure – Administrative Fine Ceiling        Low estimate - High estimate
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Friday 01 May
+* PAGE risk-foundation: 
+    1) Section Client Exposure: The view button currently now opens page: reports/ces/report?id=<ID> (was: reports/ces)
+* Page risk-foundation/structural-risk-profile:
+    1) Page title changed to the name of the Organisation.
+    2) Added navigation menu to the right of the page title:
+        A) Detailed Assessment
+        B) Edit
+        C) Export (drop-down menu with: PDF, Word)
+    3) Added sub-title "Structural Risk Profile"
+    4) Added sub-title text: "Summary of the client's structural exposure"
+    5) Added date/author.
+    6) Added Structural Risk Interpretation - section (previously found on this page: risk-foundation/structural-risk-profile/report)
+    7) Added Priority Focus Areas - section (previously found on this page: risk-foundation/structural-risk-profile/report)
+    8) Added Key Exposure Drivers - section (previously found on this page: risk-foundation/structural-risk-profile/report)
+    9) Added functionalty to auto-generate report on page load
+    10) Added Generate button
+    11) Added Claude Opus integration (Anthropic) integration for generating overview text.
+    12) Change page title from "home" to "Structural Risk Profile"
+    13) Added Edit functionality to page (lifted from risk-foundation/structural-risk-profile/report).
+* Page risk-foundation/structural-risk-profile/detailed:
+    1) Title: change to "Detailed Assessment"
+    2) Text changed to "Scores indicate estimated relevance based on the organization's business model, IT dependency, and regulatory exposure (0–100)."
+    3) Generate & Cancel button section removed.
+    4) "Review & Implementation" section removed.
+    5) Change page title from "home" to "Structural Risk Profile, Detailed Assessment"
+* PAGE reports/ces/report:
+    1) Removed "Back to CES" button.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
+── Thursday 30 Apr
+Sidemenu:
+    1) Added menu item "Action Center" above "Risc Foundation". Links to home.
+PAGE Action Center/Home:
+    1) Add pagination to all tables. + Sortable columns + Check column to the left, with a drop down menu (select all, starred) + Star column to the right. Click star or right click row to star. Checked row (below table), action line: Show only selected/show all
+CSS/Design:
+    1) Added table/section background colour to globals.css. For light & dark themes. To be used universally in the application.
+PAGE risk-foundation/client-exposure :
+    1) Title "Third Party Onboarding" raplaced with "Client Exposure"
+    2) Background colour of the sections changed to to --panel (white)
+
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Friday 10 Apr
 * Sidemenu
@@ -502,38 +1319,11 @@ Third Party Risk Exposure => Customer Exposure Assesment (CEA)
 * Workflow: Organization Profile / Organization Onboarding
     1) Make Lookup Registry configurable, such that sources can be turned on/off.
 
-
-The prefilled box still overflows into other elements. In the attached image, it overflows onto "description"
-
-The lookup registry being used by workflow organization onboarding and the onboarding wizard should be configurable. Such that sources can be turned on/off for individual organizations. Currently there are only Norwegian and Danish sources implemented I think.
-On the frontend, clicking sources on/off should be under the settings tab.
-
-
-Add table:
-"-ookup_registry"
--- ID
--- Name
--- Description
-
-Add to organisation column: FK: lookup_registry_id
-
-
-* Workflow: Organization Profile
-When a data element has been prefilled by "lookup company from registry" the prefilled infor box is overflowing to other elements, below and above. See attached image.
-
-Fix lookup: boxes too big; no danish cvr?, make look src config (turn off norwigian)
-
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Monday 16 Mar
 * Claude, Ultrathink
     1) Report of how each CONC calculations is being made
     2) Report of where each Organization parameter is being used.
-
-Ultrathink. 
-1) Can you make a report of how each calculation in the CONC report is being done.
-2) And a seperate report going through each parameter on the organization (Profile, Sector, Operations) and list where they're being used in the CONC calculations.
-
-
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Sunday 15 Mar
@@ -564,28 +1354,6 @@ Ultrathink.
         1.25× (one) / 1.50× (multiple) — GDPR Art 83(2)(e) recidivism factor
     3) Adjusted "Reputational costs"
         1.20× (one) / 1.40× (multiple) — second breach generates disproportionate media reaction
-
-
-
-
-
-
-  So 3 of the 5 have reasonable proxies already in use. The two with no coverage are remote workforce percentage and previous breach history — both would require new fields on the Organization model and new UI inputs on the
-  onboarding wizard.
-
-
-
-I had to edit the .env file when I made deployment to production.
-The production is on https://cc.predictioninstitute.com
-But I don't want to have to run the deploy script every time I make some changes while developing.
-Is it possible to hot reload the production: https://cc.predictioninstitute.com
-Or can I set it up so I can use both http://localhost:3001 and https://cc.predictioninstitute.com
-Or how do I structure my environment so I can keep on developing without having to run ./deploy every time I have made some changes?
-
-
-BETTER_AUTH_URL=http://localhost:3001
-# -- BETTER_AUTH_URL=https://cc.predictioninstitute.com
-
 
 ────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────────
 ── Saturday 14 Mar

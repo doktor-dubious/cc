@@ -102,7 +102,7 @@ export default function CesPage() {
                   <td className="px-4 py-3">
                     <div className="flex items-center justify-end gap-1">
                       <button
-                        onClick={() => router.push(`/reports/ces/report?id=${company.id}`)}
+                        onClick={() => router.push(`/risk-foundation/client-exposure-report?id=${company.id}`)}
                         className="p-1.5 rounded hover:bg-muted cursor-pointer transition-colors text-muted-foreground hover:text-foreground"
                         title={t('page.viewReport')}
                       >

@@ -41,6 +41,8 @@ export interface Organization
     businessDaysPerYear      : number | null;
     revenueConcentration     : string | null;
     entityType               : string | null;
+    mediaExposure            : boolean | null;
+    criticalSocietalRole     : boolean | null;
 }
 
 interface OrganizationContextValue
@@ -49,15 +51,22 @@ interface OrganizationContextValue
     sortedOrganizations     : Organization[];
     activeOrganization      : Organization | null;
     setActiveOrganization   : (org: Organization) => void;
+    updateOrganization      : (id: string, patch: Partial<Organization>) => void;
 }
 
 const OrganizationContext = createContext<OrganizationContextValue | null>(null);
 
-export function OrganizationProvider({children, organizations,}: {
+export function OrganizationProvider({children, organizations: organizationsProp,}: {
     children: React.ReactNode;
     organizations: Organization[];
 })
 {
+    // Mirror the server-provided list into local state so client mutations (org rename,
+    // etc.) are reflected immediately without a page refresh. Re-sync whenever the prop
+    // changes — e.g. on navigation, where the layout re-runs and returns fresh data.
+    const [organizations, setOrganizations] = useState<Organization[]>(organizationsProp);
+    useEffect(() => { setOrganizations(organizationsProp); }, [organizationsProp]);
+
     const [activeOrganization, setActiveOrganizationState] = useState<Organization | null>(null);
     const [selectionHistory, setSelectionHistory] = useState<Record<string, number>>({});
 
@@ -70,6 +79,23 @@ export function OrganizationProvider({children, organizations,}: {
             return raw ? JSON.parse(raw) : {};
         }
         catch { return {}; }
+    };
+
+    // Push the active org to the server. Fire-and-forget: localStorage is the instant
+    // source of truth; server is a best-effort sync so SSR pages see the same selection.
+    // Skips when the server already has this id (tracked via a separate localStorage key).
+    const syncActiveOrgToServer = (orgId: string) =>
+    {
+        if (typeof window === 'undefined') return;
+        if (localStorage.getItem('activeOrganizationIdSynced') === orgId) return;
+
+        void fetch('/api/profile/active-organization', {
+            method  : 'PATCH',
+            headers : { 'Content-Type': 'application/json' },
+            body    : JSON.stringify({ organizationId: orgId }),
+        })
+            .then(res => { if (res.ok) localStorage.setItem('activeOrganizationIdSynced', orgId); })
+            .catch(() => { /* offline / expired session — leave server stale */ });
     };
 
     // Restore persisted org or default to first
@@ -87,11 +113,13 @@ export function OrganizationProvider({children, organizations,}: {
             if (match)
             {
                 setActiveOrganizationState(match);
+                syncActiveOrgToServer(match.id);
                 return;
             }
         }
 
         setActiveOrganizationState(organizations[0]);
+        syncActiveOrgToServer(organizations[0].id);
     }, [organizations]);
 
     // Organizations sorted by most recently selected
@@ -114,11 +142,21 @@ export function OrganizationProvider({children, organizations,}: {
         setSelectionHistory(updated);
 
         setActiveOrganizationState(org);
+
+        syncActiveOrgToServer(org.id);
+    };
+
+    // Patch an organization's fields in-place. Used by edit pages (e.g. organization-profile)
+    // so the sidebar/switcher reflect renames immediately, without waiting for navigation.
+    const updateOrganization = (id: string, patch: Partial<Organization>) =>
+    {
+        setOrganizations(prev => prev.map(o => o.id === id ? { ...o, ...patch } : o));
+        setActiveOrganizationState(prev => prev && prev.id === id ? { ...prev, ...patch } : prev);
     };
 
     return (
 <OrganizationContext.Provider
-    value={{ organizations, sortedOrganizations, activeOrganization, setActiveOrganization }}
+    value={{ organizations, sortedOrganizations, activeOrganization, setActiveOrganization, updateOrganization }}
 >
     {children}
 </OrganizationContext.Provider>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef, useCallback, useEffect } from 'react';
 import { Textarea } from '@/components/ui/textarea';
 import { useTranslations } from 'next-intl';
 
@@ -15,6 +15,20 @@ function GapNoteEditorInner({ initialContent, onSave }: GapNoteEditorInnerProps)
   const [saveStatus, setSaveStatus] = useState<'idle' | 'saving' | 'saved' | 'error'>('idle');
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
   const debounceRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Adopt initialContent when the parent loads it asynchronously (notes fetch
+  // finishes after the editor mounts). Only sync if the local state still
+  // matches the previous prop — i.e. the user hasn't started typing yet —
+  // otherwise we'd clobber their in-flight edits.
+  const prevInitialRef = useRef(initialContent);
+  useEffect(() => {
+    if (initialContent !== prevInitialRef.current) {
+      if (content === prevInitialRef.current) {
+        setContent(initialContent);
+      }
+      prevInitialRef.current = initialContent;
+    }
+  }, [initialContent, content]);
 
   const handleSave = useCallback(async (newContent: string) => {
     setSaveStatus('saving');

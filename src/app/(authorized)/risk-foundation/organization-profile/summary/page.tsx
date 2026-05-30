@@ -2,9 +2,11 @@
 
 import { useTranslations } from 'next-intl';
 import { useRouter } from 'next/navigation';
-import { Building2, Users, Globe, Shield, Server } from 'lucide-react';
+import { ArrowLeft, Building2, Users, Globe, Shield, Server } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useOrganization } from '@/context/OrganizationContext';
+import { deriveTargetedAttackLikelihood } from '@/lib/risk/threat-likelihood';
+import type { OrganizationProfile } from '@/lib/gap-analysis/recommendation-engine';
 
 const RETURN_URL = '/risk-foundation';
 
@@ -23,6 +25,11 @@ export default function OrganizationSummaryPage() {
   }
 
   const org = activeOrganization;
+
+  // Targeted-attack likelihood is derived from the rest of the profile, not
+  // self-rated by the customer. Compute it here so the summary reflects the
+  // same value the recommendation engine uses.
+  const derivedThreatLikelihood = deriveTargetedAttackLikelihood(org as unknown as OrganizationProfile);
 
   // Helper to get translated label for enum values
   const getLabel = (value: string | null | undefined, prefix: string): string => {
@@ -60,13 +67,29 @@ export default function OrganizationSummaryPage() {
   );
 
   return (
-    <div className="flex h-screen flex-col bg-background">
+    <div className="bg-background">
       {/* Content */}
-      <div className="flex-1 overflow-y-auto p-6">
+      <div className="p-6">
         <div className="max-w-4xl mx-auto space-y-6">
-          {/* Page Header */}
+          {/* Page Header — title on the left, navigation on the right
+              (mirrors the wizard slides where Next/Finish sits in the same
+              spot). */}
           <div className="mb-8">
-            <h1 className="text-2xl font-semibold">{t('summary.title')}</h1>
+            <div className="flex items-start justify-between gap-6 mb-2">
+              <h1 className="text-2xl font-semibold">{t('summary.title')}</h1>
+
+              <div className="flex items-center gap-2 shrink-0 select-none">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="cursor-pointer"
+                  onClick={() => router.push(RETURN_URL)}
+                >
+                  <ArrowLeft className="w-4 h-4 mr-1" />
+                  Back to Risk Foundation
+                </Button>
+              </div>
+            </div>
             <p className="text-sm text-muted-foreground mt-1">{t('summary.subtitle')}</p>
           </div>
 
@@ -89,7 +112,6 @@ export default function OrganizationSummaryPage() {
             <Field label={t('fields.digitalMaturity')} value={getLabel(org.digitalMaturity, 'digitalMaturities')} />
             <Field label={t('fields.esgStatus')} value={getLabel(org.esgStatus, 'esgStatuses')} />
             <Field label={t('fields.supplyChainRole')} value={getLabel(org.supplyChainRole, 'supplyChainRoles')} />
-            <Field label={t('fields.riskProfile')} value={getLabel(org.riskProfile, 'riskProfiles')} />
             <Field label={t('fields.euTaxonomyAligned')} value={org.euTaxonomyAligned === true ? tc('words.yes') : org.euTaxonomyAligned === false ? tc('words.no') : '-'} />
           </Section>
 
@@ -98,8 +120,23 @@ export default function OrganizationSummaryPage() {
             <Field label={t('fields.itSecurityStaff')} value={getLabel(org.itSecurityStaff, 'itSecurityStaff')} />
             <Field label={t('fields.securityMaturity')} value={getLabel(org.securityMaturity, 'securityMaturity')} />
             <Field label={t('fields.securityBudgetRange')} value={getLabel(org.securityBudgetRange, 'securityBudgetRange')} />
-            <Field label={t('fields.targetedAttackLikelihood')} value={getLabel(org.targetedAttackLikelihood, 'targetedAttackLikelihood')} />
+            <Field
+              label={`${t('fields.targetedAttackLikelihood')} (computed)`}
+              value={getLabel(derivedThreatLikelihood, 'targetedAttackLikelihood')}
+            />
             <Field label={t('fields.downtimeTolerance')} value={getLabel(org.downtimeTolerance, 'downtimeTolerance')} />
+            <Field
+              label={t('fields.previousBreachHistory')}
+              value={getLabel(org.previousBreachHistory, 'previousBreachHistory')}
+            />
+            <Field
+              label={t('fields.mediaExposure')}
+              value={org.mediaExposure === true ? tc('words.yes') : org.mediaExposure === false ? tc('words.no') : '-'}
+            />
+            <Field
+              label={t('fields.criticalSocietalRole')}
+              value={org.criticalSocietalRole === true ? tc('words.yes') : org.criticalSocietalRole === false ? tc('words.no') : '-'}
+            />
           </Section>
 
           {/* Infrastructure */}
@@ -118,17 +155,6 @@ export default function OrganizationSummaryPage() {
             <Field label={t('fields.ig')} value={org.ig?.toString()} />
           </Section>
 
-          {/* Return Button */}
-          <div className="pt-6 flex justify-center">
-            <Button
-              variant="default"
-              size="lg"
-              className="gap-2 cursor-pointer"
-              onClick={() => router.push(RETURN_URL)}
-            >
-              Back to Risk Foundation
-            </Button>
-          </div>
         </div>
       </div>
     </div>

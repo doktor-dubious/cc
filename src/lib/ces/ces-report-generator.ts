@@ -9,14 +9,39 @@ export type CesCategoryReport = {
     findings    : string[];
 };
 
+// Sanitized, human-readable view of the CES inputs + scoring outputs.
+// Sent to Claude as grounding for prose generation — it sees only these
+// facts, never the raw enum tokens or NULLs.
+export type CesFactorSnapshot = {
+    companyName            : string;
+    regulatoryFramework    : string | null;
+    customerSector         : string | null;
+    contractualPosture     : string[]; // human-readable bullets, e.g. "standard contract", "SLAs included"
+    operationalFootprint   : string[];
+    technicalExposure      : string[];
+    overallScore           : number;
+    overallRiskLevel       : RiskLevel;
+    categoryAssessments    : { name: string; assessment: RiskLevel; score: number }[];
+    priorityCategories     : string[]; // top categories by score
+};
+
 export type CesReport = {
-    companyId       : string;
-    companyName     : string;
-    generatedDate   : string;
-    overallScore    : number; // 0-100
-    riskLevel       : RiskLevel;
-    categories      : CesCategoryReport[];
-    recommendations : string[];
+    companyId          : string;
+    companyName        : string;
+    generatedDate      : string;
+    overallScore       : number; // 0-100
+    riskLevel          : RiskLevel;
+    categories         : CesCategoryReport[];
+    recommendations    : string[];
+    /// Top categories by score (deterministic; populated at generation).
+    /// Editable in Adapt mode just like priority control domains.
+    priorityCategories : string[];
+    /// LLM-generated prose narrative. Empty until /api/client-exposure-interpretation
+    /// fills it; preserved through Adapt-mode edits.
+    interpretation     : string;
+    /// Snapshot of inputs sent to the LLM. Stable hash is what makes the
+    /// LLM output cacheable / regeneratable.
+    factorSnapshot     : CesFactorSnapshot;
 };
 
 // ── Scoring helpers ──────────────────────────────────────────────────────────
@@ -332,6 +357,67 @@ function buildRecommendations(categories: CesCategoryReport[], overall: RiskLeve
     return recs;
 }
 
+// ── Snapshot builders (sanitized, human-readable) ────────────────────────────
+
+function humanizeEnum(value: string | null | undefined): string | null
+{
+    if (!value) return null;
+    return value.toLowerCase().replace(/_/g, ' ');
+}
+
+function buildContractualPosture(c: ThirdPartyCompanyObj): string[]
+{
+    const out: string[] = [];
+    if (c.standardContract === false)         out.push('no standard contract template');
+    if (c.standardContract === true)          out.push('standard contract template in place');
+    if (c.slaIncluded === false)              out.push('no SLAs in current contract');
+    if (c.slaIncluded === true)               out.push('SLAs defined in contract');
+    if (c.professionalProcurement === false)  out.push('procurement is not professionalised');
+    if (c.deliversToRegulated === 'YES')      out.push('delivers to regulated customers');
+    if (c.deliversToRegulated === 'PARTLY')   out.push('partly delivers to regulated customers');
+    if (c.deliversToPublicInfra === true)     out.push('delivers into public infrastructure');
+    return out;
+}
+
+function buildOperationalFootprint(c: ThirdPartyCompanyObj): string[]
+{
+    const out: string[] = [];
+    if (c.internationalOps === true)          out.push('operates internationally');
+    if (c.coreDigital === 'YES')              out.push('digital is core to delivery');
+    if (c.coreDigital === 'PARTLY')           out.push('digital is partially core to delivery');
+    const dep = humanizeEnum(c.itDependency);
+    if (dep)                                  out.push(`IT dependency: ${dep}`);
+    if (c.publicBrand === true)               out.push('publicly visible brand');
+    if (c.criticalSocietalRole === true)      out.push('critical societal role');
+    if (c.mediaExposure === true)             out.push('elevated media exposure');
+    return out;
+}
+
+function buildTechnicalExposure(c: ThirdPartyCompanyObj): string[]
+{
+    const out: string[] = [];
+    const role    = humanizeEnum(c.deliveryRole);
+    const access  = humanizeEnum(c.accessLevel);
+    const data    = humanizeEnum(c.dataHandled);
+    const impact  = humanizeEnum(c.disruptionImpact);
+    const supply  = humanizeEnum(c.supplyChainRole);
+    if (role)    out.push(`delivery role: ${role}`);
+    if (access)  out.push(`access level: ${access}`);
+    if (data)    out.push(`data handled: ${data}`);
+    if (impact)  out.push(`disruption impact: ${impact}`);
+    if (supply)  out.push(`supply-chain role: ${supply}`);
+    return out;
+}
+
+function buildPriorityCategories(categories: CesCategoryReport[]): string[]
+{
+    return [...categories]
+        .sort((a, b) => b.score - a.score)
+        .filter(c => c.score >= 40)
+        .slice(0, 3)
+        .map(c => c.name);
+}
+
 // ── Main export ───────────────────────────────────────────────────────────────
 
 export function generateCesReport(company: ThirdPartyCompanyObj): CesReport
@@ -351,14 +437,31 @@ export function generateCesReport(company: ThirdPartyCompanyObj): CesReport
     );
     const riskLevel = scoreToRiskLevel(overallScore);
     const recommendations = buildRecommendations(categories, riskLevel);
+    const priorityCategories = buildPriorityCategories(categories);
+
+    const factorSnapshot: CesFactorSnapshot = {
+        companyName          : company.name,
+        regulatoryFramework  : humanizeEnum(company.regulatoryFramework),
+        customerSector       : company.customerSector ?? null,
+        contractualPosture   : buildContractualPosture(company),
+        operationalFootprint : buildOperationalFootprint(company),
+        technicalExposure    : buildTechnicalExposure(company),
+        overallScore,
+        overallRiskLevel     : riskLevel,
+        categoryAssessments  : categories.map(c => ({ name: c.name, assessment: c.riskLevel, score: c.score })),
+        priorityCategories,
+    };
 
     return {
-        companyId     : company.id,
-        companyName   : company.name,
-        generatedDate : new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
+        companyId          : company.id,
+        companyName        : company.name,
+        generatedDate      : new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' }),
         overallScore,
         riskLevel,
         categories,
         recommendations,
+        priorityCategories,
+        interpretation     : '',
+        factorSnapshot,
     };
 }

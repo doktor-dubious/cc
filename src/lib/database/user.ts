@@ -168,5 +168,16 @@ export const userRepository =
         log.info({ email: data.email, name: data.name, role: data.role }, 'SQL - user: createWithRole');
 
         return prisma.user.create({ data, select: selectFields });
+    },
+
+    async setCurrentOrganization(userId: string, organizationId: string | null): Promise<void>
+    {
+        log.info({ UserId: userId, OrganizationId: organizationId }, 'SQL - user: setCurrentOrganization');
+
+        await prisma.user.update({
+            where  : { id: userId },
+            data   : { currentOrganizationId: organizationId },
+            select : { id: true },
+        });
     }
 };

@@ -69,7 +69,11 @@ async function getGeoLocation(ip: string): Promise<GeoLocation> {
 // Better Auth instance
 export const auth = betterAuth({
     database: prismaAdapter(prisma, { provider: 'postgresql' }),
-    trustedOrigins: [process.env.BETTER_AUTH_URL ?? 'http://localhost:3001'],
+    trustedOrigins: [
+        process.env.BETTER_AUTH_URL ?? 'http://localhost:3001',
+        'http://localhost:3001',
+        'http://localhost:3002',
+    ],
 
     emailAndPassword: {
         enabled: true,
@@ -167,20 +171,25 @@ export async function getServerSession(): Promise<{ user: SessionUser } | null>
 
         if (!session) return null;
 
-        // Resolve profileId and organizationId from the DB
-        const profile = await prisma.profile.findUnique({
-            where:  { userId: session.user.id },
-            select: { id: true, currentOrganizationId: true, organizationId: true },
+        // currentOrganizationId now lives on the User row (so SUPER_ADMINs without
+        // a profile can also persist a selection). Profile is only consulted as a
+        // fallback for users whose primary org is implicit via their profile.
+        const user = await prisma.user.findUnique({
+            where:  { id: session.user.id },
+            select: {
+                currentOrganizationId : true,
+                profile               : { select: { id: true, organizationId: true } },
+            },
         });
 
         return {
             user: {
                 id             : session.user.id,
-                profileId      : profile?.id,
+                profileId      : user?.profile?.id,
                 email          : session.user.email,
                 role           : (session.user as any).role ?? 'USER',
                 name           : session.user.name,
-                organizationId : profile?.currentOrganizationId ?? profile?.organizationId ?? '',
+                organizationId : user?.currentOrganizationId ?? user?.profile?.organizationId ?? '',
             },
         };
     }

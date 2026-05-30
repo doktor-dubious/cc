@@ -37,6 +37,28 @@ export type StructuralRiskReport = {
   structuralInterpretation: string;
   priorityControlDomains: string[];
   nextSteps: string;
+  factorSnapshot: FactorSnapshot;
+};
+
+// Sanitized, human-readable view of the profile + scoring outputs.
+// This is what gets sent to Claude as grounding for prose generation —
+// no raw enum tokens, no NONE_NOT_SURE leakage.
+export type FactorSnapshot = {
+  organizationName: string;
+  sector: string | null;
+  digitalMaturity: string | null;
+  securityMaturity: string | null;
+  productionDependency: string | null;
+  customerAccess: string | null;
+  supplyChainPosition: string | null;
+  downtimeTolerance: string | null;
+  publicFacingServices: string | null;
+  targetedAttackLikelihood: string | null;
+  infrastructureTypes: string[];
+  dataSensitivity: string[];
+  regulatoryObligations: string[];
+  exposureIndicators: ExposureDriver[];
+  priorityControlDomains: string[];
 };
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -65,6 +87,97 @@ const NACE_SECTION_NAMES: Record<NaceSection, string> = {
   S: 'Other Service Activities',
   OTHER: 'Other / Not Classified',
 };
+
+// ── Human-readable enum label maps (used for the factor snapshot) ──────────────
+
+const DIGITAL_MATURITY_LABELS: Record<string, string> = {
+  TRADITIONAL:    'traditional infrastructure',
+  DEVELOPING:     'actively digitizing',
+  MATURE:         'digitally mature',
+  DIGITAL_NATIVE: 'digital-native',
+};
+
+const SECURITY_MATURITY_LABELS: Record<string, string> = {
+  INITIAL:    'initial / ad-hoc',
+  MANAGED:    'managed',
+  DEFINED:    'defined',
+  OPTIMIZING: 'optimizing',
+};
+
+const PRODUCTION_DEPENDENCY_LABELS: Record<string, string> = {
+  NONE:    'no IT dependency for production',
+  PARTIAL: 'partial IT dependency for production',
+  DIRECT:  'full IT dependency for production',
+};
+
+const CUSTOMER_ACCESS_LABELS: Record<string, string> = {
+  NONE:      'no digital customer channels',
+  PARTIAL:   'partly digital customer access',
+  ESSENTIAL: 'digital-only customer access (no fallback)',
+};
+
+const SUPPLY_CHAIN_LABELS: Record<string, string> = {
+  END_CONSUMER:      'sells primarily to end consumers',
+  B2B_PROVIDER:      'tier-1 B2B supplier',
+  CRITICAL_SUPPLIER: 'critical supplier to essential services',
+};
+
+const DOWNTIME_LABELS: Record<string, string> = {
+  NEAR_ZERO: 'less than 1 hour',
+  HOURS:     'less than 24 hours',
+  DAYS:      'a few days',
+  WEEKS:     'one or more weeks',
+};
+
+const PUBLIC_FACING_LABELS: Record<string, string> = {
+  NONE:              'no public-facing services',
+  ECOMMERCE_PORTALS: 'public e-commerce or customer portals',
+  CRITICAL_SERVICES: 'public-facing critical services',
+};
+
+const TARGETED_ATTACK_LABELS: Record<string, string> = {
+  LOW:    'low targeted-attack likelihood',
+  MEDIUM: 'moderate targeted-attack likelihood',
+  HIGH:   'high targeted-attack likelihood',
+};
+
+const INFRASTRUCTURE_LABELS: Record<string, string> = {
+  ON_PREMISE: 'on-premise',
+  CLOUD:      'cloud',
+  HYBRID:     'hybrid',
+  OT_ICS:     'OT / ICS',
+};
+
+const DATA_SENSITIVITY_LABELS: Record<string, string> = {
+  PUBLIC:           'public data',
+  INTERNAL:         'internal-only data',
+  PII:              'personally identifiable information',
+  SPECIAL_CATEGORY: 'special-category personal data',
+  FINANCIAL:        'financial records',
+  HEALTH:           'health records',
+  TRADE_SECRET:     'trade secrets',
+};
+
+const REGULATION_LABELS: Record<string, string> = {
+  GDPR:               'GDPR',
+  NIS2:               'NIS2',
+  DORA:               'DORA',
+  EU_AI_ACT:          'EU AI Act',
+  PCI_DSS:            'PCI-DSS',
+  INDUSTRY_SPECIFIC:  'industry-specific regulation',
+  CYBER_INSURANCE:    'cyber-insurance requirements',
+  // NONE_NOT_SURE is intentionally excluded — it represents absence, not an obligation.
+};
+
+function mapLabel(map: Record<string, string>, value: string | null | undefined): string | null {
+  if (!value) return null;
+  return map[value] ?? null;
+}
+
+function mapLabels(map: Record<string, string>, values: readonly string[] | null | undefined): string[] {
+  if (!values) return [];
+  return values.map(v => map[v]).filter((v): v is string => Boolean(v));
+}
 
 // ────────────────────────────────────────────────────────────────────────────────
 // Assessment Functions
@@ -375,10 +488,9 @@ function generateStructuralInterpretation(
   // Regulatory and operational requirements
   const regulatoryFactors: string[] = [];
 
-  const regCount = profile.regulatoryObligations?.length || 0;
-  if (regCount > 0) {
-    const regList = profile.regulatoryObligations?.join(', ');
-    regulatoryFactors.push(`The company is subject to ${regList} compliance requirements`);
+  const regLabels = mapLabels(REGULATION_LABELS, profile.regulatoryObligations);
+  if (regLabels.length > 0) {
+    regulatoryFactors.push(`The company is subject to ${regLabels.join(', ')} compliance requirements`);
   }
 
   if (profile.downtimeTolerance === 'NEAR_ZERO' || profile.downtimeTolerance === 'HOURS') {
@@ -410,7 +522,7 @@ function generateStructuralInterpretation(
   }
 
   // Regulatory
-  if (regCount >= 2) {
+  if (regLabels.length >= 2) {
     exposureFactors.push('regulated environment');
   }
 
@@ -575,6 +687,14 @@ export function generateStructuralRiskReport(
   // 4. Next Steps
   const nextSteps = getNextSteps();
 
+  // 5. Sanitized factor snapshot — used by the LLM interpreter as grounding
+  const factorSnapshot = buildFactorSnapshot(
+    profile,
+    organizationName,
+    exposureIndicators,
+    priorityControlDomains,
+  );
+
   return {
     organizationName,
     generatedDate: new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long' }),
@@ -582,5 +702,35 @@ export function generateStructuralRiskReport(
     structuralInterpretation,
     priorityControlDomains,
     nextSteps,
+    factorSnapshot,
+  };
+}
+
+// ────────────────────────────────────────────────────────────────────────────────
+// Factor Snapshot — sanitized grounding payload for the LLM interpreter
+// ────────────────────────────────────────────────────────────────────────────────
+
+export function buildFactorSnapshot(
+  profile: OrganizationProfile,
+  organizationName: string,
+  exposureIndicators: ExposureDriver[],
+  priorityControlDomains: string[],
+): FactorSnapshot {
+  return {
+    organizationName,
+    sector:                   profile.naceSection ? NACE_SECTION_NAMES[profile.naceSection] : null,
+    digitalMaturity:          mapLabel(DIGITAL_MATURITY_LABELS,    profile.digitalMaturity),
+    securityMaturity:         mapLabel(SECURITY_MATURITY_LABELS,   profile.securityMaturity),
+    productionDependency:     mapLabel(PRODUCTION_DEPENDENCY_LABELS, profile.productionDependency),
+    customerAccess:           mapLabel(CUSTOMER_ACCESS_LABELS,     profile.customerAccess),
+    supplyChainPosition:      mapLabel(SUPPLY_CHAIN_LABELS,        profile.supplyChainPosition),
+    downtimeTolerance:        mapLabel(DOWNTIME_LABELS,            profile.downtimeTolerance),
+    publicFacingServices:     mapLabel(PUBLIC_FACING_LABELS,       profile.publicFacingServices),
+    targetedAttackLikelihood: mapLabel(TARGETED_ATTACK_LABELS,     profile.targetedAttackLikelihood),
+    infrastructureTypes:      mapLabels(INFRASTRUCTURE_LABELS, profile.infrastructureTypes),
+    dataSensitivity:          mapLabels(DATA_SENSITIVITY_LABELS, profile.dataSensitivity),
+    regulatoryObligations:    mapLabels(REGULATION_LABELS,      profile.regulatoryObligations),
+    exposureIndicators,
+    priorityControlDomains,
   };
 }

@@ -82,6 +82,7 @@
     "progressReport": "Progress Report",
     "exploratoryGap": "Exploratory GAP",
     "gap": "GAP",
+    "roadmap": "Roadmap",
     "ces": "CES",
     "conc": "CONC",
     "mechanicalTurk": "Mechanical Turk",
@@ -89,6 +90,12 @@
     "cisControls": "CIS Controls",
     "cisSafeguards": "CIS Safeguards",
     "cisRiscAnalysis": "CIS Risc Analysis",
+    "structuralRiskProfile": "Structural Risk Profile",
+    "structuralRiskProfileDetailed": "Structural Risk Profile, Detailed Assessment",
+    "financialExposure": "Financial Exposure",
+    "financialExposureDetailed": "Financial Exposure, Detailed Assessment",
+    "clientExposureReport": "Client Exposure Report",
+    "clientExposureReportDetailed": "Client Exposure Report, Detailed Assessment",
     "academy": "Academy",
     "ai": "AI",
     "learnMore": "Learn More",
@@ -743,7 +750,7 @@
       "naceSection": "Industry Sector (NACE)",
       "legalForm": "Legal Form",
       "revenueRange": "Annual Revenue",
-      "maturity": "Organization Maturity",
+      "maturity": "Organization Stage",
       "ownershipType": "Ownership Type",
       "geographicScope": "Geographic Scope",
       "businessOrientation": "Business Orientation",
@@ -780,7 +787,11 @@
       "customerAccess": "Customer Access",
       "businessDaysPerYear": "Business Days per Year",
       "revenueConcentration": "Revenue Concentration",
-      "entityType": "Entity Type"
+      "entityType": "Entity Type",
+      "mediaExposure": "Elevated Media Exposure",
+      "criticalSocietalRole": "Critical Societal Role",
+      "previousBreachHistory": "Previous Material Breaches",
+      "notes": "Notes"
     },
     "sizes": {
       "micro": "Micro (0-9 employees)",
@@ -832,7 +843,11 @@
       "selectCustomerAccess": "Select customer access requirement",
       "enterBusinessDaysPerYear": "e.g. 220",
       "selectRevenueConcentration": "Select revenue concentration",
-      "selectEntityType": "Select entity type"
+      "selectEntityType": "Select entity type",
+      "selectMediaExposure": "Select yes or no",
+      "selectCriticalSocietalRole": "Select yes or no",
+      "selectPreviousBreachHistory": "Select previous breach history",
+      "enterNotes": "Add internal notes about this organization (optional)"
     },
     "tabs": {
       "details": "Details",
@@ -929,7 +944,25 @@
       "securityBudgetRangeHelp": "Approximate annual budget allocated to security",
       "manualOperationHelp": "Can core revenue-generating operations continue manually if IT systems are unavailable?",
       "productionDependencyHelp": "Does production/delivery depend directly on IT systems in a way that stops billing, delivery, or fulfillment?",
-      "customerAccessHelp": "Is customer access required for sales, orders, or service delivery?"
+      "customerAccessHelp": "Is customer access required for sales, orders, or service delivery?",
+      "organisationNameHelp": "The full legal name the organization is registered under.",
+      "descriptionHelp": "A short description of what the organization does.",
+      "maturityHelp": "Where the organization is in its lifecycle — startup, growth, established, or mature.",
+      "legalFormHelp": "Legal form of incorporation (e.g. private limited, partnership, public body).",
+      "ownershipTypeHelp": "Who owns the organization (privately held, listed, state-owned, family-owned, etc.).",
+      "geographicScopeHelp": "Geographic reach of the organization's operations.",
+      "revenueRangeHelp": "Approximate annual revenue in EUR. Used to gauge the financial scale of impact.",
+      "businessDaysPerYearHelp": "Number of operating business days per year (typically around 220).",
+      "revenueConcentrationHelp": "How concentrated revenue is among a small number of customers.",
+      "businessOrientationHelp": "Primary customer type (B2B, B2C, B2G, or mixed).",
+      "riskProfileHelp": "Overall structural risk profile of the organization (Low, Medium, High).",
+      "entityTypeHelp": "NIS2 entity classification — \"Important\" or \"Essential\".",
+      "digitalMaturityHelp": "How digital the organization is today.",
+      "esgStatusHelp": "Whether the organization is required to report on ESG.",
+      "supplyChainRoleHelp": "Role in the supply chain (manufacturer, distributor, service provider, retailer, end user).",
+      "mediaExposureHelp": "Does the organization have elevated public visibility — high brand recognition, frequent media coverage, or activist attention? Visibility raises targeted-attack likelihood.",
+      "criticalSocietalRoleHelp": "Does the organization operate services that people or other organizations depend on (e.g. healthcare, utilities, government services, payment infrastructure)?",
+      "notesHelp": "Internal notes about this organization — visible only inside Compliance Circle. Use it for context, follow-ups, or anything that doesn't fit the structured fields. Optional."
     },
     "nace": {
       "A": "A - Agriculture, forestry and fishing",
@@ -1036,6 +1069,10 @@
     "euTaxonomy": {
       "yes": "Yes - Aligned",
       "no": "No - Not aligned"
+    },
+    "yesNo": {
+      "yes": "Yes",
+      "no": "No"
     },
     "itSecurityStaff": {
       "noDedicatedIt": "No dedicated IT staff",
@@ -1273,11 +1310,12 @@
       "steps": {
         "title": "Steps",
         "basics": "Name & Description",
-        "sizeMaturity": "Size & Maturity",
+        "sizeMaturity": "Organization Size & Stage",
         "legalOwnership": "Legal & Ownership",
         "geographyRevenue": "Geography & Revenue",
-        "businessExposure": "Business Orientation & Risk",
-        "marketServices": "Market Exposure",
+        "businessExposure": "Business Orientation",
+        "marketServices": "Public-Facing Services",
+        "visibilityIncident": "Visibility & Incident History",
         "sectorRegulatory": "Sector & Regulatory",
         "euTaxonomy": "EU Taxonomy",
         "digitalEsg": "Digital & ESG",
@@ -1287,7 +1325,25 @@
         "workforceIncidentHistory": "Workforce & Incident History",
         "softwareBudget": "Software & Security Budget",
         "supplyChainDowntime": "Supply Chain & Downtime",
-        "businessContinuity": "Business Continuity"
+        "businessContinuity": "IT Dependency"
+      },
+      "descriptions": {
+        "basics": "Identify the organization with a clear name and a short description of what it does.",
+        "sizeMaturity": "Capture how big the organization is and how mature it is as a business.",
+        "legalOwnership": "Record the legal form and ownership model — this drives reporting and audit obligations.",
+        "geographyRevenue": "Where the organization operates, how much revenue it generates, and how concentrated that revenue is.",
+        "businessExposure": "Who the organization primarily sells to (B2B, B2C, B2G, mixed).",
+        "marketServices": "Which public-facing services the organization runs — a key driver of attack surface.",
+        "visibilityIncident": "Public visibility, societal role, and prior incidents — strong actuarial signals for how likely the organization is to be specifically targeted.",
+        "sectorRegulatory": "Sector classification and the regulatory frameworks that apply.",
+        "euTaxonomy": "Whether the organization's activities are aligned with the EU Taxonomy for sustainable activities.",
+        "digitalEsg": "How digital the organization is today and where it stands on ESG reporting.",
+        "itSecurityStaff": "Dedicated IT and security staffing levels and the maturity of the security program.",
+        "dataSensitivity": "What kinds of sensitive data the organization processes.",
+        "itInfrastructure": "Number of managed endpoints and the types of IT infrastructure in use.",
+        "softwareBudget": "Scope of in-house software development and the budget allocated to security.",
+        "supplyChainDowntime": "Tolerance for downtime and where the organization sits in the supply chain.",
+        "businessContinuity": "How dependent the organization is on IT for delivery, billing, and customer access — and whether anything can fall back to manual operation."
       }
     },
     "summary": {
@@ -2031,7 +2087,7 @@
       "continueToRiskProfile": "Continue to Structural Risc Profile",
       "backToWorkflow": "Back to Workflow",
       "wizard": {
-        "title": "Third Party Onboarding",
+        "title": "Client Exposure",
         "saving": "Saving...",
         "loading": "Loading...",
         "backToList": "Back to Third Parties",
@@ -2157,7 +2213,7 @@
       "actions": "Actions"
     },
     "report": {
-      "title": "Customer Exposure Score Report",
+      "title": "Client Exposure Report",
       "generated": "Generated",
       "overallScore": "Overall Score",
       "categories": "Risk Categories",

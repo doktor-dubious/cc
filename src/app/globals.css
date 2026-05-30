@@ -19,6 +19,8 @@
 
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-panel: var(--panel);
+  --color-panel-foreground: var(--panel-foreground);
 
   --font-sans--HEST: var(--font-roboto);
   --font-sans: var(--font-geist-sans);
@@ -236,6 +238,11 @@
     --background                : #F9FAFB; /* #fafafa; */
     --foreground                : #262626; /* rgb(38 38 38) */
     --foreground-inverse        : #fafafa;
+
+    /* Surface for tables, cards, and section panels. Slightly different
+       from --background so panels stand out on the page. */
+    --panel                     : #ffffff;
+    --panel-foreground          : var(--foreground);
     --card                      : oklch(1 0 0);
     --card-foreground           : oklch(0.145 0 0);
     --popover                   : oklch(1 0 0);
@@ -279,6 +286,10 @@
     --background                : #171717; /* may consider 383838 */
     --foreground                : oklch(0.985 0 0);
     --foreground-inverse        : #171717;
+
+    /* Panel surface — subtly lighter than --background. */
+    --panel                     : #1f1f1f;
+    --panel-foreground          : var(--foreground);
     --card                      : oklch(0.205 0 0);
     --card-foreground           : oklch(0.985 0 0);
     --popover                   : oklch(15.296% 0.02193 19.867);
@@ -689,7 +700,7 @@ input:-webkit-autofill:active
 {
     table
     {
-        background-color: white;
+        background-color: var(--panel);
     }
 
 

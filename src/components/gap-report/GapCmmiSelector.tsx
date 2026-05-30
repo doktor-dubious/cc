@@ -18,18 +18,26 @@ type GapCmmiSelectorProps = {
   onChange: (level: number) => void;
   className?: string;
   minLevel?: number;
+  // When true, prepend an always-selectable "L0 — Not Started" option. Used for
+  // the Current CMMI selector to record a safeguard that hasn't been started at
+  // all (distinct from L1 "Initial / Ad Hoc").
+  allowNotStarted?: boolean;
 };
 
-export function GapCmmiSelector({ label, value, onChange, className, minLevel = 1 }: GapCmmiSelectorProps) {
+const NOT_STARTED_LEVEL = { level: 0, label: 'Not Started' } as const;
+
+export function GapCmmiSelector({ label, value, onChange, className, minLevel = 1, allowNotStarted = false }: GapCmmiSelectorProps) {
+  const levels = allowNotStarted ? [NOT_STARTED_LEVEL, ...CMMI_LEVELS] : CMMI_LEVELS;
   return (
     <div className={cn('space-y-2', className)}>
       <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
         {label}
       </p>
       <div className="inline-flex items-center gap-0.5 rounded-lg bg-muted p-1">
-        {CMMI_LEVELS.map((cmmi) => {
+        {levels.map((cmmi) => {
           const isActive = value === cmmi.level;
-          const isDisabled = cmmi.level < minLevel;
+          // L0 (Not Started) is always selectable; other levels respect minLevel.
+          const isDisabled = cmmi.level !== 0 && cmmi.level < minLevel;
           return (
             <button
               key={cmmi.level}
@@ -74,19 +82,29 @@ type GapCmmiGroupProps = {
   currentCmmi: number;
   targetCmmi: number;
   onChange: (current: number, target: number) => void;
+  // Lower bound for Current CMMI driven by the safeguard's lowest applicable IG
+  // (IG2-only → 3, IG3-only → 4). Defaults to 1.
+  minCurrentLevel?: number;
 };
 
 export function GapCmmiGroup({
   currentCmmi,
   targetCmmi,
   onChange,
+  minCurrentLevel = 1,
 }: GapCmmiGroupProps) {
   const t = useTranslations('GapReport');
-  const gap = targetCmmi - currentCmmi;
 
-  // Handle current CMMI change - if new value is higher than target, update target too
+  // targetCmmi === 0 means "Not Assessed"
+  const isAssessed = targetCmmi > 0;
+  const gap = isAssessed ? targetCmmi - currentCmmi : 0;
+
+  // Handle current CMMI change - clamp to min, and if new value is higher than
+  // a non-zero target, bump target along with it.
   const handleCurrentChange = (level: number) => {
-    if (level > targetCmmi) {
+    // L0 (Not Started) is always allowed; other levels respect the IG floor.
+    if (level !== 0 && level < minCurrentLevel) return;
+    if (isAssessed && level > targetCmmi) {
       onChange(level, level);
     } else {
       onChange(level, targetCmmi);
@@ -106,6 +124,8 @@ export function GapCmmiGroup({
         label={t('cmmi.currentCmmi')}
         value={currentCmmi}
         onChange={handleCurrentChange}
+        minLevel={minCurrentLevel}
+        allowNotStarted
       />
 
       <GapCmmiSelector
@@ -122,9 +142,11 @@ export function GapCmmiGroup({
           </span>
           <span className={cn(
             'text-lg font-semibold tabular-nums',
-            gap > 0 ? 'text-yellow-500' : gap < 0 ? 'text-red-500' : 'text-green-500'
+            !isAssessed
+              ? 'text-muted-foreground'
+              : gap > 0 ? 'text-yellow-500' : gap < 0 ? 'text-red-500' : 'text-green-500'
           )}>
-            {gap > 0 ? '+' : ''}{gap}
+            {!isAssessed ? '—' : `${gap > 0 ? '+' : ''}${gap}`}
           </span>
         </div>
       </div>

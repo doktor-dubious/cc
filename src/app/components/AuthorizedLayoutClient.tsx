@@ -124,6 +124,8 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Badge } from '@/components/ui/badge';
 import { useOrganization } from '@/context/OrganizationContext';
+import { PageBreadcrumb } from '@/components/ui/cc/page-breadcrumb';
+import { getBreadcrumb } from '@/lib/breadcrumbs';
 
 interface User
 {
@@ -163,6 +165,7 @@ let pathname = usePathname();
 const getPageTitle = () =>
 {
     if (pathname.includes('/asset'))                return t('assets');
+    if (pathname.includes('/task_old'))             return `${t('tasks')} (old)`;
     if (pathname.includes('/task'))                 return t('tasks');
     if (pathname.includes('/organization'))         return t('organizations');
     if (pathname.includes('/settings/profile'))     return t('profileSettings');
@@ -177,9 +180,17 @@ const getPageTitle = () =>
     if (pathname.includes('/cis/controls'))         return t('cisControls');
     if (pathname.includes('/cis/safeguards'))       return t('cisSafeguards');
     if (pathname.includes('/cis/cis-risc-analysis')) return t('cisRiscAnalysis');
+    if (pathname.includes('/risk-foundation/structural-risk-profile/detailed')) return t('structuralRiskProfileDetailed');
+    if (pathname.includes('/risk-foundation/structural-risk-profile')) return t('structuralRiskProfile');
+    if (pathname.includes('/risk-foundation/financial-exposure-detailed')) return t('financialExposureDetailed');
+    if (pathname.includes('/risk-foundation/financial-exposure')) return t('financialExposure');
+    if (pathname.includes('/risk-foundation/client-exposure-report-detailed')) return t('clientExposureReportDetailed');
+    if (pathname.includes('/risk-foundation/client-exposure-report')) return t('clientExposureReport');
     if (pathname.includes('/reports/status'))       return t('statusReport');
     if (pathname.includes('/reports/progress'))     return t('progressReport');
-    if (pathname.includes('/reports/gap'))          return t('gap');
+    if (pathname.includes('/gap/analysis'))         return t('gap');
+    if (pathname.includes('/gap/report'))           return t('gap');
+    if (pathname.includes('/roadmap'))              return t('roadmap');
     if (pathname.includes('/reports/ces'))          return t('ces');
     if (pathname.includes('/reports/conc'))         return t('conc');
     if (pathname.includes('/turk'))                 return t('mechanicalTurk');
@@ -187,8 +198,25 @@ const getPageTitle = () =>
 };
 
 // ── Change Organization Drop Down ───────────────────────────────────────
+// Header badge showing the currently active organization. Lives inside
+// the OrganizationProvider tree so the context lookup succeeds.
+function ActiveOrganizationBadge()
+{
+    const { activeOrganization } = useOrganization();
+    if (!activeOrganization) return null;
+    return (
+        <Badge
+            className="text-xs font-medium text-white border-transparent shrink-0"
+            style={{ backgroundColor: '#25693e' }}
+        >
+            {activeOrganization.name}
+        </Badge>
+    );
+}
+
 function OrganizationSwitcher()
 {
+    const router = useRouter();
     const { organizations, sortedOrganizations, activeOrganization, setActiveOrganization } = useOrganization();
     const [searchQuery, setSearchQuery] = useState("");
     const [isOpen, setIsOpen] = useState(false);
@@ -197,6 +225,16 @@ function OrganizationSwitcher()
     useEffect(() => {
         if (!isOpen) setSearchQuery("");
     }, [isOpen]);
+
+    // Switching the active org redirects to /home so org-scoped pages don't
+    // render stale data for the previous org. Selecting the already-active
+    // org is a no-op so we don't disrupt the user's current view.
+    const handleSelectOrganization = (org: typeof organizations[number]) =>
+    {
+        if (activeOrganization?.id === org.id) return;
+        setActiveOrganization(org);
+        router.push('/home');
+    };
 
     // Sort: active org first, then by recency
     const orderedOrganizations = useMemo(() => {
@@ -308,7 +346,7 @@ function OrganizationSwitcher()
         {filteredOrganizations.map(org => (
           <DropdownMenuItem
             key={org.id}
-            onClick={() => setActiveOrganization(org)}
+            onClick={() => handleSelectOrganization(org)}
             className="cursor-pointer"
           >
             <span className={org.id === activeOrganization.id ? "font-medium" : ""}>
@@ -326,6 +364,60 @@ function OrganizationSwitcher()
   </DropdownMenu>
 </div>
 </AnimateIcon>
+    );
+}
+
+// Primary sidebar navigation. The Roadmap entry is gated: it only appears
+// once the active organization has at least one finalized GAP report (a row in
+// gap_report), since the roadmap is built from a finalized report's gaps.
+function PrimaryNav()
+{
+    const { activeOrganization } = useOrganization();
+    const [hasGapReport, setHasGapReport] = useState(false);
+
+    useEffect(() => {
+        const orgId = activeOrganization?.id;
+        if (!orgId) { setHasGapReport(false); return; }
+        let cancelled = false;
+        fetch(`/api/gap-report?organizationId=${orgId}`)
+            .then(res => res.json())
+            .then(json => {
+                if (cancelled) return;
+                if (json.success) setHasGapReport(Array.isArray(json.data) && json.data.length > 0);
+            })
+            .catch(() => { /* leave hidden */ });
+        return () => { cancelled = true; };
+    }, [activeOrganization?.id]);
+
+    const items = [
+        { href: '/home', label: 'Action Center', Icon: BellIcon },
+        { href: '/risk-foundation', label: 'Risk Foundation', Icon: LayersIcon },
+        { href: '/gap', label: 'GAP Analysis', Icon: BetweenHorizontalStartIcon },
+        ...(hasGapReport ? [{ href: '/roadmap', label: 'Roadmap', Icon: MapPinIcon }] : []),
+        { href: '/task', label: 'Tasks', Icon: ClipboardListIcon },
+        { href: '/task_old', label: 'Tasks (old)', Icon: ClipboardListIcon },
+        { href: '/assurance', label: 'Assurance', Icon: FingerprintIcon },
+    ];
+
+    return (
+        <>
+            {items.map(({ href, label, Icon }) => (
+                <SidebarMenuItem key={href}>
+                    <AnimateIcon animateOnHover asChild>
+                        <SidebarMenuButton
+                            asChild
+                            tooltip={label}
+                            className="cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
+                        >
+                            <Link href={href}>
+                                <Icon size={16} />
+                                <span className="whitespace-nowrap overflow-hidden">{label}</span>
+                            </Link>
+                        </SidebarMenuButton>
+                    </AnimateIcon>
+                </SidebarMenuItem>
+            ))}
+        </>
     );
 }
 
@@ -663,28 +755,7 @@ function TaskSidebarSections({
             </div>
 
             <SidebarGroup>
-              {[
-                { href: '/risk-foundation', label: 'Risk Foundation', Icon: LayersIcon },
-                { href: '/gap-analysis', label: 'GAP Analysis', Icon: BetweenHorizontalStartIcon },
-                { href: '/roadmap', label: 'Roadmap', Icon: MapPinIcon },
-                { href: '/task', label: 'Tasks', Icon: ClipboardListIcon },
-                { href: '/assurance', label: 'Assurance', Icon: FingerprintIcon },
-              ].map(({ href, label, Icon }) => (
-                <SidebarMenuItem key={href}>
-                  <AnimateIcon animateOnHover asChild>
-                    <SidebarMenuButton
-                      asChild
-                      tooltip={label}
-                      className="cursor-pointer hover:bg-neutral-800 hover:text-white dark:hover:bg-neutral-800 rounded-none"
-                    >
-                      <Link href={href}>
-                        <Icon size={16} />
-                        <span className="whitespace-nowrap overflow-hidden">{label}</span>
-                      </Link>
-                    </SidebarMenuButton>
-                  </AnimateIcon>
-                </SidebarMenuItem>
-              ))}
+              <PrimaryNav />
             </SidebarGroup>
 
             {/* Empty area: click to toggle sidebar */}
@@ -832,7 +903,7 @@ function TaskSidebarSections({
                       <DropdownMenuSubContent className="text-muted-foreground font-normal">
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/status')}>{t('statusReport')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/progress')}>{t('progressReport')}</DropdownMenuItem>
-                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/gap')}>{t('gap')}</DropdownMenuItem>
+                        <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/gap/analysis')}>{t('gap')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/ces')}>{t('ces')}</DropdownMenuItem>
                         <DropdownMenuItem className="cursor-pointer" onClick={() => router.push('/reports/conc')}>{t('conc')}</DropdownMenuItem>
                       </DropdownMenuSubContent>
@@ -969,10 +1040,18 @@ function TaskSidebarSections({
         {/* Main Content Area */}
         <SidebarInset className="flex-1">
           <header className="flex items-center justify-left h-10">
-            <div className="ml-8 w-80">
-              <h1 className="text-base font-semibold text-[rgb(245,245,245)] h-[21px] leading-[21px] tracking-[-0.05px] select-none">
-                {getPageTitle()}
-              </h1>
+            <div className="ml-8 flex-1 min-w-0 flex items-center gap-3">
+              <ActiveOrganizationBadge />
+              {(() => {
+                const crumb = getBreadcrumb(pathname);
+                return crumb ? (
+                  <PageBreadcrumb items={crumb} />
+                ) : (
+                  <h1 className="text-base font-semibold text-[rgb(245,245,245)] h-[21px] leading-[21px] tracking-[-0.05px] select-none">
+                    {getPageTitle()}
+                  </h1>
+                );
+              })()}
             </div>
 
             {/* ACTIONS */ }
@@ -1038,7 +1117,7 @@ function TaskSidebarSections({
           </header>
 
           {/* Page Content */}
-          <main className="flex-1 p-6">
+          <main className="flex-1 px-6 pb-6">
             {children}
           </main>
 

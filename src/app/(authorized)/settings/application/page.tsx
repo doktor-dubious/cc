@@ -8,6 +8,7 @@ import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { Switch } from "@/components/ui/switch"
 import { useTranslations } from 'next-intl';
 
 export default function ApplicationSettingsPage()
@@ -28,11 +29,13 @@ export default function ApplicationSettingsPage()
     const [applicationName, setApplicationName] = useState('');
     const [homeDirectory, setHomeDirectory] = useState('');
     const [pollingInterval, setPollingInterval] = useState(30000);
+    const [enableLlmTaskSpecialization, setEnableLlmTaskSpecialization] = useState(false);
 
     const [originalValues, setOriginalValues] = useState({
         applicationName: '',
         homeDirectory: '',
-        pollingInterval: 30000
+        pollingInterval: 30000,
+        enableLlmTaskSpecialization: false,
     });
 
     const [isLoading, setIsLoading] = useState(true);
@@ -53,11 +56,13 @@ export default function ApplicationSettingsPage()
                     setApplicationName(settings.applicationName || '');
                     setHomeDirectory(settings.homeDirectory || '');
                     setPollingInterval(settings.pollingInterval || 30000);
+                    setEnableLlmTaskSpecialization(!!settings.enableLlmTaskSpecialization);
 
                     setOriginalValues({
                         applicationName: settings.applicationName || '',
                         homeDirectory: settings.homeDirectory || '',
-                        pollingInterval: settings.pollingInterval || 30000
+                        pollingInterval: settings.pollingInterval || 30000,
+                        enableLlmTaskSpecialization: !!settings.enableLlmTaskSpecialization,
                     });
                 } else {
                     toast.error(t('toast.loadError'));
@@ -83,15 +88,17 @@ export default function ApplicationSettingsPage()
         const isChanged =
             applicationName !== originalValues.applicationName ||
             homeDirectory !== originalValues.homeDirectory ||
-            pollingInterval !== originalValues.pollingInterval;
+            pollingInterval !== originalValues.pollingInterval ||
+            enableLlmTaskSpecialization !== originalValues.enableLlmTaskSpecialization;
 
         setHasChanges(isChanged);
-    }, [applicationName, homeDirectory, pollingInterval, originalValues]);
+    }, [applicationName, homeDirectory, pollingInterval, enableLlmTaskSpecialization, originalValues]);
 
     const handleCancel = () => {
         setApplicationName(originalValues.applicationName);
         setHomeDirectory(originalValues.homeDirectory);
         setPollingInterval(originalValues.pollingInterval);
+        setEnableLlmTaskSpecialization(originalValues.enableLlmTaskSpecialization);
     };
 
     const handleSave = async () => {
@@ -116,7 +123,8 @@ export default function ApplicationSettingsPage()
                     id: settingsId,
                     applicationName,
                     homeDirectory,
-                    pollingInterval
+                    pollingInterval,
+                    enableLlmTaskSpecialization,
                 }),
             });
 
@@ -127,7 +135,8 @@ export default function ApplicationSettingsPage()
                 setOriginalValues({
                     applicationName,
                     homeDirectory,
-                    pollingInterval
+                    pollingInterval,
+                    enableLlmTaskSpecialization,
                 });
                 setHasChanges(false);
 
@@ -243,6 +252,30 @@ export default function ApplicationSettingsPage()
                         <p className="text-xs text-muted-foreground mt-1">
                             {t('helpers.pollingInterval')}
                         </p>
+                    </div>
+
+                    {/* AI Task Specialisation (Generate-from-Roadmap, Step 2) */}
+                    <div className="border-t border-border pt-6">
+                        <div className="flex items-start gap-3 max-w-2xl">
+                            <Switch
+                                id="enableLlmTaskSpecialization"
+                                checked={enableLlmTaskSpecialization}
+                                onCheckedChange={setEnableLlmTaskSpecialization}
+                                className="mt-1"
+                            />
+                            <div className="flex-1">
+                                <Label htmlFor="enableLlmTaskSpecialization" className="text-sm cursor-pointer">
+                                    Enable AI task specialisation (Generate from Roadmap)
+                                </Label>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    When on, the Roadmap → Tasks preview calls Anthropic to rewrite each baseline
+                                    task to be specific to the organisation, using the advisor notes from GAP analysis.
+                                    Requires <code>CLAUDE_API</code> in the server environment. When off (default),
+                                    the engine ships only the deterministic baseline tasks — free, instant, and never
+                                    calls an external API.
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     {/* Info Box */}

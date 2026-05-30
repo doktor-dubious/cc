@@ -1,6 +1,7 @@
 "use client"
 
 import * as React from "react"
+import { useRouter } from "next/navigation"
 import { Building2, ChevronsUpDown, Plus, Search } from "lucide-react"
 
 import {
@@ -17,14 +18,24 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
-import { useOrganization } from "@/context/OrganizationContext"
+import { useOrganization, type Organization } from "@/context/OrganizationContext"
 import { Input } from "@/components/ui/input"
 
 export function TeamSwitcher() {
+  const router = useRouter()
   const { isMobile } = useSidebar()
   const { sortedOrganizations, activeOrganization, setActiveOrganization } = useOrganization()
   const [searchQuery, setSearchQuery] = React.useState("")
   const [isOpen, setIsOpen] = React.useState(false)
+
+  // Switching the active org redirects to /home so org-scoped pages don't
+  // render stale data for the previous org. Selecting the already-active
+  // org is a no-op so we don't disrupt the user's current view.
+  const handleSelectOrganization = (org: Organization) => {
+    if (activeOrganization?.id === org.id) return
+    setActiveOrganization(org)
+    router.push('/home')
+  }
 
   // Reset search when dropdown closes
   React.useEffect(() => {
@@ -99,7 +110,7 @@ export function TeamSwitcher() {
               {filteredOrganizations.map((org) => (
                 <DropdownMenuItem
                   key={org.id}
-                  onClick={() => setActiveOrganization(org)}
+                  onClick={() => handleSelectOrganization(org)}
                   className="gap-2 p-2"
                 >
                   <div className="flex size-6 items-center justify-center rounded-md border">

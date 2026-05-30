@@ -443,10 +443,10 @@ export default function GapReportPage() {
   }
 
   return (
-    <div className="flex flex-col h-[calc(100vh-4rem)] bg-background">
+    <div className="bg-background">
       {/* Workflow Header */}
       {returnUrl && (
-        <div className="shrink-0 border-b bg-background px-6 py-3">
+        <div className="border-b bg-background px-6 py-3">
           <Button
             variant="ghost"
             size="sm"
@@ -459,9 +459,9 @@ export default function GapReportPage() {
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="flex">
         {/* Main Content Area (70%) */}
-        <div className="flex-1 overflow-y-auto p-6">
+        <div className="flex-1 p-6">
           <div className="max-w-4xl mx-auto">
           {currentItem.type === 'summary' ? (
             <GapSummarySlide
@@ -516,7 +516,7 @@ export default function GapReportPage() {
       </div>
 
         {/* Catalog Sidebar (30%) */}
-        <div className="w-80 shrink-0 h-full overflow-y-auto">
+        <div className="w-80 shrink-0">
           <GapCatalog
             currentItem={currentItem}
             expandedControlId={expandedControlId}

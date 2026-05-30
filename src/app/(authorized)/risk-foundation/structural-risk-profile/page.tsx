@@ -1,876 +1,849 @@
 'use client';
 
-import { useState, useMemo, useEffect } from 'react';
-import { useTranslations } from 'next-intl';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Switch } from '@/components/ui/switch';
-import { Checkbox } from '@/components/ui/checkbox';
-import { toast } from 'sonner';
-import { useOrganization } from '@/context/OrganizationContext';
+import { useState, useEffect, useCallback }                     from 'react';
+import Link                                                     from 'next/link';
+import { useRouter }                                            from 'next/navigation';
+import { Check, ChevronDown, Download, Edit2, FileText, Loader2,
+         Minus, Plus, Save, Sparkles, X }                        from 'lucide-react';
+import { Document, Packer, Paragraph, TextRun, Table as DocxTable,
+         TableRow as DocxRow, TableCell as DocxCell,
+         WidthType, HeadingLevel, AlignmentType }                from 'docx';
+import { saveAs }                                               from 'file-saver';
+import { toast }                                                from 'sonner';
+
+import { Button }                                               from '@/components/ui/button';
+import { Badge }                                                from '@/components/ui/badge';
+import { Separator }                                            from '@/components/ui/separator';
 import {
-  ChevronDown,
-  ChevronRight,
-  Sparkles,
-  AlertTriangle,
-  Info,
-  Loader2,
-  ArrowRight,
-  ArrowLeft,
-  Trash2,
-  FileText,
-} from 'lucide-react';
-
+    DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
+}                                                               from '@/components/ui/dropdown-menu';
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-} from '@/components/ui/dialog';
-
+    AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
+    AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
+}                                                               from '@/components/ui/alert-dialog';
+import { cn }                                                   from '@/lib/utils';
+import { useOrganization }                                      from '@/context/OrganizationContext';
+import { useUser }                                              from '@/context/UserContext';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
+    generateStructuralRiskReport,
+    type StructuralRiskReport,
+    type RiskLevel,
+    type FactorSnapshot,
+}                                                               from '@/lib/risk-report/report-generator';
+import type {
+    GapRecommendation,
+    OrganizationProfile,
+}                                                               from '@/lib/gap-analysis/recommendation-engine';
 
-type FactorImpact = {
-  parameter: string;
-  value: string | null;
-  impact: string;
-  explanation: string;
-};
-
-type SafeguardRecommendation = {
-  safeguardId: string;
-  controlId: number;
-  title: string;
-  recommendedIg: number;
-  shouldBeInactive: boolean;
-  reasons: string[];
-  relevanceScore: number;
-  factors: FactorImpact[];
-};
-
-type ControlRecommendation = {
-  controlId: number;
-  title: string;
-  shouldBeInactive: boolean;
-  reasons: string[];
-  relevanceScore: number;
-  safeguards: SafeguardRecommendation[];
-  factors: FactorImpact[];
-};
-
-type GapRecommendation = {
-  recommendedIg: number;
-  igReasons: string[];
-  controls: ControlRecommendation[];
-  summary: {
-    totalControls: number;
-    activeControls: number;
-    inactiveControls: number;
-    totalSafeguards: number;
-    activeSafeguards: number;
-    inactiveSafeguards: number;
-  };
-};
-
-const IG_COLORS: Record<number, string> = {
-  1: '#5D664D',
-  2: '#335c8c',
-  3: '#ad423f',
-};
-
-const RETURN_URL = '/risk-foundation';
-
-export default function WorkflowCISRiscAnalysisPage() {
-  const t = useTranslations('ExploratoryGap');
-  const tc = useTranslations('Common');
-  const router = useRouter();
-  const { activeOrganization } = useOrganization();
-
-  const [isLoading, setIsLoading] = useState(false);
-  const [isChangingIg, setIsChangingIg] = useState(false);
-  const [isImplementing, setIsImplementing] = useState(false);
-  const [recommendation, setRecommendation] = useState<GapRecommendation | null>(null);
-  const [organizationName, setOrganizationName] = useState<string>('');
-
-  // User adjustments
-  const [selectedIg, setSelectedIg] = useState<number>(1);
-  const [originalRecommendedIg, setOriginalRecommendedIg] = useState<number>(1);
-  const [inactiveControls, setInactiveControls] = useState<Set<number>>(new Set());
-  const [inactiveSafeguards, setInactiveSafeguards] = useState<Set<string>>(new Set());
-
-  // UI state
-  const [expandedControls, setExpandedControls] = useState<Set<number>>(new Set());
-  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-  const [showClearDialog, setShowClearDialog] = useState(false);
-  const [expandedExplanations, setExpandedExplanations] = useState<Set<string>>(new Set());
-
-  const getStorageKey = (orgId: string) => `exploratory-gap-${orgId}`;
-
-  useEffect(() => {
-    if (!activeOrganization) return;
-
-    const storageKey = getStorageKey(activeOrganization.id);
-    const cached = localStorage.getItem(storageKey);
-
-    if (cached) {
-      try {
-        const data = JSON.parse(cached);
-        setRecommendation(data.recommendation);
-        setOrganizationName(data.organizationName);
-        setSelectedIg(data.selectedIg);
-        setOriginalRecommendedIg(data.originalRecommendedIg ?? data.selectedIg);
-        setInactiveControls(new Set(data.inactiveControls));
-        setInactiveSafeguards(new Set(data.inactiveSafeguards));
-      } catch (error) {
-        console.error('Failed to load cached recommendation:', error);
-        localStorage.removeItem(storageKey);
-      }
-    } else {
-      setRecommendation(null);
-      setOrganizationName('');
-      setSelectedIg(1);
-      setOriginalRecommendedIg(1);
-      setInactiveControls(new Set());
-      setInactiveSafeguards(new Set());
+async function fetchInterpretation(snapshot: FactorSnapshot): Promise<string | null>
+{
+    try
+    {
+        const res = await fetch('/api/structural-risk-interpretation', {
+            method:  'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body:    JSON.stringify({ factorSnapshot: snapshot }),
+        });
+        const json = await res.json();
+        if (!json.success) return null;
+        return json.data.interpretation as string;
     }
-  }, [activeOrganization?.id]);
+    catch { return null; }
+}
 
-  useEffect(() => {
-    if (!activeOrganization || !recommendation) return;
+const RISK_LEVEL_COLORS: Record<RiskLevel, { bg: string; text: string }> = {
+    Low:      { bg: '#335c8c', text: '#ffffff' },
+    Moderate: { bg: '#335c8c', text: '#ffffff' },
+    Elevated: { bg: '#25693e', text: '#ffffff' },
+    High:     { bg: '#ad423f', text: '#ffffff' },
+    Severe:   { bg: '#ad423f', text: '#ffffff' },
+};
 
-    const storageKey = getStorageKey(activeOrganization.id);
-    const data = {
-      recommendation,
-      organizationName,
-      selectedIg,
-      originalRecommendedIg,
-      inactiveControls: Array.from(inactiveControls),
-      inactiveSafeguards: Array.from(inactiveSafeguards),
-      savedAt: new Date().toISOString(),
+const RISK_LEVEL_DOCX_COLORS: Record<RiskLevel, string> = {
+    Low:      '335c8c',
+    Moderate: '335c8c',
+    Elevated: '25693e',
+    High:     'ad423f',
+    Severe:   'ad423f',
+};
+
+const RISK_LEVELS: RiskLevel[] = ['Low', 'Moderate', 'Elevated', 'High', 'Severe'];
+
+type SectionKey = 'structuralInterpretation' | 'priorityControlDomains' | 'exposureIndicators';
+
+const DEFAULT_SECTION_CONFIGS: Record<SectionKey, boolean> = {
+    structuralInterpretation: true,
+    priorityControlDomains:   true,
+    exposureIndicators:       true,
+};
+
+export default function StructuralRiskProfileSummaryPage()
+{
+    const router                  = useRouter();
+    const { activeOrganization }  = useOrganization();
+    const user                    = useUser();
+
+    const [report,         setReport]         = useState<StructuralRiskReport | null>(null);
+    const [reportId,       setReportId]       = useState<string | null>(null);
+    const [isLoading,      setIsLoading]      = useState(true);
+    const [isExporting,    setIsExporting]    = useState(false);
+    const [isGenerating,   setIsGenerating]   = useState(false);
+    const [confirmRegenerateOpen, setConfirmRegenerateOpen] = useState(false);
+
+    // ── Adapt-mode state (mirrors /report page) ──────────────────────────────
+    const [isAdaptMode,    setIsAdaptMode]    = useState(false);
+    const [editingSection, setEditingSection] = useState<SectionKey | null>(null);
+    const [isSaving,       setIsSaving]       = useState(false);
+    const [sectionConfigs, setSectionConfigs] = useState<Record<SectionKey, boolean>>(DEFAULT_SECTION_CONFIGS);
+
+    // Initial load: fetch the persisted report from the DB. No LLM call here —
+    // the Anthropic interpretation only runs on an explicit Generate click.
+    useEffect(() =>
+    {
+        const orgId = activeOrganization?.id;
+        if (!orgId)
+        {
+            setIsLoading(false);
+            setReport(null);
+            setReportId(null);
+            setSectionConfigs(DEFAULT_SECTION_CONFIGS);
+            return;
+        }
+
+        let cancelled = false;
+        setIsLoading(true);
+
+        (async () =>
+        {
+            try
+            {
+                const res  = await fetch(`/api/structural-risk-report?organizationId=${orgId}`);
+                const json = await res.json();
+                if (cancelled) return;
+
+                if (json.success && json.data)
+                {
+                    setReport(json.data.report as StructuralRiskReport);
+                    setReportId(json.data.id ?? null);
+                    setSectionConfigs({ ...DEFAULT_SECTION_CONFIGS, ...(json.data.sectionConfigs ?? {}) });
+                }
+                else
+                {
+                    setReport(null);
+                    setReportId(null);
+                    setSectionConfigs(DEFAULT_SECTION_CONFIGS);
+                }
+                setIsAdaptMode(false);
+                setEditingSection(null);
+            }
+            catch (error)
+            {
+                if (cancelled) return;
+                console.error('Failed to load structural risk report:', error);
+                setReport(null);
+                setReportId(null);
+            }
+            finally
+            {
+                if (!cancelled) setIsLoading(false);
+            }
+        })();
+
+        return () => { cancelled = true; };
+    }, [activeOrganization?.id]);
+
+    // Manual Generate: fetches deps, runs the deterministic scoring, calls
+    // Claude for the interpretation, and persists the result to the DB. This
+    // overwrites any prior report (and any prior Adapt-mode edits) for the org.
+    const generateReport = useCallback(async () =>
+    {
+        if (!activeOrganization)
+        {
+            toast.error('Please select an organization first');
+            return;
+        }
+
+        setIsGenerating(true);
+        try
+        {
+            const recRes  = await fetch(`/api/gap-recommendation?organizationId=${activeOrganization.id}`);
+            const recJson = await recRes.json();
+            if (!recJson.success)
+            {
+                toast.error(recJson.error || 'Failed to generate report');
+                return;
+            }
+
+            const recommendation = recJson.data.recommendation as GapRecommendation;
+            const organizationName: string = recJson.data.organizationName;
+
+            const orgRes  = await fetch(`/api/organization/${activeOrganization.id}`);
+            const orgJson = await orgRes.json();
+            if (!orgJson.success)
+            {
+                toast.error('Failed to load organization');
+                return;
+            }
+
+            const org = orgJson.data;
+            const profile: OrganizationProfile = {
+                size:                     org.size,
+                ig:                       org.ig,
+                naceSection:              org.naceSection,
+                geographicScope:          org.geographicScope,
+                digitalMaturity:          org.digitalMaturity,
+                itSecurityStaff:          org.itSecurityStaff,
+                securityMaturity:         org.securityMaturity,
+                dataSensitivity:          org.dataSensitivity,
+                regulatoryObligations:    org.regulatoryObligations,
+                itEndpointRange:          org.itEndpointRange,
+                infrastructureTypes:      org.infrastructureTypes,
+                softwareDevelopment:      org.softwareDevelopment,
+                publicFacingServices:     org.publicFacingServices,
+                targetedAttackLikelihood: org.targetedAttackLikelihood,
+                downtimeTolerance:        org.downtimeTolerance,
+                supplyChainPosition:      org.supplyChainPosition,
+                securityBudgetRange:      org.securityBudgetRange,
+                manualOperation:          org.manualOperation,
+                productionDependency:     org.productionDependency,
+                customerAccess:           org.customerAccess,
+            };
+
+            const generated = generateStructuralRiskReport(profile, recommendation, org.name);
+
+            const llmInterpretation = await fetchInterpretation(generated.factorSnapshot);
+            if (llmInterpretation)
+            {
+                generated.structuralInterpretation = llmInterpretation;
+            }
+
+            const saveRes = await fetch('/api/structural-risk-report', {
+                method:  'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    organizationId: activeOrganization.id,
+                    report:         generated,
+                    sectionConfigs: DEFAULT_SECTION_CONFIGS,
+                }),
+            });
+            const saveJson = await saveRes.json();
+            if (!saveJson.success)
+            {
+                toast.error(saveJson.error || 'Failed to save report');
+                return;
+            }
+
+            setReport(generated);
+            setReportId(saveJson.data?.id ?? null);
+            setSectionConfigs(DEFAULT_SECTION_CONFIGS);
+            setIsAdaptMode(false);
+            setEditingSection(null);
+
+            // Mirror the detailed-page generate side-effect: hydrate the
+            // exploratory-gap cache so the Detailed Assessment view has data
+            // ready without requiring another manual generate click.
+            const inactiveControls   = new Set<number>();
+            const inactiveSafeguards = new Set<string>();
+            for (const control of recommendation.controls)
+            {
+                if (control.shouldBeInactive) inactiveControls.add(control.controlId);
+                for (const sf of control.safeguards)
+                {
+                    if (sf.shouldBeInactive) inactiveSafeguards.add(sf.safeguardId);
+                }
+            }
+            localStorage.setItem(`exploratory-gap-${activeOrganization.id}`, JSON.stringify({
+                recommendation,
+                organizationName,
+                selectedIg:            recommendation.recommendedIg,
+                originalRecommendedIg: recommendation.recommendedIg,
+                inactiveControls:      Array.from(inactiveControls),
+                inactiveSafeguards:    Array.from(inactiveSafeguards),
+                savedAt:               new Date().toISOString(),
+            }));
+
+            toast.success('Report generated');
+        }
+        catch (error)
+        {
+            console.error('Failed to generate structural risk report:', error);
+            toast.error('Failed to generate report');
+        }
+        finally
+        {
+            setIsGenerating(false);
+        }
+    }, [activeOrganization]);
+
+    // Generate-button handler: prompts for confirmation when an existing
+    // report would be overwritten. The first generation (no prior report)
+    // skips the dialog and runs immediately.
+    const handleGenerateClick = () =>
+    {
+        if (report) setConfirmRegenerateOpen(true);
+        else        generateReport();
     };
 
-    localStorage.setItem(storageKey, JSON.stringify(data));
-  }, [
-    activeOrganization?.id,
-    recommendation,
-    organizationName,
-    selectedIg,
-    originalRecommendedIg,
-    inactiveControls,
-    inactiveSafeguards,
-  ]);
+    // ── Adapt-mode handlers (mirror /report page) ────────────────────────────
 
-  const generateRecommendation = async () => {
-    if (!activeOrganization) {
-      toast.error(t('toast.selectOrganization'));
-      return;
-    }
-
-    setIsLoading(true);
-    try {
-      const res = await fetch(`/api/gap-recommendation?organizationId=${activeOrganization.id}`);
-      const data = await res.json();
-
-      if (data.success) {
-        const rec = data.data.recommendation as GapRecommendation;
-        setRecommendation(rec);
-        setOrganizationName(data.data.organizationName);
-        setSelectedIg(rec.recommendedIg);
-        setOriginalRecommendedIg(rec.recommendedIg);
-
-        const inactiveCtrl = new Set<number>();
-        const inactiveSf = new Set<string>();
-
-        for (const control of rec.controls) {
-          if (control.shouldBeInactive) {
-            inactiveCtrl.add(control.controlId);
-          }
-          for (const sf of control.safeguards) {
-            if (sf.shouldBeInactive) {
-              inactiveSf.add(sf.safeguardId);
+    const handleSaveAdaptations = async () =>
+    {
+        if (!activeOrganization || !report) return;
+        setIsSaving(true);
+        try
+        {
+            const res = await fetch('/api/structural-risk-report', {
+                method:  'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body:    JSON.stringify({
+                    organizationId: activeOrganization.id,
+                    report,
+                    sectionConfigs,
+                }),
+            });
+            const json = await res.json();
+            if (!json.success)
+            {
+                toast.error(json.error || 'Failed to save adaptations');
+                return;
             }
-          }
+            setIsAdaptMode(false);
+            setEditingSection(null);
+            toast.success('Report adaptations saved');
         }
-
-        setInactiveControls(inactiveCtrl);
-        setInactiveSafeguards(inactiveSf);
-        toast.success(t('toast.generateSuccess'));
-      } else {
-        toast.error(data.error || t('toast.generateError'));
-      }
-    } catch (error) {
-      console.error('Failed to generate recommendation:', error);
-      toast.error(t('toast.generateError'));
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  const clearAnalysis = () => {
-    if (!activeOrganization) return;
-
-    const storageKey = getStorageKey(activeOrganization.id);
-    localStorage.removeItem(storageKey);
-
-    setRecommendation(null);
-    setOrganizationName('');
-    setSelectedIg(1);
-    setOriginalRecommendedIg(1);
-    setInactiveControls(new Set());
-    setInactiveSafeguards(new Set());
-    setExpandedControls(new Set());
-    setExpandedExplanations(new Set());
-    setShowClearDialog(false);
-
-    toast.success(t('toast.clearSuccess'));
-  };
-
-  const changeIg = async (newIg: number) => {
-    if (!activeOrganization || newIg === selectedIg) return;
-
-    setIsChangingIg(true);
-    try {
-      const res = await fetch(
-        `/api/gap-recommendation?organizationId=${activeOrganization.id}&targetIg=${newIg}`
-      );
-      const data = await res.json();
-
-      if (data.success) {
-        const rec = data.data.recommendation as GapRecommendation;
-        setRecommendation(rec);
-        setSelectedIg(newIg);
-
-        const inactiveCtrl = new Set<number>();
-        const inactiveSf = new Set<string>();
-
-        for (const control of rec.controls) {
-          if (control.shouldBeInactive) {
-            inactiveCtrl.add(control.controlId);
-          }
-          for (const sf of control.safeguards) {
-            if (sf.shouldBeInactive) {
-              inactiveSf.add(sf.safeguardId);
-            }
-          }
+        catch (error)
+        {
+            console.error('Failed to save:', error);
+            toast.error('Failed to save adaptations');
         }
-
-        setInactiveControls(inactiveCtrl);
-        setInactiveSafeguards(inactiveSf);
-      } else {
-        toast.error(data.error || t('toast.generateError'));
-      }
-    } catch (error) {
-      console.error('Failed to change IG:', error);
-      toast.error(t('toast.generateError'));
-    } finally {
-      setIsChangingIg(false);
-    }
-  };
-
-  const toggleControl = (controlId: number) => {
-    setInactiveControls((prev) => {
-      const next = new Set(prev);
-      if (next.has(controlId)) {
-        next.delete(controlId);
-      } else {
-        next.add(controlId);
-        const control = recommendation?.controls.find((c) => c.controlId === controlId);
-        if (control) {
-          setInactiveSafeguards((prevSf) => {
-            const nextSf = new Set(prevSf);
-            control.safeguards.forEach((sf) => nextSf.add(sf.safeguardId));
-            return nextSf;
-          });
-        }
-      }
-      return next;
-    });
-  };
-
-  const toggleSafeguard = (safeguardId: string) => {
-    setInactiveSafeguards((prev) => {
-      const next = new Set(prev);
-      if (next.has(safeguardId)) {
-        next.delete(safeguardId);
-      } else {
-        next.add(safeguardId);
-      }
-      return next;
-    });
-  };
-
-  const toggleExpand = (controlId: number) => {
-    setExpandedControls((prev) => {
-      const next = new Set(prev);
-      if (next.has(controlId)) {
-        next.delete(controlId);
-      } else {
-        next.add(controlId);
-      }
-      return next;
-    });
-  };
-
-  const toggleExplanation = (key: string) => {
-    setExpandedExplanations((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) {
-        next.delete(key);
-      } else {
-        next.add(key);
-      }
-      return next;
-    });
-  };
-
-  const implementRecommendations = async () => {
-    if (!activeOrganization) return;
-
-    setIsImplementing(true);
-    try {
-      const res = await fetch('/api/gap-recommendation', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          organizationId: activeOrganization.id,
-          recommendedIg: selectedIg,
-          inactiveControlIds: Array.from(inactiveControls),
-          inactiveSafeguardIds: Array.from(inactiveSafeguards),
-        }),
-      });
-      const data = await res.json();
-
-      if (data.success) {
-        toast.success(t('toast.implementSuccess'));
-        setShowConfirmDialog(false);
-        router.push(RETURN_URL);
-      } else {
-        toast.error(data.error || t('toast.implementError'));
-      }
-    } catch (error) {
-      console.error('Failed to implement recommendations:', error);
-      toast.error(t('toast.implementError'));
-    } finally {
-      setIsImplementing(false);
-    }
-  };
-
-  const currentSummary = useMemo(() => {
-    if (!recommendation) return null;
-
-    const activeControlsCount = 18 - inactiveControls.size;
-    const inactiveControlsCount = inactiveControls.size;
-
-    let totalSafeguards = 0;
-    let activeSafeguardsCount = 0;
-
-    for (const control of recommendation.controls) {
-      for (const sf of control.safeguards) {
-        totalSafeguards++;
-        if (!inactiveSafeguards.has(sf.safeguardId)) {
-          activeSafeguardsCount++;
-        }
-      }
-    }
-
-    return {
-      totalControls: 18,
-      activeControls: activeControlsCount,
-      inactiveControls: inactiveControlsCount,
-      totalSafeguards,
-      activeSafeguards: activeSafeguardsCount,
-      inactiveSafeguards: totalSafeguards - activeSafeguardsCount,
+        finally { setIsSaving(false); }
     };
-  }, [recommendation, inactiveControls, inactiveSafeguards]);
 
-  const getRelevanceColor = (score: number): string => {
-    if (score >= 80) return 'text-green-500';
-    if (score >= 50) return 'text-yellow-500';
-    return 'text-red-500';
-  };
+    const toggleSection = (key: SectionKey) =>
+        setSectionConfigs(prev => ({ ...prev, [key]: !prev[key] }));
 
-  return (
-    <div className="flex flex-col min-h-screen bg-background">
-      <div className="flex-1 overflow-y-auto p-6">
-        <div className="max-w-6xl mx-auto space-y-8">
-          {/* Header */}
-          <div className="space-y-2">
-            <h1 className="text-2xl font-semibold">{t('titleCISRisc')}</h1>
-            <p className="text-muted-foreground">{t('description')}</p>
-          </div>
+    const changeAssessmentLevel = (index: number, direction: 'up' | 'down') =>
+    {
+        if (!report) return;
+        const currentIndex = RISK_LEVELS.indexOf(report.exposureIndicators[index].assessment);
+        const newIndex = direction === 'up'
+            ? Math.min(currentIndex + 1, RISK_LEVELS.length - 1)
+            : Math.max(currentIndex - 1, 0);
+        if (newIndex === currentIndex) return;
 
-          {/* Generate and Clear buttons */}
-          <div className="border rounded-lg p-6 bg-muted/30">
-            <div className="flex items-center justify-between">
-              <Button
-                onClick={generateRecommendation}
-                disabled={!activeOrganization || isLoading}
-                className="gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                    {t('buttons.generating')}
-                  </>
-                ) : (
-                  <>
-                    <Sparkles className="w-4 h-4" />
-                    {t('buttons.generateShort')}
-                  </>
-                )}
-              </Button>
+        const newIndicators = [...report.exposureIndicators];
+        newIndicators[index] = { ...newIndicators[index], assessment: RISK_LEVELS[newIndex] };
+        setReport({ ...report, exposureIndicators: newIndicators });
+    };
 
-              {recommendation && (
-                <Button
-                  variant="secondary"
-                  onClick={() => setShowClearDialog(true)}
-                  className="gap-2"
-                >
-                  <Trash2 className="w-4 h-4" />
-                  {tc('clear')}
-                </Button>
-              )}
+    const updateInterpretation = (text: string) =>
+    {
+        if (!report) return;
+        setReport({ ...report, structuralInterpretation: text });
+    };
+
+    const addPriorityDomain = () =>
+    {
+        if (!report) return;
+        setReport({ ...report, priorityControlDomains: [...report.priorityControlDomains, 'New Domain'] });
+    };
+
+    const updatePriorityDomain = (index: number, value: string) =>
+    {
+        if (!report) return;
+        const newDomains = [...report.priorityControlDomains];
+        newDomains[index] = value;
+        setReport({ ...report, priorityControlDomains: newDomains });
+    };
+
+    const removePriorityDomain = (index: number) =>
+    {
+        if (!report) return;
+        const newDomains = report.priorityControlDomains.filter((_, i) => i !== index);
+        setReport({ ...report, priorityControlDomains: newDomains });
+    };
+
+    const handleExportPdf = () =>
+    {
+        setIsExporting(true);
+        try { window.print(); }
+        finally { setIsExporting(false); }
+    };
+
+    const handleExportDocx = async () =>
+    {
+        if (!report) return;
+        setIsExporting(true);
+        try
+        {
+            const preparedLine = reportId
+                ? `${report.generatedDate} · Prepared by ${user.name} · ID: ${reportId}`
+                : `${report.generatedDate} · Prepared by ${user.name}`;
+
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new Paragraph({ text: report.organizationName, heading: HeadingLevel.HEADING_1, spacing: { after: 200 } }),
+                        new Paragraph({ text: 'Structural Risk Profile', heading: HeadingLevel.HEADING_2, spacing: { after: 100 } }),
+                        new Paragraph({ text: "Summary of the client's structural exposure", spacing: { after: 100 } }),
+                        new Paragraph({ text: preparedLine, spacing: { after: 400 } }),
+
+                        ...(sectionConfigs.structuralInterpretation ? [
+                            new Paragraph({
+                                children: [new TextRun({ text: 'Structural Risk Interpretation', bold: true })],
+                                heading: HeadingLevel.HEADING_3,
+                                spacing: { before: 400, after: 200 },
+                            }),
+                            ...report.structuralInterpretation.split('\n\n').map(para =>
+                                new Paragraph({ text: para, spacing: { after: 200 } })),
+                        ] : []),
+
+                        ...(sectionConfigs.priorityControlDomains ? [
+                            new Paragraph({
+                                children: [new TextRun({ text: 'Priority Focus Areas', bold: true })],
+                                heading: HeadingLevel.HEADING_3,
+                                spacing: { before: 400, after: 200 },
+                            }),
+                            ...report.priorityControlDomains.map(domain =>
+                                new Paragraph({ text: domain, bullet: { level: 0 }, spacing: { after: 100 } })),
+                        ] : []),
+
+                        ...(sectionConfigs.exposureIndicators ? [
+                            new Paragraph({
+                                children: [new TextRun({ text: 'Key Exposure Drivers', bold: true })],
+                                heading: HeadingLevel.HEADING_3,
+                                spacing: { before: 400, after: 200 },
+                            }),
+                            new DocxTable({
+                                width: { size: 100, type: WidthType.PERCENTAGE },
+                                rows: [
+                                    new DocxRow({
+                                        children: [
+                                            new DocxCell({
+                                                children: [new Paragraph({ children: [new TextRun({ text: 'Exposure Driver', bold: true })] })],
+                                                width:    { size: 50, type: WidthType.PERCENTAGE },
+                                                shading:  { fill: 'E5E7EB' },
+                                            }),
+                                            new DocxCell({
+                                                children: [new Paragraph({ children: [new TextRun({ text: 'Assessment', bold: true })] })],
+                                                width:    { size: 50, type: WidthType.PERCENTAGE },
+                                                shading:  { fill: 'E5E7EB' },
+                                            }),
+                                        ],
+                                    }),
+                                    ...report.exposureIndicators.map(indicator =>
+                                        new DocxRow({
+                                            children: [
+                                                new DocxCell({ children: [new Paragraph({ text: indicator.name })] }),
+                                                new DocxCell({
+                                                    children: [new Paragraph({
+                                                        children: [new TextRun({
+                                                            text:    indicator.assessment,
+                                                            bold:    true,
+                                                            color:   'FFFFFF',
+                                                            shading: { fill: RISK_LEVEL_DOCX_COLORS[indicator.assessment] },
+                                                        })],
+                                                        alignment: AlignmentType.CENTER,
+                                                    })],
+                                                }),
+                                            ],
+                                        })),
+                                ],
+                            }),
+                        ] : []),
+                    ],
+                }],
+            });
+
+            const blob = await Packer.toBlob(doc);
+            saveAs(blob, `${report.organizationName.replace(/\s+/g, '_')}_Structural_Risk_Profile.docx`);
+            toast.success('Word document exported');
+        }
+        catch (error)
+        {
+            console.error('Export failed:', error);
+            toast.error('Failed to export Word document');
+        }
+        finally { setIsExporting(false); }
+    };
+
+    if (isLoading)
+    {
+        return (
+            <div className="flex flex-col min-h-screen bg-background">
+                <div className="flex-1 flex items-center justify-center">
+                    <Loader2 className="w-8 h-8 animate-spin text-muted-foreground" />
+                </div>
             </div>
-          </div>
+        );
+    }
 
-          {/* Summary and Implement buttons */}
-          {recommendation && (
-            <div className="bg-neutral-800/50 border border-neutral-700 rounded-lg p-4 space-y-3">
-              <div>
-                <h4 className="text-sm font-medium">{t('actions.title')}</h4>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {t('actions.description')}
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => router.push('/risk-foundation/structural-risk-profile/report')}
-                  className="gap-2"
-                >
-                  <FileText className="w-4 h-4" />
-                  {t('buttons.summary')}
-                </Button>
-                <Button
-                  size="sm"
-                  onClick={() => setShowConfirmDialog(true)}
-                  className="gap-2"
-                >
-                  {t('buttons.implementShort')}
-                  <ArrowRight className="w-4 h-4" />
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {/* Recommendation Results */}
-          {recommendation && (
-            <div className="space-y-6">
-              {/* Recommended IG */}
-              <div className="border rounded-lg p-6 space-y-4">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h2 className="text-lg font-semibold">{t('labels.recommendedIg')}</h2>
-                    <p className="text-sm text-muted-foreground">
-                      {t('labels.basedOn', { name: organizationName })}
-                    </p>
-                  </div>
-                  <Badge
-                    className="text-white text-lg px-4 py-2"
-                    style={{ backgroundColor: IG_COLORS[selectedIg] }}
-                  >
-                    IG{selectedIg}
-                  </Badge>
-                </div>
-
-                {/* IG Selection */}
-                <div className="flex gap-3 pt-2">
-                  {[1, 2, 3].map((ig) => (
-                    <Button
-                      key={ig}
-                      variant={selectedIg === ig ? 'default' : 'outline'}
-                      className={`flex-1 ${selectedIg === ig ? 'text-white' : ''}`}
-                      style={selectedIg === ig ? { backgroundColor: IG_COLORS[ig] } : {}}
-                      onClick={() => changeIg(ig)}
-                      disabled={isChangingIg}
-                    >
-                      {isChangingIg && selectedIg !== ig ? (
-                        <Loader2 className="w-4 h-4 animate-spin" />
-                      ) : (
-                        `IG${ig}`
-                      )}
-                      {ig === originalRecommendedIg && selectedIg !== ig && (
-                        <span className="ml-1 text-xs opacity-60">(rec)</span>
-                      )}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* IG Reasons */}
-                <div className="space-y-2 pt-2">
-                  <p className="text-sm font-medium flex items-center gap-2">
-                    <Info className="w-4 h-4" />
-                    {t('labels.analysisFactors')}
-                  </p>
-                  <ul className="text-sm text-muted-foreground space-y-1 pl-6">
-                    {recommendation.igReasons.map((reason, idx) => (
-                      <li key={idx} className="list-disc">
-                        {reason}
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Summary */}
-              {currentSummary && (
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="border rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-green-500">
-                      {currentSummary.activeControls}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{t('labels.activeControls')}</p>
-                  </div>
-                  <div className="border rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-red-500">
-                      {currentSummary.inactiveControls}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{t('labels.inactiveControls')}</p>
-                  </div>
-                  <div className="border rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-green-500">
-                      {currentSummary.activeSafeguards}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{t('labels.activeSafeguards')}</p>
-                  </div>
-                  <div className="border rounded-lg p-4 text-center">
-                    <p className="text-2xl font-bold text-red-500">
-                      {currentSummary.inactiveSafeguards}
-                    </p>
-                    <p className="text-sm text-muted-foreground">
-                      {t('labels.inactiveSafeguards')}
-                    </p>
-                  </div>
-                </div>
-              )}
-
-              {/* Controls List */}
-              <div className="border rounded-lg overflow-hidden">
-                <div className="bg-muted/50 p-4 border-b">
-                  <h2 className="font-semibold">{t('headings.controlsRecommendations')}</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {t('headings.controlsDescription')}
-                  </p>
-                </div>
-
-                <div className="divide-y">
-                  {recommendation.controls.map((control) => {
-                    const isControlInactive = inactiveControls.has(control.controlId);
-                    const isExpanded = expandedControls.has(control.controlId);
-                    const activeSafeguardsInControl = control.safeguards.filter(
-                      (sf) => !inactiveSafeguards.has(sf.safeguardId)
-                    ).length;
-
-                    return (
-                      <div
-                        key={control.controlId}
-                        className={isControlInactive ? 'opacity-60' : ''}
-                      >
-                        {/* Control Row */}
-                        <div
-                          className="flex items-center gap-4 p-4 hover:bg-muted/30 cursor-pointer"
-                          onClick={() => toggleExpand(control.controlId)}
-                        >
-                          <div className="flex-shrink-0">
-                            {isExpanded ? (
-                              <ChevronDown className="w-5 h-5 text-muted-foreground" />
-                            ) : (
-                              <ChevronRight className="w-5 h-5 text-muted-foreground" />
+    if (!activeOrganization || !report)
+    {
+        return (
+            <div className="flex flex-col min-h-screen bg-background">
+                <div className="flex-1 p-6">
+                    <div className="border rounded-lg p-12 text-center text-muted-foreground max-w-4xl mx-auto bg-panel">
+                        <p className="text-lg font-medium">No structural risk data available</p>
+                        <p className="text-sm mt-1">Generate a CIS gap analysis first to populate the structural risk profile.</p>
+                        <div className="mt-4 flex items-center justify-center gap-2">
+                            {activeOrganization && (
+                                <Button
+                                    variant="default"
+                                    onClick={handleGenerateClick}
+                                    disabled={isGenerating}
+                                >
+                                    {isGenerating
+                                        ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                        : <Sparkles className="w-4 h-4 mr-1" />}
+                                    Generate
+                                </Button>
                             )}
-                          </div>
-
-                          <div className="flex-grow min-w-0">
-                            <div className="flex items-center gap-2">
-                              <span className="font-medium">Control {control.controlId}</span>
-                              <span className="text-muted-foreground">—</span>
-                              <span className="truncate">{control.title}</span>
-                            </div>
-                            <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground">
-                              <span className={getRelevanceColor(control.relevanceScore)}>
-                                {t('labels.relevance')}: {control.relevanceScore}%
-                              </span>
-                              <span>•</span>
-                              <span>
-                                {activeSafeguardsInControl}/{control.safeguards.length} safeguards
-                                active
-                              </span>
-                              <span>•</span>
-                              <button
-                                className="text-xs text-blue-500 hover:text-blue-400 hover:underline cursor-pointer"
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  toggleExplanation(`control-${control.controlId}`);
-                                }}
-                              >
-                                {expandedExplanations.has(`control-${control.controlId}`) ? 'hide scoring' : 'explain scoring...'}
-                              </button>
-                            </div>
-                          </div>
-
-                          <div
-                            className="flex items-center gap-3"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <label className="flex items-center gap-2 cursor-pointer">
-                              <Switch
-                                checked={!isControlInactive}
-                                onCheckedChange={() => toggleControl(control.controlId)}
-                              />
-                              <span className="text-sm text-muted-foreground">
-                                {isControlInactive ? t('labels.inactive') : t('labels.active')}
-                              </span>
-                            </label>
-                          </div>
+                            <Button
+                                variant="outline"
+                                onClick={() => router.push('/risk-foundation/structural-risk-profile/detailed')}
+                            >
+                                Go to Detailed Assessment
+                            </Button>
                         </div>
+                    </div>
+                </div>
+            </div>
+        );
+    }
 
-                        {/* Control explanation */}
-                        {expandedExplanations.has(`control-${control.controlId}`) && control.factors && (
-                          <div className="px-4 py-3 bg-muted/30 border-t space-y-2">
-                            <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                              {t('labels.analysis')} — Factor Weights
-                            </p>
-                            <div className="rounded border bg-background/50 overflow-hidden">
-                              <table className="w-full text-xs">
+    return (
+        <div className="flex flex-col min-h-screen bg-background">
+            <div className="flex-1 overflow-y-auto p-8 print:p-4">
+                <div className="max-w-4xl mx-auto">
+                    {/* ── Title row with right-aligned menu ─────────────────── */}
+                    <div className="flex items-start justify-between gap-6 mb-2">
+                        <h1 className="text-2xl font-bold">Structural Risk Profile</h1>
+
+                        <div className="flex items-center gap-2 print:hidden shrink-0">
+                            {isAdaptMode ? (
+                                <Button
+                                    variant="default"
+                                    size="sm"
+                                    onClick={handleSaveAdaptations}
+                                    disabled={isSaving}
+                                >
+                                    {isSaving
+                                        ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                        : <Save className="w-4 h-4 mr-1" />}
+                                    {isSaving ? 'Saving' : 'Save'}
+                                </Button>
+                            ) : (
+                                <>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="cursor-pointer"
+                                        onClick={() => router.push('/risk-foundation/structural-risk-profile/detailed')}
+                                    >
+                                        Detailed Assessment
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="cursor-pointer"
+                                        onClick={() => setIsAdaptMode(true)}
+                                    >
+                                        <Edit2 className="w-4 h-4 mr-1" />
+                                        Edit
+                                    </Button>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button variant="outline" size="sm" className="cursor-pointer" disabled={isExporting}>
+                                                {isExporting
+                                                    ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                                    : <Download className="w-4 h-4 mr-1" />}
+                                                Export
+                                                <ChevronDown className="w-4 h-4 ml-1 opacity-50" />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end">
+                                            <DropdownMenuItem onClick={handleExportPdf} className="cursor-pointer">
+                                                <Download className="w-4 h-4 mr-2" />
+                                                PDF
+                                            </DropdownMenuItem>
+                                            <DropdownMenuItem onClick={handleExportDocx} className="cursor-pointer">
+                                                <FileText className="w-4 h-4 mr-2" />
+                                                Word
+                                            </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="cursor-pointer"
+                                        onClick={handleGenerateClick}
+                                        disabled={isGenerating}
+                                    >
+                                        {isGenerating
+                                            ? <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                                            : <Sparkles className="w-4 h-4 mr-1" />}
+                                        Generate
+                                    </Button>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* ── Description + date ────────────────────────────────── */}
+                    <p className="text-sm text-muted-foreground mb-2">
+                        Summary of the client&apos;s structural exposure
+                    </p>
+                    <p className="text-sm text-muted-foreground mb-2">
+                        Qualitative view of the client&apos;s control posture. See{' '}
+                        <Link
+                            href="/risk-foundation/per-safeguard-exposure"
+                            className="underline underline-offset-2 hover:text-foreground"
+                        >
+                            Per-Safeguard Financial Exposure
+                        </Link>
+                        {' '}for the monetised counterpart.
+                    </p>
+                    <p className="text-sm text-muted-foreground">
+                        {report.generatedDate} · Prepared by {user.name}
+                        {reportId && <> · ID: {reportId}</>}
+                    </p>
+
+                    <Separator className="my-6" />
+
+                    {/* ── Structural Risk Interpretation ────────────────────── */}
+                    <ReportSection
+                        title="Structural Risk Interpretation"
+                        isActive={sectionConfigs.structuralInterpretation}
+                        isAdaptMode={isAdaptMode}
+                        isEditing={editingSection === 'structuralInterpretation'}
+                        onToggle={() => toggleSection('structuralInterpretation')}
+                        onEdit={() => setEditingSection('structuralInterpretation')}
+                        onSaveEdit={() => setEditingSection(null)}
+                    >
+                        {editingSection === 'structuralInterpretation' ? (
+                            <textarea
+                                value={report.structuralInterpretation}
+                                onChange={(e) => updateInterpretation(e.target.value)}
+                                className="w-full min-h-[200px] p-3 border rounded-lg resize-y font-sans text-sm leading-relaxed"
+                            />
+                        ) : (
+                            <div className="prose prose-sm max-w-none text-foreground/90 whitespace-pre-line leading-relaxed">
+                                {report.structuralInterpretation}
+                            </div>
+                        )}
+                    </ReportSection>
+
+                    {/* ── Priority Focus Areas ──────────────────────────────── */}
+                    <ReportSection
+                        title="Priority Focus Areas"
+                        isActive={sectionConfigs.priorityControlDomains}
+                        isAdaptMode={isAdaptMode}
+                        isEditing={editingSection === 'priorityControlDomains'}
+                        onToggle={() => toggleSection('priorityControlDomains')}
+                        onEdit={() => setEditingSection('priorityControlDomains')}
+                        onSaveEdit={() => setEditingSection(null)}
+                    >
+                        <ul className="list-disc list-inside space-y-1.5 text-foreground/90">
+                            {report.priorityControlDomains.map((domain, idx) => (
+                                <li key={idx} className="ml-2 flex items-center gap-2">
+                                    {editingSection === 'priorityControlDomains' ? (
+                                        <>
+                                            <input
+                                                type="text"
+                                                value={domain}
+                                                onChange={(e) => updatePriorityDomain(idx, e.target.value)}
+                                                className="flex-1 px-2 py-1 border rounded text-sm"
+                                            />
+                                            <button
+                                                onClick={() => removePriorityDomain(idx)}
+                                                className="p-1 hover:bg-red-100 rounded text-red-600 cursor-pointer"
+                                                title="Remove"
+                                            >
+                                                <Minus className="w-3 h-3" />
+                                            </button>
+                                        </>
+                                    ) : (
+                                        domain
+                                    )}
+                                </li>
+                            ))}
+                        </ul>
+                        {editingSection === 'priorityControlDomains' && (
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={addPriorityDomain}
+                                className="mt-3 gap-2"
+                            >
+                                <Plus className="w-3 h-3" />
+                                Add Domain
+                            </Button>
+                        )}
+                    </ReportSection>
+
+                    {/* ── Key Exposure Drivers ──────────────────────────────── */}
+                    <ReportSection
+                        title="Key Exposure Drivers"
+                        isActive={sectionConfigs.exposureIndicators}
+                        isAdaptMode={isAdaptMode}
+                        isEditing={editingSection === 'exposureIndicators'}
+                        onToggle={() => toggleSection('exposureIndicators')}
+                        onEdit={() => setEditingSection('exposureIndicators')}
+                        onSaveEdit={() => setEditingSection(null)}
+                    >
+                        <div className="border rounded-lg overflow-hidden bg-panel">
+                            <table className="w-full">
                                 <thead className="bg-muted/50">
-                                  <tr>
-                                    <th className="text-left px-3 py-1.5 font-medium">Parameter</th>
-                                    <th className="text-left px-3 py-1.5 font-medium">Value</th>
-                                    <th className="text-left px-3 py-1.5 font-medium">Impact</th>
-                                    <th className="text-left px-3 py-1.5 font-medium">Explanation</th>
-                                  </tr>
+                                    <tr>
+                                        <th className="text-left px-4 py-3 font-medium border-r">Exposure Driver</th>
+                                        <th className="text-left px-4 py-3 font-medium">Assessment</th>
+                                    </tr>
                                 </thead>
                                 <tbody className="divide-y">
-                                  {control.factors.map((factor, idx) => (
-                                    <tr key={idx} className="hover:bg-muted/30">
-                                      <td className="px-3 py-1.5 font-medium">{factor.parameter}</td>
-                                      <td className="px-3 py-1.5 text-muted-foreground font-mono">
-                                        {factor.value || '—'}
-                                      </td>
-                                      <td className="px-3 py-1.5">
-                                        <span className={
-                                          factor.impact.includes('+') ? 'text-green-500' :
-                                          factor.impact.includes('-') ? 'text-red-500' :
-                                          factor.impact.includes('INACTIVE') ? 'text-red-500 font-medium' :
-                                          'text-muted-foreground'
-                                        }>
-                                          {factor.impact}
-                                        </span>
-                                      </td>
-                                      <td className="px-3 py-1.5 text-muted-foreground">{factor.explanation}</td>
-                                    </tr>
-                                  ))}
+                                    {report.exposureIndicators.map((indicator, idx) => (
+                                        <tr key={idx} className="hover:bg-muted/20">
+                                            <td className="px-4 py-3 border-r font-medium">{indicator.name}</td>
+                                            <td className="px-4 py-3">
+                                                <div className="flex items-center gap-2">
+                                                    {editingSection === 'exposureIndicators' && (
+                                                        <button
+                                                            onClick={() => changeAssessmentLevel(idx, 'down')}
+                                                            className="p-1 hover:bg-muted rounded cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                                            disabled={RISK_LEVELS.indexOf(indicator.assessment) === 0}
+                                                            title="Lower assessment"
+                                                        >
+                                                            <Minus className="w-3 h-3" />
+                                                        </button>
+                                                    )}
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="font-medium w-24 justify-center"
+                                                        style={{
+                                                            backgroundColor: RISK_LEVEL_COLORS[indicator.assessment].bg,
+                                                            color:           RISK_LEVEL_COLORS[indicator.assessment].text,
+                                                            borderColor:     RISK_LEVEL_COLORS[indicator.assessment].bg,
+                                                        }}
+                                                    >
+                                                        {indicator.assessment}
+                                                    </Badge>
+                                                    {editingSection === 'exposureIndicators' && (
+                                                        <button
+                                                            onClick={() => changeAssessmentLevel(idx, 'up')}
+                                                            className="p-1 hover:bg-muted rounded cursor-pointer disabled:opacity-30 disabled:cursor-not-allowed"
+                                                            disabled={RISK_LEVELS.indexOf(indicator.assessment) === RISK_LEVELS.length - 1}
+                                                            title="Raise assessment"
+                                                        >
+                                                            <Plus className="w-3 h-3" />
+                                                        </button>
+                                                    )}
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    ))}
                                 </tbody>
-                              </table>
-                            </div>
-                            <p className="text-xs text-muted-foreground">
-                              Final Score: <span className={`font-medium ${getRelevanceColor(control.relevanceScore)}`}>{control.relevanceScore}%</span>
-                              {control.shouldBeInactive && <span className="text-red-500 ml-2">(Marked Inactive)</span>}
-                            </p>
-                          </div>
-                        )}
-
-                        {/* Expanded Safeguards */}
-                        {isExpanded && (
-                          <div className="bg-muted/20 border-t">
-                            <div className="divide-y">
-                              {control.safeguards.map((sf) => {
-                                const isSfInactive = inactiveSafeguards.has(sf.safeguardId);
-                                const sfExplainKey = `safeguard-${sf.safeguardId}`;
-                                return (
-                                  <div key={sf.safeguardId}>
-                                    <div
-                                      className={`flex items-center gap-4 px-4 py-3 pl-12 ${isSfInactive ? 'opacity-50' : ''}`}
-                                    >
-                                      <div className="flex-grow min-w-0">
-                                        <div className="flex items-center gap-2">
-                                          <span className="font-mono text-sm text-muted-foreground">
-                                            {sf.safeguardId}
-                                          </span>
-                                          <span className="truncate text-sm">{sf.title}</span>
-                                        </div>
-                                        <div className="flex items-center gap-3 mt-0.5">
-                                          {sf.reasons.length > 0 && (
-                                            <p className="text-xs text-muted-foreground truncate">
-                                              {sf.reasons[0]}
-                                            </p>
-                                          )}
-                                          <button
-                                            className="text-xs text-blue-500 hover:text-blue-400 hover:underline cursor-pointer flex-shrink-0"
-                                            onClick={(e) => {
-                                              e.stopPropagation();
-                                              toggleExplanation(sfExplainKey);
-                                            }}
-                                          >
-                                            {expandedExplanations.has(sfExplainKey) ? 'hide' : 'explain...'}
-                                          </button>
-                                        </div>
-                                      </div>
-
-                                      <div
-                                        className="flex items-center gap-2"
-                                        onClick={(e) => e.stopPropagation()}
-                                      >
-                                        <span
-                                          className={`text-xs ${getRelevanceColor(sf.relevanceScore)}`}
-                                        >
-                                          {sf.relevanceScore}%
-                                        </span>
-                                        <Checkbox
-                                          checked={!isSfInactive}
-                                          onCheckedChange={() => toggleSafeguard(sf.safeguardId)}
-                                          disabled={isControlInactive}
-                                        />
-                                      </div>
-                                    </div>
-
-                                    {/* Expanded safeguard explanation */}
-                                    {expandedExplanations.has(sfExplainKey) && sf.factors && (
-                                      <div className="px-4 py-2 pl-12 bg-muted/10 border-t">
-                                        <div className="rounded border bg-background/50 overflow-hidden">
-                                          <table className="w-full text-xs">
-                                            <thead className="bg-muted/50">
-                                              <tr>
-                                                <th className="text-left px-2 py-1 font-medium">Parameter</th>
-                                                <th className="text-left px-2 py-1 font-medium">Value</th>
-                                                <th className="text-left px-2 py-1 font-medium">Impact</th>
-                                                <th className="text-left px-2 py-1 font-medium">Explanation</th>
-                                              </tr>
-                                            </thead>
-                                            <tbody className="divide-y">
-                                              {sf.factors.map((factor, idx) => (
-                                                <tr key={idx} className="hover:bg-muted/30">
-                                                  <td className="px-2 py-1 font-medium">{factor.parameter}</td>
-                                                  <td className="px-2 py-1 text-muted-foreground font-mono text-[10px]">
-                                                    {factor.value || '—'}
-                                                  </td>
-                                                  <td className="px-2 py-1">
-                                                    <span className={
-                                                      factor.impact.includes('+') ? 'text-green-500' :
-                                                      factor.impact.includes('-') ? 'text-red-500' :
-                                                      factor.impact.includes('INACTIVE') ? 'text-red-500 font-medium' :
-                                                      'text-muted-foreground'
-                                                    }>
-                                                      {factor.impact}
-                                                    </span>
-                                                  </td>
-                                                  <td className="px-2 py-1 text-muted-foreground">{factor.explanation}</td>
-                                                </tr>
-                                              ))}
-                                            </tbody>
-                                          </table>
-                                        </div>
-                                        <p className="text-xs text-muted-foreground mt-1">
-                                          Final: <span className={`font-medium ${getRelevanceColor(sf.relevanceScore)}`}>{sf.relevanceScore}%</span>
-                                          {sf.shouldBeInactive && <span className="text-red-500 ml-1">(Inactive)</span>}
-                                        </p>
-                                      </div>
-                                    )}
-                                  </div>
-                                );
-                              })}
-                            </div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                  })}
+                            </table>
+                        </div>
+                    </ReportSection>
                 </div>
-              </div>
             </div>
-          )}
 
-          {/* No organization selected */}
-          {!activeOrganization && (
-            <div className="border rounded-lg p-12 text-center text-muted-foreground">
-              <AlertTriangle className="w-12 h-12 mx-auto mb-4 opacity-50" />
-              <p className="text-lg font-medium">{t('empty.noOrganization')}</p>
-              <p className="text-sm mt-1">{t('empty.noOrganizationDescription')}</p>
-            </div>
-          )}
+            <style jsx global>{`
+                @media print {
+                    @page { margin: 2cm; }
+                    body { print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+                    .print\\:hidden { display: none !important; }
+                    .print\\:p-4 { padding: 1rem !important; }
+                    section { page-break-inside: avoid; }
+                    table { page-break-inside: avoid; }
+                }
+            `}</style>
+
+            <AlertDialog open={confirmRegenerateOpen} onOpenChange={setConfirmRegenerateOpen}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Regenerate the Structural Risk Profile?</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            This will overwrite the saved report — including any edits made in
+                            Adapt mode — and run a fresh interpretation. The previous version
+                            cannot be recovered.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => generateReport()}>
+                            Regenerate
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </div>
-      </div>
+    );
+}
 
-      {/* Clear Confirmation Dialog */}
-      <AlertDialog open={showClearDialog} onOpenChange={setShowClearDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t('dialog.clearTitle')}</AlertDialogTitle>
-            <AlertDialogDescription>{t('dialog.clearDescription')}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t('buttons.cancel')}</AlertDialogCancel>
-            <AlertDialogAction onClick={clearAnalysis}>{tc('clear')}</AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+// ── ReportSection ────────────────────────────────────────────────────────────
+// Wraps each report section with adapt-mode controls (per-section Edit pencil
+// toggling to a Check, and an X / Plus to remove or restore the section).
+// Inactive sections are hidden outside adapt mode and shown line-through inside.
+type ReportSectionProps = {
+    title:       string;
+    children:    React.ReactNode;
+    isActive:    boolean;
+    isAdaptMode: boolean;
+    isEditing:   boolean;
+    onToggle:    () => void;
+    onEdit:      () => void;
+    onSaveEdit:  () => void;
+};
 
-      {/* Implement Confirmation Dialog */}
-      <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>{t('dialog.title')}</DialogTitle>
-            <DialogDescription>
-              {t('dialog.description', { name: organizationName })}
-            </DialogDescription>
-          </DialogHeader>
+function ReportSection({
+    title, children,
+    isActive, isAdaptMode, isEditing,
+    onToggle, onEdit, onSaveEdit,
+}: ReportSectionProps)
+{
+    if (!isAdaptMode && !isActive) return null;
 
-          <div className="space-y-4 py-4">
-            <div className="flex items-center justify-between">
-              <span className="text-sm">{t('dialog.targetIg')}</span>
-              <Badge style={{ backgroundColor: IG_COLORS[selectedIg] }} className="text-white">
-                IG{selectedIg}
-              </Badge>
+    return (
+        <section className={cn('mb-10 relative', !isActive && 'opacity-50')}>
+            <div className="flex items-center justify-between mb-4">
+                <h3 className={cn(
+                    'text-lg font-semibold italic',
+                    !isActive && 'line-through text-muted-foreground',
+                )}>
+                    {title}
+                </h3>
+
+                {isAdaptMode && (
+                    <div className="flex items-center gap-1 print:hidden">
+                        {isActive && (
+                            <button
+                                onClick={isEditing ? onSaveEdit : onEdit}
+                                className="flex h-7 w-7 items-center justify-center rounded border-2 border-foreground/50 bg-foreground/10 text-foreground hover:bg-foreground/20 hover:scale-105 transition-all cursor-pointer"
+                                title={isEditing ? 'Save changes' : 'Edit section'}
+                            >
+                                {isEditing ? <Check size={14} /> : <Edit2 size={14} />}
+                            </button>
+                        )}
+                        <button
+                            onClick={onToggle}
+                            className="flex h-7 w-7 items-center justify-center rounded border-2 border-foreground/50 bg-foreground/10 text-foreground hover:bg-foreground/20 hover:scale-105 transition-all cursor-pointer"
+                            title={isActive ? 'Remove section' : 'Restore section'}
+                        >
+                            {isActive ? <X size={14} /> : <Plus size={14} />}
+                        </button>
+                    </div>
+                )}
             </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm">{t('dialog.controlsInactive')}</span>
-              <span className="font-medium">{inactiveControls.size}</span>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-sm">{t('dialog.safeguardsInactive')}</span>
-              <span className="font-medium">{inactiveSafeguards.size}</span>
-            </div>
-          </div>
 
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowConfirmDialog(false)}>
-              {t('buttons.cancel')}
-            </Button>
-            <Button onClick={implementRecommendations} disabled={isImplementing}>
-              {isImplementing ? (
-                <>
-                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  {t('buttons.implementing')}
-                </>
-              ) : (
-                t('buttons.confirm')
-              )}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </div>
-  );
+            {isActive && (
+                <div className={cn(
+                    isEditing && 'border-2 border-blue-500/30 rounded-lg p-4 bg-blue-500/5',
+                )}>
+                    {children}
+                </div>
+            )}
+        </section>
+    );
 }

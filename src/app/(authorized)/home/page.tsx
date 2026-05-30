@@ -6,7 +6,7 @@ import { Badge }                                                    from '@/comp
 import { Button }                                                   from '@/components/ui/button';
 import { Separator }                                                from '@/components/ui/separator';
 import { Textarea }                                                 from '@/components/ui/textarea';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { DataTableShell, type DataColumn }                          from '@/components/ui/data-table-shell';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import { Dialog, DialogContent }                                    from '@/components/ui/dialog';
 import { InputGroup, InputGroupAddon, InputGroupInput }             from '@/components/ui/input-group';
@@ -169,6 +169,143 @@ function actionLabel(type: 'Evidence' | 'Chat' | 'Request'): string
 {
     return type === 'Chat' ? 'Reply' : 'Review';
 }
+
+// Classify a task by the type of its most recent message.
+// Tasks with no messages default to "Chat" so they remain selectable in the
+// "Select Chat" dropdown filter.
+function taskTypeFromMessages(task: TaskRef): 'Chat' | 'Evidence' | 'Request'
+{
+    const sorted = [...task.messages].sort(
+        (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+    const latest = sorted[0];
+    if (!latest)                            return 'Chat';
+    if (latest.type === 'REQUEST')          return 'Request';
+    if (latest.type.startsWith('EVIDENCE')) return 'Evidence';
+    return 'Chat';
+}
+
+// ── Table column configs ─────────────────────────────────────────────────────
+
+type AttentionRow = { latest: AttentionItem; count: number };
+
+function attentionRowKey({ latest }: AttentionRow): string
+{
+    return `${latest.data.task.id}:${attentionTypeLabel(latest)}`;
+}
+
+const attentionColumns: DataColumn<AttentionRow>[] = [
+    {
+        key:           'client',
+        label:         'Client',
+        sortable:      true,
+        width:         'w-48',
+        sortValue:     ({ latest }) => latest.data.task.organization?.name?.toLowerCase() ?? '',
+        cellClassName: 'text-blue-600 dark:text-blue-400 font-medium',
+        render:        ({ latest }) => latest.data.task.organization?.name || '-',
+    },
+    {
+        key:       'type',
+        label:     'Type',
+        sortable:  true,
+        width:     'w-28',
+        sortValue: ({ latest }) => attentionTypeLabel(latest),
+        render:    ({ latest, count }) =>
+        {
+            const type         = attentionTypeLabel(latest);
+            const displayLabel = attentionTypeDisplayLabel(latest);
+            return (
+                <div className="relative inline-flex">
+                    <Badge variant="outline" className={`text-xs ${attentionTypeBadgeClass(type)}`}>
+                        {displayLabel}
+                    </Badge>
+                    {count > 1 && (
+                        <Badge variant="destructive" className="absolute -top-2 -right-3 h-5 px-2 text-xs">
+                            {count}
+                        </Badge>
+                    )}
+                </div>
+            );
+        },
+    },
+    {
+        key:           'task',
+        label:         'Task',
+        sortable:      true,
+        sortValue:     ({ latest }) => latest.data.task.name.toLowerCase(),
+        cellClassName: 'text-muted-foreground truncate max-w-md',
+        render:        ({ latest }) => latest.data.task.name,
+    },
+    {
+        key:           'lastActivity',
+        label:         'Last Activity',
+        sortable:      true,
+        width:         'w-36',
+        sortValue:     ({ latest }) => new Date(latest.data.createdAt).getTime(),
+        cellClassName: 'text-muted-foreground text-sm',
+        render:        ({ latest }) => timeAgo(latest.data.createdAt),
+    },
+];
+
+function buildTaskColumns(opts: { dueDateClass: string }): DataColumn<TaskRef>[]
+{
+    return [
+        {
+            key:           'client',
+            label:         'Client',
+            sortable:      true,
+            width:         'w-48',
+            sortValue:     (task) => task.organization?.name?.toLowerCase() ?? '',
+            cellClassName: 'text-blue-600 dark:text-blue-400 font-medium',
+            render:        (task) => task.organization?.name || '-',
+        },
+        {
+            key:       'type',
+            label:     'Type',
+            sortable:  true,
+            width:     'w-28',
+            sortValue: (task) => taskTypeFromMessages(task),
+            render:    (task) =>
+            {
+                const type = taskTypeFromMessages(task);
+                return (
+                    <Badge variant="outline" className={`text-xs ${attentionTypeBadgeClass(type)}`}>
+                        {type}
+                    </Badge>
+                );
+            },
+        },
+        {
+            key:       'task',
+            label:     'Task',
+            sortable:  true,
+            sortValue: (task) => task.name.toLowerCase(),
+            render:    (task) => task.name,
+        },
+        {
+            key:           'dueDate',
+            label:         'Due Date',
+            sortable:      true,
+            width:         'w-36',
+            sortValue:     (task) => task.endAt ? new Date(task.endAt).getTime() : 0,
+            cellClassName: opts.dueDateClass,
+            render:        (task) => formatDate(task.endAt),
+        },
+        {
+            key:       'status',
+            label:     'Status',
+            sortable:  true,
+            width:     'w-32',
+            sortValue: (task) => task.status,
+            render:    (task) => (
+                <Badge variant="outline" className="text-xs">{statusLabel(task.status)}</Badge>
+            ),
+        },
+    ];
+}
+
+const overdueColumns = buildTaskColumns({ dueDateClass: 'text-red-600 dark:text-red-400 font-medium' });
+const dueSoonColumns = buildTaskColumns({ dueDateClass: 'font-medium' });
 
 // ── Chat Bubbles ──────────────────────────────────────────────────────────────
 
@@ -769,10 +906,70 @@ export default function HomePage()
         setDrawerOpen(true);
     };
 
+    // Open the drawer in the type-appropriate mode (Chat/Request/Evidence)
+    // based on the row's classified type. First try to reuse an existing
+    // AttentionItem (so Evidence rows wired to a real PendingEvidence record
+    // get the full approve/reject UI); otherwise synthesize a minimal
+    // message-kind item from the task's own messages so the drawer still
+    // opens in Chat or Request mode. Evidence with no backing PendingEvidence
+    // falls back to Chat — the evidence id needed for approve/reject isn't
+    // reconstructable from TaskRef alone.
+    const findExistingAttentionItem = (
+        taskId: string,
+        type: 'Chat' | 'Evidence' | 'Request',
+    ): AttentionItem | null =>
+    {
+        const matches = attentionItems.filter(it =>
+        {
+            const itTaskId = it.kind === 'message' ? it.data.task.id : it.data.task.id;
+            return itTaskId === taskId && attentionTypeLabel(it) === type;
+        });
+        if (matches.length === 0) return null;
+        return matches.sort((a, b) =>
+        {
+            const aDate = a.kind === 'message' ? a.data.createdAt : a.data.createdAt;
+            const bDate = b.kind === 'message' ? b.data.createdAt : b.data.createdAt;
+            return new Date(bDate).getTime() - new Date(aDate).getTime();
+        })[0];
+    };
+
+    const synthesizeAttentionItem = (
+        task: TaskRef,
+        type: 'Chat' | 'Evidence' | 'Request',
+    ): AttentionItem | null =>
+    {
+        const sorted = [...task.messages].sort(
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+        );
+        const candidate = type === 'Request'
+            ? sorted.find(m => m.type === 'REQUEST')
+            : sorted[0];
+        if (!candidate) return null;
+        return {
+            kind: 'message',
+            data: {
+                id:             candidate.id,
+                content:        candidate.content,
+                type:           candidate.type as 'NOTE' | 'REPLY' | 'REQUEST',
+                origin:         candidate.origin as 'USER' | 'SYSTEM',
+                assetName:      candidate.assetName,
+                requestType:    candidate.requestType,
+                replyId:        null,
+                replyTo:        null,
+                createdAt:      candidate.createdAt,
+                sender:         candidate.sender ? { ...candidate.sender, email: '' } : null,
+                replyToProfile: null,
+                task,
+            },
+        };
+    };
+
     const handleTaskClick = (task: TaskRef) =>
     {
+        const type = taskTypeFromMessages(task);
+        const item = findExistingAttentionItem(task.id, type) ?? synthesizeAttentionItem(task, type);
         setSelectedTask(task);
-        setSelectedItem(null);
+        setSelectedItem(item);
         setDrawerOpen(true);
     };
 
@@ -826,60 +1023,16 @@ export default function HomePage()
 
                 {loading ? (
                     <p className="text-muted-foreground text-sm">Loading...</p>
-                ) : groupedAttentionItems.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">Nothing needs attention right now.</p>
                 ) : (
-                    <div className="rounded-lg border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-48">Client</TableHead>
-                                    <TableHead className="w-28">Type</TableHead>
-                                    <TableHead>Task</TableHead>
-                                    <TableHead className="w-36">Last Activity</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {groupedAttentionItems.map(({ latest, count }) =>
-                                {
-                                    const type = attentionTypeLabel(latest);
-                                    const displayLabel = attentionTypeDisplayLabel(latest);
-                                    const task = latest.kind === 'message' ? latest.data.task : latest.data.task;
-                                    const createdAt = latest.kind === 'message' ? latest.data.createdAt : latest.data.createdAt;
-                                    const rowKey = latest.kind === 'message' ? latest.data.id : `ev-${latest.data.id}`;
-                                    return (
-                                        <TableRow
-                                            key={rowKey}
-                                            className="cursor-pointer"
-                                            onClick={() => handleAttentionClick(latest)}
-                                        >
-                                            <TableCell className="text-blue-600 dark:text-blue-400 font-medium">
-                                                {task.organization?.name || '-'}
-                                            </TableCell>
-                                            <TableCell>
-                                                <div className="relative inline-flex">
-                                                    <Badge variant="outline" className={`text-xs ${attentionTypeBadgeClass(type)}`}>
-                                                        {displayLabel}
-                                                    </Badge>
-                                                    {count > 1 && (
-                                                        <Badge variant="destructive" className="absolute -top-2 -right-3 h-5 px-2 text-xs">
-                                                            {count}
-                                                        </Badge>
-                                                    )}
-                                                </div>
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground truncate max-w-md">
-                                                {task.name}
-                                            </TableCell>
-                                            <TableCell className="text-muted-foreground text-sm">
-                                                {timeAgo(createdAt)}
-                                            </TableCell>
-                                        </TableRow>
-                                    );
-                                })}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <DataTableShell
+                        items={groupedAttentionItems}
+                        columns={attentionColumns}
+                        rowKey={attentionRowKey}
+                        storageKey="home:needs-attention"
+                        onRowClick={({ latest }) => handleAttentionClick(latest)}
+                        emptyMessage="Nothing needs attention right now."
+                        typeOf={({ latest }) => attentionTypeLabel(latest)}
+                    />
                 )}
             </section>
 
@@ -894,47 +1047,16 @@ export default function HomePage()
 
                 {loading ? (
                     <p className="text-muted-foreground text-sm">Loading...</p>
-                ) : overdueTasks.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">No overdue tasks.</p>
                 ) : (
-                    <div className="rounded-lg border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-48">Client</TableHead>
-                                    <TableHead>Task</TableHead>
-                                    <TableHead className="w-36">Due Date</TableHead>
-                                    <TableHead className="w-32">Status</TableHead>
-                                    <TableHead className="w-28 text-right">Action</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {overdueTasks.map((task) => (
-                                    <TableRow
-                                        key={task.id}
-                                        className="cursor-pointer"
-                                        onClick={() => handleTaskClick(task)}
-                                    >
-                                        <TableCell className="text-blue-600 dark:text-blue-400 font-medium">
-                                            {task.organization?.name || '-'}
-                                        </TableCell>
-                                        <TableCell>{task.name}</TableCell>
-                                        <TableCell className="text-red-600 dark:text-red-400 font-medium">
-                                            {formatDate(task.endAt)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline" className="text-xs">{statusLabel(task.status)}</Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Button size="sm" className="h-8 px-4 rounded-full text-xs">
-                                                Review
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <DataTableShell
+                        items={overdueTasks}
+                        columns={overdueColumns}
+                        rowKey={(task) => task.id}
+                        storageKey="home:overdue"
+                        onRowClick={handleTaskClick}
+                        emptyMessage="No overdue tasks."
+                        typeOf={taskTypeFromMessages}
+                    />
                 )}
             </section>
 
@@ -949,47 +1071,16 @@ export default function HomePage()
 
                 {loading ? (
                     <p className="text-muted-foreground text-sm">Loading...</p>
-                ) : dueSoonTasks.length === 0 ? (
-                    <p className="text-muted-foreground text-sm">No tasks due soon.</p>
                 ) : (
-                    <div className="rounded-lg border">
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead className="w-48">Client</TableHead>
-                                    <TableHead>Task</TableHead>
-                                    <TableHead className="w-36">Due Date</TableHead>
-                                    <TableHead className="w-32">Status</TableHead>
-                                    <TableHead className="w-28 text-right">Action</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {dueSoonTasks.map((task) => (
-                                    <TableRow
-                                        key={task.id}
-                                        className="cursor-pointer"
-                                        onClick={() => handleTaskClick(task)}
-                                    >
-                                        <TableCell className="text-blue-600 dark:text-blue-400 font-medium">
-                                            {task.organization?.name || '-'}
-                                        </TableCell>
-                                        <TableCell>{task.name}</TableCell>
-                                        <TableCell className="font-medium">
-                                            {formatDate(task.endAt)}
-                                        </TableCell>
-                                        <TableCell>
-                                            <Badge variant="outline" className="text-xs">{statusLabel(task.status)}</Badge>
-                                        </TableCell>
-                                        <TableCell className="text-right">
-                                            <Button size="sm" className="h-8 px-4 rounded-full text-xs">
-                                                Review
-                                            </Button>
-                                        </TableCell>
-                                    </TableRow>
-                                ))}
-                            </TableBody>
-                        </Table>
-                    </div>
+                    <DataTableShell
+                        items={dueSoonTasks}
+                        columns={dueSoonColumns}
+                        rowKey={(task) => task.id}
+                        storageKey="home:due-soon"
+                        onRowClick={handleTaskClick}
+                        emptyMessage="No tasks due soon."
+                        typeOf={taskTypeFromMessages}
+                    />
                 )}
             </section>
 

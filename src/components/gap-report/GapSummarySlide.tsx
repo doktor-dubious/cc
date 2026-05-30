@@ -18,6 +18,11 @@ type GapSummarySlideProps = {
   activeSafeguardIds: string[];
   isFinalized: boolean;
   onFinalize: (remarks: string) => Promise<void>;
+  // Hide the internal "GAP Report Summary" header when the parent page
+  // already provides its own page title (e.g. /gap/report). Defaults to
+  // true so existing callers (the customer-onboarding workflow) are
+  // unaffected.
+  showHeader?: boolean;
 };
 
 export function GapSummarySlide({
@@ -25,6 +30,7 @@ export function GapSummarySlide({
   activeSafeguardIds,
   isFinalized,
   onFinalize,
+  showHeader = true,
 }: GapSummarySlideProps) {
   const t = useTranslations('GapReport');
   const [remarks, setRemarks] = useState('');
@@ -51,8 +57,10 @@ export function GapSummarySlide({
   const targetLevelCounts = [0, 0, 0, 0, 0];
 
   for (const entry of activeCmmiEntries) {
-    currentLevelCounts[entry.currentCmmi - 1]++;
-    targetLevelCounts[entry.targetCmmi - 1]++;
+    // currentCmmi may be 0 ("Not Started"); it has no L1–L5 bucket, so skip it
+    // here rather than indexing at -1. Its gap still counts toward the average.
+    if (entry.currentCmmi >= 1) currentLevelCounts[entry.currentCmmi - 1]++;
+    if (entry.targetCmmi >= 1) targetLevelCounts[entry.targetCmmi - 1]++;
   }
 
   const handleFinalize = async () => {
@@ -69,10 +77,12 @@ export function GapSummarySlide({
   return (
     <div className="space-y-6">
       {/* Header */}
-      <div>
-        <h1 className="text-2xl font-semibold">{t('summary.title')}</h1>
-        <p className="text-muted-foreground mt-1">{t('summary.subtitle')}</p>
-      </div>
+      {showHeader && (
+        <div>
+          <h1 className="text-2xl font-semibold">{t('summary.title')}</h1>
+          <p className="text-muted-foreground mt-1">{t('summary.subtitle')}</p>
+        </div>
+      )}
 
       {/* Statistics */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

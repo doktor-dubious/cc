@@ -1,12 +1,14 @@
 'use client';
 
-import { useState, useEffect, useCallback, use } from 'react';
+import { useState, useEffect, useCallback, useRef, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslations } from 'next-intl';
+import { toast } from 'sonner';
 import { ChevronLeft, ChevronRight, Check, LogOut, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
 import {
     Select,
@@ -25,7 +27,12 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { RocketIcon } from '@/components/animate-ui/icons/rocket';
+
+// Menu-button styling: pointer cursor + underline-on-hover, matching the
+// other risk-foundation pages.
+const MENU_BTN_CLASS =
+    'cursor-pointer rounded-none border-b-2 border-transparent ' +
+    'hover:border-foreground hover:bg-transparent disabled:hover:border-transparent';
 
 // ── Option constants (same values as CES wizard) ─────────────────────────────
 
@@ -187,6 +194,14 @@ const WIZARD_STEPS: WizardStep[] = [
     },
 ];
 
+// field key → { labelKey, namespace } so a save can name the changed field in
+// its toast, resolved through the same translator the field renders with.
+const FIELD_META: Record<string, { labelKey: string; namespace?: string }> = Object.fromEntries(
+    WIZARD_STEPS.flatMap((step) =>
+        step.fields.map((f) => [f.key, { labelKey: f.labelKey, namespace: f.namespace }]),
+    ),
+);
+
 // ── Form state ────────────────────────────────────────────────────────────────
 
 type FormData = {
@@ -285,11 +300,14 @@ export default function ThirdPartyWizardPage({
     const currentStep = WIZARD_STEPS[currentStepIndex];
 
     const [formData, setFormData]       = useState<FormData>(initialFormData);
-    const [companyName, setCompanyName] = useState('');
     const [isSaving, setIsSaving]       = useState(false);
     const [isLoading, setIsLoading]     = useState(true);
     const [showExitDialog, setShowExitDialog] = useState(false);
     const [saveTimeout, setSaveTimeout] = useState<NodeJS.Timeout | null>(null);
+
+    // Label of the last user-changed field. Null until a real edit, so the
+    // spurious save the debounced effect fires right after load stays silent.
+    const lastChangeLabelRef = useRef<string | null>(null);
 
     // Load existing data
     useEffect(() => {
@@ -298,7 +316,6 @@ export default function ThirdPartyWizardPage({
             .then(json => {
                 if (json.success && json.data) {
                     const c = json.data;
-                    setCompanyName(c.name || '');
                     setFormData({
                         name                    : c.name || '',
                         description             : c.description || '',
@@ -335,13 +352,25 @@ export default function ThirdPartyWizardPage({
         if (!data.name.trim()) return;
         setIsSaving(true);
         try {
-            await fetch(`/api/third-party/${id}`, {
+            const res = await fetch(`/api/third-party/${id}`, {
                 method  : 'PATCH',
                 headers : { 'Content-Type': 'application/json' },
                 body    : JSON.stringify(serialize(data)),
             });
+            if (res.ok) {
+                // Only toast a save the user actually triggered — the ref is
+                // null for the spurious post-load save, which stays silent.
+                const label = lastChangeLabelRef.current;
+                if (label) {
+                    toast.success(`${label} updated`, { description: data.name });
+                    lastChangeLabelRef.current = null;
+                }
+            } else {
+                const body = await res.json().catch(() => null);
+                toast.error(body?.error || "Couldn't save changes");
+            }
         } catch {
-            // silently fail
+            toast.error("Couldn't save changes");
         } finally {
             setIsSaving(false);
         }
@@ -357,8 +386,12 @@ export default function ThirdPartyWizardPage({
     }, [formData, isLoading]);
 
     const handleFieldChange = (key: string, value: string | null) => {
+        const meta = FIELD_META[key];
+        if (meta) {
+            const tFunc = meta.namespace === 'ces' ? ces : tw;
+            lastChangeLabelRef.current = tFunc(meta.labelKey);
+        }
         setFormData(prev => ({ ...prev, [key]: value }));
-        if (key === 'name' && value) setCompanyName(value);
     };
 
     const goToPrevious = useCallback(() => {
@@ -465,79 +498,76 @@ export default function ThirdPartyWizardPage({
 
     return (
         <div className="min-h-screen bg-background flex flex-col">
-            {/* Header */}
+            {/* Header 
             <header className="sticky top-0 z-50 border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-                <div className="container mx-auto flex h-16 items-center justify-between px-4">
-                    <div className="flex items-center gap-3">
-                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-primary-foreground">
-                            <RocketIcon size={20} />
-                        </div>
-                        <div className="flex items-center gap-3">
-                            <h1 className="text-lg font-semibold">{tw('wizard.title')}</h1>
-                            {companyName && (
-                                <>
-                                    <div className="h-5 w-px bg-border" />
-                                    <span className="text-base text-muted-foreground">{companyName}</span>
-                                </>
-                            )}
-                        </div>
-                    </div>
-                    <div className="flex items-center gap-2">
-                        {isSaving && (
-                            <span className="text-xs text-muted-foreground">{tw('wizard.saving')}</span>
-                        )}
-                    </div>
+                <div className="container mx-auto flex h-16 items-center justify-end px-4">
+                    {isSaving && (
+                        <span className="text-xs text-muted-foreground">{tw('wizard.saving')}</span>
+                    )}
                 </div>
             </header>
+            */}
+
+            
 
             {/* Body — main content + right sidebar */}
             <div className="flex flex-1">
                 {/* Main content */}
-                <div className="flex-1 overflow-y-auto p-8">
-                    <div className="max-w-2xl mx-auto">
+                <div className="flex-1 overflow-y-auto">
+                    <div className="max-w-2xl mx-auto p-8">
+                        {/* Title row — title on the left, navigation on the right */}
+                        <div className="flex items-start justify-between gap-6 mb-2">
+                            <h1 className="text-2xl font-bold">Client Exposure data</h1>
+
+                            <div className="flex items-center gap-2 shrink-0 select-none">
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={goToPrevious}
+                                    disabled={currentStepIndex === 0}
+                                    className="cursor-pointer"
+                                >
+                                    <ChevronLeft className="w-4 h-4 mr-1" />
+                                    {tc('navigation.previous')}
+                                </Button>
+
+                                {currentStepIndex < WIZARD_STEPS.length - 1 ? (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={goToNext}
+                                        className="cursor-pointer"
+                                    >
+                                        {tc('navigation.next')}
+                                        <ChevronRight className="w-4 h-4 ml-1" />
+                                    </Button>
+                                ) : (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        onClick={() => router.push('/risk-foundation')}
+                                        className="cursor-pointer"
+                                    >
+                                        <Check className="w-4 h-4 mr-1" />
+                                        {tc('navigation.finish')}
+                                    </Button>
+                                )}
+                            </div>
+                        </div>
+
+                        <p className="text-sm text-muted-foreground mb-2">
+                            Add organization data to prepare the Client Exposure report
+                        </p>
+                        <Separator className="my-6" />
+
                         {/* Step content */}
-                        <div className="border rounded-lg p-6 space-y-6">
+                        <div className="border rounded-lg bg-panel p-6 space-y-6">
                             <h2 className="text-lg font-medium">
                                 {tw(currentStep.titleKey)}
                             </h2>
                             <div className="space-y-6">
                                 {currentStep.fields.map(field => renderField(field))}
                             </div>
-                        </div>
-
-                        {/* Navigation */}
-                        <div className="flex items-center justify-between border-t border-muted pt-4 mt-6">
-                            <Button
-                                variant="outline"
-                                size="sm"
-                                onClick={goToPrevious}
-                                disabled={currentStepIndex === 0}
-                                className="gap-2"
-                            >
-                                <ChevronLeft className="w-4 h-4" />
-                                {tc('navigation.previous')}
-                            </Button>
-
-                            <span className="text-sm text-muted-foreground">
-                                {currentStepIndex + 1} / {WIZARD_STEPS.length}
-                            </span>
-
-                            {currentStepIndex < WIZARD_STEPS.length - 1 ? (
-                                <Button variant="outline" size="sm" onClick={goToNext} className="gap-2">
-                                    {tc('navigation.next')}
-                                    <ChevronRight className="w-4 h-4" />
-                                </Button>
-                            ) : (
-                                <Button
-                                    variant="default"
-                                    size="sm"
-                                    onClick={() => router.push('/risk-foundation')}
-                                    className="gap-2"
-                                >
-                                    <Check className="w-4 h-4" />
-                                    {tc('navigation.finish')}
-                                </Button>
-                            )}
                         </div>
                     </div>
                 </div>

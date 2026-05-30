@@ -111,7 +111,6 @@ export default function RiskReportPage() {
               size: org.size,
               ig: org.ig,
               naceSection: org.naceSection,
-              riskProfile: org.riskProfile,
               geographicScope: org.geographicScope,
               digitalMaturity: org.digitalMaturity,
               itSecurityStaff: org.itSecurityStaff,

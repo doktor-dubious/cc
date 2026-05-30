@@ -179,6 +179,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
             targetedAttackLikelihood, downtimeTolerance, supplyChainPosition, securityBudgetRange,
             manualOperation, productionDependency, customerAccess,
             businessDaysPerYear, revenueConcentration, entityType,
+            mediaExposure, criticalSocietalRole, previousBreachHistory,
             autoFilledFields,
         } = body;
 
@@ -243,6 +244,9 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
                 businessDaysPerYear      : businessDaysPerYear !== undefined ? businessDaysPerYear : org.businessDaysPerYear,
                 revenueConcentration     : revenueConcentration !== undefined ? revenueConcentration : org.revenueConcentration,
                 entityType               : entityType !== undefined ? entityType : org.entityType,
+                mediaExposure            : mediaExposure !== undefined ? mediaExposure : org.mediaExposure,
+                criticalSocietalRole     : criticalSocietalRole !== undefined ? criticalSocietalRole : org.criticalSocietalRole,
+                previousBreachHistory    : previousBreachHistory !== undefined ? previousBreachHistory : org.previousBreachHistory,
                 autoFilledFields         : autoFilledFields !== undefined ? autoFilledFields : org.autoFilledFields,
             }
         );

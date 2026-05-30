@@ -1,0 +1,89 @@
+GORM — Forecasting that's paid for itself for 12 years
+
+by Prediction Institute · Seed round one-pager · 2026-05
+
+The wedge
+
+We sell forecasts that maximise profit, not accuracy. Our parent product, Cassandra, has run print-circulation forecasting for The Washington Post, The New York Times, Chicago Sun-Times, Philadelphia Inquirer, Denver Post and Toronto Star for over a decade. GORM is Cassandra rebuilt on top of the new generation of time-series foundation models — and generalised to any sector that has to decide "how many of X do I put where, tomorrow?"
+
+The problem
+
+Every retailer, publisher, restaurant chain and hospital faces the same daily question: how much of what, where. Get it wrong and you either lose the sale (stock-out) or eat the inventory (waste). Enterprise tools (o9, Blue Yonder, SAP IBP) cost $500k+ and take a year to install. Open-source stacks (Prophet, statsmodels) need a PhD-led data team. The mid-market — the bulk of the global $828M → $2.07B forecasting SaaS spend by 2035 — has no good option.
+
+The product
+
+GORM is a forecasting and decisioning platform with three things competitors don't combine:
+
+1. An ensemble of 20+ frontier AI foundation models — Google TimesFM 2.5, Amazon Chronos 2, Salesforce Moirai 2, IBM FlowState, Datadog Toto, Alibaba YingLong, Tsinghua Sundial, NX-AI TiRex, ShanghaiTech Kairos, plus statistical baselines. Each forecast is a weighted blend, re-selected per series. As new models ship, we add them — the platform gets better without us retraining anything.
+
+2. A profit-optimisation layer (Newsvendor / Economic Optimal) — we fold cost, margin and price directly into the decision via the critical-fractile quantile. High-margin items automatically get larger draws. Output is how many to deliver, not what the model thinks demand is.
+
+3. Natural-language interface — operators ask in plain English ("Sunday circulation, Chicago, Q4"; "expected profit, 7-Eleven Denver, 2H 2024"); GORM returns a forecast, a scenario, or a chart.
+
+Why now
+
+Foundation models for time-series went production-ready in 2024–2026 (TimesFM 2.5, Chronos 2, Moirai 2). What used to be a 12-month custom-model build is now a model-orchestration problem. First mover in the orchestration + decisioning layer wins, the same way Vercel won the hosting layer above Next.js.
+
+Moat
+
+- Proprietary dataset. ~130M sales observations across +40 publications, US/CA/EU, daily resolution including holidays — the right shape to fine-tune any of the foundation models we host. Already shipping a fine-tuned TimesFM variant in production.
+
+- 12 years of operational know-how. What does "good" look like on Thanksgiving in Denver? We know. The Economic Optimal layer, weekday corrections, PAD (holiday/event) adjustments, variation handling — all production-tested.
+
+- Reference customers in a defensible niche. Newsrooms are not glamorous, but they pay, they renew, and they are an extraordinary testbed: high noise, strong seasonality, real money on every decision.
+
+Traction
+
+- Cassandra: 30 newsroom customers, [REWRITE: repeat customers running for years]
+- GORM beta: [REWRITE: Improved profibility perfopmance verified on existing customers]
+
+Go-to-market
+
+Land via vertical "presets" — Newsroom Forecaster, Retail Demand & Replenishment, Hospitality Revenue, SaaS Subscription Forecaster — each a configured version of the same engine. Mid-market SaaS pricing ($2k–$15k/mo), inside-sales motion, expansion via SKU/outlet growth.
+
+Team
+
+Magnus Gabrielsen, Rune Skardhamar — 12+ years building Cassandra; deep relationships across the North American publishing industry. 
+
+The ask
+
+[$1.5M–$3M] seed — [18-month runway] to:
+- Ship two non-newspaper verticals to revenue (retail demand, hospitality).
+- Productise the fine-tuning pipeline as a paid tier. 
+- Hire 2 ML engineers + 1 founding GTM.
+
+Contact: invest@predictioninstitute.com · predictioninstitute.com
+
+---
+A few things worth deciding before the next pass:
+
+1. Round size and use of funds — angel/pre-seed ($500k–$1.5M) reads differently from a $3M priced seed. Which are you targeting?
+2. Lead with newspapers or lead with "any time-series"? The existing Series-A brief leads generic; for angels, the newspaper story is more concrete and credible. I leaned that way here.
+3. Real traction numbers — Cassandra ARR, GORM beta customer count, accuracy/profit deltas on real pilots — the placeholders are the weakest part of the draft.
+
+Happy to tighten further, swap to a more aggressive growth-narrative version, or write a slide-deck cover plus 10-slide outline instead.
+
+
+
+
+"The Prediction Institute team did an exceptional job working with our internal IT team to move quickly through the implementation process and ongoing support is outstanding. I would highly recommend both The Prediction Institute and the Cassandra system to anyone that is looking to upgrade their single copy forecasting system. The only regret we have is that we did not move to the system earlier."
+– Jim Dean
+Director, Delivery Operations and Administration,
+Washington Post 
+
+"We have been pleased with our decision to contract with Prediction Institute. They are a wonderful vendor to work with."
+– Sheila Reidy
+Vice President Circulation,
+Chicago Sun Times 
+
+"Cassandra has provided us with an annual saving of more than 1 million euro without impacting the sale!"
+– Torben Pilgård Madsen
+Market Manager,
+Ekstra Bladet 
+
+
+
+
+
+
+

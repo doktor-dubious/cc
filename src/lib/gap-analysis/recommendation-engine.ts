@@ -3,10 +3,10 @@
 // and suggests which controls and safeguards should be active or inactive.
 
 import { CIS_CONTROLS, type Safeguard } from '@/lib/constants/cis-controls';
+import { deriveTargetedAttackLikelihood } from '@/lib/risk/threat-likelihood';
 import type {
   OrgSize,
   NaceSection,
-  RiskProfile,
   ItSecurityStaff,
   SecurityMaturity,
   DataSensitivity,
@@ -24,6 +24,9 @@ import type {
   ManualOperation,
   ProductionDependency,
   CustomerAccess,
+  OwnershipType,
+  EntityType,
+  PreviousBreachHistory,
 } from '@prisma/client';
 
 // ────────────────────────────────────────────────────────────────────────────────
@@ -34,7 +37,6 @@ export type OrganizationProfile = {
   size?: OrgSize | null;
   ig?: number | null;
   naceSection?: NaceSection | null;
-  riskProfile?: RiskProfile | null;
   geographicScope?: GeographicScope | null;
   digitalMaturity?: DigitalMaturity | null;
   itSecurityStaff?: ItSecurityStaff | null;
@@ -53,6 +55,12 @@ export type OrganizationProfile = {
   manualOperation?: ManualOperation | null;
   productionDependency?: ProductionDependency | null;
   customerAccess?: CustomerAccess | null;
+  // Threat-profile signals (input to deriveTargetedAttackLikelihood)
+  ownershipType?: OwnershipType | null;
+  entityType?: EntityType | null;
+  mediaExposure?: boolean | null;
+  criticalSocietalRole?: boolean | null;
+  previousBreachHistory?: PreviousBreachHistory | null;
 };
 
 export type FactorImpact = {
@@ -2868,7 +2876,15 @@ function calculateSafeguardRelevance(
 // Main Recommendation Generator
 // ────────────────────────────────────────────────────────────────────────────────
 
-export function generateGapRecommendation(profile: OrganizationProfile, targetIg?: number): GapRecommendation {
+export function generateGapRecommendation(rawProfile: OrganizationProfile, targetIg?: number): GapRecommendation {
+  // Targeted-attack likelihood is derived from the rest of the profile, not
+  // self-rated by the customer. We override it here so every downstream
+  // reader sees the deterministic value computed by deriveTargetedAttackLikelihood.
+  const profile: OrganizationProfile = {
+    ...rawProfile,
+    targetedAttackLikelihood: deriveTargetedAttackLikelihood(rawProfile),
+  };
+
   const { ig: calculatedIg, reasons: igReasons } = calculateRecommendedIg(profile);
   // Use targetIg if provided (user override), otherwise use calculated recommendation
   const recommendedIg = targetIg ?? calculatedIg;

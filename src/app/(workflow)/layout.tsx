@@ -90,6 +90,8 @@ export default async function WorkflowLayout({
     businessDaysPerYear: org.businessDaysPerYear,
     revenueConcentration: org.revenueConcentration,
     entityType: org.entityType,
+    mediaExposure: org.mediaExposure,
+    criticalSocietalRole: org.criticalSocietalRole,
   }));
 
   return (
